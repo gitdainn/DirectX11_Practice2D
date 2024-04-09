@@ -9,6 +9,7 @@
 
 #define			USING(NAMESPACE)	using namespace NAMESPACE;
 //
+#define			OBJ_DEAD				-1
 
 #define D3DCOLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))

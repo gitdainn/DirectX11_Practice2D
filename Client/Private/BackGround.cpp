@@ -4,43 +4,30 @@
 #include "GameInstance.h"
 
 CBackGround::CBackGround(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
-	: CGameObject(pDevice, pContext)
+	: CSpriteObject(pDevice, pContext)
 {
 
 }
 
 CBackGround::CBackGround(const CBackGround & rhs)
-	: CGameObject(rhs)
+	: CSpriteObject(rhs)
 {
 
 }
 
 HRESULT CBackGround::Initialize_Prototype()
 {
+	__super::Initialize_Prototype();
+
 	return S_OK;
 }
 
-HRESULT CBackGround::Initialize(void * pArg)
+HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
-	if (FAILED(Add_Components()))
-		return E_FAIL;
+	if (FAILED(__super::Initialize(InSpriteInfo)))
+	{
 
-	m_fSizeX = g_iWinSizeX;
-	m_fSizeY = g_iWinSizeY;
-	m_fX = g_iWinSizeX >> 1;
-	m_fY = g_iWinSizeY >> 1;
-
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
-	m_WorldMatrix._11 = m_fSizeX;
-	m_WorldMatrix._22 = m_fSizeY;
-
-	m_WorldMatrix._41 = m_fX - g_iWinSizeX * 0.5f;
-	m_WorldMatrix._42 = -m_fY + g_iWinSizeY * 0.5f;
-
-	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-
-	XMStoreFloat4x4(&m_ProjMatrix, 
-		XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+	}
 
 	return S_OK;
 }
@@ -72,23 +59,13 @@ HRESULT CBackGround::Render()
 
 HRESULT CBackGround::Add_Components()
 {
-	/* For.Com_Renderer */
-	if (FAILED(__super::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		TEXT("Com_Renderer"), (CComponent**)&m_pRendererCom, nullptr)))
-		return E_FAIL;
-
-	/* For.Com_VIBuffer */
-	if (FAILED(__super::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		TEXT("Com_VIBuffer"), (CComponent**)&m_pVIBufferCom, nullptr)))
-		return E_FAIL;
-
 	/* For.Com_Shader */
-	if (FAILED(__super::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;	
 
 	/* For.Com_Texture */
-	if (FAILED(__super::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		TEXT("Com_Texture "), (CComponent**)&m_pTextureCom, nullptr)))
 		return E_FAIL;	
 	
@@ -110,9 +87,9 @@ HRESULT CBackGround::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CBackGround * CBackGround::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CBackGround*		pInstance = new CBackGround(pDevice, pContext);
+	CBackGround* pInstance = new CBackGround(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize_Prototype()))
 	{
@@ -123,11 +100,11 @@ CBackGround * CBackGround::Create(ID3D11Device * pDevice, ID3D11DeviceContext * 
 	return pInstance;
 }
 
-CGameObject * CBackGround::Clone(void * pArg)
+CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	CBackGround*		pInstance = new CBackGround(*this);
 
-	if (FAILED(pInstance->Initialize(pArg)))
+	if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
 	{
 		MSG_BOX("Failed to Cloned CBackGround");
 		Safe_Release(pInstance);

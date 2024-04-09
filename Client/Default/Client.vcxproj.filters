@@ -138,6 +138,7 @@
     <ClInclude Include="..\Public\ForkLift.h">
       <Filter>02.GameObject\ForkLift</Filter>
     </ClInclude>
+    <ClInclude Include="SpriteObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -194,6 +195,7 @@
     <ClCompile Include="..\Private\ForkLift.cpp">
       <Filter>02.GameObject\ForkLift</Filter>
     </ClCompile>
+    <ClCompile Include="SpriteObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

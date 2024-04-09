@@ -271,57 +271,6 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 #pragma region GAMEOBJECTS
 	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
 
-	/* For.Prototype_GameObject_Terrain */	
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Terrain"),
-		CTerrain::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Camera_Dynamic*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"),
-		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Monster */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Monster"),
-		CMonster::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Sky*/
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Sky"),
-		CSky::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Weapon */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Weapon"),
-		CWeapon::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Effect_Blue */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Blue"),
-		CEffect_Blue::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Effect_Red */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Effect_Red"),
-		CEffect_Red::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_Explosion */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Explosion"),
-		CExplosion::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_GameObject_ForkLift */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_ForkLift"),
-		CForkLift::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-
 #pragma endregion
 
 	Safe_Release(pGameInstance);

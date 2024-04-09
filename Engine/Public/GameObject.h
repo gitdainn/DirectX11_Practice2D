@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Base.h"
+#include "Transform.h"
+#include "Renderer.h"
 
 BEGIN(Engine)
 
@@ -26,6 +28,8 @@ public:
 protected:
 	ID3D11Device*			m_pDevice = { nullptr };
 	ID3D11DeviceContext*	m_pContext = { nullptr };
+	CTransform*	m_pTransformCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
 
 protected:
 	/* 해시테이블 */
