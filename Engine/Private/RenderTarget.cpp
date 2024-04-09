@@ -1,9 +1,9 @@
 #include "..\Public\RenderTarget.h"
 
-#ifdef _DEBUG
 #include "Shader.h"
 #include "VIBuffer_Rect.h"
-#endif // _DEBUG
+#include "Renderer.h"
+
 
 CRenderTarget::CRenderTarget(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)

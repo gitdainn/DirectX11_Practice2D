@@ -14,11 +14,15 @@ CCollider::CCollider(const CCollider & rhs)
 	, m_pSphere_Original(nullptr == rhs.m_pSphere_Original ? rhs.m_pSphere_Original : new BoundingSphere(*rhs.m_pSphere_Original))
 	, m_pAABB_Original(nullptr == rhs.m_pAABB_Original ? rhs.m_pAABB_Original : new BoundingBox(*rhs.m_pAABB_Original))
 	, m_pOBB_Original(nullptr == rhs.m_pOBB_Original ? rhs.m_pOBB_Original : new BoundingOrientedBox(*rhs.m_pOBB_Original))
+#ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)
 	, m_pInputLayout(rhs.m_pInputLayout)
+#endif // _DEBUG
 {
+#ifdef _DEBUG
 	Safe_AddRef(m_pInputLayout);
+#endif _DEBUG
 }
 
 HRESULT CCollider::Initialize_Prototype(TYPE eType)
@@ -154,6 +158,7 @@ _bool CCollider::Collision(CCollider * pTarget)
 	return m_isCollision;
 }
 
+#ifdef _DEBUG
 HRESULT CCollider::Render()
 {
 	m_pEffect->SetWorld(XMMatrixIdentity());
@@ -193,6 +198,7 @@ HRESULT CCollider::Render()
 
 	return S_OK;
 }
+#endif // _DEBUG
 
 _matrix CCollider::Remove_Rotation(_fmatrix TransformMatrix)
 {
@@ -235,12 +241,14 @@ void CCollider::Free()
 {
 	__super::Free();
 
+#ifdef _DEBUG
 	if (false == m_isCloned)
 	{
 		Safe_Delete(m_pBatch);
 		Safe_Delete(m_pEffect);
 	}
 	Safe_Release(m_pInputLayout);
+#endif // _DEBUG
 
 	Safe_Delete(m_pSphere_Original);
 	Safe_Delete(m_pAABB_Original);

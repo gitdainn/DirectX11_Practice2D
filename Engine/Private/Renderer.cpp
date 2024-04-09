@@ -325,6 +325,7 @@ HRESULT CRenderer::Draw_DeferredBlend()
 	return S_OK;
 }
 
+#ifdef _DEBUG
 HRESULT CRenderer::Render_Debug()
 {
 	if (nullptr == m_pTarget_Manager)
@@ -345,6 +346,7 @@ HRESULT CRenderer::Render_Debug()
 
 	return S_OK;
 }
+#endif // _DEBUG
 
 CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

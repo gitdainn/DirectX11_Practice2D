@@ -1,18 +1,18 @@
-D:\Jusin\9개월차\7.Framework-Final\Client\private\BackGround.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\BackGround.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\private\Camera_Dynamic.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Camera_Dynamic.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Effect_Blue.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Effect_Blue.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Effect_Red.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Effect_Red.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Explosion.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Explosion.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\ForkLift.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\ForkLift.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Level_GamePlay.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Level_GamePlay.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Level_Loading.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Level_Loading.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\private\Level_Logo.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Level_Logo.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\private\Loader.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Loader.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\MainApp.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\MainApp.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Monster.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Monster.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Player.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Player.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Sky.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Sky.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Terrain.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Terrain.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Private\Weapon.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Weapon.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Default\Client.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\Client.obj
-D:\Jusin\9개월차\7.Framework-Final\Client\Default\stdafx.cpp;D:\Jusin\9개월차\7.Framework-Final\Client\Default\x64\Debug\stdafx.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\private\BackGround.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\BackGround.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\private\Camera_Dynamic.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Camera_Dynamic.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Effect_Blue.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Effect_Blue.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Effect_Red.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Effect_Red.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Explosion.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Explosion.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\ForkLift.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\ForkLift.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Level_GamePlay.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Level_GamePlay.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Level_Loading.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Level_Loading.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\private\Level_Logo.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Level_Logo.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\private\Loader.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Loader.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\MainApp.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\MainApp.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Monster.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Monster.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Player.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Player.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Sky.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Sky.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Terrain.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Terrain.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Weapon.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Weapon.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Default\Client.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\Client.obj
+D:\1. GameProject\DirectX11_Practice2D\Client\Default\stdafx.cpp;D:\1. GameProject\DirectX11_Practice2D\Client\Default\x64\Debug\stdafx.obj

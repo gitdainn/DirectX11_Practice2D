@@ -65,6 +65,7 @@ HRESULT CMainApp::Render()
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("담배 피러가자"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
+#ifdef _DEBUG
 	++m_dwNumDraw;
 
 	if (m_TimeAcc >= 1.0)
@@ -76,7 +77,7 @@ HRESULT CMainApp::Render()
 
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
-
+#endif
 
 	m_pGameInstance->Present();
 
