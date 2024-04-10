@@ -19,16 +19,18 @@ HRESULT CBackGround::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	return S_OK;
+	return S_OK;	
 }
 
 HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
-	{
+		return E_FAIL;
 
-	}
+	if(FAILED(Add_Components()))
+		return E_FAIL;
 
+	m_iShaderPassIndex = (int)VTXTEXPASS::Default;
 	return S_OK;
 }
 
@@ -39,7 +41,6 @@ _uint CBackGround::Tick(_double TimeDelta)
 
 _uint CBackGround::LateTick(_double TimeDelta)
 {
-
 	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
 
 	return _uint();
@@ -50,7 +51,7 @@ HRESULT CBackGround::Render()
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin(0);
+	m_pShaderCom->Begin(m_iShaderPassIndex);
 
 	m_pVIBufferCom->Render();		
 
@@ -61,12 +62,12 @@ HRESULT CBackGround::Add_Components()
 {
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-		TEXT("Com_Shader"), (CComponent**)&m_pShaderCom, nullptr)))
+		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;	
 
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		TEXT("Com_Texture "), (CComponent**)&m_pTextureCom, nullptr)))
+		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 		return E_FAIL;	
 	
 	return S_OK;
@@ -74,14 +75,7 @@ HRESULT CBackGround::Add_Components()
 
 HRESULT CBackGround::SetUp_ShaderResources()
 {
-	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &m_WorldMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", 0)))
+	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
 
 	return S_OK;
@@ -116,10 +110,4 @@ CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg)
 void CBackGround::Free()
 {
 	__super::Free();
-
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pVIBufferCom);
-	Safe_Release(m_pRendererCom);
-
 }

@@ -1,7 +1,17 @@
 #pragma once
 
 namespace Engine
-{	
+{
+	/** @note - Typedef.h 헤더를 먼저 선언해야 형식 지정자를 읽음 */
+	typedef struct ENGINE_DLL tSpriteInfo
+	{
+		int		iOrder = { 0 };
+		_float2	fSize = { 10.f, 10.f };
+		_float2	fPosition = { 0.f, 0.f };
+
+		int		iTextureIndex = { 0 };
+		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
+	}SPRITEINFO;
 
 	typedef struct tagKeyFrame
 	{
@@ -31,11 +41,6 @@ namespace Engine
 		XMFLOAT4		vAmbient;		
 		XMFLOAT4		vSpecular; /* 정반사 */
 	}LIGHTDESC;
-
-
-
-
-
 
 	typedef struct tagGraphicDesc
 	{

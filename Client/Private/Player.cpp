@@ -36,7 +36,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 
 HRESULT CPlayer::Render()
 {
-	m_iShaderPassIndex = (_uint)eShaderVtxSprite::Default;
+	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
 	return __super::Render();
 }
 

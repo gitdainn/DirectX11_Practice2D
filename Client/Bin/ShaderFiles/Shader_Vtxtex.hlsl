@@ -4,6 +4,7 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
 texture2D		g_Texture;
 texture2D		g_DepthTexture;
+float4			g_vColor;
 
 
 struct VS_IN
@@ -82,7 +83,7 @@ PS_OUT PS_MAIN_SOFTEFFECT(PS_IN In)
 
 technique11		DefaultTechnique
 {
-	pass BackGround
+	pass Default
 	{
 		SetRasterizerState(RS_Default);
 		SetDepthStencilState(DSS_Default, 0);

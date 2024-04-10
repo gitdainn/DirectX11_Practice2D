@@ -27,10 +27,6 @@ public:
 	virtual HRESULT Render() override;
 
 private:
-	_float				m_fX, m_fY, m_fSizeX, m_fSizeY;	
-	_float4x4			m_WorldMatrix, m_ViewMatrix, m_ProjMatrix;
-
-private:
 	HRESULT Add_Components();
 	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
 

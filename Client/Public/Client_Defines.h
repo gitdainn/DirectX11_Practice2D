@@ -9,6 +9,11 @@ namespace Client
 	const unsigned int g_iWinSizeY = 720;
 
 	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
+
+	typedef enum class eVtxTexPass
+	{
+		Default
+	}VTXTEXPASS;
 }
 
 extern HINSTANCE g_hInst;
@@ -39,11 +44,4 @@ using namespace Client;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
-#pragma endregion
-
-#pragma region SHADER_TECHNIQUE
-enum eShaderVtxSprite
-{
-	Default
-};
 #pragma endregion

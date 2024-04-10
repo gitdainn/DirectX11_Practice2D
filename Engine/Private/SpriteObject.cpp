@@ -6,14 +6,15 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_bIsDead(false), m_bIsRender(false)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 {
-	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
-	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
-	m_tSpriteInfo.fSize = { 10.f, 10.f };
-	m_tSpriteInfo.fPosition = { 0.f, 0.f };
 }
 
 HRESULT CSpriteObject::Initialize_Prototype()
 {
+	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
+	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
+	m_tSpriteInfo.fSize = { 10.f, 10.f };
+	m_tSpriteInfo.fPosition = { 0.f, 0.f };
+
 	return S_OK;
 }
 
@@ -41,7 +42,7 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
 	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 
-	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+	// m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
