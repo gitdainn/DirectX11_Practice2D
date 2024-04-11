@@ -11,10 +11,8 @@ assignees: gitdainn
 상세 설명
 
 ## ☑️To do
--[] 할 
+- [ ]
 
-##❔Concerns 💡Solutions
-고민 및 해결책
+## ❔Concerns 💡Solutions
 
 ## 💬ETC
-추가적으로 작성할 말
