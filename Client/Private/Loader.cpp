@@ -80,7 +80,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 
 	/* For.Prototype_Component_Texture_Logo */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Default%d.dds"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Textures/Background/Forest%d.png")))))
 		return E_FAIL;
 
 #pragma endregion
