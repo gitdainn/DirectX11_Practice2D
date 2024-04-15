@@ -34,9 +34,6 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{850f13c7-6913-4adb-b4e4-1d7006f35f4e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Terrain">
-      <UniqueIdentifier>{af43f187-33bc-436d-985a-4e91d1772e5d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Camera">
       <UniqueIdentifier>{c3285823-a471-479b-a17f-a8c60872aafc}</UniqueIdentifier>
     </Filter>
@@ -46,29 +43,20 @@
     <Filter Include="02.GameObject\Player">
       <UniqueIdentifier>{54e556c2-aad2-4e99-a91d-a30f317b7856}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Monster">
-      <UniqueIdentifier>{5abca957-5f32-43ed-8583-e4f7736ec7c2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Sky">
       <UniqueIdentifier>{1418b525-c593-4fb2-ab27-9a698c172cd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Weapon">
-      <UniqueIdentifier>{1c6f8451-8d59-4a4a-8e51-3e6a28559028}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Effect">
       <UniqueIdentifier>{fa70f379-4138-4d5b-9056-5d03b702cc9b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\Blue">
-      <UniqueIdentifier>{317be2a4-9fa3-4ab0-aa76-2087752205cf}</UniqueIdentifier>
+    <Filter Include="97.ShaderFiles\Buffer">
+      <UniqueIdentifier>{20c8b5b6-7d13-4a33-a767-3a3aa868a4dc}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\Red">
-      <UniqueIdentifier>{48a9269e-489e-4499-82b2-f47b35450f6c}</UniqueIdentifier>
+    <Filter Include="97.ShaderFiles\Instance">
+      <UniqueIdentifier>{f1b3220f-03e0-4166-b5c9-9b77874b14d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Effect\Explosion">
-      <UniqueIdentifier>{30305d4f-e660-47ef-a7bc-a7ac7f798368}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\ForkLift">
-      <UniqueIdentifier>{a427e7de-8b1c-4768-a8bd-8abe955e2076}</UniqueIdentifier>
+    <Filter Include="97.ShaderFiles\Model">
+      <UniqueIdentifier>{a8b9b4e9-a42c-444a-9aa5-41231e20fe52}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -105,39 +93,16 @@
     <ClInclude Include="..\public\BackGround.h">
       <Filter>02.GameObject\BackGround</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Terrain.h">
-      <Filter>02.GameObject\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Camera_Dynamic.h">
       <Filter>02.GameObject\Camera\Dynamic</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Player.h">
       <Filter>02.GameObject\Player</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Monster.h">
-      <Filter>02.GameObject\Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Sky.h">
-      <Filter>02.GameObject\Sky</Filter>
-    </ClInclude>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp">
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Weapon.h">
-      <Filter>02.GameObject\Weapon</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Effect_Blue.h">
-      <Filter>02.GameObject\Effect\Blue</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Effect_Red.h">
-      <Filter>02.GameObject\Effect\Red</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\Explosion.h">
-      <Filter>02.GameObject\Effect\Explosion</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\ForkLift.h">
-      <Filter>02.GameObject\ForkLift</Filter>
-    </ClInclude>
+    <ClInclude Include="SpriteObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -164,36 +129,13 @@
     <ClCompile Include="..\private\BackGround.cpp">
       <Filter>02.GameObject\BackGround</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Terrain.cpp">
-      <Filter>02.GameObject\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Camera_Dynamic.cpp">
       <Filter>02.GameObject\Camera\Dynamic</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Player.cpp">
       <Filter>02.GameObject\Player</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Monster.cpp">
-      <Filter>02.GameObject\Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Sky.cpp">
-      <Filter>02.GameObject\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Weapon.cpp">
-      <Filter>02.GameObject\Weapon</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Effect_Blue.cpp">
-      <Filter>02.GameObject\Effect\Blue</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Effect_Red.cpp">
-      <Filter>02.GameObject\Effect\Red</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\Explosion.cpp">
-      <Filter>02.GameObject\Effect\Explosion</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\ForkLift.cpp">
-      <Filter>02.GameObject\ForkLift</Filter>
-    </ClCompile>
+    <ClCompile Include="SpriteObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -215,25 +157,25 @@
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
-      <Filter>97.ShaderFiles</Filter>
+      <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
-      <Filter>97.ShaderFiles</Filter>
+      <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
+      <Filter>97.ShaderFiles\Instance</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxPointInstance.hlsl">
-      <Filter>97.ShaderFiles</Filter>
+      <Filter>97.ShaderFiles\Instance</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxNorTex.hlsl">
+      <Filter>97.ShaderFiles\Buffer</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxAnimModel.hlsl">
+      <Filter>97.ShaderFiles\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
+      <Filter>97.ShaderFiles\Model</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

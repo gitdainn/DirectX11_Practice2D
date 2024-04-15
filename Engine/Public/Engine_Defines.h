@@ -22,9 +22,6 @@
 #include <d3dcompiler.h>
 #include <DirectXCollision.h>
 
-
-
-
 #include <vector>
 #include <list>
 #include <map>
@@ -37,10 +34,10 @@
 using namespace std;
 using namespace DirectX;
 
+#include "Engine_Typedef.h"
 #include "Engine_Macro.h"
 #include "Engine_Function.h"
 #include "Engine_Struct.h"
-#include "Engine_Typedef.h"
 
 #ifdef _DEBUG
 

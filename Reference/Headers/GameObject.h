@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Base.h"
+#include "Transform.h"
+#include "Renderer.h"
+#include "VIBuffer_Rect.h"
 
 BEGIN(Engine)
 
@@ -28,16 +31,20 @@ protected:
 	ID3D11DeviceContext*	m_pContext = { nullptr };
 
 protected:
+	CTransform* m_pTransformCom = { nullptr };
+	CRenderer* m_pRendererCom = { nullptr };
+
+protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 
 protected:
 	HRESULT Add_Components(_uint iLevelIndex, const _tchar* pPrototypeTag, 
 		const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
-
 	class CComponent* Find_Component(const _tchar* pComponentTag);
 
 public:			
+	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) = 0;
 	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
 	virtual void Free() override;
 };

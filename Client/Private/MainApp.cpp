@@ -28,11 +28,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
 		return E_FAIL;
 
-	if (FAILED(Ready_Gara()))
-		return E_FAIL;
-
 	if (FAILED(Ready_Prototype_Component_For_Static()))
 		return E_FAIL;
+
 	if (FAILED(Ready_Prototype_GameObject_For_Static()))
 		return E_FAIL;
 
@@ -124,125 +122,6 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 {
-	return S_OK;
-}
-
-HRESULT CMainApp::Ready_Gara()
-{
-	ID3D11Texture2D*		pTexture2D = { nullptr };
-
-	D3D11_TEXTURE2D_DESC	TextureDesc;
-	ZeroMemory(&TextureDesc, sizeof TextureDesc);
-
-	TextureDesc.Width = 256;
-	TextureDesc.Height = 256;
-	TextureDesc.MipLevels = 1;
-	TextureDesc.ArraySize = 1;
-	TextureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-
-	TextureDesc.SampleDesc.Quality = 0;
-	TextureDesc.SampleDesc.Count = 1;
-
-	TextureDesc.Usage = D3D11_USAGE_DYNAMIC;
-	TextureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
-	TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	TextureDesc.MiscFlags = 0;
-
-	_uint*		pPixel = new _uint[TextureDesc.Width * TextureDesc.Height];
-	ZeroMemory(pPixel, sizeof(_uint) * TextureDesc.Width * TextureDesc.Height);
-
-	for (_uint i = 0; i < TextureDesc.Height; ++i)
-	{
-		for (_uint j = 0; j < TextureDesc.Width; ++j)
-		{
-			_uint		iIndex = i * TextureDesc.Width + j;
-
-			pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
-		}
-	}
-
-	D3D11_SUBRESOURCE_DATA		SubResourceData;
-	ZeroMemory(&SubResourceData, sizeof SubResourceData);
-
-	SubResourceData.pSysMem = pPixel;
-	SubResourceData.SysMemPitch = sizeof(_uint) * TextureDesc.Width;
-
-	if (FAILED(m_pDevice->CreateTexture2D(&TextureDesc, &SubResourceData, &pTexture2D)))
-		return E_FAIL;	
-
-	for (_uint i = 0; i < TextureDesc.Height; ++i)
-	{
-		for (_uint j = 0; j < TextureDesc.Width; ++j)
-		{
-			_uint		iIndex = i * TextureDesc.Width + j;
-
-			if(j < 128)
-				pPixel[iIndex] = D3DCOLOR_ARGB(255, 255, 255, 255);
-			else
-				pPixel[iIndex] = D3DCOLOR_ARGB(255, 0, 0, 0);
-
-		}
-	}
-
-	
-	D3D11_MAPPED_SUBRESOURCE	MappedSubResource;
-	ZeroMemory(&MappedSubResource, sizeof MappedSubResource);		
-
-	m_pContext->Map(pTexture2D, 0, D3D11_MAP_WRITE_DISCARD, 0, &MappedSubResource);	
-	
-	memcpy(MappedSubResource.pData, pPixel, sizeof(_uint) * TextureDesc.Width * TextureDesc.Height);
-
-	m_pContext->Unmap(pTexture2D, 0);
-
-	if (FAILED(SaveDDSTextureToFile(m_pContext, pTexture2D, TEXT("../Bin/Resources/Textures/Terrain/Filter.dds"))))
-		return E_FAIL;
-
-	Safe_Release(pTexture2D);
-
-	Safe_Delete_Array(pPixel);
-
-
-
-	/* Navigation */
-	HANDLE		hFile = 0;
-	_ulong		dwByte = 0;
-
-	hFile = CreateFile(TEXT("../Bin/DataFiles/NavigationData.dat"), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-	if (0 == hFile)
-		return E_FAIL;
-
-	_float3		vPoints[3];
-
-	/* 0¹øÂ° »ï°¢Çü */
-	ZeroMemory(vPoints, sizeof(_float3) * 3);
-	vPoints[0] = _float3(0.0f, 0.f, 5.f);
-	vPoints[1] = _float3(5.0f, 0.f, 0.f);
-	vPoints[2] = _float3(0.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	/* 1¹øÂ° »ï°¢Çü */
-	ZeroMemory(vPoints, sizeof(_float3) * 3);
-	vPoints[0] = _float3(0.0f, 0.f, 5.f);
-	vPoints[1] = _float3(5.0f, 0.f, 5.0f);
-	vPoints[2] = _float3(5.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	/* 2¹øÂ° »ï°¢Çü */
-	ZeroMemory(vPoints, sizeof(_float3) * 3);
-	vPoints[0] = _float3(0.0f, 0.f, 10.0f);
-	vPoints[1] = _float3(5.0f, 0.f, 5.0f);
-	vPoints[2] = _float3(0.f, 0.f, 5.0f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	/* 3¹øÂ° »ï°¢Çü */
-	ZeroMemory(vPoints, sizeof(_float3) * 3);
-	vPoints[0] = _float3(5.0f, 0.f, 5.0f);
-	vPoints[1] = _float3(10.0f, 0.f, 0.0f);
-	vPoints[2] = _float3(5.0f, 0.f, 0.f);
-	WriteFile(hFile, vPoints, sizeof(_float3) * 3, &dwByte, nullptr);
-
-	CloseHandle(hFile);
-
 	return S_OK;
 }
 

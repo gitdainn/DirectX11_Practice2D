@@ -82,6 +82,11 @@ HRESULT CCamera::Render()
 	return S_OK;
 }
 
+CGameObject* CCamera::Clone(const tSpriteInfo& SpriteInfo, void* pArg)
+{
+	return nullptr;
+}
+
 void CCamera::Free()
 {
 	__super::Free();

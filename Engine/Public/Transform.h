@@ -46,6 +46,12 @@ public: /* Getter */
 	}
 
 public: /* Setter */
+	void Set_WorldMatrix(_matrix matWorld) {
+		_matrix matWorldW = matWorld;
+		matWorldW.r[(_uint)STATE::STATE_POSITION] = XMVectorSetW(matWorldW.r[3], 1.f);
+		XMStoreFloat4x4(&m_WorldMatrix, matWorldW);
+	}
+
 	void Set_State(STATE eState, _fvector vState) {		
 		XMStoreFloat4((_float4*)&m_WorldMatrix.m[eState][0], vState);
 	}
@@ -76,8 +82,6 @@ public:
 	void LookAt(_fvector vTargetPos);
 
 	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimitDistance = 0.2f);
-
-
 
 private:
 	/* 단순 보관용 데이터. */

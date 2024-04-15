@@ -171,43 +171,29 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
-    <ClInclude Include="..\Public\Effect_Blue.h" />
-    <ClInclude Include="..\Public\Effect_Red.h" />
-    <ClInclude Include="..\Public\Explosion.h" />
-    <ClInclude Include="..\Public\ForkLift.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
-    <ClInclude Include="..\Public\Monster.h" />
     <ClInclude Include="..\Public\Player.h" />
-    <ClInclude Include="..\Public\Sky.h" />
-    <ClInclude Include="..\Public\Terrain.h" />
-    <ClInclude Include="..\Public\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SpriteObject.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
-    <ClCompile Include="..\Private\Effect_Blue.cpp" />
-    <ClCompile Include="..\Private\Effect_Red.cpp" />
-    <ClCompile Include="..\Private\Explosion.cpp" />
-    <ClCompile Include="..\Private\ForkLift.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
-    <ClCompile Include="..\Private\Monster.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
-    <ClCompile Include="..\Private\Sky.cpp" />
-    <ClCompile Include="..\Private\Terrain.cpp" />
-    <ClCompile Include="..\Private\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

@@ -105,7 +105,7 @@ HRESULT CRenderer::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject * pGameObject)
+HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject)
 {
 	if (eRenderGroup >= RENDER_END ||
 		nullptr == pGameObject)
