@@ -235,7 +235,7 @@ _pkginfo.txt
 
 # Others
 ClientBin/
-!ClientBin/Resources/Skul/*.png
+!ClientBin/Resources/Skul
 ~$*
 *~
 *.dbmdl
