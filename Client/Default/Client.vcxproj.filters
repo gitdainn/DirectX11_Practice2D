@@ -43,12 +43,6 @@
     <Filter Include="02.GameObject\Player">
       <UniqueIdentifier>{54e556c2-aad2-4e99-a91d-a30f317b7856}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Sky">
-      <UniqueIdentifier>{1418b525-c593-4fb2-ab27-9a698c172cd6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Effect">
-      <UniqueIdentifier>{fa70f379-4138-4d5b-9056-5d03b702cc9b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="97.ShaderFiles\Buffer">
       <UniqueIdentifier>{20c8b5b6-7d13-4a33-a767-3a3aa868a4dc}</UniqueIdentifier>
     </Filter>
