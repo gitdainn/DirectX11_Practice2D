@@ -151,6 +151,9 @@
     <Filter Include="01.Utility\02.GameObject\AlphaBlend">
       <UniqueIdentifier>{29146f62-7cce-4851-8c59-b60186da7b74}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\02.GameObject\Utility">
+      <UniqueIdentifier>{9244b3d0-da73-4167-969d-a1f0d51eb3b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -287,6 +290,9 @@
     </ClCompile>
     <ClCompile Include="..\private\BlendObject.cpp">
       <Filter>01.Utility\02.GameObject\AlphaBlend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Utility.cpp">
+      <Filter>01.Utility\02.GameObject\Utility</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -436,6 +442,9 @@
     </ClInclude>
     <ClInclude Include="..\public\BlendObject.h">
       <Filter>01.Utility\02.GameObject\AlphaBlend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Utility.h">
+      <Filter>01.Utility\02.GameObject\Utility</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

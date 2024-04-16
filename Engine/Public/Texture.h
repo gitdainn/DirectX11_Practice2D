@@ -18,6 +18,9 @@ public:
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pConstantName, _uint iTextureIndex = 0);
 	HRESULT Set_ShaderResourceArray(class CShader* pShader, const char* pConstantName);
 public:
+	/** 폴더 경로 받으면 폴더 안 이미지 경로 모두 보관 */
+	virtual HRESULT Initialize_Prototype(const vector<TCHAR*>& TextureFileVec);
+	/** 텍스처 경로 직접 모두 명시 */
 	virtual HRESULT Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures);
 	virtual HRESULT Initialize(void* pArg);
 
@@ -27,6 +30,7 @@ private:
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);
+	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const vector<_tchar*>& pFilePathVec);
 	virtual CComponent* Clone(void* pArg = nullptr) override;
 	virtual void Free() override;
 };

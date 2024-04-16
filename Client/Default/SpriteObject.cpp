@@ -3,7 +3,7 @@
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_bIsDead(false), m_bIsRender(false)
+	, m_bIsDead(false), m_bIsRender(true)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
@@ -123,6 +123,25 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CSpriteObject::Play_Animation(_double TimeDelta)
+{
+	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
+	float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / (float)abs(m_pAnimInfo[m_iCurrentAnim].iEndIndex - m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+
+	m_fTimeAcc += TimeDelta;
+	if (fPerAnimTime <= m_fTimeAcc)
+	{
+		m_fTimeAcc = 0.f;
+		++m_tSpriteInfo.iTextureIndex;
+
+		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < m_tSpriteInfo.iTextureIndex)
+		{
+			m_tSpriteInfo.iTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+		}
+	}
+
 }
 
 CGameObject* CSpriteObject::Clone(void* pArg)

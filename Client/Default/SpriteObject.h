@@ -35,9 +35,23 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+protected: // Animation
+	struct ANIMINFO
+	{
+		float fAnimTime = { 1.f };
+		int iStartIndex = { 0 };
+		int iEndIndex = { 0 };
+	};
+	ANIMINFO* m_pAnimInfo = { nullptr };
+	_uint m_iCurrentAnim = { 0 };
+	float m_fTimeAcc = { 0.f };
+
+	virtual void Add_Animation() = 0;
+	virtual void Play_Animation(_double TimeDelta);
+
 protected:
-	HRESULT Add_Components(void* pArg = nullptr);
-	class CComponent* Find_Component(const _tchar* pComponentTag);
+	virtual HRESULT Add_Components(void* pArg = nullptr);
+	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 
 protected:
@@ -49,11 +63,10 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 
-
 protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
-	int	m_iShaderPassIndex;
+	_uint	m_iShaderPassIndex = { 0 };
 	Engine::tSpriteInfo m_tSpriteInfo;
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;

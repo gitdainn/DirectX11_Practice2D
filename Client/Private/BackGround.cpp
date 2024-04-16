@@ -12,7 +12,7 @@ CBackGround::CBackGround(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CBackGround::CBackGround(const CBackGround & rhs)
 	: CSpriteObject(rhs)
 {
-
+	
 }
 
 HRESULT CBackGround::Initialize_Prototype()
@@ -27,10 +27,7 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
 
-	if(FAILED(Add_Components()))
-		return E_FAIL;
-
-	m_iShaderPassIndex = (int)VTXTEXPASS::Default;
+	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
 	return S_OK;
 }
 
@@ -58,8 +55,11 @@ HRESULT CBackGround::Render()
 	return S_OK;
 }
 
-HRESULT CBackGround::Add_Components()
+HRESULT CBackGround::Add_Components(void* pArg)
 {
+	if (FAILED(__super::Add_Components(pArg)))
+		return E_FAIL;
+
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
@@ -79,6 +79,11 @@ HRESULT CBackGround::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CBackGround::Add_Animation()
+{
+	return;
 }
 
 CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

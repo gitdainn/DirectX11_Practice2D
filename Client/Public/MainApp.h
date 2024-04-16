@@ -40,7 +40,7 @@ private:
 	HRESULT SetUp_StartLevel(LEVEL eNextLevelID);
 	HRESULT Ready_Prototype_Component_For_Static();
 	HRESULT Ready_Prototype_GameObject_For_Static();
-	HRESULT Ready_Gara();
+	HRESULT Ready_Prototype_Sprite_For_Static();
 
 
 
