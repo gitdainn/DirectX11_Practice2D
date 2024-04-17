@@ -50,6 +50,7 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\private\Renderer.cpp(52,6): warnin
   Shader.cpp
   Target_Manager.cpp
   Texture.cpp
+D:\1. GameProject\DirectX11_Practice2D\Engine\private\Texture.cpp(113,4): warning C4002: 함수 같은 매크로 호출 'MSG_BOX'에 대해 인수가 너무 많습니다.
   Timer.cpp
   Timer_Manager.cpp
   Transform.cpp
@@ -65,11 +66,13 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(105,56): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(118,87): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(151,58): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
 D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(151,73): warning C4244: '인수': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  Utility.cpp
+D:\1. GameProject\DirectX11_Practice2D\Engine\Private\Utility.cpp(47,9): warning C4101: 'szTexNum' :참조되지 않은 지역 변수입니다.
   VIBuffer.cpp
   VIBuffer_Cell.cpp
-  VIBuffer_Cube.cpp
   코드를 생성하고 있습니다...
   컴파일하고 있습니다...
+  VIBuffer_Cube.cpp
   VIBuffer_Point_Instance.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Private\VIBuffer_Point_Instance.cpp(191,68): warning C4244: '-=': 'Engine::_double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   VIBuffer_Rect.cpp

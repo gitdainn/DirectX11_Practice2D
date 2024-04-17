@@ -7,10 +7,14 @@ CTexture::CTexture(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 }
 
-CTexture::CTexture(const CTexture & rhs)
+/** @qurious - 사본 생성 시 clone해서 생성자 불릴 때, 복사 생성자 자동 호출돼서 기본 자료형은 1대1 대입되지 않나?
+* vector인 m_SRVs는 Safe_AddRef까지 직접 명시해줘야한다해도 m_INumTextures도 굳이 명시 해줘야 하는가? 
+-> 선언을 안했으면 기본 대입인데 명시 선언을 했으니까 지본 자료형까지 모두 직접 적어서 해줘야하는건가? */
+CTexture::CTexture(const CTexture& rhs)
 	: CComponent(rhs)
 	, m_iNumTextures(rhs.m_iNumTextures)
 	, m_SRVs(rhs.m_SRVs)
+	, m_TextureSizeVec(rhs.m_TextureSizeVec)
 {
 	for (auto& pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
@@ -35,6 +39,9 @@ HRESULT CTexture::Set_ShaderResourceArray(CShader * pShader, const char * pConst
 
 HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 {
+	m_TextureSizeVec.resize(TextureFileVec.size());
+	_uint iIndex = { 0 };
+
 	for (const TCHAR* pFilePath : TextureFileVec)
 	{
 		_tchar		szDrive[MAX_PATH] = TEXT("");
@@ -57,7 +64,8 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 		else
 			hr = CreateWICTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
 
-		m_SRVs.push_back(pSRV);
+		m_SRVs.emplace_back(pSRV);
+		m_TextureSizeVec[iIndex++] = (Get_OriginalTextureSize(pSRV));
 	}
 
 	return S_OK;
@@ -66,6 +74,8 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iNumTextures)
 {
 	m_iNumTextures = iNumTextures;
+	// 텍스처 개수 미리 알고있어 메모리 재할당 문제 방지 가능하고, 검색이 중요하기에 벡터 선정. 
+	m_TextureSizeVec.resize(iNumTextures); 
 
 	for (_uint i = 0; i < iNumTextures; ++i)
 	{
@@ -84,17 +94,28 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 		ID3D11ShaderResourceView*	pSRV = { nullptr };
 
 		HRESULT		hr = 0;
-
-		if (!lstrcmp(szEXT, TEXT(".dds")))
+		if (!lstrcmp(szEXT, TEXT(".tga")))
+		{
+			return E_FAIL;
+		}
+		else if (!lstrcmp(szEXT, TEXT(".dds")))
 		{
 			hr = CreateDDSTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
 		}
-		else if (!lstrcmp(szEXT, TEXT(".tga")))
-			return E_FAIL;
 		else
+		{
 			hr = CreateWICTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
 
-		m_SRVs.push_back(pSRV);
+		}
+
+		if (FAILED(hr))
+		{
+			MSG_BOX("CTexture - Initialize_Prototype() - Failed Create File");
+			return E_FAIL;
+		}
+
+		m_SRVs.emplace_back(pSRV);
+		m_TextureSizeVec[i] = (Get_OriginalTextureSize(pSRV));
 	}	
 
 	return S_OK;
@@ -103,6 +124,30 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 HRESULT CTexture::Initialize(void * pArg)
 {
 	return S_OK;
+}
+
+const _float2 CTexture::Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) const
+{
+	//D3D11_SHADER_RESOURCE_VIEW_DESC TextureDesc;
+
+	// 1. ID3D11ShaderResourceView로부터 텍스처를 가져옴.
+	ID3D11Resource* pResource = { nullptr };
+	pSRV->GetResource(&pResource);
+	
+	// 2. 가져온 텍스처를 ID3D11Texture2D로 캐스팅함.
+	ID3D11Texture2D* pTexture = { nullptr };
+	HRESULT hr = pResource->QueryInterface<ID3D11Texture2D>(&pTexture);
+
+	if (FAILED(hr))
+	{
+		MSG_BOX("CTexture - Get_TextureSize() - FAILED");
+		return _float2(0.f, 0.f);
+	}
+
+	D3D11_TEXTURE2D_DESC TextureDesc;
+	pTexture->GetDesc(&TextureDesc);
+
+	return _float2((float)TextureDesc.Width, (float)TextureDesc.Height);
 }
 
 CTexture * CTexture::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, const _tchar * pTextureFilePath, _uint iNumTextures)

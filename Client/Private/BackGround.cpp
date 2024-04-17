@@ -27,6 +27,11 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
 
+	m_tSpriteInfo.fSizeRatio.x = 2.f;
+	m_tSpriteInfo.fSizeRatio.y = 2.f;
+	
+	Change_TextureSize();
+
 	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
 	return S_OK;
 }

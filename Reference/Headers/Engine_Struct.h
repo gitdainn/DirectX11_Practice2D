@@ -6,12 +6,12 @@ namespace Engine
 	typedef struct ENGINE_DLL tSpriteInfo
 	{
 		int		iOrder = { 0 };
-		_float2	fSize = { 10.f, 10.f };
+		_float2	fSizeRatio = { 10.f, 10.f };
 		_float2	fPosition = { 0.f, 0.f };
 
 		int		iTextureIndex = { 0 };
 		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
-	}SPRITEINFO;
+	}SPRITE_INFO;
 
 	typedef struct tagKeyFrame
 	{

@@ -8,6 +8,7 @@
 
 [const]
 1. 왜 포인터는 const면 대입이 안되는거지? 반환할 때는 주소가 const? 아님 값이 const?
+2. 멤버 const는 해당 함수 안에서 해당 클래스의 멤버 모두 const화되어 변경할 수 없음을 의미함. 이거 사용하려고 노력중!
 
 [효율성]
 1. push_back과 emplace_back의 차이점은?

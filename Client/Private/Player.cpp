@@ -47,7 +47,7 @@ HRESULT CPlayer::Render()
 
 void CPlayer::Add_Animation()
 {
-	m_pAnimInfo = new ANIMINFO[(_uint)PLAYER_ANIM::ANIM_END];
+	m_pAnimInfo = new ANIM_INFO[(_uint)PLAYER_ANIM::ANIM_END];
 
 	m_pAnimInfo[(_uint)PLAYER_ANIM::WAIT].iStartIndex = 0;
 	m_pAnimInfo[(_uint)PLAYER_ANIM::WAIT].iEndIndex = 47;

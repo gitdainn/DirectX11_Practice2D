@@ -51,3 +51,14 @@
 			return dwRefCnt;								\
 		}
 
+// char* ->tchar *
+#define CToWC(IN_C,OUT_WC){															\
+         int strSize = MultiByteToWideChar(CP_ACP, 0, IN_C, -1, NULL, NULL);		\
+         OUT_WC = new _tchar[strSize];												\
+         MultiByteToWideChar(CP_ACP,0,IN_C,(int)strlen(IN_C) + 1, OUT_WC,strSize);}
+
+// tchar* -> char*
+#define WCToC(IN_WC,OUT_C){															\
+      int strSize = WideCharToMultiByte(CP_ACP, 0, IN_WC, -1, NULL, 0, NULL, NULL);	\
+      OUT_C = new char[strSize];													\
+      WideCharToMultiByte(CP_ACP, 0, IN_WC, -1, OUT_C, strSize, 0, 0);}

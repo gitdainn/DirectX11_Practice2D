@@ -36,15 +36,26 @@ public:
 	virtual HRESULT Render() override;
 
 protected: // Animation
-	struct ANIMINFO
+	struct ANIM_INFO
 	{
 		float fAnimTime = { 1.f };
 		int iStartIndex = { 0 };
 		int iEndIndex = { 0 };
 	};
-	ANIMINFO* m_pAnimInfo = { nullptr };
+	ANIM_INFO* m_pAnimInfo = { nullptr };
 	_uint m_iCurrentAnim = { 0 };
 	float m_fTimeAcc = { 0.f };
+
+	inline virtual void Change_TextureSize()
+	{
+		// 青纺 11 x 农扁, 22 y 农扁, 33 z 农扁
+		const _float2 fSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
+
+		m_WorldMatrix._11 = fSize.x * m_tSpriteInfo.fSizeRatio.x;
+		m_WorldMatrix._22 = fSize.y * m_tSpriteInfo.fSizeRatio.y;
+
+		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	}
 
 	virtual void Add_Animation() = 0;
 	virtual void Play_Animation(_double TimeDelta);
@@ -68,6 +79,7 @@ protected:
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 	_uint	m_iShaderPassIndex = { 0 };
 	Engine::tSpriteInfo m_tSpriteInfo;
+	_float4x4	m_WorldMatrix;
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;
 

@@ -44,8 +44,6 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	// list<const _tchar*> ResourceTagList = {};
 	// list<const _tchar*> MemoryList = {}; // 문자열 변환으로 인한 동적할당 해제를 위해서.
 
-	_tchar szTexNum[10];
-
 	_uint iTexType = 0;
 	_uint iTexNum = 0; 
 

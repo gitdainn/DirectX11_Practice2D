@@ -46,8 +46,8 @@ HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	SPRITEINFO tSpriteInfo;
-	tSpriteInfo.fSize = { g_iWinSizeX, g_iWinSizeY };
+	SPRITE_INFO tSpriteInfo;
+
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, pLayerTag, tSpriteInfo)))
 		return E_FAIL;
 
@@ -60,8 +60,10 @@ HRESULT CLevel_Logo::Ready_Layer_UI(const _tchar * pLayerTag)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	SPRITEINFO tSpriteInfo;
-	tSpriteInfo.fSize = { 46, 36 };
+	SPRITE_INFO tSpriteInfo;
+	tSpriteInfo.fSizeRatio.x = 2.f;
+	tSpriteInfo.fSizeRatio.y = 2.f;
+
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Player"), LEVEL_LOGO, pLayerTag, tSpriteInfo)))
 		return E_FAIL;
 

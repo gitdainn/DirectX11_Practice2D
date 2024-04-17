@@ -85,38 +85,14 @@
     <Filter Include="01.Utility\05.Lights\Manager">
       <UniqueIdentifier>{eece81b8-8456-4eee-bb7a-1b216d5df5e7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Component\Model">
-      <UniqueIdentifier>{c5aac343-3c1c-40be-811c-cd8de8c41c1f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Model\Mesh">
-      <UniqueIdentifier>{d70cae22-6e5d-494e-8a21-5e2ae73ff437}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Model\Bone">
-      <UniqueIdentifier>{091001cc-ece3-40b4-a21e-2dc2ed21c654}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Model\Animation">
-      <UniqueIdentifier>{84f1ad50-ef45-4833-8812-feaebc85e23d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Model\Animation\Channel">
-      <UniqueIdentifier>{bbc5a1f1-f7bd-4e50-967d-f46e72abb072}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Component\VIBuffer\Cube">
       <UniqueIdentifier>{f8a93ef6-9774-4860-8cc2-9bdf502f4fe1}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\03.Component\Collider">
       <UniqueIdentifier>{15e3cc60-e957-4baa-b35d-766ad2b4ee4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Component\Navigation">
-      <UniqueIdentifier>{fd44a308-2a06-4307-9f2d-ac879508e26e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Navigation\Cell">
-      <UniqueIdentifier>{15094fcb-0d66-4838-b620-5a3929b78f48}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Component\VIBuffer\Cell">
       <UniqueIdentifier>{ba48c95b-95b8-43ec-88d0-6d5c64e70e6c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\Navigation\Cell\Shader">
-      <UniqueIdentifier>{3ca9d73b-6def-4679-a183-c2d97f50ce73}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\06.Fonts">
       <UniqueIdentifier>{4851b28b-2b61-4fa1-b11a-aa7f55832a64}</UniqueIdentifier>
@@ -231,21 +207,6 @@
     <ClCompile Include="..\private\Light.cpp">
       <Filter>01.Utility\05.Lights</Filter>
     </ClCompile>
-    <ClCompile Include="..\private\Model.cpp">
-      <Filter>01.Utility\03.Component\Model</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Mesh.cpp">
-      <Filter>01.Utility\03.Component\Model\Mesh</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Bone.cpp">
-      <Filter>01.Utility\03.Component\Model\Bone</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Animation.cpp">
-      <Filter>01.Utility\03.Component\Model\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Channel.cpp">
-      <Filter>01.Utility\03.Component\Model\Animation\Channel</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Cube.cpp">
       <Filter>01.Utility\03.Component\VIBuffer\Cube</Filter>
     </ClCompile>
@@ -254,12 +215,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\DebugDraw.cpp">
       <Filter>01.Utility\03.Component\Collider</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Navigation.cpp">
-      <Filter>01.Utility\03.Component\Navigation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\Cell.cpp">
-      <Filter>01.Utility\03.Component\Navigation\Cell</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\VIBuffer_Cell.cpp">
       <Filter>01.Utility\03.Component\VIBuffer\Cell</Filter>
@@ -383,21 +338,6 @@
     <ClInclude Include="..\public\Light.h">
       <Filter>01.Utility\05.Lights</Filter>
     </ClInclude>
-    <ClInclude Include="..\public\Model.h">
-      <Filter>01.Utility\03.Component\Model</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Mesh.h">
-      <Filter>01.Utility\03.Component\Model\Mesh</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Bone.h">
-      <Filter>01.Utility\03.Component\Model\Bone</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Animation.h">
-      <Filter>01.Utility\03.Component\Model\Animation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Channel.h">
-      <Filter>01.Utility\03.Component\Model\Animation\Channel</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Cube.h">
       <Filter>01.Utility\03.Component\VIBuffer\Cube</Filter>
     </ClInclude>
@@ -406,12 +346,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\DebugDraw.h">
       <Filter>01.Utility\03.Component\Collider</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Navigation.h">
-      <Filter>01.Utility\03.Component\Navigation</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\Cell.h">
-      <Filter>01.Utility\03.Component\Navigation\Cell</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\VIBuffer_Cell.h">
       <Filter>01.Utility\03.Component\VIBuffer\Cell</Filter>
@@ -448,9 +382,6 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
-      <Filter>01.Utility\03.Component\Navigation\Cell\Shader</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
       <Filter>01.Utility\03.Component\Renderer\DeferredShader</Filter>
     </FxCompile>

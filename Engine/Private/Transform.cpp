@@ -53,7 +53,7 @@ void CTransform::Go_Straight(_double TimeDelta, CNavigation* pNavigation)
 	_vector		vPosition = Get_State(CTransform::STATE_POSITION);
 	_vector		vLook = Get_State(CTransform::STATE_LOOK);
 
-	vPosition += XMVector3Normalize(vLook) * m_TransformDesc.SpeedPerSec * TimeDelta;
+	vPosition += XMVector3Normalize(vLook) * (_float)m_TransformDesc.SpeedPerSec * (_float)TimeDelta;
 
 	if (nullptr != pNavigation)
 	{
