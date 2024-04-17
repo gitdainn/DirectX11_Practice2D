@@ -3,13 +3,17 @@
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_bIsDead(false), m_bIsRender(false)
+	, m_bIsDead(false), m_bIsRender(true)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
-	m_tSpriteInfo.fSize = { 10.f, 10.f };
+	m_tSpriteInfo.fSizeRatio = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
+
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 HRESULT CSpriteObject::Initialize_Prototype()
@@ -30,18 +34,14 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-	_float4x4 WorldMatrix;
-	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
-
-	// 행렬 11 x 크기, 22 y 크기, 33 z 크기
-	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
-	WorldMatrix._22 = m_tSpriteInfo.fSize.y;
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 
 	// 4는 위치
-	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
-	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+	Change_TextureSize();
+	m_WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
+	m_WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 
-	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
@@ -125,6 +125,26 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	return S_OK;
 }
 
+void CSpriteObject::Play_Animation(_double TimeDelta)
+{
+	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
+	float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / (float)abs(m_pAnimInfo[m_iCurrentAnim].iEndIndex - m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+
+	m_fTimeAcc += (_float)TimeDelta;
+	if (fPerAnimTime <= m_fTimeAcc)
+	{
+		m_fTimeAcc = 0.f;
+		++m_tSpriteInfo.iTextureIndex;
+
+		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < m_tSpriteInfo.iTextureIndex)
+		{
+			m_tSpriteInfo.iTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+		}
+
+		Change_TextureSize();
+	}
+}
+
 CGameObject* CSpriteObject::Clone(void* pArg)
 {
 	MSG_BOX("CSpriteObject - Clone(void* pArg) - 2D용 Clone 함수를 사용해주세요");
@@ -138,4 +158,6 @@ void CSpriteObject::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+
+
 }

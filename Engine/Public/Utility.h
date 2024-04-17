@@ -1,0 +1,15 @@
+#pragma once
+#include "Engine_Defines.h"
+#include "Texture.h"
+
+class ENGINE_DLL CUtility
+{
+private:
+    explicit CUtility();
+    ~CUtility();
+
+public:
+    /** 폴더 안의 이미지를 이름 상관없이 모두 불러오는 함수입니다. */
+    static CTexture* Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const char* pFolderPath);
+};
+

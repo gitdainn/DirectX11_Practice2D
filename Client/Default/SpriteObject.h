@@ -35,9 +35,34 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+protected: // Animation
+	struct ANIM_INFO
+	{
+		float fAnimTime = { 1.f };
+		int iStartIndex = { 0 };
+		int iEndIndex = { 0 };
+	};
+	ANIM_INFO* m_pAnimInfo = { nullptr };
+	_uint m_iCurrentAnim = { 0 };
+	float m_fTimeAcc = { 0.f };
+
+	inline virtual void Change_TextureSize()
+	{
+		// 행렬 11 x 크기, 22 y 크기, 33 z 크기
+		const _float2 fSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
+
+		m_WorldMatrix._11 = fSize.x * m_tSpriteInfo.fSizeRatio.x;
+		m_WorldMatrix._22 = fSize.y * m_tSpriteInfo.fSizeRatio.y;
+
+		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	}
+
+	virtual void Add_Animation() = 0;
+	virtual void Play_Animation(_double TimeDelta);
+
 protected:
-	HRESULT Add_Components(void* pArg = nullptr);
-	class CComponent* Find_Component(const _tchar* pComponentTag);
+	virtual HRESULT Add_Components(void* pArg = nullptr);
+	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 
 protected:
@@ -49,12 +74,12 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 
-
 protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
-	int	m_iShaderPassIndex;
+	_uint	m_iShaderPassIndex = { 0 };
 	Engine::tSpriteInfo m_tSpriteInfo;
+	_float4x4	m_WorldMatrix;
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;
 

@@ -34,6 +34,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototype_GameObject_For_Static()))
 		return E_FAIL;
 
+	if (FAILED(Ready_Prototype_Sprite_For_Static()))
+		return E_FAIL;
+
 	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
 		return E_FAIL;
 
@@ -60,7 +63,7 @@ HRESULT CMainApp::Render()
 
 	m_pRenderer->Draw_RenderGroup();
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("담배 피러가자"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("다인잉"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -121,6 +124,11 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 }
 
 HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
+{
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
 	return S_OK;
 }

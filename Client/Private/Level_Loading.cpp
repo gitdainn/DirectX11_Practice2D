@@ -21,7 +21,7 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 	m_eNextLevelID = eNextLevelID;
 
 	/* 로더안에서 스레드를 생성한다. */
-	/* 생성한 스레드가 필요한 준비를 한다.  */
+	/* 생성한 스레드가 필요한 준비를 한다. */
 	m_pLoader = CLoader::Create(m_pDevice, m_pContext, eNextLevelID);
 	if (nullptr == m_pLoader)
 		return E_FAIL;

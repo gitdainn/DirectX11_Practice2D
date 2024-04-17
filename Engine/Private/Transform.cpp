@@ -5,13 +5,15 @@
 CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
+	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 }
 
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 {
-	
+	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
 }
 
 void CTransform::Set_Scaled(const _float3 & vScale)

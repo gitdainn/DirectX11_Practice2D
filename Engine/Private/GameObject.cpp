@@ -7,13 +7,16 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+	Safe_AddRef(m_pTransformCom);
+	Safe_AddRef(m_pRendererCom);
 }
 
 /** @qurious - 자식 객체가 삭제될 때 최상위 부모의 소멸자까지 호출되는가
 */
 
-/** @qurious - m_pTransformCom과 m_pRendererCom은 각 객체마다 사본 만들어서 사용하는데
-* 그렇다면 Safe_Release로 원본 삭제? 아니면 Safe_AddRef를 해줘야함? => 내 생각은 AddRef 생략 */
+/** @note - m_pTransformCom과 m_pRendererCom은 각 객체마다 Add_Components로 사본 만들어서 사용함.
+* 이때, Add_Components에서 Add_Ref를 해주고, Free()에서 m_Components에 담긴 모든 것들 Relese 해주기 때문에 delete 정상 다 됨!
+*/
 
 CGameObject::CGameObject(const CGameObject & rhs)
 	: m_pDevice(rhs.m_pDevice)
@@ -92,8 +95,6 @@ void CGameObject::Free()
 
 	m_Components.clear();
 
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);
 }

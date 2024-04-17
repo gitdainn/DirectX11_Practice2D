@@ -22,6 +22,8 @@
 #include <d3dcompiler.h>
 #include <DirectXCollision.h>
 
+#include <io.h>
+
 #include <vector>
 #include <list>
 #include <map>

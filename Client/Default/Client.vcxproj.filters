@@ -148,6 +148,7 @@
     <Text Include="ReadMe.txt">
       <Filter>98.Default</Filter>
     </Text>
+    <Text Include="노트.txt" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">

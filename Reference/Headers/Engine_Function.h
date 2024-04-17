@@ -67,4 +67,18 @@ namespace Engine
 		return dwRefCnt;
 	}
 
+#pragma region operator 연산자
+	/** @qurious - 왜 _float2 기준 operator를 했는데 vector에 += 한 게 인식 못한다고 오류가 뜨나? */
+	//const _float2 operator *=(_float2& fA, const _float2& fB)
+	//{
+	//	fA.x *= fB.x;
+	//	fA.y *= fB.y;
+	//}
+
+	//const _float2 operator +=(_float2& fA, const _float2& fB)
+	//{
+	//	fA.x += fB.x;
+	//	fA.y += fB.y;
+	//}
+#pragma endregion
 }
