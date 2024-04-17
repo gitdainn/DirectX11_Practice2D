@@ -64,9 +64,6 @@
     <Filter Include="01.Utility\03.Component\Texture">
       <UniqueIdentifier>{962274bd-9642-4862-a4a5-e54a2ee77d8a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Component\VIBuffer\Terrain">
-      <UniqueIdentifier>{2b7cb02d-8920-4f91-8b10-359c9b4cff99}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\03.Component\Transform">
       <UniqueIdentifier>{e04fe5a9-3ff8-4d68-ad28-0d2ec67b2176}</UniqueIdentifier>
     </Filter>
@@ -100,20 +97,8 @@
     <Filter Include="01.Utility\06.Fonts\Manager">
       <UniqueIdentifier>{96360e10-de02-458b-b6af-b3db6932a7b5}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\03.Component\VIBuffer\Instancing">
-      <UniqueIdentifier>{ac04f2a9-d614-4b2f-8a93-2c792d69f0e6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\VIBuffer\Instancing\Rect">
-      <UniqueIdentifier>{6797271a-b6a2-4998-a51b-89a63d49c8da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\VIBuffer\Instancing\Point">
-      <UniqueIdentifier>{eff21cb5-5898-456b-86a0-d181c447f07e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\07.Frustum">
       <UniqueIdentifier>{55cf0970-272d-4dbf-8c26-d1e28e47a867}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="01.Utility\03.Component\VIBuffer\Terrain\QuadTree">
-      <UniqueIdentifier>{378d64fa-beff-4c7d-abb1-c1a547630a0a}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\08.RenderTargets">
       <UniqueIdentifier>{7043b45a-408f-4e2f-a4f4-32afc2c098c9}</UniqueIdentifier>
@@ -186,9 +171,6 @@
     <ClCompile Include="..\private\Texture.cpp">
       <Filter>01.Utility\03.Component\Texture</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\ViBuffer_Terrain.cpp">
-      <Filter>01.Utility\03.Component\VIBuffer\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Transform.cpp">
       <Filter>01.Utility\03.Component\Transform</Filter>
     </ClCompile>
@@ -225,17 +207,8 @@
     <ClCompile Include="..\private\CustomFont.cpp">
       <Filter>01.Utility\06.Fonts</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer_Rect_Instance.cpp">
-      <Filter>01.Utility\03.Component\VIBuffer\Instancing\Rect</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\VIBuffer_Point_Instance.cpp">
-      <Filter>01.Utility\03.Component\VIBuffer\Instancing\Point</Filter>
-    </ClCompile>
     <ClCompile Include="..\private\Frustum.cpp">
       <Filter>01.Utility\07.Frustum</Filter>
-    </ClCompile>
-    <ClCompile Include="..\private\QuadTree.cpp">
-      <Filter>01.Utility\03.Component\VIBuffer\Terrain\QuadTree</Filter>
     </ClCompile>
     <ClCompile Include="..\private\Target_Manager.cpp">
       <Filter>01.Utility\08.RenderTargets</Filter>
@@ -317,9 +290,6 @@
     <ClInclude Include="..\public\Texture.h">
       <Filter>01.Utility\03.Component\Texture</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Terrain.h">
-      <Filter>01.Utility\03.Component\VIBuffer\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Transform.h">
       <Filter>01.Utility\03.Component\Transform</Filter>
     </ClInclude>
@@ -356,17 +326,8 @@
     <ClInclude Include="..\public\CustomFont.h">
       <Filter>01.Utility\06.Fonts</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Rect_Instance.h">
-      <Filter>01.Utility\03.Component\VIBuffer\Instancing\Rect</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\VIBuffer_Point_Instance.h">
-      <Filter>01.Utility\03.Component\VIBuffer\Instancing\Point</Filter>
-    </ClInclude>
     <ClInclude Include="..\public\Frustum.h">
       <Filter>01.Utility\07.Frustum</Filter>
-    </ClInclude>
-    <ClInclude Include="..\public\QuadTree.h">
-      <Filter>01.Utility\03.Component\VIBuffer\Terrain\QuadTree</Filter>
     </ClInclude>
     <ClInclude Include="..\public\Target_Manager.h">
       <Filter>01.Utility\08.RenderTargets</Filter>

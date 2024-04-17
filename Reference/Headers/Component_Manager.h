@@ -1,21 +1,17 @@
 #pragma once
 
 #pragma region COMPONENT_VIBUFFER
-#include "VIBuffer_Point_Instance.h"
 #include "VIBuffer_Rect_Instance.h"
-#include "VIBuffer_Terrain.h"
 #include "VIBuffer_Rect.h"
 #include "VIBuffer_Cube.h"
 #pragma endregion
 
 #pragma region COMPONENT
-#include "Navigation.h"
 #include "Transform.h"
 #include "Renderer.h"
 #include "Collider.h"
 #include "Texture.h"
 #include "Shader.h"
-#include "Model.h"
 #pragma endregion
 
 /* 0.원형컴포넌트를 레벨별로 보관한다. */
