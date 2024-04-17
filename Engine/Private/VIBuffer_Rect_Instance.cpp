@@ -217,7 +217,7 @@ void CVIBuffer_Rect_Instance::Update(_double TimeDelta)
 
 	for (_uint i = 0; i < m_iNumInstances; ++i)
 	{
-		((VTXMATRIX*)SubResource.pData)[i].vTranslation.y -= m_pSpeed[i] * TimeDelta;
+		((VTXMATRIX*)SubResource.pData)[i].vTranslation.y -= m_pSpeed[i] * (_float)TimeDelta;
 
 		if (((VTXMATRIX*)SubResource.pData)[i].vTranslation.y < 0.0f)
 			((VTXMATRIX*)SubResource.pData)[i].vTranslation.y = m_RectInstanceDesc.vPosition.y;
