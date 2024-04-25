@@ -7,12 +7,7 @@ assignees: gitdainn
 
 ---
 
-## 📝Description
-상세 설명
-
 ## ☑️To do
 - [ ]
-
-## ❔Concerns 💡Solutions
 
 ## 💬ETC
