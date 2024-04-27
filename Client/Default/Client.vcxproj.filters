@@ -151,9 +151,6 @@
     <Text Include="노트.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
-      <Filter>97.ShaderFiles\Buffer</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
       <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
@@ -171,6 +168,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
       <Filter>97.ShaderFiles\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
+      <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

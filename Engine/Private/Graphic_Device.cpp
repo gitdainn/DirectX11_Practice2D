@@ -14,6 +14,7 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHIC_DESC::WINMODE e
 	_uint		iFlag = 0;
 
 #ifdef _DEBUG
+	// 해제 안된 D3D11 COM 객체 추적하는 플래그
 	iFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 	D3D_FEATURE_LEVEL			FeatureLV;

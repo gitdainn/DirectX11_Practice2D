@@ -2,20 +2,20 @@
 #include "Timer_Manager.h"
 #include "Graphic_Device.h"
 #include "Target_Manager.h"
-#include "Input_Device.h"
 #include "Level_Manager.h"
 #include "Object_Manager.h"
 #include "Light_Manager.h"
 #include "Font_Manager.h"
 #include "PipeLine.h"
 #include "Frustum.h"
+#include "Input_Device.h"
+
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
 CGameInstance::CGameInstance()
 	: m_pTimer_Manager(CTimer_Manager::GetInstance())
 	, m_pGraphic_Device(CGraphic_Device::GetInstance())
-	, m_pInput_Device(CInput_Device::GetInstance())
 	, m_pLevel_Manager(CLevel_Manager::GetInstance())
 	, m_pObject_Manager(CObject_Manager::GetInstance())
 	, m_pComponent_Manager(CComponent_Manager::GetInstance())
@@ -23,9 +23,8 @@ CGameInstance::CGameInstance()
 	, m_pLight_Manager(CLight_Manager::GetInstance())
 	, m_pFont_Manager(CFont_Manager::GetInstance())
 	, m_pFrustum(CFrustum::GetInstance())
-	, m_pTarget_Manager(CTarget_Manager::GetInstance())
+	, m_pDInput_Manager(CDInput_Manager::GetInstance())
 {
-	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
 	Safe_AddRef(m_pLight_Manager);
@@ -33,9 +32,9 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pComponent_Manager);
 	Safe_AddRef(m_pObject_Manager);
 	Safe_AddRef(m_pLevel_Manager);
-	Safe_AddRef(m_pInput_Device);
 	Safe_AddRef(m_pGraphic_Device);	
 	Safe_AddRef(m_pTimer_Manager);
+	Safe_AddRef(m_pDInput_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
@@ -49,7 +48,7 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 		return E_FAIL;
 
 	/* 다렉인풋 디바이스 초기화. */
-	if (FAILED(m_pInput_Device->Ready_DInput(hInstance, GraphicDesc.hWnd)))
+	if (FAILED(m_pDInput_Manager->Ready_DInput(hInstance, GraphicDesc.hWnd)))
 		return E_FAIL;
 
 	/* 사운드초기화 */
@@ -71,7 +70,7 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 {
 	/* 입력장치의 정보 받아오기.  */
-	m_pInput_Device->Update_DInput();
+	m_pDInput_Manager->Update_DInput();
 
 	/* 레벨 매니져의 업데이트 */
 	m_pLevel_Manager->Tick_Level(TimeDelta);
@@ -143,29 +142,63 @@ HRESULT CGameInstance::Present()
 	return m_pGraphic_Device->Present();
 }
 
-_byte CGameInstance::Get_DIKeyState(_ubyte ubyKeyID)
+#pragma region DInput_Manager
+_bool CGameInstance::Get_KeyStay(_ubyte ubyKeyID)
 {
-	if (nullptr == m_pInput_Device)
+	if (nullptr == m_pDInput_Manager)
 		return 0;
 
-	return m_pInput_Device->Get_DIKeyState(ubyKeyID);	
+	return m_pDInput_Manager->Get_KeyStay(ubyKeyID);
 }
 
-_byte CGameInstance::Get_DIMouseState(CInput_Device::MOUSEKEYSTATE eMouseID)
+_bool CGameInstance::Get_MouseStay(CDInput_Manager::MOUSEKEYSTATE eMouseID)
 {
-	if (nullptr == m_pInput_Device)
+	if (nullptr == m_pDInput_Manager)
 		return 0;
 
-	return m_pInput_Device->Get_DIMouseState(eMouseID);
+	return m_pDInput_Manager->Get_MouseStay(eMouseID);
 }
 
-_long CGameInstance::Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMouseMoveID)
+_long CGameInstance::Get_MouseMove(CDInput_Manager::MOUSEMOVESTATE eMouseMoveID)
 {
-	if (nullptr == m_pInput_Device)
+	if (nullptr == m_pDInput_Manager)
 		return 0;
 
-	return m_pInput_Device->Get_DIMouseMove(eMouseMoveID);
+	return m_pDInput_Manager->Get_MouseMove(eMouseMoveID);
 }
+
+_bool CGameInstance::Get_KeyDown(_ubyte ubyKeyID)
+{
+	if (nullptr == m_pDInput_Manager)
+		return false;
+
+	return m_pDInput_Manager->Get_KeyDown(ubyKeyID);
+}
+
+_bool CGameInstance::Get_KeyUp(_ubyte ubyKeyID)
+{
+	if (nullptr == m_pDInput_Manager)
+		return false;
+
+	return m_pDInput_Manager->Get_KeyUp(ubyKeyID);
+}
+
+_bool CGameInstance::Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE eMouseID)
+{
+	if (nullptr == m_pDInput_Manager)
+		return false;
+
+	return m_pDInput_Manager->Get_MouseDown(eMouseID);
+}
+
+_bool CGameInstance::Get_MouseUp(CDInput_Manager::MOUSEKEYSTATE eMouseID)
+{
+	if (nullptr == m_pDInput_Manager)
+		return false;
+
+	return m_pDInput_Manager->Get_MouseUp(eMouseID);
+}
+#pragma endregion
 
 HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel * pNewLevel)
 {
@@ -295,14 +328,6 @@ _bool CGameInstance::isIn_WorldFrustum(_fvector vPosition, _float fRange)
 	return m_pFrustum->isIn_World(vPosition, fRange);
 }
 
-HRESULT CGameInstance::Set_Shader_RTV(const _tchar * pTargetTag, CShader * pShader, const char * pConstantName)
-{
-	if (nullptr == m_pTarget_Manager)
-		return E_FAIL;
-
-	return m_pTarget_Manager->Set_ShaderResourceView(pTargetTag, pShader, pConstantName);	
-}
-
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -319,7 +344,7 @@ void CGameInstance::Release_Engine()
 
 	CLight_Manager::GetInstance()->DestroyInstance();
 
-	CInput_Device::GetInstance()->DestroyInstance();
+	CDInput_Manager::GetInstance()->DestroyInstance();
 
 	CFont_Manager::GetInstance()->DestroyInstance();
 
@@ -328,11 +353,12 @@ void CGameInstance::Release_Engine()
 	CTarget_Manager::GetInstance()->DestroyInstance();
 
 	CGraphic_Device::GetInstance()->DestroyInstance();
+
+	CDInput_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
 {
-	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pFrustum);
 	Safe_Release(m_pFont_Manager);
 	Safe_Release(m_pLight_Manager);
@@ -340,7 +366,7 @@ void CGameInstance::Free()
 	Safe_Release(m_pComponent_Manager);
 	Safe_Release(m_pObject_Manager);
 	Safe_Release(m_pLevel_Manager);
-	Safe_Release(m_pInput_Device);
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pTimer_Manager);
+	Safe_Release(m_pDInput_Manager);
 }

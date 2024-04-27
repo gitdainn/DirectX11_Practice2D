@@ -16,7 +16,7 @@ public:
 
 		_float		fFovy, fAspect, fNear, fFar;
 
-		CTransform::TRANSFORMDESC		TransformDesc;
+		CTransform::TRANSFORM_DESC		TransformDesc;
 	}CAMERADESC;
 
 protected:

@@ -44,12 +44,33 @@ HRESULT CMainApp::Initialize()
 	return S_OK;
 }
 
+#ifdef _DEBUG
+#include <dxgidebug.h>
+
+#pragma comment(lib, "dxguid.lib")
+
+void list_remaining_d3d_objects()
+{
+	HMODULE dxgidebugdll = GetModuleHandleW(L"dxgidebug.dll");
+	decltype(&DXGIGetDebugInterface) GetDebugInterface = reinterpret_cast<decltype(&DXGIGetDebugInterface)>(GetProcAddress(dxgidebugdll, "DXGIGetDebugInterface"));
+
+	IDXGIDebug* debug;
+
+	GetDebugInterface(IID_PPV_ARGS(&debug));
+
+	OutputDebugStringW(L"Starting Live Direct3D Object Dump:\r\n");
+	debug->ReportLiveObjects(DXGI_DEBUG_D3D11, DXGI_DEBUG_RLO_DETAIL);
+	OutputDebugStringW(L"Completed Live Direct3D Object Dump.\r\n");
+
+	debug->Release();
+}
+#endif
+
 void CMainApp::Tick(_double TimeDelta)
 {
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
 	m_pGameInstance->Tick_Engine(TimeDelta);
-
 
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
@@ -108,17 +129,19 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		return E_FAIL;
 
 	/* For.Prototype_Component_Shader_VtxTex*/
-
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Background"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/no_0.dds")))))
+		return E_FAIL;
+
+	// CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/no_0.dds"));
 	/* For.Prototype_Component_Shader_VtxNorTex*/
 	/*if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxNorTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
 		return E_FAIL;*/
-
-	Safe_AddRef(m_pRenderer);
 
 	return S_OK;
 }
@@ -150,11 +173,16 @@ void CMainApp::Free()
 {
 	__super::Free();
 
-	Safe_Release(m_pRenderer);
+	//Safe_Release(m_pRenderer); // Renderer는 컴포넌트에 추가되어 있어, 추후 Component에서 모두 Release하기 떄문에 X
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);	
 
 	CGameInstance::Release_Engine();
+
+	//해제안된 COM객체 추적
+#ifdef _DEBUG
+	list_remaining_d3d_objects();
+#endif
 }
 

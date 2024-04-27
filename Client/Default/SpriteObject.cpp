@@ -11,7 +11,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_tSpriteInfo.fSizeRatio = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
 
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
@@ -34,19 +33,21 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+	_float4x4 WorldMatrix;
+	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
-	// 4는 위치
+	// 크기 지정
 	Change_TextureSize();
-	m_WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
-	m_WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 
-	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	// 위치 지정
+	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
+	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
 
-	CTransform::TRANSFORMDESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
+	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
 	return S_OK;
@@ -155,6 +156,11 @@ void CSpriteObject::Free()
 {
 	__super::Free();
 
+	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
+	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌
+	// @note - Add_Component의 Clone()할 때, new로 생성 또는 AddRef()해서 사본 주기 때문에 얘네는 따로 여기서 해제해줘야함.
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);

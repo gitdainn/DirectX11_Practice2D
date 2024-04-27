@@ -22,6 +22,9 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	}
 
 	Add_Animation();
+	CTransform::TRANSFORM_DESC tTransDesc;
+	tTransDesc.SpeedPerSec = 20.f;
+	m_pTransformCom->Set_TransformDesc(tTransDesc);
 
 	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
 	m_iCurrentAnim = (_uint)PLAYER_ANIM::WAIT;
@@ -32,6 +35,25 @@ _uint CPlayer::Tick(_double TimeDelta)
 {
 	Play_Animation(TimeDelta);
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	if (pGameInstance->Get_KeyStay(DIK_A))
+	{
+		m_pTransformCom->Go_Left(TimeDelta);
+	}
+	if (pGameInstance->Get_KeyStay(DIK_D))
+	{
+		m_pTransformCom->Go_Right(TimeDelta);
+	}
+	Safe_Release(pGameInstance);
+
+	static _vector vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_vector vCurrentPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	if (XMVectorGetX(vCurrentPos) != XMVectorGetX(vPos))
+	{
+		vPos = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		int i = 0;
+	}
 	return __super::Tick(TimeDelta);
 }
 

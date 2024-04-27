@@ -46,16 +46,11 @@ protected: // Animation
 	_uint m_iCurrentAnim = { 0 };
 	float m_fTimeAcc = { 0.f };
 
-	inline virtual void Change_TextureSize()
+	void Change_TextureSize()
 	{
-		// 행렬 11 x 크기, 22 y 크기, 33 z 크기
 		const _float2 fSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
-
-		m_WorldMatrix._11 = fSize.x * m_tSpriteInfo.fSizeRatio.x;
-		m_WorldMatrix._22 = fSize.y * m_tSpriteInfo.fSizeRatio.y;
-
-		m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
-	}
+		m_pTransformCom->Set_Scaled(_float3(fSize.x * m_tSpriteInfo.fSizeRatio.x, fSize.y * m_tSpriteInfo.fSizeRatio.y, 1.f));
+	};
 
 	virtual void Add_Animation() = 0;
 	virtual void Play_Animation(_double TimeDelta);
@@ -79,7 +74,7 @@ protected:
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 	_uint	m_iShaderPassIndex = { 0 };
 	Engine::tSpriteInfo m_tSpriteInfo;
-	_float4x4	m_WorldMatrix;
+	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;
 

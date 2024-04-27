@@ -72,41 +72,46 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	/* For.Prototype_Component_Texture_Logo */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	};
 
 	/* For.Prototype_Component_Sprite_LittleBorn */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_LittleBorn"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
-		return E_FAIL;
-#pragma endregion
-
-#pragma region MODELS
-	wsprintf(m_szLoadingText, TEXT("모델를 로딩중입니다."));
-	
-
-#pragma endregion
-
-#pragma region SHADERS
-	wsprintf(m_szLoadingText, TEXT("셰이더를 로딩중입니다."));
-	for (_uint i = 0; i < 999999999; ++i)
 	{
-		int a = 10;
-	}
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 #pragma endregion
 
+//#pragma region SHADERS
+//	wsprintf(m_szLoadingText, TEXT("셰이더를 로딩중입니다."));
+//	for (_uint i = 0; i < 999999999; ++i)
+//	{
+//		int a = 10;
+//	}
+//#pragma endregion
+//
 #pragma region GAMEOBJECTS
 	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
 
 	/* For.Prototype_GameObject_BackGround */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	};
 
 	/* For.Prototype_GameObject_Player */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
 		CPlayer::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
-	
+	};
 
 #pragma endregion
 
@@ -114,7 +119,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	m_isFinished = true;
 
 	Safe_Release(pGameInstance);
-	
+
 	return S_OK;
 }
 
@@ -124,51 +129,51 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	Safe_AddRef(pGameInstance);
 
 	/*  */
-#pragma region TEXTURES
-#pragma endregion
-
-
-#pragma region VIBUFFER
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	
-#pragma endregion
-
-	wsprintf(m_szLoadingText, TEXT("콜라이더를 로딩중입니다."));
-#pragma region COLLIDER
-	/* For.Prototype_Component_Collider_AABB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Collider_OBB */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Collider_SPHERE */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
-		return E_FAIL;
-
-#pragma endregion
-
-
-#pragma region SHADERS
-	wsprintf(m_szLoadingText, TEXT("셰이더를 로딩중입니다."));
-	/* For.Prototype_Component_Shader_VtxNorTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-#pragma endregion
-
-
-#pragma region GAMEOBJECTS
-	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
-
-#pragma endregion
+//#pragma region TEXTURES
+//#pragma endregion
+//
+//
+//#pragma region VIBUFFER
+//	/* For.Prototype_Component_VIBuffer_Cube */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
+//		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	
+//#pragma endregion
+//
+//	wsprintf(m_szLoadingText, TEXT("콜라이더를 로딩중입니다."));
+//#pragma region COLLIDER
+//	/* For.Prototype_Component_Collider_AABB*/
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+//		return E_FAIL;
+//
+//	/* For.Prototype_Component_Collider_OBB */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
+//		return E_FAIL;
+//
+//	/* For.Prototype_Component_Collider_SPHERE */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+//		return E_FAIL;
+//
+//#pragma endregion
+//
+//
+//#pragma region SHADERS
+//	wsprintf(m_szLoadingText, TEXT("셰이더를 로딩중입니다."));
+//	/* For.Prototype_Component_Shader_VtxNorTex */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
+//		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+//		return E_FAIL;
+//#pragma endregion
+//
+//
+//#pragma region GAMEOBJECTS
+//	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
+//
+//#pragma endregion
 
 	Safe_Release(pGameInstance);
 

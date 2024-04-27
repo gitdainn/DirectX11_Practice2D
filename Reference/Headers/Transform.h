@@ -18,7 +18,7 @@ public:
 	{
 		_double		SpeedPerSec;
 		_double		RotationPerSec;
-	}TRANSFORMDESC;
+	}TRANSFORM_DESC;
 
 private:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -45,6 +45,10 @@ public: /* Getter */
 		return XMLoadFloat4x4(&m_WorldMatrix);
 	}
 
+	_float4x4 Get_WorldMatrixFloat() {
+		return m_WorldMatrix;
+	}
+
 public: /* Setter */
 	void Set_WorldMatrix(_matrix matWorld) {
 		_matrix matWorldW = matWorld;
@@ -56,7 +60,7 @@ public: /* Setter */
 		XMStoreFloat4((_float4*)&m_WorldMatrix.m[eState][0], vState);
 	}
 
-	void Set_TransformDesc(const TRANSFORMDESC& TransformDesc) {
+	void Set_TransformDesc(const TRANSFORM_DESC& TransformDesc) {
 		m_TransformDesc = TransformDesc; }
 
 	void Set_Scaled(const _float3& vScale);
@@ -90,7 +94,7 @@ private:
 	/* 직교행렬. */
 	_float4x4			m_WorldMatrix;
 	// _matrix : 행렬의 연산을 위한 데이터 타입. 
-	TRANSFORMDESC		m_TransformDesc;
+	TRANSFORM_DESC		m_TransformDesc;
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

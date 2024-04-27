@@ -1,4 +1,5 @@
 #include "..\Public\Base.h"
+#include "Renderer.h"
 
 CBase::CBase(void)
 {	
@@ -7,6 +8,10 @@ CBase::CBase(void)
 
 unsigned long CBase::AddRef(void)
 {
+	if (nullptr != dynamic_cast<CRenderer*>(this))
+	{
+		int i = 0;
+	}
 	return ++m_dwRefCnt;	
 }
 
@@ -21,13 +26,6 @@ unsigned long CBase::Release(void)
 
 		return 0;
 	}
-	else
-	{
-		return m_dwRefCnt--;
-	}
-	
-
-		
 
 	return m_dwRefCnt--;
 }

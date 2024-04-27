@@ -7,11 +7,10 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
-	Safe_AddRef(m_pTransformCom);
-	Safe_AddRef(m_pRendererCom);
 }
 
-/** @qurious - 자식 객체가 삭제될 때 최상위 부모의 소멸자까지 호출되는가
+/** @note - 자식 객체가 삭제될 때 최상위 부모의 소멸자까지 호출되는가
+* => 자식 객체 소멸자 호출 -> 부모 소멸자 호출 -> virtual 시 자식 소멸자 한 번 더 호출?
 */
 
 /** @note - m_pTransformCom과 m_pRendererCom은 각 객체마다 Add_Components로 사본 만들어서 사용함.

@@ -33,31 +33,23 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	Change_TextureSize();
 
 	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
+	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
 }
 
 _uint CBackGround::Tick(_double TimeDelta)
 {
-	return _uint();
+	return __super::Tick(TimeDelta);
 }
 
 _uint CBackGround::LateTick(_double TimeDelta)
 {
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
-
-	return _uint();
+	return __super::LateTick(TimeDelta);
 }
 
 HRESULT CBackGround::Render()
 {
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin(m_iShaderPassIndex);
-
-	m_pVIBufferCom->Render();		
-
-	return S_OK;
+	return __super::Render();
 }
 
 HRESULT CBackGround::Add_Components(void* pArg)

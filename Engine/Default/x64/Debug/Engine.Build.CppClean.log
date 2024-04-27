@@ -1,6 +1,5 @@
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vc143.pdb
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vc143.idb
-d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\object_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\light_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\light.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\level_manager.obj
@@ -12,6 +11,7 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\gameobject.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\gameinstance.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\frustum.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\font_manager.obj
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\dinput_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\debugdraw.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\customfont.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\component_manager.obj
@@ -35,12 +35,14 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\shader.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\rendertarget.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\renderer.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\pipeline.obj
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\object_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\bin\shader_deferred.cso
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.dll
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.pdb
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.lib
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.exp
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\engine.ilk
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\transform.obj.enc
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\engine.tlog\cl.command.1.tlog
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\engine.tlog\cl.items.tlog
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\engine.tlog\cl.read.1.tlog

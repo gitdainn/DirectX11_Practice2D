@@ -16,7 +16,7 @@ CTexture::CTexture(const CTexture& rhs)
 	, m_SRVs(rhs.m_SRVs)
 	, m_TextureSizeVec(rhs.m_TextureSizeVec)
 {
-	for (auto& pSRV : m_SRVs)
+	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
 }
 
@@ -84,11 +84,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 		// wsprintf: 2번째 인자에 %d로 되어 있는 부분이 있으면 3번째 인자값으로 대체해서 첫번째 인자에 저장하는 함수
 		wsprintf(szFullPath, pTextureFilePath, i);
 
-		_tchar		szDrive[MAX_PATH] = TEXT("");
-		_tchar		szDir[MAX_PATH] = TEXT("");
-		_tchar		szFileName[MAX_PATH] = TEXT("");
 		_tchar		szEXT[MAX_PATH] = TEXT("");
-
 		_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
 
 		ID3D11ShaderResourceView*	pSRV = { nullptr };
@@ -121,6 +117,40 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 	return S_OK;
 }
 
+//HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
+//{
+//	m_iNumTextures = iNumTextures;
+//
+//	for (_uint i = 0; i < m_iNumTextures; ++i)
+//	{
+//		_tchar		szFullPath[MAX_PATH] = TEXT("");
+//		wsprintf(szFullPath, pTextureFilePath, i);
+//
+//		_tchar		szEXT[MAX_PATH] = TEXT("");
+//		_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
+//
+//		ID3D11ShaderResourceView* pSRV = { nullptr };
+//
+//		HRESULT		hr = { 0 };
+//
+//		if (!lstrcmp(szEXT, TEXT(".tga")))
+//			return E_FAIL;
+//		else if (!lstrcmp(szEXT, TEXT(".dds")))
+//			hr = CreateDDSTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
+//		else
+//			hr = CreateWICTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
+//
+//		if (FAILED(hr)) {
+//			MSG_BOX("Failed to Create Texture From File");
+//			return E_FAIL;
+//		}
+//
+//		m_SRVs.push_back(pSRV);
+//	}
+//
+//	return S_OK;
+//}
+
 HRESULT CTexture::Initialize(void * pArg)
 {
 	return S_OK;
@@ -146,6 +176,9 @@ const _float2 CTexture::Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) 
 
 	D3D11_TEXTURE2D_DESC TextureDesc;
 	pTexture->GetDesc(&TextureDesc);
+
+	Safe_Release(pTexture);
+	Safe_Release(pResource);
 
 	return _float2((float)TextureDesc.Width, (float)TextureDesc.Height);
 }
@@ -189,11 +222,14 @@ CComponent * CTexture::Clone(void * pArg)
 	return pInstance;
 }
 
+// @qurious - 기본 자료형 vector도 clear 해줘야하나?
 void CTexture::Free()
 {
 	__super::Free();
 
-	for (auto& pSRV : m_SRVs)
+	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_Release(pSRV);
-
+	
+	m_SRVs.clear();
+	//m_TextureSizeVec.clear();
 }
