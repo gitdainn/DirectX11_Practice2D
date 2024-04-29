@@ -50,7 +50,7 @@ void CBlendObject::Compute_ViewZ(_fvector vPosition)
 
 }
 
-CGameObject* CBlendObject::Clone(const tSpriteInfo& SpriteInfo, void* pArg)
+CGameObject* CBlendObject::Clone(const tSpriteInfo& SpriteInfo, void* pArg) const
 {
 	return nullptr;
 }

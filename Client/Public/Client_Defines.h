@@ -10,10 +10,11 @@ namespace Client
 
 	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
 
-	typedef enum class eVtxTexPass
+	typedef enum class eVTXTEX_PASS
 	{
-		Default
-	}VTXTEXPASS;
+		Default,
+		UV_Anim
+	}VTXTEX_PASS;
 }
 
 extern HINSTANCE g_hInst;
@@ -44,4 +45,15 @@ using namespace Client;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
+#pragma endregion
+
+#pragma region LAYER_TAG
+#define LAYER_BACKGROUND		TEXT("Layer_Background")
+#define LAYER_PLAYER			TEXT("Layer_Player")
+#define LAYER_UI				TEXT("Layer_UI")
+#pragma endregion
+
+#pragma region DINPUT
+#define MOUSE_LB		CDInput_Manager::MOUSEKEYSTATE::DIMK_LB
+#define MOUSE_RB		CDInput_Manager::MOUSEKEYSTATE::DIMK_RB
 #pragma endregion

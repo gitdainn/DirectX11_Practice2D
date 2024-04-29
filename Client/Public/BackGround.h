@@ -20,23 +20,23 @@ private:
 	virtual ~CBackGround() = default;
 
 public:
-	virtual HRESULT Initialize_Prototype() override; /* ¿øÇü°´Ã¼ÀÇ ÃÊ±âÈ­ÀÛ¾÷ */
-	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) override; /* »çº»°´Ã¼ÀÇ ÃÊ±âÈ­ÀÛ¾÷ */
+	virtual HRESULT Initialize_Prototype() override; /* ì›í˜•ê°ì²´ì˜ ì´ˆê¸°í™”ì‘ì—… */
+	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) override; /* ì‚¬ë³¸ê°ì²´ì˜ ì´ˆê¸°í™”ì‘ì—… */
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
 private:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
-	virtual HRESULT SetUp_ShaderResources() override; /* ¼ÎÀÌ´õ Àü¿ªº¯¼ö¿¡ °ªÀ» ´øÁø´Ù. */
+	virtual HRESULT SetUp_ShaderResources() override; /* ì…°ì´ë” ì „ì—­ë³€ìˆ˜ì— ê°’ì„ ë˜ì§„ë‹¤. */
 	virtual void Add_Animation() override;
 
 public:
 	/* Prototype */
-	/* ¿øÇü °´Ã¼¸¦ »ı¼ºÇÑ´Ù. */
+	/* ì›í˜• ê°ì²´ë¥¼ ìƒì„±í•œë‹¤. */
 	static CBackGround* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	/* »çº» °´Ã¼¸¦ »ı¼ºÇÑ´Ù. */
-	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr);
+	/* ì‚¬ë³¸ ê°ì²´ë¥¼ ìƒì„±í•œë‹¤. */
+	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const;
 	virtual void Free() override;
 };
 

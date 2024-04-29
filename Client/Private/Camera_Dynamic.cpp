@@ -6,10 +6,12 @@
 CCamera_Dynamic::CCamera_Dynamic(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera(pDevice, pContext)
 {
+	ZeroMemory(&m_CameraDynamicDesc, sizeof(m_CameraDynamicDesc));
 }
 
 CCamera_Dynamic::CCamera_Dynamic(const CCamera_Dynamic & rhs)
 	: CCamera(rhs)
+	, m_CameraDynamicDesc(rhs.m_CameraDynamicDesc)
 {
 }
 
@@ -94,7 +96,7 @@ CCamera_Dynamic * CCamera_Dynamic::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CGameObject * CCamera_Dynamic::Clone(void * pArg)
+CGameObject * CCamera_Dynamic::Clone(void * pArg) const
 {
 	CCamera_Dynamic*		pInstance = new CCamera_Dynamic(*this);
 

@@ -48,6 +48,7 @@ public: /* For.Level_Manager */
 
 public: /* For.Object_Manager */
 	class CComponent* Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
+	const list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
@@ -72,9 +73,6 @@ public: /* For.Font_Manager */
 
 public: /* For.Frustum */
 	_bool isIn_WorldFrustum(_fvector vPosition, _float fRange = 0.f);
-
-public: /* For.Target_Manager */
-	HRESULT Set_Shader_RTV(const _tchar* pTargetTag, class CShader* pShader, const char* pConstantName);
 
 public:
 	static void Release_Engine();

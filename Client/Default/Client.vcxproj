@@ -172,12 +172,18 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
+    <ClInclude Include="..\Public\Command.h" />
+    <ClInclude Include="..\Public\GrimReaper.h" />
+    <ClInclude Include="..\Public\InputHandler.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
+    <ClInclude Include="..\Public\LittleBorn.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\Public\PlayerInfo.h" />
+    <ClInclude Include="..\Public\RotationCmd.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SpriteObject.h" />
@@ -187,12 +193,18 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\Private\Command.cpp" />
+    <ClCompile Include="..\Private\GrimReaper.cpp" />
+    <ClCompile Include="..\Private\InputHandler.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
+    <ClCompile Include="..\Private\LittleBorn.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\Private\PlayerInfo.cpp" />
+    <ClCompile Include="..\Private\RotationCmd.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="stdafx.cpp">

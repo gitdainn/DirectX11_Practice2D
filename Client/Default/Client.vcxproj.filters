@@ -52,6 +52,15 @@
     <Filter Include="97.ShaderFiles\Model">
       <UniqueIdentifier>{a8b9b4e9-a42c-444a-9aa5-41231e20fe52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Player\GrimReaper">
+      <UniqueIdentifier>{f19c7415-d41a-4018-8a6e-3869f7361f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\LittleBorn">
+      <UniqueIdentifier>{8a17bfd0-6a2c-4d2b-9838-f61319ab2fbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern">
+      <UniqueIdentifier>{07df51a0-92dd-4a44-87af-e19be37e27f0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -97,6 +106,24 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="SpriteObject.h" />
+    <ClInclude Include="..\Public\GrimReaper.h">
+      <Filter>02.GameObject\Player\GrimReaper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LittleBorn.h">
+      <Filter>02.GameObject\Player\LittleBorn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Command.h">
+      <Filter>03.DesignPattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InputHandler.h">
+      <Filter>03.DesignPattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RotationCmd.h">
+      <Filter>03.DesignPattern</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerInfo.h">
+      <Filter>02.GameObject\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -130,6 +157,24 @@
       <Filter>02.GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="SpriteObject.cpp" />
+    <ClCompile Include="..\Private\GrimReaper.cpp">
+      <Filter>02.GameObject\Player\GrimReaper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LittleBorn.cpp">
+      <Filter>02.GameObject\Player\LittleBorn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Command.cpp">
+      <Filter>03.DesignPattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InputHandler.cpp">
+      <Filter>03.DesignPattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RotationCmd.cpp">
+      <Filter>03.DesignPattern</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerInfo.cpp">
+      <Filter>02.GameObject\Player</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

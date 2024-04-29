@@ -46,14 +46,8 @@ protected: // Animation
 	_uint m_iCurrentAnim = { 0 };
 	float m_fTimeAcc = { 0.f };
 
-	void Change_TextureSize()
-	{
-		const _float2 fSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
-		m_pTransformCom->Set_Scaled(_float3(fSize.x * m_tSpriteInfo.fSizeRatio.x, fSize.y * m_tSpriteInfo.fSizeRatio.y, 1.f));
-	};
-
 	virtual void Add_Animation() = 0;
-	virtual void Play_Animation(_double TimeDelta);
+	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
@@ -82,10 +76,13 @@ protected:
 	bool	m_bIsDead;
 	bool	m_bIsRender;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
+	_uint	m_iUVTextureIndex;
+	_uint	m_iUVTexNumX;
+	_uint	m_iUVTexNumY;
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) = 0;
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CGameObject* Clone(void* pArg = nullptr) const override;
 	virtual void Free() override;
 };
 

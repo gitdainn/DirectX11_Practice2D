@@ -1,4 +1,10 @@
-﻿  Player.cpp
-  BackGround.cpp
+﻿  GrimReaper.cpp
+  LittleBorn.cpp
+  MainApp.cpp
+  Player.cpp
+  PlayerInfo.cpp
+  RotationCmd.cpp
+  Level_Logo.cpp
+  Loader.cpp
   코드를 생성하고 있습니다...
   Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

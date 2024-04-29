@@ -42,8 +42,6 @@ private:
 	HRESULT Ready_Prototype_GameObject_For_Static();
 	HRESULT Ready_Prototype_Sprite_For_Static();
 
-
-
 public:
 	static CMainApp* Create();
 	virtual void Free() override;

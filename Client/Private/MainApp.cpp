@@ -2,6 +2,7 @@
 #include "MainApp.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "InputHandler.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -23,7 +24,7 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	/*
-	MakeSpriteFont "¹èÂîÃ¼" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
+	MakeSpriteFont "ë°°ì°Œì²´" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
 	*/ 
 	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
 		return E_FAIL;
@@ -68,10 +69,20 @@ void list_remaining_d3d_objects()
 
 void CMainApp::Tick(_double TimeDelta)
 {
-	/* 1. ÇöÀç ÇÒ´çµÈ ·¹º§ÀÇ TickÇÔ¼ö¸¦ È£ÃâÇÑ´Ù. */
-	/* 2. »ı¼ºµÈ °ÔÀÓ¿ÀºêÁ§Æ®ÀÇ TickÇÔ¼ö¸¦ È£ÃâÇÑ´Ù. */
+	/* 1. í˜„ì¬ í• ë‹¹ëœ ë ˆë²¨ì˜ Tickí•¨ìˆ˜ë¥¼ í˜¸ì¶œí•œë‹¤. */
+	/* 2. ìƒì„±ëœ ê²Œì„ì˜¤ë¸Œì íŠ¸ì˜ Tickí•¨ìˆ˜ë¥¼ í˜¸ì¶œí•œë‹¤. */
 	m_pGameInstance->Tick_Engine(TimeDelta);
 
+	/** @qurious - ë„˜ê²¨ë°›ëŠ” ì»¤ë§¨ë“œ ì¢…ë¥˜ì— ë”°ë¼ UIë¥¼ ë„˜ê¸¸ì§€ Playerë¥¼ ë„˜ê¸¸ì§€ ì–´ì¼€ ê²°ì •í•˜ì§€..? */
+	/** @qurious - ì™œ const CCommandë©´ -> Executeê°€ ë¶ˆê°€ì§€? */
+	CCommand* pCommand = CInputHandler::GetInstance()->Key_Input();
+	if (nullptr != pCommand)
+	{
+		pCommand->Execute();
+	}
+	// Moveë©´ í”Œë ˆì´ì–´ ë„˜ê¸°ê³  .. ë©”ë‰´ë©´ UI ë„˜ê¸°ê³  .. 
+	// ê·¼ë° InputHandlerì—ì„œ ê¼­ ì»¤ë§¨ë“œ ì•ˆë„˜ê¸°ê³  ê± ì–˜ cpp ì•ˆì—ì„œ ë©”ë‰´ GetInstanceí•´ì„œ í˜¸ì¶œí•´ë„ë˜ë‚˜?
+	// ê·¼ë° ì‚¬ì‹¤ ì»¤ë§¨ë“œ ìì²´ëŠ” í”Œë ˆì´ì–´ ë§ê³ ë„ ëª¬ìŠ¤í„°ë„ íŠ¹ì • ì¡°ê±´ì— ë”°ë¼ì„œ ë°œë™í•¨.. ì´ê±´ ê± í•˜ë©´ë ë“¯?
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
 #endif // _DEBUG
@@ -84,7 +95,7 @@ HRESULT CMainApp::Render()
 
 	m_pRenderer->Draw_RenderGroup();
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("´ÙÀÎÀ×"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("ë‹¤ì¸ì‰"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -153,6 +164,7 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
+
 	return S_OK;
 }
 
@@ -173,14 +185,14 @@ void CMainApp::Free()
 {
 	__super::Free();
 
-	//Safe_Release(m_pRenderer); // Renderer´Â ÄÄÆ÷³ÍÆ®¿¡ Ãß°¡µÇ¾î ÀÖ¾î, ÃßÈÄ Component¿¡¼­ ¸ğµÎ ReleaseÇÏ±â ‹š¹®¿¡ X
+	//Safe_Release(m_pRenderer); // RendererëŠ” ì»´í¬ë„ŒíŠ¸ì— ì¶”ê°€ë˜ì–´ ìˆì–´, ì¶”í›„ Componentì—ì„œ ëª¨ë‘ Releaseí•˜ê¸° ë–„ë¬¸ì— X
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);	
 
 	CGameInstance::Release_Engine();
 
-	//ÇØÁ¦¾ÈµÈ COM°´Ã¼ ÃßÀû
+	//í•´ì œì•ˆëœ COMê°ì²´ ì¶”ì 
 #ifdef _DEBUG
 	list_remaining_d3d_objects();
 #endif

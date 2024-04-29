@@ -19,6 +19,10 @@ public:
 		return Find_Component(pComponentTag);
 	}
 
+	CTransform* Get_TransformCom() const {
+		return m_pTransformCom;
+	};
+
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -44,8 +48,8 @@ protected:
 	class CComponent* Find_Component(const _tchar* pComponentTag);
 
 public:			
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) = 0;
-	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
+	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };
 

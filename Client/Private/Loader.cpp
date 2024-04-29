@@ -4,7 +4,8 @@
 
 #include "Camera_Dynamic.h"
 #include "BackGround.h"
-#include "Player.h"
+#include "GrimReaper.h"
+#include "LittleBorn.h"
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
@@ -84,6 +85,22 @@ HRESULT CLoader::Loading_ForLogoLevel()
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png"), 2))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Test"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/Bat.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 #pragma endregion
 
 //#pragma region SHADERS
@@ -105,9 +122,17 @@ HRESULT CLoader::Loading_ForLogoLevel()
 		return E_FAIL;
 	};
 
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GrimReaper"),
+		CGrimReaper::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_LittleBorn */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LittleBorn"),
+		CLittleBorn::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

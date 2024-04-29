@@ -37,8 +37,8 @@ protected:
 	CAMERADESC					m_CameraDesc;
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) override;
-	virtual CGameObject* Clone(void* pArg = nullptr) = 0;
+	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const override;
+	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };
 

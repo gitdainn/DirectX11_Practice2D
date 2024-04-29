@@ -2,10 +2,10 @@
 
 #include "Base.h"
 
-/* ¸ğ¾Æ¼­ °ü¸® : ³»°¡ ³ª´©°í ½ÍÀº ±âÁØ(CLayer)¿¡ µû¶ó ·¹º§[] º°·Î */
-/* 1. ¿øÇü °´Ã¼µéÀ» ¸ğ¾Æ¼­ °ü¸®ÇÏ´Ù. */
-/* 1. »çº» °´Ã¼µéÀ» ¸ğ¾Æ¼­ °ü¸®ÇÏ´Ù. */
-/* 2. »çº»°´Ã¼µéÀÇ Tick, LateTick¹«ÇÑÀ¸·Î È£ÃâÇÑ´Ù. */
+/* ëª¨ì•„ì„œ ê´€ë¦¬ : ë‚´ê°€ ë‚˜ëˆ„ê³  ì‹¶ì€ ê¸°ì¤€(CLayer)ì— ë”°ë¼ ë ˆë²¨[] ë³„ë¡œ */
+/* 1. ì›í˜• ê°ì²´ë“¤ì„ ëª¨ì•„ì„œ ê´€ë¦¬í•˜ë‹¤. */
+/* 1. ì‚¬ë³¸ ê°ì²´ë“¤ì„ ëª¨ì•„ì„œ ê´€ë¦¬í•˜ë‹¤. */
+/* 2. ì‚¬ë³¸ê°ì²´ë“¤ì˜ Tick, LateTickë¬´í•œìœ¼ë¡œ í˜¸ì¶œí•œë‹¤. */
 
 BEGIN(Engine)
 
@@ -18,6 +18,8 @@ private:
 
 public:
 	class CComponent* Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex);
+	/** @qurious - ë²¡í„°(ë˜ëŠ” ë¦¬ìŠ¤íŠ¸)ë¥¼ &ë¡œ ë°˜í™˜í•˜ë©´ ì•ˆë˜ëŠ” ì´ìœ ëŠ” ì˜ˆì™¸ì²˜ë¦¬ê°€ ë¶ˆê°€í•˜ë‹ˆê¹Œ? return nullptr ëª»í•¨ */
+	const list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag);
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
@@ -25,17 +27,17 @@ public:
 
 public:
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* ¿øÇüÀ» º¹Á¦ÇÏ¿© »çº»À» Ãß°¡ÇÑ´Ù. */
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg = nullptr); /* ¿øÇüÀ» º¹Á¦ÇÏ¿© »çº»À» Ãß°¡ÇÑ´Ù. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* ì›í˜•ì„ ë³µì œí•˜ì—¬ ì‚¬ë³¸ì„ ì¶”ê°€í•œë‹¤. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg = nullptr); /* ì›í˜•ì„ ë³µì œí•˜ì—¬ ì‚¬ë³¸ì„ ì¶”ê°€í•œë‹¤. */
 	class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	void Tick(_double TimeDelta);
 	void LateTick(_double TimeDelta);
 
-private: /* ¿øÇü °´Ã¼µéÀ» º¸°üÇÑ´Ù. */
+private: /* ì›í˜• ê°ì²´ë“¤ì„ ë³´ê´€í•œë‹¤. */
 	unordered_map<const _tchar*, class CGameObject*>			m_Prototypes;
 	typedef unordered_map<const _tchar*, class CGameObject*>	PROTOTYPES;
 
-private: /* º¹Á¦ÇÑ °´Ã¼µéÀ» ±×·ìÁö¾î ·¹º§º°·Î º¸°üÇÑ´Ù. */
+private: /* ë³µì œí•œ ê°ì²´ë“¤ì„ ê·¸ë£¹ì§€ì–´ ë ˆë²¨ë³„ë¡œ ë³´ê´€í•œë‹¤. */
 	unordered_map<const _tchar*, class CLayer*>*		m_pLayers = { nullptr };
 	typedef unordered_map<const _tchar*, class CLayer*>	LAYERS;
 

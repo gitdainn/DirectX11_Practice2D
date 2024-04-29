@@ -26,13 +26,10 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
-
-	m_tSpriteInfo.fSizeRatio.x = 2.f;
-	m_tSpriteInfo.fSizeRatio.y = 2.f;
 	
-	Change_TextureSize();
+	m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 1.f));
 
-	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
 }
@@ -96,7 +93,7 @@ CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg)
+CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
 {
 	CBackGround*		pInstance = new CBackGround(*this);
 
