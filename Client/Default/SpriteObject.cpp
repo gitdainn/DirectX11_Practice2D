@@ -7,6 +7,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_iUVTextureIndex(0)
 	, m_iUVTexNumX(0), m_iUVTexNumY(0)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
+	, m_bIsAnimUV(false)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -27,7 +28,7 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	return S_OK;
 }
 
-// @qurious. 매개변수 &가 원본 참조..인데 주소 참조는아닌가? 그렇기에 memcpy에서 & 또 써줘야함?
+// @qurious - 매개변수 &가 원본 참조..인데 주소 참조는아닌가? 그렇기에 memcpy에서 & 또 써줘야함?
 HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
@@ -59,6 +60,36 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 	if (m_bIsDead)
 		return OBJ_DEAD;
 
+	if (m_bIsMove)
+	{
+		Move(TimeDelta);
+	}
+
+	if (m_bIsJump)
+	{
+		/** 엔진에서 제공해야할 것:
+		* 1. 현재 하락세인지 검사
+		* 2. 파라볼라 종료 함수
+		*/
+		m_pTransformCom->ParabolaY(TimeDelta);
+
+		/** @note - 윗층으로 점프하는 경우 대비
+		* 하락세일 때, 가장 가까이 있는 땅으로 착지 */
+		_float fLandingY = 0.0;
+		if (true == m_pTransformCom->CheckParabolicDecline())
+		{
+			// 하락세일 때 가장 가까운 땅 검사해서 착지
+			if (fLandingY > XMVectorGetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_POSITION
+					, XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION), fLandingY));
+
+				m_pTransformCom->End_Parabola();
+				m_bIsJump = false;
+			}
+		}
+	}
+
 	return _uint();
 }
 
@@ -83,6 +114,25 @@ HRESULT CSpriteObject::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CSpriteObject::Move(_double TimeDelta)
+{
+	switch (m_eMoveDir)
+	{
+	case CONTROL_KEY::LEFT:
+		m_pTransformCom->Go_Left(TimeDelta);
+		break;
+
+	case CONTROL_KEY::RIGHT:
+		m_pTransformCom->Go_Right(TimeDelta);
+		break;
+
+	default:
+		break;
+	}
+	m_bIsMove = false;
+	Change_Motion(MOTION_TYPE::IDLE);
 }
 
 HRESULT CSpriteObject::Add_Components(void* pArg)

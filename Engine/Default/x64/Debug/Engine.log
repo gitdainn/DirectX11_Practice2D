@@ -1,85 +1,24 @@
-﻿  Base.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Base.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Base.cpp'을(를) 컴파일하는 중)
-  
-  DInput_Manager.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/DInput_Manager.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/DInput_Manager.cpp'을(를) 컴파일하는 중)
-  
-  DebugDraw.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/DebugDraw.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/DebugDraw.cpp'을(를) 컴파일하는 중)
-  
-  Graphic_Device.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Graphic_Device.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Graphic_Device.cpp'을(를) 컴파일하는 중)
-  
-  Input_Device.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Input_Device.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Input_Device.cpp'을(를) 컴파일하는 중)
-  
-  Timer.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Timer.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Timer.cpp'을(를) 컴파일하는 중)
-  
-  Timer_Manager.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Timer_Manager.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/Timer_Manager.cpp'을(를) 컴파일하는 중)
-  
-  Utility.cpp
+﻿  Utility.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../Private/Utility.cpp'을(를) 컴파일하는 중)
   
 D:\1. GameProject\DirectX11_Practice2D\Engine\public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../Private/Utility.cpp'을(를) 컴파일하는 중)
   
-  VIBuffer_Cell.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/VIBuffer_Cell.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../Private/Utility.cpp'을(를) 컴파일하는 중)
   
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/VIBuffer_Cell.cpp'을(를) 컴파일하는 중)
-  
-  VIBuffer_Cube.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/VIBuffer_Cube.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Private/VIBuffer_Cube.cpp'을(를) 컴파일하는 중)
-  
-  Engine_Struct.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Public/Engine_Struct.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../Public/Engine_Struct.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\DInput_Manager.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../Private/Utility.cpp'을(를) 컴파일하는 중)
   
   BlendObject.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/BlendObject.cpp'을(를) 컴파일하는 중)
   
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/BlendObject.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/BlendObject.cpp'을(를) 컴파일하는 중)
   
   Camera.cpp
@@ -89,19 +28,8 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Camera.cpp'을(를) 컴파일하는 중)
   
-  Collider.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Collider.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Collider.cpp'을(를) 컴파일하는 중)
-  
-  Component.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Component.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Component.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Camera.cpp'을(를) 컴파일하는 중)
   
   Component_Manager.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -110,26 +38,8 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Component_Manager.cpp'을(를) 컴파일하는 중)
   
-  CustomFont.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/CustomFont.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/CustomFont.cpp'을(를) 컴파일하는 중)
-  
-  Font_Manager.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Font_Manager.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Font_Manager.cpp'을(를) 컴파일하는 중)
-  
-  Frustum.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Frustum.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Frustum.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Component_Manager.cpp'을(를) 컴파일하는 중)
   
   GameInstance.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -138,17 +48,24 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/GameInstance.cpp'을(를) 컴파일하는 중)
   
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/GameInstance.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\DInput_Manager.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/GameInstance.cpp'을(를) 컴파일하는 중)
+  
 D:\1. GameProject\DirectX11_Practice2D\Engine\public\Object_Manager.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/GameInstance.cpp'을(를) 컴파일하는 중)
   
-  코드를 생성하고 있습니다...
-  컴파일하고 있습니다...
   GameObject.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\private\GameObject.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/GameObject.cpp'을(를) 컴파일하는 중)
   
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/GameObject.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/GameObject.cpp'을(를) 컴파일하는 중)
   
   Layer.cpp
@@ -158,12 +75,8 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Layer.cpp'을(를) 컴파일하는 중)
   
-  Level.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Level.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Level.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Layer.cpp'을(를) 컴파일하는 중)
   
   Level_Manager.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -172,19 +85,11 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Level_Manager.cpp'을(를) 컴파일하는 중)
   
-  Light.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Light.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Level_Manager.cpp'을(를) 컴파일하는 중)
   
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Light.cpp'을(를) 컴파일하는 중)
-  
-  Light_Manager.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Light_Manager.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Light_Manager.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\DInput_Manager.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Level_Manager.cpp'을(를) 컴파일하는 중)
   
   Object_Manager.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Object_Manager.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -196,19 +101,8 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Object_Manager.cpp'을(를) 컴파일하는 중)
   
-  PipeLine.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/PipeLine.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/PipeLine.cpp'을(를) 컴파일하는 중)
-  
-  RenderTarget.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/RenderTarget.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/RenderTarget.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Object_Manager.cpp'을(를) 컴파일하는 중)
   
   Renderer.cpp
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
@@ -217,65 +111,20 @@ D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): war
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Renderer.cpp'을(를) 컴파일하는 중)
   
-  Shader.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Shader.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Shader.cpp'을(를) 컴파일하는 중)
-  
-  Target_Manager.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Target_Manager.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Target_Manager.cpp'을(를) 컴파일하는 중)
-  
-  Texture.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Texture.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/Texture.cpp'을(를) 컴파일하는 중)
+D:\1. GameProject\DirectX11_Practice2D\Engine\public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Renderer.cpp'을(를) 컴파일하는 중)
   
   Transform.cpp
+D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Transform.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
+  (소스 파일 '../private/Transform.cpp'을(를) 컴파일하는 중)
+  
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Transform.cpp'을(를) 컴파일하는 중)
   
 D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
   (소스 파일 '../private/Transform.cpp'을(를) 컴파일하는 중)
   
-  VIBuffer.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/VIBuffer.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/VIBuffer.cpp'을(를) 컴파일하는 중)
-  
-  VIBuffer_Rect.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Function.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/VIBuffer_Rect.cpp'을(를) 컴파일하는 중)
-  
-D:\1. GameProject\DirectX11_Practice2D\Engine\Public\Engine_Struct.h(1,1): warning C4819: 현재 코드 페이지(949)에서 표시할 수 없는 문자가 파일에 들어 있습니다. 데이터가 손실되지 않게 하려면 해당 파일을 유니코드 형식으로 저장하십시오.
-  (소스 파일 '../private/VIBuffer_Rect.cpp'을(를) 컴파일하는 중)
-  
+D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(92,16): warning C4244: '초기화 중': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
   코드를 생성하고 있습니다...
-Effects11d.lib(EffectAPI.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectLoad.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectLoad.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectReflection.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectReflection.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-Effects11d.lib(EffectRuntime.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectRuntime.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(PrimitiveBatch.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(PrimitiveBatch.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(BasicEffect.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(BasicEffect.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(VertexTypes.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(VertexTypes.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(SpriteBatch.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(SpriteBatch.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(SpriteFont.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(SpriteFont.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(DDSTextureLoader.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(DDSTextureLoader.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(WICTextureLoader.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(WICTextureLoader.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(pch.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(pch.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(EffectCommon.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(EffectCommon.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(CommonStates.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(CommonStates.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-DirectXTKd.lib(BinaryReader.obj) : warning LNK4099: '' PDB를 'DirectXTKd.lib(BinaryReader.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
-     ..\Bin\Engine.lib 라이브러리 및 ..\Bin\Engine.exp 개체를 생성하고 있습니다.
   Engine.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Engine\Bin\Engine.dll

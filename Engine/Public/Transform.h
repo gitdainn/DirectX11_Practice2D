@@ -2,9 +2,9 @@
 
 #include "Component.h"
 
-/* °´Ã¼ÀÇ ¿ùµå º¯È¯À» À§ÇÑ ¿ùµåº¯È¯Çà·ÄÀ» °¡Áö°í ÀÖ´Â´Ù.*/
-/* °´Ã¼¸¦ ·»´õ¸µÇÒ ¶§¿¡ ¼ÎÀÌ´õ¿¡ ¿ùµåÇà·ÄÀ» Àü´ŞÇØÁÖ´Â °úÁ¤À» ¼öÇàÇÑ´Ù. */
-/* ¿ùµå Çà·ÄÀ» ÅëÇØ ¼öÇàÇÒ ¼ö ÀÖ´Â ´Ù¾çÇÑ ¿ùµå º¯È¯ÀÇ ±â´É(¿òÁ÷ÀÓÁ¦¾î)À» °¡Áø´Ù. */
+/* ê°ì²´ì˜ ì›”ë“œ ë³€í™˜ì„ ìœ„í•œ ì›”ë“œë³€í™˜í–‰ë ¬ì„ ê°€ì§€ê³  ìˆëŠ”ë‹¤.*/
+/* ê°ì²´ë¥¼ ë Œë”ë§í•  ë•Œì— ì…°ì´ë”ì— ì›”ë“œí–‰ë ¬ì„ ì „ë‹¬í•´ì£¼ëŠ” ê³¼ì •ì„ ìˆ˜í–‰í•œë‹¤. */
+/* ì›”ë“œ í–‰ë ¬ì„ í†µí•´ ìˆ˜í–‰í•  ìˆ˜ ìˆëŠ” ë‹¤ì–‘í•œ ì›”ë“œ ë³€í™˜ì˜ ê¸°ëŠ¥(ì›€ì§ì„ì œì–´)ì„ ê°€ì§„ë‹¤. */
 
 BEGIN(Engine)
 
@@ -19,6 +19,12 @@ public:
 		_double		SpeedPerSec;
 		_double		RotationPerSec;
 	}TRANSFORM_DESC;
+
+	typedef struct tagParabola
+	{
+		_float fPower;
+		_double JumpTimeAcc;
+	}PARABOLA_DESC;
 
 private:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -63,6 +69,10 @@ public: /* Setter */
 	void Set_TransformDesc(const TRANSFORM_DESC& TransformDesc) {
 		m_TransformDesc = TransformDesc; }
 
+	void Set_ParabolaDesc(const PARABOLA_DESC& ParabolaDesc) {
+		m_ParabolaDesc = ParabolaDesc;
+	}
+
 	void Set_Scaled(const _float3& vScale);
 
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pContantName);
@@ -77,10 +87,20 @@ public:
 	void Go_Right(_double TimeDelta);
 	void Go_Backward(_double TimeDelta);
 
-	/* Á¤ÀûÀÎ È¸Àü. : Ç×µî»óÅÂ±âÁØ vAxisÃàÀ¸·Î Radian¸¸Å­ È¸ÀüÇØ ÀÖ´Â´Ù. */
+	void ParabolaY(_double TimeDelta);
+	bool CheckParabolicDecline()
+	{
+		return m_UpTime < m_DownTime;
+	}
+	void End_Parabola()
+	{
+		m_ParabolaDesc.JumpTimeAcc = 0.0;
+	}
+
+	/* ì •ì ì¸ íšŒì „. : í•­ë“±ìƒíƒœê¸°ì¤€ vAxisì¶•ìœ¼ë¡œ Radianë§Œí¼ íšŒì „í•´ ìˆëŠ”ë‹¤. */
 	void Rotation(_fvector vAxis, _double Radian);
 
-	/* µ¿ÀûÀÎ È¸Àü. : ÇöÀç»óÅÂ±âÁØ vAxisÃàÀ¸·Î m_TransformDesc.fRotationSpeedPerSec¸¸Å­ È¸ÀüÇÑ´Ù */
+	/* ë™ì ì¸ íšŒì „. : í˜„ì¬ìƒíƒœê¸°ì¤€ vAxisì¶•ìœ¼ë¡œ m_TransformDesc.fRotationSpeedPerSecë§Œí¼ íšŒì „í•œë‹¤ */
 	void Turn(_fvector vAxis, _double TimeDelta);
 
 	void LookAt(_fvector vTargetPos);
@@ -88,13 +108,16 @@ public:
 	void Chase(_fvector vTargetPos, _double TimeDelta, _float fLimitDistance = 0.2f);
 
 private:
-	/* ´Ü¼ø º¸°ü¿ë µ¥ÀÌÅÍ. */
-	/* ¿ùµå ½ºÆäÀÌ½º·ÎÀÇ º¯È¯. */
-	/* ¿ùµå °ø°£¿¡¼­ °´Ã¼ÀÇ right, up, look, positionÀ» Çà¼ø¼­·Î ÀúÀåÇÑ\ µ¥ÀÌÅÍ. */
-	/* Á÷±³Çà·Ä. */
+	/* ë‹¨ìˆœ ë³´ê´€ìš© ë°ì´í„°. */
+	/* ì›”ë“œ ìŠ¤í˜ì´ìŠ¤ë¡œì˜ ë³€í™˜. */
+	/* ì›”ë“œ ê³µê°„ì—ì„œ ê°ì²´ì˜ right, up, look, positionì„ í–‰ìˆœì„œë¡œ ì €ì¥í•œ\ ë°ì´í„°. */
+	/* ì§êµí–‰ë ¬. */
 	_float4x4			m_WorldMatrix;
-	// _matrix : Çà·ÄÀÇ ¿¬»êÀ» À§ÇÑ µ¥ÀÌÅÍ Å¸ÀÔ. 
+	// _matrix : í–‰ë ¬ì˜ ì—°ì‚°ì„ ìœ„í•œ ë°ì´í„° íƒ€ì…. 
 	TRANSFORM_DESC		m_TransformDesc;
+	PARABOLA_DESC		m_ParabolaDesc;
+	_double				m_UpTime;
+	_double				m_DownTime;
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

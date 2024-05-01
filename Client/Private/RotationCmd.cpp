@@ -11,3 +11,4 @@ void CRotationCmd::Execute(CGameObject* pObject)
 
     Safe_Release(pPlayerInfo);
 }
+

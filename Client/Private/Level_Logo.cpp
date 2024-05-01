@@ -34,9 +34,8 @@ void CLevel_Logo::Tick(_double TimeDelta)
 	// }
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("로고레벨임"));
+	SetWindowText(g_hWnd, TEXT("Logo Level"));
 #endif
-
 }
 
 HRESULT CLevel_Logo::Ready_Layer_GameObject()

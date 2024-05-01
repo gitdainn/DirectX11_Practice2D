@@ -27,7 +27,7 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-    m_iCurrentAnim = (_uint)PLAYER_MOTION::IDLE;
+    m_iCurrentAnim = (_uint)MOTION_TYPE::IDLE;
 
     m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
@@ -54,13 +54,13 @@ HRESULT CLittleBorn::Render()
 
 void CLittleBorn::Add_Animation()
 {
-    m_pAnimInfo = new ANIM_INFO[(_uint)PLAYER_MOTION::MOTION_END];
+    m_pAnimInfo = new ANIM_INFO[(_uint)MOTION_TYPE::MOTION_END];
 
-    m_pAnimInfo[(_uint)PLAYER_MOTION::IDLE].iStartIndex = 0;
-    m_pAnimInfo[(_uint)PLAYER_MOTION::IDLE].iEndIndex = 47;
+    m_pAnimInfo[(_uint)MOTION_TYPE::IDLE].iStartIndex = 0;
+    m_pAnimInfo[(_uint)MOTION_TYPE::IDLE].iEndIndex = 47;
 
-    m_pAnimInfo[(_uint)PLAYER_MOTION::DASH].iStartIndex = 0;
-    m_pAnimInfo[(_uint)PLAYER_MOTION::DASH].iEndIndex = 47;
+    m_pAnimInfo[(_uint)MOTION_TYPE::DASH].iStartIndex = 0;
+    m_pAnimInfo[(_uint)MOTION_TYPE::DASH].iEndIndex = 47;
 
     return;
 }

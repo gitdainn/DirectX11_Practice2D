@@ -61,6 +61,21 @@
     <Filter Include="03.DesignPattern">
       <UniqueIdentifier>{07df51a0-92dd-4a44-87af-e19be37e27f0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.DesignPattern\Command">
+      <UniqueIdentifier>{57f1461d-7bc3-427e-8da6-5b44f2ecc8b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\RotationCmd">
+      <UniqueIdentifier>{60963beb-b448-4a4e-8678-a818e79becd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\MoveCmd">
+      <UniqueIdentifier>{751c9c3b-5ac8-49ee-97d4-74d8c820e068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Handler">
+      <UniqueIdentifier>{44c203e1-40f9-409c-aa51-dd283fc43574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\TemplateTest">
+      <UniqueIdentifier>{ab940ebc-a893-4678-bf4e-84f7332b97d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -112,17 +127,23 @@
     <ClInclude Include="..\Public\LittleBorn.h">
       <Filter>02.GameObject\Player\LittleBorn</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Command.h">
-      <Filter>03.DesignPattern</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\InputHandler.h">
-      <Filter>03.DesignPattern</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\RotationCmd.h">
-      <Filter>03.DesignPattern</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerInfo.h">
       <Filter>02.GameObject\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Command.h">
+      <Filter>03.DesignPattern\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RotationCmd.h">
+      <Filter>03.DesignPattern\Command\RotationCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InputHandler.h">
+      <Filter>04. Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TemplateCmd.h">
+      <Filter>03.DesignPattern\Command\TemplateTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveCmd.h">
+      <Filter>03.DesignPattern\Command\MoveCmd</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -163,17 +184,23 @@
     <ClCompile Include="..\Private\LittleBorn.cpp">
       <Filter>02.GameObject\Player\LittleBorn</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Command.cpp">
-      <Filter>03.DesignPattern</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\InputHandler.cpp">
-      <Filter>03.DesignPattern</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\RotationCmd.cpp">
-      <Filter>03.DesignPattern</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PlayerInfo.cpp">
       <Filter>02.GameObject\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Command.cpp">
+      <Filter>03.DesignPattern\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RotationCmd.cpp">
+      <Filter>03.DesignPattern\Command\RotationCmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InputHandler.cpp">
+      <Filter>04. Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TemplateCmd.cpp">
+      <Filter>03.DesignPattern\Command\TemplateTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveCmd.cpp">
+      <Filter>03.DesignPattern\Command\MoveCmd</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

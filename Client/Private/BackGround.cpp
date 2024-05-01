@@ -60,7 +60,7 @@ HRESULT CBackGround::Add_Components(void* pArg)
 		return E_FAIL;	
 
 	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 		return E_FAIL;	
 	

@@ -27,7 +27,7 @@ _uint APIENTRY LoadingMain(void* pArg)
 
 	switch (pLoader->Get_NextLevelID())
 	{
-	case LEVEL_LOGO: /* ·Îµù¾À ´ÙÀ½·¹º§ÀÌ ·Î°í´Ù. ·Î°í·¹º§¿¡ ÇÊ¿äÇÑ »çÀü »ı¼º(¸®¼Ò½º, ¿øÇü°´Ã¼) ÀÛ¾÷À» ÇÏÀÚ. */
+	case LEVEL_LOGO: /* ë¡œë”©ì”¬ ë‹¤ìŒë ˆë²¨ì´ ë¡œê³ ë‹¤. ë¡œê³ ë ˆë²¨ì— í•„ìš”í•œ ì‚¬ì „ ìƒì„±(ë¦¬ì†ŒìŠ¤, ì›í˜•ê°ì²´) ì‘ì—…ì„ í•˜ì. */
 		hr = pLoader->Loading_ForLogoLevel();
 		break;
 
@@ -53,8 +53,8 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ½º·¹µå¸¦ »ı¼ºÇÑ´Ù. */
-	/* ½º·¹µå¸¦ »ı¼ºÇÏ°ÔµÇ¸é ÁøÀÔÁ¡ÇÔ¼ö¸¦ Á¤ÀÇÇØ¾ßÇØ. */
+	/* ìŠ¤ë ˆë“œë¥¼ ìƒì„±í•œë‹¤. */
+	/* ìŠ¤ë ˆë“œë¥¼ ìƒì„±í•˜ê²Œë˜ë©´ ì§„ì…ì í•¨ìˆ˜ë¥¼ ì •ì˜í•´ì•¼í•´. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;	
@@ -68,10 +68,10 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	Safe_AddRef(pGameInstance);
 	/*  */
 #pragma region TEXTURES	
-	wsprintf(m_szLoadingText, TEXT("ÅØ½ºÃÄ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("í…ìŠ¤ì³ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
 
 	/* For.Prototype_Component_Texture_Logo */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
 	{
 		Safe_Release(pGameInstance);
@@ -88,7 +88,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
@@ -104,7 +104,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 #pragma endregion
 
 //#pragma region SHADERS
-//	wsprintf(m_szLoadingText, TEXT("¼ÎÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
+//	wsprintf(m_szLoadingText, TEXT("ì…°ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
 //	for (_uint i = 0; i < 999999999; ++i)
 //	{
 //		int a = 10;
@@ -112,7 +112,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 //#pragma endregion
 //
 #pragma region GAMEOBJECTS
-	wsprintf(m_szLoadingText, TEXT("°´Ã¼¿øÇüÀ» ·ÎµùÁß."));
+	wsprintf(m_szLoadingText, TEXT("ê°ì²´ì›í˜•ì„ ë¡œë”©ì¤‘."));
 
 	/* For.Prototype_GameObject_BackGround */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
@@ -140,7 +140,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 
 #pragma endregion
 
-	wsprintf(m_szLoadingText, TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("ë¡œë”©ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."));
 	m_isFinished = true;
 
 	Safe_Release(pGameInstance);
@@ -166,7 +166,7 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 //	
 //#pragma endregion
 //
-//	wsprintf(m_szLoadingText, TEXT("Äİ¶óÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
+//	wsprintf(m_szLoadingText, TEXT("ì½œë¼ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
 //#pragma region COLLIDER
 //	/* For.Prototype_Component_Collider_AABB*/
 //	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
@@ -187,7 +187,7 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 //
 //
 //#pragma region SHADERS
-//	wsprintf(m_szLoadingText, TEXT("¼ÎÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
+//	wsprintf(m_szLoadingText, TEXT("ì…°ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
 //	/* For.Prototype_Component_Shader_VtxNorTex */
 //	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
 //		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
@@ -196,13 +196,13 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 //
 //
 //#pragma region GAMEOBJECTS
-//	wsprintf(m_szLoadingText, TEXT("°´Ã¼¿øÇüÀ» ·ÎµùÁß."));
+//	wsprintf(m_szLoadingText, TEXT("ê°ì²´ì›í˜•ì„ ë¡œë”©ì¤‘."));
 //
 //#pragma endregion
 
 	Safe_Release(pGameInstance);
 
-	wsprintf(m_szLoadingText, TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("ë¡œë”©ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."));
 	m_isFinished = true;
 
 	return S_OK;	

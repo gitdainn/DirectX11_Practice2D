@@ -27,6 +27,7 @@ public:
         m_pHoldingSkul->Set_IsEquipped(false);
     };
 
+public: // Setter //
     void Set_EquippedSkul(CPlayer* Skul)
     {
         m_pEquippedSkul = Skul;
@@ -36,6 +37,12 @@ public:
     void Set_HoldingSkul(CPlayer* Skul)
     {
         m_pHoldingSkul = Skul;
+    }
+
+public: // Getter //
+    CPlayer* Get_EquippedSkul()
+    {
+        return m_pEquippedSkul;
     }
 
 private:

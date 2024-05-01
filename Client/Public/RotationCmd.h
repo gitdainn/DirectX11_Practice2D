@@ -10,4 +10,3 @@ public:
 public:
     virtual void Execute(CGameObject* pObject) override;
 };
-

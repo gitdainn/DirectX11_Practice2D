@@ -9,8 +9,6 @@ public:
     ~CCommand() {}
 
 public:
-
-public:
     virtual void    Execute(CGameObject* pObject = nullptr) = 0;
 };
 

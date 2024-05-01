@@ -17,8 +17,8 @@ public:
 private:
 	typedef struct InputInfo
 	{
-		INPUTSTATE eState;		//	ÀÔ·Â »óÅÂ
-		bool bIsPreviousPush;	// ÀÌÀü¿¡ ´­·È´ÂÁö È®ÀÎ ÇÏ´Â °ª
+		INPUTSTATE eState;		//	ì…ë ¥ ìƒíƒœ
+		bool bIsPreviousPush;	// ì´ì „ì— ëˆŒë ¸ëŠ”ì§€ í™•ì¸ í•˜ëŠ” ê°’
 	}INPUTINFO;
 
 private:
@@ -57,12 +57,12 @@ private:
 	LPDIRECTINPUTDEVICE8		m_pMouse = { nullptr };
 
 private:
-	_byte					m_byKeyState[256];		// Engine¿ë
-	DIMOUSESTATE			m_MouseState;			// Engine¿ë
+	_byte					m_byKeyState[256];		// Engineìš©
+	DIMOUSESTATE			m_MouseState;			// Engineìš©
 
 private:
-	INPUTINFO				m_tKeyInputState[256];	// Client Á¦°ø¿ë
-	INPUTINFO				m_tMouseInputState[3];	// Client Á¦°ø¿ë
+	INPUTINFO				m_tKeyInputState[256];	// Client ì œê³µìš©
+	INPUTINFO				m_tMouseInputState[3];	// Client ì œê³µìš©
 
 public:
 	virtual void Free() override;

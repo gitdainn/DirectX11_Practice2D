@@ -3,6 +3,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "InputHandler.h"
+#include "PlayerInfo.h"
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
@@ -69,20 +70,32 @@ void list_remaining_d3d_objects()
 
 void CMainApp::Tick(_double TimeDelta)
 {
+	/** @qurious - 넘겨받는 커맨드 종류에 따라 UI를 넘길지 Player를 넘길지 어케 결정하지..? */
+/** @qurious - 왜 const CCommand면 -> Execute가 불가지? */
+	CGameObject** pObject = nullptr;
+	/** @note - 매개변수가 이중포인터일 때 CGameObject* pObject를 &pObject로 넘기면 값 못 받아옴. */
+	CCommand* pCommand = CInputHandler::GetInstance()->Key_Input(pObject);
+	/** @note - CGameObject** pObject로 이중포인터일 경우 nullptr인데 *pObject처럼 값에 접근하면 오류 뜸! */
+
+	CGameObject* pTest = nullptr;
+	if (nullptr != pObject)
+		pTest = *pObject;
+
+
+	// Move면 플레이어 넘기고 .. 메뉴면 UI 넘기고 .. 
+	// 근데 InputHandler에서 꼭 커맨드 안넘기고 걍 얘 cpp 안에서 메뉴 GetInstance해서 호출해도되나?
+	// 근데 사실 커맨드 자체는 플레이어 말고도 몬스터도 특정 조건에 따라서 발동함.. 이건 걍 하면될듯?
+	CGameObject* pPlayer = CPlayerInfo::GetInstance()->Get_EquippedSkul();
+	if (nullptr != pCommand)
+	{
+		pCommand->Execute(pPlayer);
+	}
+
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
 	m_pGameInstance->Tick_Engine(TimeDelta);
 
-	/** @qurious - 넘겨받는 커맨드 종류에 따라 UI를 넘길지 Player를 넘길지 어케 결정하지..? */
-	/** @qurious - 왜 const CCommand면 -> Execute가 불가지? */
-	CCommand* pCommand = CInputHandler::GetInstance()->Key_Input();
-	if (nullptr != pCommand)
-	{
-		pCommand->Execute();
-	}
-	// Move면 플레이어 넘기고 .. 메뉴면 UI 넘기고 .. 
-	// 근데 InputHandler에서 꼭 커맨드 안넘기고 걍 얘 cpp 안에서 메뉴 GetInstance해서 호출해도되나?
-	// 근데 사실 커맨드 자체는 플레이어 말고도 몬스터도 특정 조건에 따라서 발동함.. 이건 걍 하면될듯?
+
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
 #endif // _DEBUG
@@ -95,7 +108,7 @@ HRESULT CMainApp::Render()
 
 	m_pRenderer->Draw_RenderGroup();
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("다인잉"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("Dainn"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #ifdef _DEBUG
@@ -144,9 +157,7 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Background"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/no_0.dds")))))
-		return E_FAIL;
+
 
 	// CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/no_0.dds"));
 	/* For.Prototype_Component_Shader_VtxNorTex*/
@@ -164,7 +175,6 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
-
 	return S_OK;
 }
 

@@ -5,7 +5,6 @@
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
 	, m_pTextureTag(nullptr)
-	, m_iUVTextureIndex(0)
 	, m_bIsEquipped(false)
 {
 }
@@ -31,7 +30,6 @@ _uint CPlayer::Tick(_double TimeDelta)
 	if (!m_bIsEquipped)
 		return _uint();
 
-	//Key_Input(TimeDelta);
 	return __super::Tick(TimeDelta);
 }
 
@@ -78,6 +76,7 @@ void CPlayer::Free()
 {
 	__super::Free();
 
+	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
 	//Safe_Delete_Array(m_pTextureTag);
 	Safe_Delete_Array(m_pAnimInfo);
 }

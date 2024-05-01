@@ -1,6 +1,6 @@
 #pragma once
 
-/* Ŭ���̾�Ʈ���� ���ֻ���ϴ� ������ ���Ǹ� ��´�. */
+/* 클라이언트에서 자주사용하는 변수나 정의를 담는다. */
 #include "Time.h"
 
 namespace Client
@@ -15,6 +15,22 @@ namespace Client
 		Default,
 		UV_Anim
 	}VTXTEX_PASS;
+
+	enum class CONTROL_KEY 
+	{ 
+		LEFT, RIGHT, FALL, 
+		JUMP, DASH, MENU,
+		INTERACTION, ATTACK, SKILL1,
+		SKILL2, ESSENCE, ROTATION
+	};
+
+	enum class MOTION_TYPE 
+	{ 
+		IDLE, WALK, DASH,
+		ATK, JUMP_ATK, JUMP,
+		FALL, SKILL1, SKILL2, MOTION_END 
+	};
+
 }
 
 extern HINSTANCE g_hInst;
