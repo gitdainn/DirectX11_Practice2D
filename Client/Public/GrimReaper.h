@@ -19,7 +19,7 @@ private:
 
 private:
 	HRESULT Add_Components(void* pArg = nullptr);
-	HRESULT SetUp_ShaderResources(); /* ¼ÎÀÌ´õ Àü¿ªº¯¼ö¿¡ °ªÀ» ´øÁø´Ù. */
+	HRESULT SetUp_ShaderResources(); /* ì…°ì´ë” ì „ì—­ë³€ìˆ˜ì— ê°’ì„ ë˜ì§„ë‹¤. */
 
 public:
 	/* Prototype */

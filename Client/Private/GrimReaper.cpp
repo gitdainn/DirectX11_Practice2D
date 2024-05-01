@@ -79,7 +79,7 @@ void CGrimReaper::Add_Animation()
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 60;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 67;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 70;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 71;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 75;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;

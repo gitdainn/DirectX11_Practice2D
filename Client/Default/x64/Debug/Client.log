@@ -1,2 +1,5 @@
-﻿  InputHandler.cpp
+﻿  PlayerWalk.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Public\Client_Defines.h(13,69): warning C4091: 'typedef ': 변수를 선언하지 않으면 'Client::SPRITE_DIRECTION' 왼쪽은 무시됩니다.
+  (소스 파일 '/Private/PlayerWalk.cpp'을(를) 컴파일하는 중)
+  
   Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

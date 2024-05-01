@@ -2,7 +2,6 @@
 #include "InputHandler.h"
 #include "GameInstance.h"
 #include "RotationCmd.h"
-#include "MoveCmd.h"
 #include "PlayerInfo.h"
 
 IMPLEMENT_SINGLETON(CInputHandler)
@@ -10,8 +9,6 @@ IMPLEMENT_SINGLETON(CInputHandler)
 CInputHandler::CInputHandler()
 {
     m_CommandKeyMap.emplace(CONTROL_KEY::ROTATION, new CRotationCmd());
-    m_CommandKeyMap.emplace(CONTROL_KEY::LEFT, new CMoveCmd(CONTROL_KEY::LEFT));
-    m_CommandKeyMap.emplace(CONTROL_KEY::RIGHT, new CMoveCmd(CONTROL_KEY::RIGHT));
 }
 
 CInputHandler::~CInputHandler()
@@ -32,14 +29,12 @@ CCommand* CInputHandler::Key_Input() const
 
     if (pGameInstance->Get_KeyDown(DIK_LEFT))
     {
-        iter = m_CommandKeyMap.find(CONTROL_KEY::LEFT);
-        pPlayer->Input_Handler(STATE_TYPE::WALK);
+        pPlayer->Input_Handler(STATE_TYPE::WALK, SPRITE_DIRECTION::LEFT);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_RIGHT))
     {
-        iter = m_CommandKeyMap.find(CONTROL_KEY::RIGHT);
-        pPlayer->Input_Handler(STATE_TYPE::WALK);
+        pPlayer->Input_Handler(STATE_TYPE::WALK, SPRITE_DIRECTION::RIGHT);
     }
 
     if (pGameInstance->Get_KeyUp(DIK_LEFT)
@@ -51,6 +46,11 @@ CCommand* CInputHandler::Key_Input() const
     if (pGameInstance->Get_KeyDown(DIK_X))
     {
         pPlayer->Input_Handler(STATE_TYPE::ATK);
+    }
+
+    if (pGameInstance->Get_KeyDown(DIK_Z))
+    {
+        pPlayer->Input_Handler(STATE_TYPE::DASH);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_C))

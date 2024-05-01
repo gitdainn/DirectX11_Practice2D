@@ -11,6 +11,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
 	, m_pState(nullptr)
+	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -114,9 +115,9 @@ HRESULT CSpriteObject::Render()
 	return S_OK;
 }
 
-void CSpriteObject::Input_Handler(const STATE_TYPE Input)
+void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
-	CState* pState = m_pState->Input_Handler(this, Input);
+	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
 	
 	if (nullptr == pState)
 		return;
@@ -183,6 +184,7 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 
 		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)
 		{
+			m_bIsEndSprite = true;
 			iSpriteIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 		}
 	}

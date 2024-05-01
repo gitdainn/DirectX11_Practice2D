@@ -2,15 +2,16 @@
 #include "PlayerIdle.h"
 #include "PlayerWalk.h"
 #include "PlayerAtk.h"
+#include "PlayerDash.h"
 
-CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input)
+CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
 	switch (Input)
 	{
 	case STATE_TYPE::WALK:
-		pState = new CPlayerWalk();
+		pState = new CPlayerWalk(eDirection);
 		break;
 
 	case STATE_TYPE::ATK:
@@ -18,6 +19,7 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		break;
 
 	case STATE_TYPE::DASH:
+		pState = new CPlayerDash(eDirection);
 		break;
 
 	case STATE_TYPE::JUMP:

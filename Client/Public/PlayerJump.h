@@ -1,11 +1,11 @@
 #pragma once
 #include "State.h"
 
-class CPlayerAtk : public CState
+class CPlayerJump : public CState
 {
 public:
-    explicit CPlayerAtk() {}
-    ~CPlayerAtk() {}
+    explicit CPlayerJump();
+    ~CPlayerJump();
 
 public:
     CState* Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection) override;

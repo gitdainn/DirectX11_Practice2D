@@ -10,10 +10,13 @@ namespace Client
 
 	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
 
+	typedef enum class SPRITE_DIRECTION { LEFT, RIGHT , DIRECTION_END };
+
 	typedef enum class eVTXTEX_PASS
 	{
 		Default,
-		UV_Anim
+		UV_Anim,
+		FlipUV_Anim
 	}VTXTEX_PASS;
 
 	enum class CONTROL_KEY 
@@ -26,8 +29,8 @@ namespace Client
 
 	enum class STATE_TYPE 
 	{ 
-		IDLE, WALK, DASH,
-		ATK, JUMP_ATK, JUMP,
+		IDLE, WALK,
+		DASH, ATK, JUMP_ATK, JUMP,
 		FALL, SKILL1, SKILL2, MOTION_END 
 	};
 

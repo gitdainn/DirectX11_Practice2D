@@ -154,9 +154,6 @@
     <ClInclude Include="..\Public\State.h">
       <Filter>03.DesignPattern\State</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerWalk.h">
-      <Filter>03.DesignPattern\State\PlayerState</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerAtk.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
@@ -165,6 +162,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\PlayerInfo.h">
       <Filter>05.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerDash.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerJump.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerWalk.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +240,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerInfo.cpp">
       <Filter>05.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerDash.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerJump.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -58,15 +58,33 @@ protected: // Animation
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
 
 public:
-	void	Input_Handler(const STATE_TYPE Input);
+	void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 
-	bool IsEndSprite()
+public:
+	void Set_ShaderPass(const _uint iPassIndex)
 	{
-		return m_bIsAnimUV ?
-			m_tSpriteInfo.iTextureIndex == m_pAnimInfo[m_iCurrentAnim].iStartIndex
-			: m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+		m_iShaderPassIndex = iPassIndex;
 	}
 
+	void Set_SpriteDirection(const SPRITE_DIRECTION eDirection)
+	{
+		m_eSpriteDirection = eDirection;
+	}
+
+public:
+	const bool IsEndSprite()
+	{
+		bool bIsSprite = m_bIsEndSprite;
+		m_bIsEndSprite = false;
+		return bIsSprite;
+	}
+
+	const SPRITE_DIRECTION& Get_SpriteDirection()
+	{
+		return m_eSpriteDirection;
+	}
+
+public: 
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
 
@@ -97,7 +115,9 @@ protected:
 	bool	m_bIsDead;
 	bool	m_bIsRender;
 	bool	m_bIsAnimUV;
+	bool	m_bIsEndSprite;
 
+	SPRITE_DIRECTION		m_eSpriteDirection;
 	CState*					m_pState;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_uint	m_iUVTextureIndex;

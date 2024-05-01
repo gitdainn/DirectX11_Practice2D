@@ -1,8 +1,9 @@
 #include "stdafx.h"
 #include "PlayerAtk.h"
 #include "PlayerIdle.h"
+#include "PlayerDash.h"
 
-CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input)
+CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -13,6 +14,7 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 		break;
 
 	case STATE_TYPE::DASH:
+		pState = new CPlayerDash(eDirection);
 		break;
 
 	default:
