@@ -28,7 +28,7 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iCurrentAnim = (_uint)MOTION_TYPE::IDLE;
+    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
     m_tSpriteInfo.iTextureIndex = 0;
 
     m_iUVTexNumX = 10;
@@ -56,31 +56,31 @@ HRESULT CGrimReaper::Render()
 
 void CGrimReaper::Add_Animation()
 {
-    m_pAnimInfo = new ANIM_INFO[(_uint)MOTION_TYPE::MOTION_END];
+    m_pAnimInfo = new ANIM_INFO[(_uint)STATE_TYPE::MOTION_END];
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::IDLE].iStartIndex = 0;
-    m_pAnimInfo[(_uint)MOTION_TYPE::IDLE].iEndIndex = 9;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 9;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::WALK].iStartIndex = 10;
-    m_pAnimInfo[(_uint)MOTION_TYPE::WALK].iEndIndex =19;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 10;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex =19;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::ATK].iStartIndex = 20;
-    m_pAnimInfo[(_uint)MOTION_TYPE::ATK].iEndIndex = 29;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iStartIndex = 20;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iEndIndex = 29;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::SKILL1].iStartIndex = 30;
-    m_pAnimInfo[(_uint)MOTION_TYPE::SKILL1].iEndIndex = 39;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 30;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 39;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::JUMP_ATK].iStartIndex = 40;
-    m_pAnimInfo[(_uint)MOTION_TYPE::JUMP_ATK].iEndIndex = 48;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iStartIndex = 40;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iEndIndex = 48;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::JUMP].iStartIndex = 50;
-    m_pAnimInfo[(_uint)MOTION_TYPE::JUMP].iEndIndex = 56;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 50;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 56;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::FALL].iStartIndex = 60;
-    m_pAnimInfo[(_uint)MOTION_TYPE::FALL].iEndIndex = 67;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 60;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 67;
 
-    m_pAnimInfo[(_uint)MOTION_TYPE::DASH].iStartIndex = 70;
-    m_pAnimInfo[(_uint)MOTION_TYPE::DASH].iEndIndex = 75;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 70;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 75;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 }

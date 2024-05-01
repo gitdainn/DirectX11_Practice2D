@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "SpriteObject.h"
+#include "State.h"
+#include "PlayerIdle.h"
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -8,6 +10,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_iUVTexNumX(0), m_iUVTexNumY(0)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
+	, m_pState(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -60,35 +63,30 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 	if (m_bIsDead)
 		return OBJ_DEAD;
 
-	if (m_bIsMove)
-	{
-		Move(TimeDelta);
-	}
+	//if (m_bIsJump)
+	//{
+	//	/** 엔진에서 제공해야할 것:
+	//	* 1. 현재 하락세인지 검사
+	//	* 2. 파라볼라 종료 함수
+	//	*/
+	//	m_pTransformCom->ParabolaY(TimeDelta);
 
-	if (m_bIsJump)
-	{
-		/** 엔진에서 제공해야할 것:
-		* 1. 현재 하락세인지 검사
-		* 2. 파라볼라 종료 함수
-		*/
-		m_pTransformCom->ParabolaY(TimeDelta);
+	//	/** @note - 윗층으로 점프하는 경우 대비
+	//	* 하락세일 때, 가장 가까이 있는 땅으로 착지 */
+	//	_float fLandingY = 0.0;
+	//	if (true == m_pTransformCom->CheckParabolicDecline())
+	//	{
+	//		// 하락세일 때 가장 가까운 땅 검사해서 착지
+	//		if (fLandingY > XMVectorGetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+	//		{
+	//			m_pTransformCom->Set_State(CTransform::STATE_POSITION
+	//				, XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION), fLandingY));
 
-		/** @note - 윗층으로 점프하는 경우 대비
-		* 하락세일 때, 가장 가까이 있는 땅으로 착지 */
-		_float fLandingY = 0.0;
-		if (true == m_pTransformCom->CheckParabolicDecline())
-		{
-			// 하락세일 때 가장 가까운 땅 검사해서 착지
-			if (fLandingY > XMVectorGetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
-			{
-				m_pTransformCom->Set_State(CTransform::STATE_POSITION
-					, XMVectorSetY(m_pTransformCom->Get_State(CTransform::STATE_POSITION), fLandingY));
-
-				m_pTransformCom->End_Parabola();
-				m_bIsJump = false;
-			}
-		}
-	}
+	//			m_pTransformCom->End_Parabola();
+	//			m_bIsJump = false;
+	//		}
+	//	}
+	//}
 
 	return _uint();
 }
@@ -116,23 +114,18 @@ HRESULT CSpriteObject::Render()
 	return S_OK;
 }
 
-void CSpriteObject::Move(_double TimeDelta)
+void CSpriteObject::Input_Handler(const STATE_TYPE Input)
 {
-	switch (m_eMoveDir)
-	{
-	case CONTROL_KEY::LEFT:
-		m_pTransformCom->Go_Left(TimeDelta);
-		break;
+	CState* pState = m_pState->Input_Handler(this, Input);
+	
+	if (nullptr == pState)
+		return;
 
-	case CONTROL_KEY::RIGHT:
-		m_pTransformCom->Go_Right(TimeDelta);
-		break;
+	if (nullptr != m_pState)
+		delete m_pState;
 
-	default:
-		break;
-	}
-	m_bIsMove = false;
-	Change_Motion(MOTION_TYPE::IDLE);
+	m_pState = pState;
+	m_pState->Enter(this);
 }
 
 HRESULT CSpriteObject::Add_Components(void* pArg)
@@ -204,6 +197,8 @@ CGameObject* CSpriteObject::Clone(void* pArg) const
 void CSpriteObject::Free()
 {
 	__super::Free();
+
+	Safe_Delete(m_pState);
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌

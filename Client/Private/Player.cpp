@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "PlayerIdle.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -22,6 +23,8 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	{
 		return E_FAIL;
 	}
+
+	m_pState = new CPlayerIdle();
 	return S_OK;
 }
 
@@ -29,6 +32,8 @@ _uint CPlayer::Tick(_double TimeDelta)
 {
 	if (!m_bIsEquipped)
 		return _uint();
+
+	m_pState->Update(this, TimeDelta);
 
 	return __super::Tick(TimeDelta);
 }

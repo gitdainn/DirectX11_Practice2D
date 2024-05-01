@@ -1,17 +1,2 @@
-﻿  GrimReaper.cpp
-  InputHandler.cpp
-  LittleBorn.cpp
-  MainApp.cpp
-  MoveCmd.cpp
-  Player.cpp
-  PlayerInfo.cpp
-  RotationCmd.cpp
-  BackGround.cpp
-  Level_Logo.cpp
-  Loader.cpp
-  SpriteObject.cpp
-D:\1. GameProject\DirectX11_Practice2D\Client\Default\SpriteObject.cpp(191,45): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
-  (소스 파일 '/SpriteObject.cpp'을(를) 컴파일하는 중)
-  
-  코드를 생성하고 있습니다...
+﻿  InputHandler.cpp
   Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

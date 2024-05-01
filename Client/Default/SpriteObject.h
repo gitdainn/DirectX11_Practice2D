@@ -9,6 +9,14 @@
 #include "Texture.h"
 #pragma endregion
 
+/** @note - 전방선언의 기준은?
+- CState와 CSpriteObject 처럼 서로 상호작용하고 있는 경우 둘 중 하나라도 먼저 정의가 완료되지 않은 상태에서 참조하므로 오류가 뜸. 이때 전방선언 필요
+- 현재 CState* m_pState처럼 보유만 하고 있는 곳에서는 CState라는 애 있어~ 라고 전방선언만 해주고, 실제 구현부 -> 사용하는 곳에서 cpp 추가해주기
+*/
+
+/** @qurious - 근데 파라미터로 CSpriteObject를 받는 경우에는 전방선언 X 헤더를 추가해줘야하는듯함. (CState 클래스 참고)*/
+class CState;
+
 // @qurious. 분리해주는 이유가 뭐지? 엔진과 클라 간의 충돌 방지?
 BEGIN(Engine)
 class CRenderer;
@@ -35,13 +43,6 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
-	void Set_IsMove(const CONTROL_KEY eMove, const bool bIsMove = true)
-	{
-		m_bIsMove = true;
-		m_eMoveDir = eMove;
-	}
-
 protected: // Animation
 	struct ANIM_INFO
 	{
@@ -55,11 +56,19 @@ protected: // Animation
 
 	virtual void Add_Animation() = 0;
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
-	virtual void Move(_double TimeDelta);
 
 public:
+	void	Input_Handler(const STATE_TYPE Input);
+
+	bool IsEndSprite()
+	{
+		return m_bIsAnimUV ?
+			m_tSpriteInfo.iTextureIndex == m_pAnimInfo[m_iCurrentAnim].iStartIndex
+			: m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+	}
+
 	template<typename T>
-	void Change_Motion(const T& Motion);
+	void Change_Sprite(const T& Sprite);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
@@ -87,12 +96,9 @@ protected:
 protected:
 	bool	m_bIsDead;
 	bool	m_bIsRender;
-	bool	m_bIsMove;
-	bool	m_bIsJump;
-	bool	m_bIsFall;
 	bool	m_bIsAnimUV;
 
-	CONTROL_KEY				m_eMoveDir;
+	CState*					m_pState;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
@@ -105,19 +111,19 @@ public:
 };
 
 template<typename T>
-inline void CSpriteObject::Change_Motion(const T& Motion)
+inline void CSpriteObject::Change_Sprite(const T& Sprite)
 {
-	if (m_iCurrentAnim == (_uint)Motion)
+	if (m_iCurrentAnim == (_uint)Sprite)
 		return;
 	
-	m_iCurrentAnim = (_uint)Motion;
+	m_iCurrentAnim = (_uint)Sprite;
 	if (m_bIsAnimUV)
 	{
-		m_iUVTextureIndex = m_pAnimInfo[(_uint)Motion].iStartIndex;
+		m_iUVTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
 	}
 	else
 	{
-		m_tSpriteInfo.iTextureIndex = m_pAnimInfo[(_uint)Motion].iStartIndex;
+		m_tSpriteInfo.iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
 	}
 }
 

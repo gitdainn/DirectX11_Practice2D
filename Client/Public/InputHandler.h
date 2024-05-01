@@ -13,7 +13,7 @@ private:
     ~CInputHandler();
 
 public:
-    CCommand* Key_Input(CGameObject** OutObject) const;
+    CCommand* Key_Input() const;
     
 private:
     /** @qurious - map 정의 시 const 포인터는 가능하나 const int 같이 타입 상수는 삭제됐다고 안된다고 함 */

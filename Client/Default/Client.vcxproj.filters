@@ -76,6 +76,15 @@
     <Filter Include="03.DesignPattern\Command\TemplateTest">
       <UniqueIdentifier>{ab940ebc-a893-4678-bf4e-84f7332b97d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.DesignPattern\State">
+      <UniqueIdentifier>{f5386d66-8dc3-4a69-aa43-61c3ff7fa436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\State\PlayerState">
+      <UniqueIdentifier>{ef7e6694-3424-4e7b-b8ba-77f479f04929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Manager">
+      <UniqueIdentifier>{fde2b693-111a-4c88-8aa0-c0167d2d6dbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -127,9 +136,6 @@
     <ClInclude Include="..\Public\LittleBorn.h">
       <Filter>02.GameObject\Player\LittleBorn</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerInfo.h">
-      <Filter>02.GameObject\Player</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\Command.h">
       <Filter>03.DesignPattern\Command</Filter>
     </ClInclude>
@@ -144,6 +150,21 @@
     </ClInclude>
     <ClInclude Include="..\Public\MoveCmd.h">
       <Filter>03.DesignPattern\Command\MoveCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\State.h">
+      <Filter>03.DesignPattern\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerWalk.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerAtk.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerIdle.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerInfo.h">
+      <Filter>05.Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -184,9 +205,6 @@
     <ClCompile Include="..\Private\LittleBorn.cpp">
       <Filter>02.GameObject\Player\LittleBorn</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerInfo.cpp">
-      <Filter>02.GameObject\Player</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\Command.cpp">
       <Filter>03.DesignPattern\Command</Filter>
     </ClCompile>
@@ -201,6 +219,21 @@
     </ClCompile>
     <ClCompile Include="..\Private\MoveCmd.cpp">
       <Filter>03.DesignPattern\Command\MoveCmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\State.cpp">
+      <Filter>03.DesignPattern\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerWalk.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerAtk.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerIdle.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerInfo.cpp">
+      <Filter>05.Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

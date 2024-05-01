@@ -71,25 +71,13 @@ void list_remaining_d3d_objects()
 void CMainApp::Tick(_double TimeDelta)
 {
 	/** @qurious - 넘겨받는 커맨드 종류에 따라 UI를 넘길지 Player를 넘길지 어케 결정하지..? */
-/** @qurious - 왜 const CCommand면 -> Execute가 불가지? */
-	CGameObject** pObject = nullptr;
+	/** @qurious - 왜 const CCommand면 -> Execute가 불가지? */
 	/** @note - 매개변수가 이중포인터일 때 CGameObject* pObject를 &pObject로 넘기면 값 못 받아옴. */
-	CCommand* pCommand = CInputHandler::GetInstance()->Key_Input(pObject);
 	/** @note - CGameObject** pObject로 이중포인터일 경우 nullptr인데 *pObject처럼 값에 접근하면 오류 뜸! */
+	//CGameObject** pObject = nullptr;
+	//CCommand* pCommand = CInputHandler::GetInstance()->Key_Input(pObject);
 
-	CGameObject* pTest = nullptr;
-	if (nullptr != pObject)
-		pTest = *pObject;
-
-
-	// Move면 플레이어 넘기고 .. 메뉴면 UI 넘기고 .. 
-	// 근데 InputHandler에서 꼭 커맨드 안넘기고 걍 얘 cpp 안에서 메뉴 GetInstance해서 호출해도되나?
-	// 근데 사실 커맨드 자체는 플레이어 말고도 몬스터도 특정 조건에 따라서 발동함.. 이건 걍 하면될듯?
-	CGameObject* pPlayer = CPlayerInfo::GetInstance()->Get_EquippedSkul();
-	if (nullptr != pCommand)
-	{
-		pCommand->Execute(pPlayer);
-	}
+	CInputHandler::GetInstance()->Key_Input();
 
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
@@ -200,6 +188,9 @@ void CMainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);	
 
+	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
+	CPlayerInfo::GetInstance()->DestroyInstance();
+	CInputHandler::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 
 	//해제안된 COM객체 추적

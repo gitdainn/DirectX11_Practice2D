@@ -184,6 +184,10 @@
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\MoveCmd.h" />
+    <ClInclude Include="..\Public\PlayerAtk.h" />
+    <ClInclude Include="..\Public\PlayerIdle.h" />
+    <ClInclude Include="..\Public\PlayerWalk.h" />
+    <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\Public\TemplateCmd.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -210,6 +214,10 @@
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="..\Private\MoveCmd.cpp" />
+    <ClCompile Include="..\Private\PlayerAtk.cpp" />
+    <ClCompile Include="..\Private\PlayerIdle.cpp" />
+    <ClCompile Include="..\Private\PlayerWalk.cpp" />
+    <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\Private\TemplateCmd.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>

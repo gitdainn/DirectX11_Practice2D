@@ -24,7 +24,7 @@ namespace Client
 		SKILL2, ESSENCE, ROTATION
 	};
 
-	enum class MOTION_TYPE 
+	enum class STATE_TYPE 
 	{ 
 		IDLE, WALK, DASH,
 		ATK, JUMP_ATK, JUMP,
