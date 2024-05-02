@@ -30,7 +30,7 @@ namespace Client
 	enum class STATE_TYPE 
 	{ 
 		IDLE, WALK,
-		DASH, ATK, JUMP_ATK, JUMP,
+		DASH, ATK1, ATK2, JUMP_ATK, JUMP,
 		FALL, SKILL1, SKILL2, MOTION_END 
 	};
 

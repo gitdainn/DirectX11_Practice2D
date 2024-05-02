@@ -85,6 +85,9 @@
     <Filter Include="05.Manager">
       <UniqueIdentifier>{fde2b693-111a-4c88-8aa0-c0167d2d6dbd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Player\WaterSkul">
+      <UniqueIdentifier>{b4bbdb24-1900-4bcd-b390-4afd9e215c6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -172,6 +175,9 @@
     <ClInclude Include="..\Public\PlayerWalk.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\WaterSkul.h">
+      <Filter>02.GameObject\Player\WaterSkul</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -246,6 +252,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\PlayerJump.cpp">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WaterSkul.cpp">
+      <Filter>02.GameObject\Player\WaterSkul</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

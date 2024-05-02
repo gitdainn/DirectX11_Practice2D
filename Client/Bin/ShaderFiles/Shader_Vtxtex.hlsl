@@ -90,8 +90,8 @@ PS_OUT PS_FlipUV_ANIM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
 	
-	// UV를 좌우반전하여 순서도 반전됐으므로 조정
-    float fX = g_iUVTexNumX * 0.1 - (In.vTexUV.x + (g_iUVTexNumX - g_iUVIndexX)) / g_iUVTexNumX;
+	// UV를 좌우반전하여 순서도 반전됐으므로 조정 (만약 가로 5인데 3까지 있으면 0, 1, 2가 아니라 4, 3, 2로 접근해야함)
+    float fX = saturate(g_iUVTexNumX - g_iUVIndexX - 1) * 0.1 - (In.vTexUV.x + (g_iUVTexNumX - g_iUVIndexX)) / g_iUVTexNumX;
     float fY = (In.vTexUV.y + g_iUVIndexY) / g_iUVTexNumY;
     float2 NewUV = float2(fX, fY);
 	

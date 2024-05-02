@@ -53,7 +53,7 @@ CCommand* CInputHandler::Key_Input() const
 
     if (pGameInstance->Get_KeyDown(DIK_X))
     {
-        pPlayer->Input_Handler(STATE_TYPE::ATK);
+        pPlayer->Input_Handler(STATE_TYPE::ATK1);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_Z))
@@ -72,7 +72,10 @@ CCommand* CInputHandler::Key_Input() const
     }
 
     if (iter != m_CommandKeyMap.end())
+    {
         pCommand = iter->second;
+        pCommand->Execute();
+    }
 
     /** @note - CGameObject*에 CPlayer*는 담을 수 있지만, CGameObject**에 CPlayer*의 주소(&)를 담을 수 없음 */
 

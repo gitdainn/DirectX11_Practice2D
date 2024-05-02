@@ -28,7 +28,7 @@ CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		pState = new CPlayerIdle();
 		break;
 
-	case STATE_TYPE::ATK:
+	case STATE_TYPE::ATK1:
 		pState = new CPlayerAtk();
 		break;
 

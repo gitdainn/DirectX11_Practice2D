@@ -1,19 +1,17 @@
 #include "stdafx.h"
-#include "GrimReaper.h"
+#include "WaterSkul.h"
 
-/* @note - 생성자에 부모 생성자도 초기화해야 하는 이유
-* */
-CGrimReaper::CGrimReaper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWaterSkul::CWaterSkul(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer(pDevice, pContext)
 {
 }
 
-HRESULT CGrimReaper::Initialize_Prototype()
+HRESULT CWaterSkul::Initialize_Prototype()
 {
     return __super::Initialize_Prototype();
 }
 
-HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -30,8 +28,8 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
     m_tSpriteInfo.iTextureIndex = 0;
 
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 15;
+    m_iUVTexNumX = 8;
+    m_iUVTexNumY = 9;
     m_bIsAnimUV = true;
 
     Add_Animation();
@@ -39,64 +37,68 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     return S_OK;
 }
 
-_uint CGrimReaper::Tick(_double TimeDelta)
+_uint CWaterSkul::Tick(_double TimeDelta)
 {
     Play_Animation(m_iUVTextureIndex, TimeDelta);
     return CPlayer::Tick(TimeDelta);
 }
 
-_uint CGrimReaper::LateTick(_double TimeDelta)
+_uint CWaterSkul::LateTick(_double TimeDelta)
 {
     return CPlayer::LateTick(TimeDelta);
 }
 
-HRESULT CGrimReaper::Render()
+HRESULT CWaterSkul::Render()
 {
     return CPlayer::Render();
 }
 
-void CGrimReaper::Add_Animation()
+void CWaterSkul::Add_Animation()
 {
     m_pAnimInfo = new ANIM_INFO[(_uint)STATE_TYPE::MOTION_END];
 
     int iRow = { 0 };
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
-    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 9;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 5;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex = 5 + m_iUVTexNumX * iRow;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iEndIndex = 9 + m_iUVTexNumX * iRow;
-
-    ++iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iEndIndex = 6 + m_iUVTexNumX * iRow;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iEndIndex = 8 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iEndIndex = 7 + m_iUVTexNumX * iRow;
+
+    ++iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 0 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 4 + m_iUVTexNumX * iRow;
+
+    ++iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].iStartIndex = 0 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].iEndIndex = 5 + m_iUVTexNumX * iRow;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 6 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 2 + m_iUVTexNumX * iRow;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 7 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 3 + m_iUVTexNumX * iRow;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 0 + m_iUVTexNumX * iRow;
-    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 5 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 2 + m_iUVTexNumX * iRow;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 }
 
-HRESULT CGrimReaper::Add_Components(void* pArg)
+HRESULT CWaterSkul::Add_Components(void* pArg)
 {
-    m_pTextureTag = TEXT("Prototype_Component_Sprite_GrimReaperUV");
+    m_pTextureTag = TEXT("Prototype_Component_Sprite_WaterSkulUV");
 
     if (FAILED(__super::Add_Components(pArg)))
         return E_FAIL;
@@ -104,13 +106,15 @@ HRESULT CGrimReaper::Add_Components(void* pArg)
     return S_OK;
 }
 
-HRESULT CGrimReaper::SetUp_ShaderResources()
+HRESULT CWaterSkul::SetUp_ShaderResources()
 {
     if (FAILED(__super::SetUp_ShaderResources()))
         return E_FAIL;
 
     _uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
     _uint iUVIndexX = m_iUVTextureIndex - (m_iUVTexNumX * iUVIndexY);
+
+    // 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
     if (0 < iUVIndexX)
         --iUVIndexX;
 
@@ -129,33 +133,33 @@ HRESULT CGrimReaper::SetUp_ShaderResources()
     return S_OK;
 }
 
-CGrimReaper* CGrimReaper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CWaterSkul* CWaterSkul::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-    CGrimReaper* pInstance = new CGrimReaper(pDevice, pContext);
+    CWaterSkul* pInstance = new CWaterSkul(pDevice, pContext);
 
     if (FAILED(pInstance->Initialize_Prototype()))
     {
-        MSG_BOX("Failed to Created CGrimReaper");
+        MSG_BOX("Failed to Created CWaterSkul");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-CSpriteObject* CGrimReaper::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CWaterSkul::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
 {
-    CGrimReaper* pInstance = new CGrimReaper(*this);
+    CWaterSkul* pInstance = new CWaterSkul(*this);
 
     if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
     {
-        MSG_BOX("Failed to Cloned CGrimReaper");
+        MSG_BOX("Failed to Cloned CWaterSkul");
         Safe_Release(pInstance);
     }
 
     return pInstance;
 }
 
-void CGrimReaper::Free()
+void CWaterSkul::Free()
 {
     __super::Free();
 }

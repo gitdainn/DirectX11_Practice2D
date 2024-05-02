@@ -6,6 +6,7 @@
 #include "BackGround.h"
 #include "GrimReaper.h"
 #include "LittleBorn.h"
+#include "WaterSkul.h"
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
@@ -94,6 +95,14 @@ HRESULT CLoader::Loading_ForLogoLevel()
 		return E_FAIL;
 	};
 
+	/* For.Prototype_Component_Sprite_WaterSkul */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/WaterSkul/WaterSkulUV_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Test"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/Bat.png")))))
@@ -133,6 +142,14 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	/* For.Prototype_GameObject_LittleBorn */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LittleBorn"),
 		CLittleBorn::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_WaterSkul */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterSkul"),
+		CWaterSkul::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

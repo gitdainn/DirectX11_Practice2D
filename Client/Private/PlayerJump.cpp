@@ -45,7 +45,7 @@ CState* CPlayerJump::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		m_bIsPaused = false;
 		break;
 
-	case STATE_TYPE::ATK: // 공격 후에는 추가 점프 불가
+	case STATE_TYPE::ATK1: // 공격 후에는 추가 점프 불가
 		break;
 
 	case STATE_TYPE::DASH:

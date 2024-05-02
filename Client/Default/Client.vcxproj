@@ -200,6 +200,7 @@
     <ClInclude Include="..\Public\Player.h" />
     <ClInclude Include="..\Public\PlayerInfo.h" />
     <ClInclude Include="..\Public\RotationCmd.h" />
+    <ClInclude Include="..\Public\WaterSkul.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SpriteObject.h" />
@@ -235,6 +236,7 @@
     <ClCompile Include="..\Private\Player.cpp" />
     <ClCompile Include="..\Private\PlayerInfo.cpp" />
     <ClCompile Include="..\Private\RotationCmd.cpp" />
+    <ClCompile Include="..\Private\WaterSkul.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="stdafx.cpp">

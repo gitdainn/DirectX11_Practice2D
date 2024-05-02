@@ -18,7 +18,7 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 		pState = new CPlayerIdle();
 		break;
 
-	case STATE_TYPE::ATK:
+	case STATE_TYPE::ATK1:
 		pState = new CPlayerAtk(*this);
 		break;
 
@@ -35,7 +35,7 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 void CPlayerAtk::Enter(CSpriteObject* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
-	pObject->Change_Sprite(STATE_TYPE::ATK);
+	pObject->Change_Sprite(STATE_TYPE::ATK1);
 }
 
 void CPlayerAtk::Update(CSpriteObject* pObject, _double TimeDelta)
