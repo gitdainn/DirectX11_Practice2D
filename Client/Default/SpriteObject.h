@@ -58,7 +58,7 @@ protected: // Animation
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
 
 public:
-	void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
+	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 
 public:
 	void Set_ShaderPass(const _uint iPassIndex)
@@ -79,9 +79,14 @@ public:
 		return bIsSprite;
 	}
 
-	const SPRITE_DIRECTION& Get_SpriteDirection()
+	const SPRITE_DIRECTION& Get_SpriteDirection() const
 	{
 		return m_eSpriteDirection;
+	}
+
+	const STATE_TYPE& Get_CurrentState() const
+	{
+		return m_eCurrentState;
 	}
 
 public: 
@@ -117,12 +122,15 @@ protected:
 	bool	m_bIsAnimUV;
 	bool	m_bIsEndSprite;
 
-	SPRITE_DIRECTION		m_eSpriteDirection;
 	CState*					m_pState;
+	STATE_TYPE				m_eCurrentState;
+	SPRITE_DIRECTION		m_eSpriteDirection;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
 	_uint	m_iUVTexNumY;
+
+	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 public:
 	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
@@ -136,6 +144,7 @@ inline void CSpriteObject::Change_Sprite(const T& Sprite)
 	if (m_iCurrentAnim == (_uint)Sprite)
 		return;
 	
+	m_eCurrentState = Sprite;
 	m_iCurrentAnim = (_uint)Sprite;
 	if (m_bIsAnimUV)
 	{

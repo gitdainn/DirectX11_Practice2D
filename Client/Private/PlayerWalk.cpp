@@ -55,7 +55,8 @@ CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 void CPlayerWalk::Enter(CSpriteObject* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
-	pObject->Change_Sprite(STATE_TYPE::WALK);
+	if(STATE_TYPE::IDLE == pObject->Get_CurrentState())
+		pObject->Change_Sprite(STATE_TYPE::WALK);
 	pObject->Set_SpriteDirection(m_eDirection);
 
 	VTXTEX_PASS eShaderPass = VTXTEX_PASS::Default;

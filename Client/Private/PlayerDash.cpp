@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PlayerDash.h"
 #include "PlayerIdle.h"
+#include "PlayerAtk.h"
 
 CPlayerDash::CPlayerDash(const SPRITE_DIRECTION eDirection)
 	: m_eDirection(eDirection)
@@ -19,6 +20,14 @@ CState* CPlayerDash::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 	{
 	case STATE_TYPE::IDLE:
 		pState = new CPlayerIdle();
+		break;
+
+	case STATE_TYPE::ATK:
+		pState = new CPlayerAtk();
+		break;
+
+	case STATE_TYPE::DASH:
+		pState = new CPlayerDash(*this);
 		break;
 
 	default:

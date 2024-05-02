@@ -1,12 +1,15 @@
 #include "stdafx.h"
 #include "Player.h"
 #include "PlayerIdle.h"
+#include "PlayerJump.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
 	, m_pTextureTag(nullptr)
 	, m_bIsEquipped(false)
+	, m_bIsInAir(false)
+	, m_pAirState(nullptr)
 {
 }
 
@@ -25,6 +28,7 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	}
 
 	m_pState = new CPlayerIdle();
+	m_pAirState = new CPlayerJump();
 	return S_OK;
 }
 
@@ -34,6 +38,9 @@ _uint CPlayer::Tick(_double TimeDelta)
 		return _uint();
 
 	m_pState->Update(this, TimeDelta);
+
+	if(m_bIsInAir)
+		m_pAirState->Update(this, TimeDelta);
 
 	return __super::Tick(TimeDelta);
 }
@@ -49,6 +56,28 @@ _uint CPlayer::LateTick(_double TimeDelta)
 HRESULT CPlayer::Render()
 {
 	return __super::Render();
+}
+
+void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+{
+	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
+	CState* pAirState = m_pAirState->Input_Handler(this, Input, eDirection);
+
+	if (nullptr != pState)
+	{
+		//m_eCurrentState = Input;
+		delete m_pState;
+
+		m_pState = pState;
+		m_pState->Enter(this);
+	}
+
+	if (nullptr != pAirState)
+	{
+		delete m_pAirState;
+		m_pAirState = pAirState;
+		m_pAirState->Enter(this);
+	}
 }
 
 HRESULT CPlayer::Add_Components(void* pArg)
@@ -83,5 +112,6 @@ void CPlayer::Free()
 
 	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
 	//Safe_Delete_Array(m_pTextureTag);
+	Safe_Delete(m_pAirState);
 	Safe_Delete_Array(m_pAnimInfo);
 }

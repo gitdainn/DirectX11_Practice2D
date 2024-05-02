@@ -27,20 +27,28 @@ CCommand* CInputHandler::Key_Input() const
     auto iter = m_CommandKeyMap.end();
     CSpriteObject* pPlayer = CPlayerInfo::GetInstance()->Get_EquippedSkul();
 
-    if (pGameInstance->Get_KeyDown(DIK_LEFT))
+    if (pGameInstance->Get_KeyStay(DIK_LEFT))
     {
         pPlayer->Input_Handler(STATE_TYPE::WALK, SPRITE_DIRECTION::LEFT);
     }
 
-    if (pGameInstance->Get_KeyDown(DIK_RIGHT))
+    if (pGameInstance->Get_KeyStay(DIK_RIGHT))
     {
         pPlayer->Input_Handler(STATE_TYPE::WALK, SPRITE_DIRECTION::RIGHT);
     }
 
     if (pGameInstance->Get_KeyUp(DIK_LEFT)
-        || pGameInstance->Get_KeyUp(DIK_RIGHT))
+        && SPRITE_DIRECTION::LEFT == pPlayer->Get_SpriteDirection())
     {
-        pPlayer->Input_Handler(STATE_TYPE::IDLE);
+        if (STATE_TYPE::WALK == pPlayer->Get_CurrentState())
+            pPlayer->Input_Handler(STATE_TYPE::IDLE);
+    }
+
+    if (pGameInstance->Get_KeyUp(DIK_RIGHT)
+        && SPRITE_DIRECTION::RIGHT == pPlayer->Get_SpriteDirection())
+    {
+        if (STATE_TYPE::WALK == pPlayer->Get_CurrentState())
+            pPlayer->Input_Handler(STATE_TYPE::IDLE);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_X))
@@ -55,7 +63,7 @@ CCommand* CInputHandler::Key_Input() const
 
     if (pGameInstance->Get_KeyDown(DIK_C))
     {
-        iter = m_CommandKeyMap.find(CONTROL_KEY::JUMP);
+        pPlayer->Input_Handler(STATE_TYPE::JUMP);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_R))

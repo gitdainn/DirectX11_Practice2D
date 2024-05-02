@@ -58,29 +58,29 @@ void CGrimReaper::Add_Animation()
 {
     m_pAnimInfo = new ANIM_INFO[(_uint)STATE_TYPE::MOTION_END];
 
-    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
-    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 9;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 1;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 10;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 10;
-    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex =19;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 11;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex =20;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iStartIndex = 20;
-    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iEndIndex = 29;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iStartIndex = 21;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK].iEndIndex = 30;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 30;
-    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 39;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 31;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 40;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iStartIndex = 40;
-    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iEndIndex = 48;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iStartIndex = 41;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP_ATK].iEndIndex = 50;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 50;
-    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 56;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 51;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 60;
 
-    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 60;
-    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 67;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 61;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 70;
 
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 71;
-    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 75;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 80;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 }

@@ -10,7 +10,7 @@ namespace Client
 
 	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
 
-	typedef enum class SPRITE_DIRECTION { LEFT, RIGHT , DIRECTION_END };
+	enum class SPRITE_DIRECTION { LEFT, RIGHT , DIRECTION_END };
 
 	typedef enum class eVTXTEX_PASS
 	{

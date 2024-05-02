@@ -10,6 +10,9 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 
 	switch (Input)
 	{
+	case STATE_TYPE::IDLE:
+		return new CPlayerIdle(*this);
+
 	case STATE_TYPE::WALK:
 		pState = new CPlayerWalk(eDirection);
 		break;

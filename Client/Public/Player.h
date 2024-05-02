@@ -15,9 +15,16 @@ public:
 	virtual HRESULT Render() override;
 
 public:
+	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
+
+public:
 	void	Set_IsEquipped(const bool bIsEquipped)
 	{
 		m_bIsEquipped = bIsEquipped;
+	}
+	void	Set_IsInAir(const bool bInAir)
+	{
+		m_bIsInAir = bInAir;
 	}
 
 protected:
@@ -31,6 +38,9 @@ protected:
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_tchar* m_pTextureTag;
 	bool	m_bIsEquipped;
+
+	CState* m_pAirState;
+	bool	m_bIsInAir;
 
 public:
 	/* Prototype */
