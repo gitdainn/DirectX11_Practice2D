@@ -83,20 +83,6 @@ void CTransform::Go_Backward(_double TimeDelta)
 	Set_State(CTransform::STATE_POSITION, vPosition);
 }
 
-void CTransform::ParabolaY(_double TimeDelta)
-{
-	const _float fGravity = 9.8f;
-	m_UpTime = m_ParabolaDesc.fPower * TimeDelta;
-	m_DownTime = (fGravity * m_ParabolaDesc.JumpTimeAcc * m_ParabolaDesc.JumpTimeAcc) * 0.5f;
-
-	_float fJumpY = m_ParabolaDesc.fPower * (_float)TimeDelta 
-		- (fGravity * m_ParabolaDesc.JumpTimeAcc * m_ParabolaDesc.JumpTimeAcc) * 0.5f;
-
-	m_ParabolaDesc.JumpTimeAcc += TimeDelta;
-
-	Set_State(CTransform::STATE_POSITION, XMVectorSetY(Get_State(CTransform::STATE_POSITION), fJumpY));
-}
-
 void CTransform::Rotation(_fvector vAxis, _double Radian)
 {
 	_float3		vScale = Get_Scaled();

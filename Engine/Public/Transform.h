@@ -20,12 +20,6 @@ public:
 		_double		RotationPerSec;
 	}TRANSFORM_DESC;
 
-	typedef struct tagParabola
-	{
-		_float fPower;
-		_double JumpTimeAcc;
-	}PARABOLA_DESC;
-
 private:
 	CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CTransform(const CTransform& rhs);
@@ -69,10 +63,6 @@ public: /* Setter */
 	void Set_TransformDesc(const TRANSFORM_DESC& TransformDesc) {
 		m_TransformDesc = TransformDesc; }
 
-	void Set_ParabolaDesc(const PARABOLA_DESC& ParabolaDesc) {
-		m_ParabolaDesc = ParabolaDesc;
-	}
-
 	void Set_Scaled(const _float3& vScale);
 
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pContantName);
@@ -86,16 +76,6 @@ public:
 	void Go_Left(_double TimeDelta);
 	void Go_Right(_double TimeDelta);
 	void Go_Backward(_double TimeDelta);
-
-	void ParabolaY(_double TimeDelta);
-	bool CheckParabolicDecline()
-	{
-		return m_UpTime < m_DownTime;
-	}
-	void End_Parabola()
-	{
-		m_ParabolaDesc.JumpTimeAcc = 0.0;
-	}
 
 	/* 정적인 회전. : 항등상태기준 vAxis축으로 Radian만큼 회전해 있는다. */
 	void Rotation(_fvector vAxis, _double Radian);
@@ -115,9 +95,6 @@ private:
 	_float4x4			m_WorldMatrix;
 	// _matrix : 행렬의 연산을 위한 데이터 타입. 
 	TRANSFORM_DESC		m_TransformDesc;
-	PARABOLA_DESC		m_ParabolaDesc;
-	_double				m_UpTime;
-	_double				m_DownTime;
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
