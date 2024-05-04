@@ -62,34 +62,42 @@ void CGrimReaper::Add_Animation()
     int iRow = { 0 };
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 9;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].fAnimTime = 1.f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].fAnimTime =  1.f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK1].fAnimTime = 0.5f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].fAnimTime = 0.6f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iEndIndex = 8 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK2].fAnimTime = 0.6f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 6 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].fAnimTime = 1.f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 7 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].fAnimTime = 1.f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 5 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].fAnimTime = 0.6f;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 }
@@ -110,9 +118,7 @@ HRESULT CGrimReaper::SetUp_ShaderResources()
         return E_FAIL;
 
     _uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
-    _uint iUVIndexX = m_iUVTextureIndex - (m_iUVTexNumX * iUVIndexY);
-    if (0 < iUVIndexX)
-        --iUVIndexX;
+    _uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
 
     if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
         return E_FAIL;

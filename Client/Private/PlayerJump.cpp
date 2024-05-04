@@ -121,13 +121,13 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
-	const _float fPower = 400.f;
+	const _float fPower = 800.f;
 	// sin(포물선운동 진행각도90) = 1
 	m_UpTime = fPower * m_JumpTimeAcc *TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
 	_float fJumpY = fPower * (_float)TimeDelta
-		- (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
+		- (fGravity * (_float)m_JumpTimeAcc * (_float)m_JumpTimeAcc) * 0.5f;
 	
 	m_JumpTimeAcc += TimeDelta;
 

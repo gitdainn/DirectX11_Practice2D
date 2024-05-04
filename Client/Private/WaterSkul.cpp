@@ -60,38 +60,49 @@ void CWaterSkul::Add_Animation()
     int iRow = { 0 };
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 5;
+    m_pAnimInfo[(_uint)STATE_TYPE::IDLE].fAnimTime = 1.f;
+
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::WALK].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::WALK].iEndIndex = 5 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::WALK].fAnimTime = 1.f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iEndIndex = 6 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK1].fAnimTime = 0.5f;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iEndIndex = 7 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::ATK2].fAnimTime = 0.6f ;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 4 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].fAnimTime = 0.6f;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].iEndIndex = 5 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].fAnimTime = 0.6f;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 2 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::JUMP].fAnimTime = 1.f;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::FALL].iEndIndex = 3 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::FALL].fAnimTime = 1.f;
 
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].iEndIndex = 2 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].fAnimTime = 0.3f;
+    m_pAnimInfo[(_uint)STATE_TYPE::DASH].fDelayTimeMap.emplace( 1, 2.2f );
 
     m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 }
@@ -112,12 +123,10 @@ HRESULT CWaterSkul::SetUp_ShaderResources()
         return E_FAIL;
 
     _uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
-    _uint iUVIndexX = m_iUVTextureIndex - (m_iUVTexNumX * iUVIndexY);
+    /** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 큰 수처럼 이상수 나옴) */
+    _uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
 
     // 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
-    if (0 < iUVIndexX)
-        --iUVIndexX;
-
     if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
         return E_FAIL;
 

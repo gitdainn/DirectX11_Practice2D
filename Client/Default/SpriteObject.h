@@ -46,9 +46,12 @@ public:
 protected: // Animation
 	struct ANIM_INFO
 	{
-		float fAnimTime = { 1.f };
-		int iStartIndex = { 0 };
-		int iEndIndex = { 0 };
+		_float fAnimTime = { 0.f };
+		// @qurious - vector를 하려면 딜레이없는 애들까지 공간 다 만들어줘야하고, 공간을 아끼자니 몇번째 인덱스인지 .find()를 써야함 ㅁ가 더 좋을까?
+		/** @qurious - map 타입 정의에는 const 쓰면 안됨 */
+		unordered_map<_uint, _float> fDelayTimeMap;
+		_uint iStartIndex = { 0 };
+		_uint iEndIndex = { 0 };
 	};
 	ANIM_INFO* m_pAnimInfo = { nullptr };
 	_uint m_iCurrentAnim = { 0 };

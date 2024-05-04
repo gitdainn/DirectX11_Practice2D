@@ -9,11 +9,6 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 
 	switch (Input)
 	{
-	default:
-		break;
-	}
-	switch (Input)
-	{
 	case STATE_TYPE::IDLE:
 		pState = new CPlayerIdle();
 		break;

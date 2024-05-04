@@ -150,10 +150,16 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 {
 	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
-	float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / (float)abs(m_pAnimInfo[m_iCurrentAnim].iEndIndex - m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+
+	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_tSpriteInfo.iTextureIndex;
+	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
+	_float fDelayTime = { 0.f };
+	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
+		fDelayTime = iter->second;
 
 	m_fTimeAcc += (_float)TimeDelta;
-	if (fPerAnimTime <= m_fTimeAcc)
+	if (fPerAnimTime + fDelayTime <= m_fTimeAcc)
 	{
 		m_fTimeAcc = 0.f;
 		++iSpriteIndex;
@@ -177,6 +183,12 @@ void CSpriteObject::Free()
 	__super::Free();
 
 	Safe_Delete(m_pState);
+
+	if (nullptr != m_pAnimInfo)
+	{
+		m_pAnimInfo->fDelayTimeMap.clear();
+		Safe_Delete_Array(m_pAnimInfo);
+	}
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌

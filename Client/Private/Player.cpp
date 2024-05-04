@@ -113,5 +113,4 @@ void CPlayer::Free()
 	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
 	//Safe_Delete_Array(m_pTextureTag);
 	Safe_Delete(m_pAirState);
-	Safe_Delete_Array(m_pAnimInfo);
 }
