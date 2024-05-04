@@ -9,8 +9,8 @@ d:\1. gameproject\directx11_practice2d\client\default\x64\debug\player.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\state.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\playerwalk.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\playeridle.obj
+d:\1. gameproject\directx11_practice2d\client\default\x64\debug\playerdash.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\playeratk.obj
-d:\1. gameproject\directx11_practice2d\client\default\x64\debug\movecmd.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\mainapp.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\loader.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\littleborn.obj
@@ -23,6 +23,8 @@ d:\1. gameproject\directx11_practice2d\client\default\x64\debug\command.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\camera_dynamic.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\background.obj
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\spriteobject.obj
+d:\1. gameproject\directx11_practice2d\client\default\x64\debug\playerjump.obj
+d:\1. gameproject\directx11_practice2d\client\default\x64\debug\waterskul.obj
 d:\1. gameproject\directx11_practice2d\client\bin\shader_vtxanimmodel.cso
 d:\1. gameproject\directx11_practice2d\client\bin\shader_vtxcube.cso
 d:\1. gameproject\directx11_practice2d\client\bin\shader_vtxinstance.cso
@@ -34,7 +36,6 @@ d:\1. gameproject\directx11_practice2d\client\bin\client.exe
 d:\1. gameproject\directx11_practice2d\client\bin\client.pdb
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\client.res
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\client.ilk
-d:\1. gameproject\directx11_practice2d\client\default\x64\debug\inputhandler.obj.enc
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\client.tlog\cl.command.1.tlog
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\client.tlog\cl.items.tlog
 d:\1. gameproject\directx11_practice2d\client\default\x64\debug\client.tlog\cl.read.1.tlog

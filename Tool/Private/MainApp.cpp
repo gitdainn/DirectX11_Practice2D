@@ -1,15 +1,20 @@
-#include "stdafx.h"
+#pragma once
+
+#pragma region IMGUI
+// 먼저 추가해야함. 아니면 에러래.
+#include "imgui.h"
+#include "imgui_impl_win32.h"
+#include "imgui_impl_dx11.h"
+#pragma endregion
+
 #include "MainApp.h"
 #include "GameInstance.h"
-#include "Level_Loading.h"
-#include "InputHandler.h"
-#include "PlayerInfo.h"
 
-USING(Client)
+USING(Tool)
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
-{	
+{
 	Safe_AddRef(m_pGameInstance);
 }
 
@@ -23,14 +28,18 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewSizeX = g_iWinSizeX;
 	GraphicDesc.iViewSizeY = g_iWinSizeY;
 
+	/** @ImGui */
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+
 	if (FAILED(m_pGameInstance->Initialize_Engine(LEVEL_END, g_hInst, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
 	/*
 	MakeSpriteFont "배찌체" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
-	*/ 
-	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
-		return E_FAIL;
+	*/
+	//if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
+	//	return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Component_For_Static()))
 		return E_FAIL;
@@ -44,6 +53,11 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
 		return E_FAIL;
 
+	/** @ImGui */
+	ImGui::StyleColorsDark();
+
+	ImGui_ImplWin32_Init(g_hWnd);
+	ImGui_ImplDX11_Init(m_pDevice, m_pContext);
 
 	return S_OK;
 }
@@ -79,8 +93,6 @@ void CMainApp::Tick(_double TimeDelta)
 	//CGameObject** pObject = nullptr;
 	//CCommand* pCommand = CInputHandler::GetInstance()->Key_Input(pObject);
 
-	CInputHandler::GetInstance()->Key_Input();
-
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
 	m_pGameInstance->Tick_Engine(TimeDelta);
@@ -93,13 +105,20 @@ void CMainApp::Tick(_double TimeDelta)
 
 HRESULT CMainApp::Render()
 {
+	/** @ImGui */
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	static bool bDemo = true;
+	ImGui::ShowDemoWindow(&bDemo);
+
+	ImGui::Render();
+
 	m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f));
 	m_pGameInstance->Clear_DepthStencil_View();
 
 	m_pRenderer->Draw_RenderGroup();
-
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("Dainn"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
 
 #ifdef _DEBUG
 	++m_dwNumDraw;
@@ -111,9 +130,10 @@ HRESULT CMainApp::Render()
 		m_dwNumDraw = 0;
 	}
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
 #endif
+
+	/** @ImGui */
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
 
 	m_pGameInstance->Present();
 
@@ -121,8 +141,10 @@ HRESULT CMainApp::Render()
 }
 
 HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
-{		
-	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));	
+{
+	//return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));
+
+	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Prototype_Component_For_Static()
@@ -142,10 +164,10 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	/* For.Prototype_Component_Shader_VtxTex*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
+	///* For.Prototype_Component_Shader_VtxTex*/
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+	//	CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+	//	return E_FAIL;
 
 
 
@@ -168,9 +190,9 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	return S_OK;
 }
 
-CMainApp * CMainApp::Create()
+CMainApp* CMainApp::Create()
 {
-	CMainApp*		pInstance = new CMainApp();
+	CMainApp* pInstance = new CMainApp();
 
 	if (FAILED(pInstance->Initialize()))
 	{
@@ -188,11 +210,14 @@ void CMainApp::Free()
 	//Safe_Release(m_pRenderer); // Renderer는 컴포넌트에 추가되어 있어, 추후 Component에서 모두 Release하기 떄문에 X
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
 
-	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
-	CPlayerInfo::GetInstance()->DestroyInstance();
-	CInputHandler::GetInstance()->DestroyInstance();
+	/** @ImGui */
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
+
+
 	CGameInstance::Release_Engine();
 
 	//해제안된 COM객체 추적

@@ -1,6 +1,7 @@
 #pragma once
 
 /* 클라이언트에서 자주사용하는 변수나 정의를 담는다. */
+#include "stdafx.h"
 #include "Time.h"
 
 namespace Client

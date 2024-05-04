@@ -1,9 +1,45 @@
 ﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
   compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Engine\Bin\Shader_Deferred.cso
+  Base.cpp
+  BlendObject.cpp
+  Camera.cpp
+  Collider.cpp
+  Component.cpp
+  Component_Manager.cpp
+  CustomFont.cpp
+  DebugDraw.cpp
+  DInput_Manager.cpp
+  Font_Manager.cpp
+  Frustum.cpp
+  GameInstance.cpp
+  GameObject.cpp
+  Graphic_Device.cpp
+  Input_Device.cpp
+  Layer.cpp
+  Level.cpp
+  Level_Manager.cpp
+  Light.cpp
+  Light_Manager.cpp
+  코드를 생성하고 있습니다...
+  컴파일하고 있습니다...
+  Object_Manager.cpp
+  PipeLine.cpp
+  Renderer.cpp
+  RenderTarget.cpp
+  Shader.cpp
+  Target_Manager.cpp
+  Texture.cpp
+  Timer.cpp
+  Timer_Manager.cpp
   Transform.cpp
-D:\1. GameProject\DirectX11_Practice2D\Engine\private\Transform.cpp(92,16): warning C4244: '초기화 중': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
-  LINK : ..\Bin\Engine.dll을(를) 찾을 수 없거나 마지막 증분 링크에 의해 빌드되지 않았습니다. 전체 링크를 수행하고 있습니다.
+  Utility.cpp
+  VIBuffer.cpp
+  VIBuffer_Cell.cpp
+  VIBuffer_Cube.cpp
+  VIBuffer_Rect.cpp
+  Engine_Struct.cpp
+  코드를 생성하고 있습니다...
 Effects11d.lib(EffectAPI.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectAPI.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 Effects11d.lib(d3dxGlobal.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(d3dxGlobal.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.
 Effects11d.lib(EffectNonRuntime.obj) : warning LNK4099: '' PDB를 'Effects11d.lib(EffectNonRuntime.obj)' 또는 ''에서 찾을 수 없습니다. 디버그 정보가 없는 것처럼 개체를 링크합니다.

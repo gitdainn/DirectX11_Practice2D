@@ -173,7 +173,6 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
-    <ClInclude Include="..\Public\Client_Defines.h" />
     <ClInclude Include="..\Public\Command.h" />
     <ClInclude Include="..\Public\GrimReaper.h" />
     <ClInclude Include="..\Public\InputHandler.h" />
@@ -202,6 +201,7 @@
     <ClInclude Include="..\Public\RotationCmd.h" />
     <ClInclude Include="..\Public\WaterSkul.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Client_Defines.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SpriteObject.h" />
     <ClInclude Include="stdafx.h" />
