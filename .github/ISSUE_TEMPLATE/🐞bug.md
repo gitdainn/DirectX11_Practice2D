@@ -13,13 +13,11 @@ assignees: gitdainn
 ## ⛔Problem
 오류로 인한 문제점
 
-## 🔧Try
-오류 해결을 위해 시도한 내용
-1. Todo
-
 ## ✅Solution
 해결 방법
 1. Todo
 
 ## 📚Reference
 참고자료
+
+## 💬ETC
