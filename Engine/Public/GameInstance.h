@@ -2,7 +2,7 @@
 
 #include "Component_Manager.h"
 #include "PipeLine.h"
-#include "Input_Device.h"
+#include "DInput_Manager.h"
 
 /* 엔진의 핵심이 되는 싱글턴 클래스.  */
 /* 엔진에서 사용되는 다양한 매니져클래스를 가지고 있는다. */
@@ -32,16 +32,23 @@ public: /* For.Graphic_Device */
 	HRESULT Clear_DepthStencil_View();	
 	HRESULT Present();
 
-public: /* For.Input_Device */
-	_byte Get_DIKeyState(_ubyte ubyKeyID);
-	_byte Get_DIMouseState(CInput_Device::MOUSEKEYSTATE eMouseID);
-	_long Get_DIMouseMove(CInput_Device::MOUSEMOVESTATE eMouseMoveID);
+public: /* For.Dinput_Manager */
+	_bool		Get_KeyStay(_ubyte ubyKeyID);
+	_bool		Get_KeyDown(_ubyte ubyKeyID);
+	_bool		Get_KeyUp(_ubyte ubyKeyID);
+
+	_bool		Get_MouseStay(CDInput_Manager::MOUSEKEYSTATE eMouseID);
+	_bool		Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE eMouseID);
+	_bool		Get_MouseUp(CDInput_Manager::MOUSEKEYSTATE eMouseID);
+
+	_long		Get_MouseMove(CDInput_Manager::MOUSEMOVESTATE eMouseMoveID);
 
 public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);
 
 public: /* For.Object_Manager */
 	class CComponent* Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
+	const list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
@@ -67,16 +74,12 @@ public: /* For.Font_Manager */
 public: /* For.Frustum */
 	_bool isIn_WorldFrustum(_fvector vPosition, _float fRange = 0.f);
 
-public: /* For.Target_Manager */
-	HRESULT Set_Shader_RTV(const _tchar* pTargetTag, class CShader* pShader, const char* pConstantName);
-
 public:
 	static void Release_Engine();
 
 private:
 	class CTimer_Manager*				m_pTimer_Manager = { nullptr };
 	class CGraphic_Device*				m_pGraphic_Device = { nullptr };
-	class CInput_Device*				m_pInput_Device = { nullptr };
 	class CLevel_Manager*				m_pLevel_Manager = { nullptr };
 	class CObject_Manager*				m_pObject_Manager = { nullptr };
 	class CComponent_Manager*			m_pComponent_Manager = { nullptr };
@@ -84,8 +87,7 @@ private:
 	class CLight_Manager*				m_pLight_Manager = { nullptr };
 	class CFont_Manager*				m_pFont_Manager = { nullptr };
 	class CFrustum*						m_pFrustum = { nullptr };
-	class CTarget_Manager*				m_pTarget_Manager = { nullptr };
-
+	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
 
 public:
 	virtual void Free() override;

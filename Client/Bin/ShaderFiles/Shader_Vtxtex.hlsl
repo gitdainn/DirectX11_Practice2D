@@ -5,7 +5,10 @@ matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 texture2D		g_Texture;
 texture2D		g_DepthTexture;
 float4			g_vColor;
-
+int				g_iUVIndexX;
+int				g_iUVIndexY;
+int				g_iUVTexNumX;
+int				g_iUVTexNumY;
 
 struct VS_IN
 {
@@ -23,8 +26,6 @@ struct VS_OUT
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
-
-	
 
 	matrix		matWV, matWVP;
 
@@ -50,7 +51,7 @@ struct PS_OUT
 	float4		vColor : SV_TARGET0;		
 };
 
-/* �ȼ��� ���� �����Ѵ�. */
+/* 픽셀의 색을 결정한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -58,7 +59,50 @@ PS_OUT PS_MAIN(PS_IN In)
 	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
     if (0.1 >= Out.vColor.a)
-        discard;;
+        discard;
+	
+    return Out;
+}
+
+/* 픽셀의 색을 결정한다. */
+PS_OUT PS_UV_ANIM(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+	
+    float fX = (In.vTexUV.x + g_iUVIndexX) / g_iUVTexNumX;
+    float fY = (In.vTexUV.y + g_iUVIndexY) / g_iUVTexNumY;
+    // float fX = (In.vTexUV.x) / g_iUVTexNumX +g_iUVIndexX; 
+    // float fY = (In.vTexUV.y) / g_iUVTexNumY + g_iUVIndexY;
+    float2 NewUV = float2(fX, fY);
+	
+	/* @note - LinearSampler는 hpp에서 정의한 밉맵 방식
+	우리는 현재 wrap 방식으로 1을 초과하면 반복되도록 사용 중
+	*/
+    Out.vColor = g_Texture.Sample(LinearSampler, NewUV);
+
+    if (0.1 >= Out.vColor.a)
+        discard;
+	
+    return Out;
+}
+
+PS_OUT PS_FlipUV_ANIM(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+	
+	// UV를 좌우반전하여 순서도 반전됐으므로 조정 (만약 가로 5인데 3까지 있으면 0, 1, 2가 아니라 4, 3, 2로 접근해야함)
+    float fX = saturate(g_iUVTexNumX - g_iUVIndexX - 1) * 0.1 - (In.vTexUV.x + (g_iUVTexNumX - g_iUVIndexX)) / g_iUVTexNumX;
+    float fY = (In.vTexUV.y + g_iUVIndexY) / g_iUVTexNumY;
+    float2 NewUV = float2(fX, fY);
+	
+	/* @note - LinearSampler는 hpp에서 정의한 밉맵 방식
+	우리는 현재 wrap 방식으로 1을 초과하면 반복되도록 사용 중
+	g_Texture라는 텍스처를 0~1 범위의 UV 좌표로 변경
+	*/
+    Out.vColor = g_Texture.Sample(LinearSampler, NewUV);
+
+    if (0.1 >= Out.vColor.a)
+        discard;
 	
     return Out;
 }
@@ -99,16 +143,29 @@ technique11		DefaultTechnique
 		PixelShader = compile ps_5_0 PS_MAIN();
 	}
 
-	pass Effect
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    pass UV_ANIM
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
 
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN_SOFTEFFECT();
-	}
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_UV_ANIM();
+    }
+
+    pass UV_INVERSION_ANIM
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_FlipUV_ANIM();
+    }
 }

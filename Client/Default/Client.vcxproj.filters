@@ -52,6 +52,42 @@
     <Filter Include="97.ShaderFiles\Model">
       <UniqueIdentifier>{a8b9b4e9-a42c-444a-9aa5-41231e20fe52}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Player\GrimReaper">
+      <UniqueIdentifier>{f19c7415-d41a-4018-8a6e-3869f7361f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\LittleBorn">
+      <UniqueIdentifier>{8a17bfd0-6a2c-4d2b-9838-f61319ab2fbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern">
+      <UniqueIdentifier>{07df51a0-92dd-4a44-87af-e19be37e27f0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command">
+      <UniqueIdentifier>{57f1461d-7bc3-427e-8da6-5b44f2ecc8b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\RotationCmd">
+      <UniqueIdentifier>{60963beb-b448-4a4e-8678-a818e79becd8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\MoveCmd">
+      <UniqueIdentifier>{751c9c3b-5ac8-49ee-97d4-74d8c820e068}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Handler">
+      <UniqueIdentifier>{44c203e1-40f9-409c-aa51-dd283fc43574}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\Command\TemplateTest">
+      <UniqueIdentifier>{ab940ebc-a893-4678-bf4e-84f7332b97d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\State">
+      <UniqueIdentifier>{f5386d66-8dc3-4a69-aa43-61c3ff7fa436}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.DesignPattern\State\PlayerState">
+      <UniqueIdentifier>{ef7e6694-3424-4e7b-b8ba-77f479f04929}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Manager">
+      <UniqueIdentifier>{fde2b693-111a-4c88-8aa0-c0167d2d6dbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Player\WaterSkul">
+      <UniqueIdentifier>{b4bbdb24-1900-4bcd-b390-4afd9e215c6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -97,6 +133,51 @@
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
     <ClInclude Include="SpriteObject.h" />
+    <ClInclude Include="..\Public\GrimReaper.h">
+      <Filter>02.GameObject\Player\GrimReaper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LittleBorn.h">
+      <Filter>02.GameObject\Player\LittleBorn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Command.h">
+      <Filter>03.DesignPattern\Command</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\RotationCmd.h">
+      <Filter>03.DesignPattern\Command\RotationCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\InputHandler.h">
+      <Filter>04. Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\TemplateCmd.h">
+      <Filter>03.DesignPattern\Command\TemplateTest</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MoveCmd.h">
+      <Filter>03.DesignPattern\Command\MoveCmd</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\State.h">
+      <Filter>03.DesignPattern\State</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerAtk.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerIdle.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerInfo.h">
+      <Filter>05.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerDash.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerJump.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerWalk.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\WaterSkul.h">
+      <Filter>02.GameObject\Player\WaterSkul</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -130,6 +211,51 @@
       <Filter>02.GameObject\Player</Filter>
     </ClCompile>
     <ClCompile Include="SpriteObject.cpp" />
+    <ClCompile Include="..\Private\GrimReaper.cpp">
+      <Filter>02.GameObject\Player\GrimReaper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LittleBorn.cpp">
+      <Filter>02.GameObject\Player\LittleBorn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Command.cpp">
+      <Filter>03.DesignPattern\Command</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\RotationCmd.cpp">
+      <Filter>03.DesignPattern\Command\RotationCmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\InputHandler.cpp">
+      <Filter>04. Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\TemplateCmd.cpp">
+      <Filter>03.DesignPattern\Command\TemplateTest</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MoveCmd.cpp">
+      <Filter>03.DesignPattern\Command\MoveCmd</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\State.cpp">
+      <Filter>03.DesignPattern\State</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerWalk.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerAtk.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerIdle.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerInfo.cpp">
+      <Filter>05.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerDash.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerJump.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\WaterSkul.cpp">
+      <Filter>02.GameObject\Player\WaterSkul</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -151,9 +277,6 @@
     <Text Include="노트.txt" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
-      <Filter>97.ShaderFiles\Buffer</Filter>
-    </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxCube.hlsl">
       <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
@@ -171,6 +294,9 @@
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_VtxModel.hlsl">
       <Filter>97.ShaderFiles\Model</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
+      <Filter>97.ShaderFiles\Buffer</Filter>
     </FxCompile>
   </ItemGroup>
 </Project>

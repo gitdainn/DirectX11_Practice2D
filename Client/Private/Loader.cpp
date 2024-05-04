@@ -4,7 +4,9 @@
 
 #include "Camera_Dynamic.h"
 #include "BackGround.h"
-#include "Player.h"
+#include "GrimReaper.h"
+#include "LittleBorn.h"
+#include "WaterSkul.h"
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
@@ -26,7 +28,7 @@ _uint APIENTRY LoadingMain(void* pArg)
 
 	switch (pLoader->Get_NextLevelID())
 	{
-	case LEVEL_LOGO: /* ·Îµù¾À ´ÙÀ½·¹º§ÀÌ ·Î°í´Ù. ·Î°í·¹º§¿¡ ÇÊ¿äÇÑ »çÀü »ı¼º(¸®¼Ò½º, ¿øÇü°´Ã¼) ÀÛ¾÷À» ÇÏÀÚ. */
+	case LEVEL_LOGO: /* ë¡œë”©ì”¬ ë‹¤ìŒë ˆë²¨ì´ ë¡œê³ ë‹¤. ë¡œê³ ë ˆë²¨ì— í•„ìš”í•œ ì‚¬ì „ ìƒì„±(ë¦¬ì†ŒìŠ¤, ì›í˜•ê°ì²´) ì‘ì—…ì„ í•˜ì. */
 		hr = pLoader->Loading_ForLogoLevel();
 		break;
 
@@ -52,8 +54,8 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 	InitializeCriticalSection(&m_CriticalSection);
 
-	/* ½º·¹µå¸¦ »ı¼ºÇÑ´Ù. */
-	/* ½º·¹µå¸¦ »ı¼ºÇÏ°ÔµÇ¸é ÁøÀÔÁ¡ÇÔ¼ö¸¦ Á¤ÀÇÇØ¾ßÇØ. */
+	/* ìŠ¤ë ˆë“œë¥¼ ìƒì„±í•œë‹¤. */
+	/* ìŠ¤ë ˆë“œë¥¼ ìƒì„±í•˜ê²Œë˜ë©´ ì§„ì…ì í•¨ìˆ˜ë¥¼ ì •ì˜í•´ì•¼í•´. */
 	m_hThread = (HANDLE)_beginthreadex(nullptr, 0, LoadingMain, this, 0, nullptr);
 	if (0 == m_hThread)
 		return E_FAIL;	
@@ -67,54 +69,99 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	Safe_AddRef(pGameInstance);
 	/*  */
 #pragma region TEXTURES	
-	wsprintf(m_szLoadingText, TEXT("ÅØ½ºÃÄ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("í…ìŠ¤ì³ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
 
 	/* For.Prototype_Component_Texture_Logo */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	};
 
 	/* For.Prototype_Component_Sprite_LittleBorn */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_LittleBorn"),
 		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
-		return E_FAIL;
-#pragma endregion
-
-#pragma region MODELS
-	wsprintf(m_szLoadingText, TEXT("¸ğµ¨¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
-	
-
-#pragma endregion
-
-#pragma region SHADERS
-	wsprintf(m_szLoadingText, TEXT("¼ÎÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
-	for (_uint i = 0; i < 999999999; ++i)
 	{
-		int a = 10;
-	}
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_WaterSkul */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/WaterSkul/WaterSkulUV_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Test"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/Bat.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 #pragma endregion
 
+//#pragma region SHADERS
+//	wsprintf(m_szLoadingText, TEXT("ì…°ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
+//	for (_uint i = 0; i < 999999999; ++i)
+//	{
+//		int a = 10;
+//	}
+//#pragma endregion
+//
 #pragma region GAMEOBJECTS
-	wsprintf(m_szLoadingText, TEXT("°´Ã¼¿øÇüÀ» ·ÎµùÁß."));
+	wsprintf(m_szLoadingText, TEXT("ê°ì²´ì›í˜•ì„ ë¡œë”©ì¤‘."));
 
 	/* For.Prototype_GameObject_BackGround */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	};
 
-	/* For.Prototype_GameObject_Player */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Player"),
-		CPlayer::Create(m_pDevice, m_pContext))))
+	/* For.Prototype_GameObject_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GrimReaper"),
+		CGrimReaper::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
-	
+	};
+
+	/* For.Prototype_GameObject_LittleBorn */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_LittleBorn"),
+		CLittleBorn::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_WaterSkul */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_WaterSkul"),
+		CWaterSkul::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 
 #pragma endregion
 
-	wsprintf(m_szLoadingText, TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("ë¡œë”©ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."));
 	m_isFinished = true;
 
 	Safe_Release(pGameInstance);
-	
+
 	return S_OK;
 }
 
@@ -124,55 +171,55 @@ HRESULT CLoader::Loading_ForGamePlayLevel()
 	Safe_AddRef(pGameInstance);
 
 	/*  */
-#pragma region TEXTURES
-#pragma endregion
-
-
-#pragma region VIBUFFER
-	/* For.Prototype_Component_VIBuffer_Cube */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
-		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-	
-#pragma endregion
-
-	wsprintf(m_szLoadingText, TEXT("Äİ¶óÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
-#pragma region COLLIDER
-	/* For.Prototype_Component_Collider_AABB*/
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Collider_OBB */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Collider_SPHERE */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
-		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
-		return E_FAIL;
-
-#pragma endregion
-
-
-#pragma region SHADERS
-	wsprintf(m_szLoadingText, TEXT("¼ÎÀÌ´õ¸¦ ·ÎµùÁßÀÔ´Ï´Ù."));
-	/* For.Prototype_Component_Shader_VtxNorTex */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-#pragma endregion
-
-
-#pragma region GAMEOBJECTS
-	wsprintf(m_szLoadingText, TEXT("°´Ã¼¿øÇüÀ» ·ÎµùÁß."));
-
-#pragma endregion
+//#pragma region TEXTURES
+//#pragma endregion
+//
+//
+//#pragma region VIBUFFER
+//	/* For.Prototype_Component_VIBuffer_Cube */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_VIBuffer_Cube"),
+//		CVIBuffer_Cube::Create(m_pDevice, m_pContext))))
+//		return E_FAIL;
+//	
+//#pragma endregion
+//
+//	wsprintf(m_szLoadingText, TEXT("ì½œë¼ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
+//#pragma region COLLIDER
+//	/* For.Prototype_Component_Collider_AABB*/
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_AABB"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_AABB))))
+//		return E_FAIL;
+//
+//	/* For.Prototype_Component_Collider_OBB */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_OBB"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_OBB))))
+//		return E_FAIL;
+//
+//	/* For.Prototype_Component_Collider_SPHERE */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Collider_SPHERE"),
+//		CCollider::Create(m_pDevice, m_pContext, CCollider::TYPE_SPHERE))))
+//		return E_FAIL;
+//
+//#pragma endregion
+//
+//
+//#pragma region SHADERS
+//	wsprintf(m_szLoadingText, TEXT("ì…°ì´ë”ë¥¼ ë¡œë”©ì¤‘ì…ë‹ˆë‹¤."));
+//	/* For.Prototype_Component_Shader_VtxNorTex */
+//	if (FAILED(pGameInstance->Add_Prototype(LEVEL_GAMEPLAY, TEXT("Prototype_Component_Shader_VtxNorTex"),
+//		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxNorTex.hlsl"), VTXNORTEX_DECLARATION::Elements, VTXNORTEX_DECLARATION::iNumElements))))
+//		return E_FAIL;
+//#pragma endregion
+//
+//
+//#pragma region GAMEOBJECTS
+//	wsprintf(m_szLoadingText, TEXT("ê°ì²´ì›í˜•ì„ ë¡œë”©ì¤‘."));
+//
+//#pragma endregion
 
 	Safe_Release(pGameInstance);
 
-	wsprintf(m_szLoadingText, TEXT("·ÎµùÀÌ ¿Ï·áµÇ¾ú½À´Ï´Ù."));
+	wsprintf(m_szLoadingText, TEXT("ë¡œë”©ì´ ì™„ë£Œë˜ì—ˆìŠµë‹ˆë‹¤."));
 	m_isFinished = true;
 
 	return S_OK;	

@@ -6,10 +6,12 @@
 CCamera_Dynamic::CCamera_Dynamic(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CCamera(pDevice, pContext)
 {
+	ZeroMemory(&m_CameraDynamicDesc, sizeof(m_CameraDynamicDesc));
 }
 
 CCamera_Dynamic::CCamera_Dynamic(const CCamera_Dynamic & rhs)
 	: CCamera(rhs)
+	, m_CameraDynamicDesc(rhs.m_CameraDynamicDesc)
 {
 }
 
@@ -36,29 +38,29 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (pGameInstance->Get_DIKeyState(DIK_W) & 0x80)
-		m_pTransform->Go_Straight(TimeDelta);
+	//if (pGameInstance->Get_KeyState(DIK_W))
+	//	m_pTransform->Go_Straight(TimeDelta);
 
-	if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
-		m_pTransform->Go_Backward(TimeDelta);
+	//if (pGameInstance->Get_DIKeyState(DIK_S) & 0x80)
+	//	m_pTransform->Go_Backward(TimeDelta);
 
-	if (pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
-		m_pTransform->Go_Left(TimeDelta);
+	//if (pGameInstance->Get_DIKeyState(DIK_A) & 0x80)
+	//	m_pTransform->Go_Left(TimeDelta);
 
-	if (pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
-		m_pTransform->Go_Right(TimeDelta);
+	//if (pGameInstance->Get_DIKeyState(DIK_D) & 0x80)
+	//	m_pTransform->Go_Right(TimeDelta);
 
-	_long MouseMove = { 0 };
+	//_long MouseMove = { 0 };
 
-	if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_X))
-	{
-		m_pTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * (MouseMove * 0.1f));
-	}
+	//if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_X))
+	//{
+	//	m_pTransform->Turn(XMVectorSet(0.f, 1.f, 0.f, 0.f), TimeDelta * (MouseMove * 0.1f));
+	//}
 
-	if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_Y))
-	{
-		m_pTransform->Turn(m_pTransform->Get_State(CTransform::STATE_RIGHT), TimeDelta * (MouseMove * 0.1f));
-	}
+	//if (MouseMove = pGameInstance->Get_DIMouseMove(CInput_Device::DIMM_Y))
+	//{
+	//	m_pTransform->Turn(m_pTransform->Get_State(CTransform::STATE_RIGHT), TimeDelta * (MouseMove * 0.1f));
+	//}
 
 
 	Safe_Release(pGameInstance);
@@ -94,7 +96,7 @@ CCamera_Dynamic * CCamera_Dynamic::Create(ID3D11Device * pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CGameObject * CCamera_Dynamic::Clone(void * pArg)
+CGameObject * CCamera_Dynamic::Clone(void * pArg) const
 {
 	CCamera_Dynamic*		pInstance = new CCamera_Dynamic(*this);
 

@@ -106,6 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../Public/;../Default/;../../Reference/Headers/</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -147,6 +148,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../Public/;../Default/;../../Reference/Headers/</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -172,12 +174,33 @@
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Client_Defines.h" />
+    <ClInclude Include="..\Public\Command.h" />
+    <ClInclude Include="..\Public\GrimReaper.h" />
+    <ClInclude Include="..\Public\InputHandler.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
+    <ClInclude Include="..\Public\LittleBorn.h" />
     <ClInclude Include="..\public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\MoveCmd.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\PlayerAtk.h" />
+    <ClInclude Include="..\Public\PlayerDash.h" />
+    <ClInclude Include="..\Public\PlayerIdle.h" />
+    <ClInclude Include="..\Public\PlayerJump.h" />
+    <ClInclude Include="..\Public\PlayerWalk.h" />
+    <ClInclude Include="..\Public\State.h" />
+    <ClInclude Include="..\Public\TemplateCmd.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\Player.h" />
+    <ClInclude Include="..\Public\PlayerInfo.h" />
+    <ClInclude Include="..\Public\RotationCmd.h" />
+    <ClInclude Include="..\Public\WaterSkul.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SpriteObject.h" />
@@ -187,12 +210,33 @@
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\Private\Command.cpp" />
+    <ClCompile Include="..\Private\GrimReaper.cpp" />
+    <ClCompile Include="..\Private\InputHandler.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
+    <ClCompile Include="..\Private\LittleBorn.cpp" />
     <ClCompile Include="..\private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\MoveCmd.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerAtk.cpp" />
+    <ClCompile Include="..\Private\PlayerDash.cpp" />
+    <ClCompile Include="..\Private\PlayerIdle.cpp" />
+    <ClCompile Include="..\Private\PlayerJump.cpp" />
+    <ClCompile Include="..\Private\PlayerWalk.cpp" />
+    <ClCompile Include="..\Private\State.cpp" />
+    <ClCompile Include="..\Private\TemplateCmd.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\Player.cpp" />
+    <ClCompile Include="..\Private\PlayerInfo.cpp" />
+    <ClCompile Include="..\Private\RotationCmd.cpp" />
+    <ClCompile Include="..\Private\WaterSkul.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SpriteObject.cpp" />
     <ClCompile Include="stdafx.cpp">

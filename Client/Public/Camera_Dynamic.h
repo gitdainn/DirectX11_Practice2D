@@ -29,7 +29,7 @@ private:
 
 public:
 	static CCamera_Dynamic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CGameObject* Clone(void* pArg = nullptr) override;
+	virtual CGameObject* Clone(void* pArg = nullptr) const override;
 	virtual void Free() override;
 };
 

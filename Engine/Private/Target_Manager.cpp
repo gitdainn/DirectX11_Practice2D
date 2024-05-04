@@ -142,6 +142,7 @@ list<class CRenderTarget*>* CTarget_Manager::Find_MRT(const _tchar * pMRTTag)
 
 void CTarget_Manager::Free()
 {
+	// @error - 이 pRenderTarget이 제대로 삭제가 안됨. 어디서 Safe_Release 한 번 더 해줘야함.
 	for (auto& Pair : m_MRTs)
 	{
 		for (auto& pRenderTarget : Pair.second)

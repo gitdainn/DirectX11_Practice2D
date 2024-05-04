@@ -106,6 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../public/</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4819;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,6 +150,7 @@
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>../public/</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,6 +176,7 @@
     <ClCompile Include="..\private\Component_Manager.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
+    <ClCompile Include="..\Private\DInput_Manager.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameInstance.cpp" />
@@ -211,6 +214,7 @@
     <ClInclude Include="..\public\Component_Manager.h" />
     <ClInclude Include="..\public\CustomFont.h" />
     <ClInclude Include="..\Public\DebugDraw.h" />
+    <ClInclude Include="..\Public\DInput_Manager.h" />
     <ClInclude Include="..\Public\Engine_Defines.h" />
     <ClInclude Include="..\Public\Engine_Function.h" />
     <ClInclude Include="..\Public\Engine_Macro.h" />

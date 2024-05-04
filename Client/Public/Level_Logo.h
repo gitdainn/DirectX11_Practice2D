@@ -15,9 +15,8 @@ public:
 	virtual HRESULT Initialize() override;
 	virtual void Tick(_double TimeDelta) override;
 
-private: /* ÀÌ ·¹º§ÀÌ »ç¿ëÇÏ±âÀ§ÇÑ »çº» °´Ã¼µéÀ» ±×·ìº°·Î »ı¼ºÇÑ´Ù. */
-	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
+private: /* ì´ ë ˆë²¨ì´ ì‚¬ìš©í•˜ê¸°ìœ„í•œ ì‚¬ë³¸ ê°ì²´ë“¤ì„ ê·¸ë£¹ë³„ë¡œ ìƒì„±í•œë‹¤. */
+	HRESULT Ready_Layer_GameObject();
 
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

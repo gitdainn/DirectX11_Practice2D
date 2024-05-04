@@ -7,9 +7,6 @@ public:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	~CPlayer() {}
 
-private:
-	enum class PLAYER_ANIM{ WAIT, RUN, ANIM_END };
-
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) override;
@@ -17,17 +14,37 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-private:
-	virtual void Add_Animation() override;
+public:
+	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 
-private:
+public:
+	void	Set_IsEquipped(const bool bIsEquipped)
+	{
+		m_bIsEquipped = bIsEquipped;
+	}
+	void	Set_IsInAir(const bool bInAir)
+	{
+		m_bIsInAir = bInAir;
+	}
+
+protected:
+	virtual void Add_Animation() = 0;
+	
+protected:
 	HRESULT Add_Components(void* pArg = nullptr);
-	HRESULT SetUp_ShaderResources(); /* ºŒ¿Ã¥ı ¿¸ø™∫Øºˆø° ∞™¿ª ¥¯¡¯¥Ÿ. */
+	HRESULT SetUp_ShaderResources(); /* ÏÖ∞Ïù¥Îçî Ï†ÑÏó≠Î≥ÄÏàòÏóê Í∞íÏùÑ ÎçòÏßÑÎã§. */
+
+protected:
+	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
+	_tchar* m_pTextureTag;
+	bool	m_bIsEquipped;
+
+	CState* m_pAirState;
+	bool	m_bIsInAir;
 
 public:
 	/* Prototype */
-	static CPlayer* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr);
+	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 
 };

@@ -7,15 +7,14 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
-	Safe_AddRef(m_pTransformCom);
-	Safe_AddRef(m_pRendererCom);
 }
 
-/** @qurious - ÀÚ½Ä °´Ã¼°¡ »èÁ¦µÉ ¶§ ÃÖ»óÀ§ ºÎ¸ğÀÇ ¼Ò¸êÀÚ±îÁö È£ÃâµÇ´Â°¡
+/** @note - ìì‹ ê°ì²´ê°€ ì‚­ì œë  ë•Œ ìµœìƒìœ„ ë¶€ëª¨ì˜ ì†Œë©¸ìê¹Œì§€ í˜¸ì¶œë˜ëŠ”ê°€
+* => ìì‹ ê°ì²´ ì†Œë©¸ì í˜¸ì¶œ -> ë¶€ëª¨ ì†Œë©¸ì í˜¸ì¶œ -> virtual ì‹œ ìì‹ ì†Œë©¸ì í•œ ë²ˆ ë” í˜¸ì¶œ?
 */
 
-/** @note - m_pTransformCom°ú m_pRendererComÀº °¢ °´Ã¼¸¶´Ù Add_Components·Î »çº» ¸¸µé¾î¼­ »ç¿ëÇÔ.
-* ÀÌ¶§, Add_Components¿¡¼­ Add_Ref¸¦ ÇØÁÖ°í, Free()¿¡¼­ m_Components¿¡ ´ã±ä ¸ğµç °Íµé Relese ÇØÁÖ±â ¶§¹®¿¡ delete Á¤»ó ´Ù µÊ!
+/** @note - m_pTransformComê³¼ m_pRendererComì€ ê° ê°ì²´ë§ˆë‹¤ Add_Componentsë¡œ ì‚¬ë³¸ ë§Œë“¤ì–´ì„œ ì‚¬ìš©í•¨.
+* ì´ë•Œ, Add_Componentsì—ì„œ Add_Refë¥¼ í•´ì£¼ê³ , Free()ì—ì„œ m_Componentsì— ë‹´ê¸´ ëª¨ë“  ê²ƒë“¤ Relese í•´ì£¼ê¸° ë•Œë¬¸ì— delete ì •ìƒ ë‹¤ ë¨!
 */
 
 CGameObject::CGameObject(const CGameObject & rhs)
@@ -60,17 +59,17 @@ HRESULT CGameObject::Add_Components(_uint iLevelIndex, const _tchar * pPrototype
 	CComponent_Manager*		pComponent_Manager = CComponent_Manager::GetInstance();
 	Safe_AddRef(pComponent_Manager);
 
-	/* ¿øÇü°´Ã¼¸¦ º¹»çÇÏ¿© »çº» ÄÄÆ÷³ÍÆ®¸¦ ¸¸µç´Ù. */
+	/* ì›í˜•ê°ì²´ë¥¼ ë³µì‚¬í•˜ì—¬ ì‚¬ë³¸ ì»´í¬ë„ŒíŠ¸ë¥¼ ë§Œë“ ë‹¤. */
 	CComponent*		pComponent = pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
 	if (nullptr == pComponent)
 		return E_FAIL;
 
 	Safe_Release(pComponent_Manager);
 
-	/* ºÎ¸ğÀÇ ¸ÊÄÁÅ×ÀÌ³Ê¿¡ º¹Á¦ÇÑ ÄÄÆ÷³ÍÆ®¸¦ Ãß°¡ÇÑ´Ù. */
+	/* ë¶€ëª¨ì˜ ë§µì»¨í…Œì´ë„ˆì— ë³µì œí•œ ì»´í¬ë„ŒíŠ¸ë¥¼ ì¶”ê°€í•œë‹¤. */
 	m_Components.emplace(pComponentTag, pComponent);
 
-	/* ÀÚ½Ä¿¡ º¯¼ö¿¡°Ôµµ °øÀ¯½ÃÄÑÁÖ¾ú´Ù. */
+	/* ìì‹ì— ë³€ìˆ˜ì—ê²Œë„ ê³µìœ ì‹œì¼œì£¼ì—ˆë‹¤. */
 	*ppOut = pComponent;
 
 	Safe_AddRef(pComponent);

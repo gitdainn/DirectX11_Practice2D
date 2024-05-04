@@ -1,17 +1,24 @@
 #include "stdafx.h"
 #include "SpriteObject.h"
+#include "State.h"
+#include "PlayerIdle.h"
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
 	, m_bIsDead(false), m_bIsRender(true)
+	, m_iUVTextureIndex(0)
+	, m_iUVTexNumX(0), m_iUVTexNumY(0)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
+	, m_bIsAnimUV(false)
+	, m_pState(nullptr)
+	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
+	, m_eCurrentState(STATE_TYPE::IDLE)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
-	m_tSpriteInfo.fSizeRatio = { 1.f, 1.f };
+	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
 
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
@@ -26,7 +33,7 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	return S_OK;
 }
 
-// @qurious. ¸Å°³º¯¼ö &°¡ ¿øº» ÂüÁ¶..ÀÎµ¥ ÁÖ¼Ò ÂüÁ¶´Â¾Æ´Ñ°¡? ±×·¸±â¿¡ memcpy¿¡¼­ & ¶Ç ½áÁà¾ßÇÔ?
+// @qurious - ë§¤ê°œë³€ìˆ˜ &ê°€ ì›ë³¸ ì°¸ì¡°..ì¸ë° ì£¼ì†Œ ì°¸ì¡°ëŠ”ì•„ë‹Œê°€? ê·¸ë ‡ê¸°ì— memcpyì—ì„œ & ë˜ ì¨ì¤˜ì•¼í•¨?
 HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
@@ -34,19 +41,20 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
-	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+	_float4x4 WorldMatrix;
+	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
-	// 4´Â À§Ä¡
-	Change_TextureSize();
-	m_WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
-	m_WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
-
-	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&m_WorldMatrix));
+	// ìœ„ì¹˜ ì§€ì •
+	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
+	WorldMatrix._22 = m_tSpriteInfo.fSize.x;
+	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
+	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
 	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
 
-	CTransform::TRANSFORMDESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
+	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
 	return S_OK;
@@ -64,7 +72,7 @@ _uint CSpriteObject::LateTick(_double TimeDelta)
 {
 	if (m_bIsRender)
 	{
-		//@qurious. enum class°¡ ¾Æ´Ï¶ó ÀÏ¹İ enumÀÌ¸é engineÀÇ ¿­°ÅÃ¼¸¦ ¸â¹ö·Î ¼±¾ğ ½Ã »ç¿ëºÒ°¡ÀÓ.
+		//@qurious. enum classê°€ ì•„ë‹ˆë¼ ì¼ë°˜ enumì´ë©´ engineì˜ ì—´ê±°ì²´ë¥¼ ë©¤ë²„ë¡œ ì„ ì–¸ ì‹œ ì‚¬ìš©ë¶ˆê°€ì„.
 		m_pRendererCom->Add_RenderGroup(m_eRenderGroup, this);
 	}
 
@@ -81,6 +89,20 @@ HRESULT CSpriteObject::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
+}
+
+void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+{
+	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
+	
+	if (nullptr != pState)
+	{
+		m_eCurrentState = Input;
+		delete m_pState;
+
+		m_pState = pState;
+		m_pState->Enter(this);
+	}
 }
 
 HRESULT CSpriteObject::Add_Components(void* pArg)
@@ -125,29 +147,34 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CSpriteObject::Play_Animation(_double TimeDelta)
+void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 {
-	// ¿­°ÅÃ¼´Â °´Ã¼¸¶´Ù ´Ù¸£¹Ç·Î .. ÅÛÇÃ¸´ °¡´ÉÇÒ±î?
-	float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / (float)abs(m_pAnimInfo[m_iCurrentAnim].iEndIndex - m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+	// ì—´ê±°ì²´ëŠ” ê°ì²´ë§ˆë‹¤ ë‹¤ë¥´ë¯€ë¡œ .. í…œí”Œë¦¿ ê°€ëŠ¥í• ê¹Œ?
+	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+
+	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_tSpriteInfo.iTextureIndex;
+	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
+	_float fDelayTime = { 0.f };
+	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
+		fDelayTime = iter->second;
 
 	m_fTimeAcc += (_float)TimeDelta;
-	if (fPerAnimTime <= m_fTimeAcc)
+	if (fPerAnimTime + fDelayTime <= m_fTimeAcc)
 	{
 		m_fTimeAcc = 0.f;
-		++m_tSpriteInfo.iTextureIndex;
+		++iSpriteIndex;
 
-		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < m_tSpriteInfo.iTextureIndex)
+		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)
 		{
-			m_tSpriteInfo.iTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+			m_bIsEndSprite = true;
+			iSpriteIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
 		}
-
-		Change_TextureSize();
 	}
 }
 
-CGameObject* CSpriteObject::Clone(void* pArg)
+CGameObject* CSpriteObject::Clone(void* pArg) const
 {
-	MSG_BOX("CSpriteObject - Clone(void* pArg) - 2D¿ë Clone ÇÔ¼ö¸¦ »ç¿ëÇØÁÖ¼¼¿ä");
+	MSG_BOX("CSpriteObject - Clone(void* pArg) - 2Dìš© Clone í•¨ìˆ˜ë¥¼ ì‚¬ìš©í•´ì£¼ì„¸ìš”");
 	return nullptr;
 }
 
@@ -155,6 +182,19 @@ void CSpriteObject::Free()
 {
 	__super::Free();
 
+	Safe_Delete(m_pState);
+
+	if (nullptr != m_pAnimInfo)
+	{
+		m_pAnimInfo->fDelayTimeMap.clear();
+		Safe_Delete_Array(m_pAnimInfo);
+	}
+
+	// @note - Add_Prototypeìœ¼ë¡œ ë§Œë“  ì›ë³¸ ê°ì²´ë“¤ì€ m_Prototypesì—ì„œ ì‚­ì œí•´ì¤Œ. (ì›ë³¸ì€ ì‚­ì œí•´ì•¼í•˜ë‹ˆê¹Œ AddRef X)
+	// @note - ê° ì˜¤ë¸Œì íŠ¸ì˜ ì»´í¬ë„ŒíŠ¸ë“¤ì€ Add_Component ì‹œ AddRefí•˜ê¸° ë•Œë¬¸ì— m_Componentì—ì„œ ë‹¤ Release í•´ì¤Œ
+	// @note - Add_Componentì˜ Clone()í•  ë•Œ, newë¡œ ìƒì„± ë˜ëŠ” AddRef()í•´ì„œ ì‚¬ë³¸ ì£¼ê¸° ë•Œë¬¸ì— ì–˜ë„¤ëŠ” ë”°ë¡œ ì—¬ê¸°ì„œ í•´ì œí•´ì¤˜ì•¼í•¨.
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);

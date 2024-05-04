@@ -15,7 +15,7 @@ CTransform::CTransform(const CTransform & rhs)
 {
 	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
 }
-
+  
 void CTransform::Set_Scaled(const _float3 & vScale)
 {
 	Set_State(CTransform::STATE_RIGHT, XMVector3Normalize(Get_State(CTransform::STATE_RIGHT)) * vScale.x);
@@ -35,7 +35,7 @@ HRESULT CTransform::Initialize_Prototype()
 
 	/* float4x4 -> matrix = Load */
 	/* float3 or float4 -> vector = Load */
-	/* matrix Àý´ë &¸¦ ¾ÈºÙ¿©¿ä. */
+	/* matrix ì ˆëŒ€ &ë¥¼ ì•ˆë¶™ì—¬ìš”. */
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 
 	return S_OK;
@@ -81,6 +81,20 @@ void CTransform::Go_Backward(_double TimeDelta)
 	vPosition -= XMVector3Normalize(vLook) * (_float)(m_TransformDesc.SpeedPerSec * TimeDelta);
 
 	Set_State(CTransform::STATE_POSITION, vPosition);
+}
+
+void CTransform::ParabolaY(_double TimeDelta)
+{
+	const _float fGravity = 9.8f;
+	m_UpTime = m_ParabolaDesc.fPower * TimeDelta;
+	m_DownTime = (fGravity * m_ParabolaDesc.JumpTimeAcc * m_ParabolaDesc.JumpTimeAcc) * 0.5f;
+
+	_float fJumpY = m_ParabolaDesc.fPower * (_float)TimeDelta 
+		- (fGravity * m_ParabolaDesc.JumpTimeAcc * m_ParabolaDesc.JumpTimeAcc) * 0.5f;
+
+	m_ParabolaDesc.JumpTimeAcc += TimeDelta;
+
+	Set_State(CTransform::STATE_POSITION, XMVectorSetY(Get_State(CTransform::STATE_POSITION), fJumpY));
 }
 
 void CTransform::Rotation(_fvector vAxis, _double Radian)
@@ -133,7 +147,7 @@ void CTransform::Chase(_fvector vTargetPos, _double TimeDelta, _float fLimitDist
 
 	_vector		vDir = vTargetPos - vPosition;
 
-	/* ³»°¡ ¿òÁ÷¿©¾ßÇÒ ´ë»óÀ§Ä¡±îÁöÀÇ °Å¸®. */
+	/* ë‚´ê°€ ì›€ì§ì—¬ì•¼í•  ëŒ€ìƒìœ„ì¹˜ê¹Œì§€ì˜ ê±°ë¦¬. */
 	_float		fDistance = XMVectorGetX(XMVector3Length(vDir));
 
 	if(fDistance > fLimitDistance)
@@ -164,6 +178,7 @@ CComponent * CTransform::Clone(void * pArg)
 	}
 
 	return pInstance;
+	return this;
 }
 
 

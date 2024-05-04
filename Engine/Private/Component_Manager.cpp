@@ -29,9 +29,12 @@ void CComponent_Manager::Clear(_uint iLevelIndex)
 
 HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
-	if (nullptr == m_pPrototypes || 
-		nullptr!= Find_Prototype(iLevelIndex, pPrototypeTag))
+	if (nullptr == m_pPrototypes ||
+		nullptr != Find_Prototype(iLevelIndex, pPrototypeTag))
+	{
+		int i = 0;
 		return E_FAIL;
+	}
 
 	m_pPrototypes[iLevelIndex].emplace(pPrototypeTag, pPrototype);
 

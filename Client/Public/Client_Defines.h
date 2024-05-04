@@ -1,6 +1,6 @@
 #pragma once
 
-/* Å¬¶óÀÌ¾ğÆ®¿¡¼­ ÀÚÁÖ»ç¿ëÇÏ´Â º¯¼ö³ª Á¤ÀÇ¸¦ ´ã´Â´Ù. */
+/* í´ë¼ì´ì–¸íŠ¸ì—ì„œ ìì£¼ì‚¬ìš©í•˜ëŠ” ë³€ìˆ˜ë‚˜ ì •ì˜ë¥¼ ë‹´ëŠ”ë‹¤. */
 #include "Time.h"
 
 namespace Client
@@ -10,10 +10,30 @@ namespace Client
 
 	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
 
-	typedef enum class eVtxTexPass
+	enum class SPRITE_DIRECTION { LEFT, RIGHT , DIRECTION_END };
+
+	typedef enum class eVTXTEX_PASS
 	{
-		Default
-	}VTXTEXPASS;
+		Default,
+		UV_Anim,
+		FlipUV_Anim
+	}VTXTEX_PASS;
+
+	enum class CONTROL_KEY 
+	{ 
+		LEFT, RIGHT, FALL, 
+		JUMP, DASH, MENU,
+		INTERACTION, ATTACK, SKILL1,
+		SKILL2, ESSENCE, ROTATION
+	};
+
+	enum class STATE_TYPE 
+	{ 
+		IDLE, WALK,
+		DASH, ATK1, ATK2, JUMP_ATK, JUMP,
+		FALL, SKILL1, SKILL2, MOTION_END 
+	};
+
 }
 
 extern HINSTANCE g_hInst;
@@ -44,4 +64,15 @@ using namespace Client;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
+#pragma endregion
+
+#pragma region LAYER_TAG
+#define LAYER_BACKGROUND		TEXT("Layer_Background")
+#define LAYER_PLAYER			TEXT("Layer_Player")
+#define LAYER_UI				TEXT("Layer_UI")
+#pragma endregion
+
+#pragma region DINPUT
+#define MOUSE_LB		CDInput_Manager::MOUSEKEYSTATE::DIMK_LB
+#define MOUSE_RB		CDInput_Manager::MOUSEKEYSTATE::DIMK_RB
 #pragma endregion

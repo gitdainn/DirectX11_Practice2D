@@ -3,6 +3,7 @@
 
 #include "Level_Loading.h"
 #include "GameInstance.h"
+#include "PlayerInfo.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -11,11 +12,8 @@ CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 HRESULT CLevel_Logo::Initialize()
 {
-	/* °Ë»ö½Ã¿¡ ¾î¶² ·¹º§¿¡ ÀÖ´Â Æ¯Á¤ ÅÂ±×¿¡ ÀÖ´Â ¸î¹øÂ° ³à¼®. */
-	if (FAILED(Ready_Layer_BackGround(TEXT("Layer_BackGround"))))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_UI(TEXT("Layer_UI"))))
+	/* ê²€ìƒ‰ì‹œì— ì–´ë–¤ ë ˆë²¨ì— ìžˆëŠ” íŠ¹ì • íƒœê·¸ì— ìžˆëŠ” ëª‡ë²ˆì§¸ ë…€ì„. */
+	if (FAILED(Ready_Layer_GameObject()))
 		return E_FAIL;
 
 	return S_OK;
@@ -23,7 +21,7 @@ HRESULT CLevel_Logo::Initialize()
 
 void CLevel_Logo::Tick(_double TimeDelta)
 {
-	/* ·Î°í·¹º§´ÙÀ½Àº °ÔÀÓÇÃ·¹ÀÌ¾ß. */
+	/* ë¡œê³ ë ˆë²¨ë‹¤ìŒì€ ê²Œìž„í”Œë ˆì´ì•¼. */
 	// if (GetKeyState(VK_SPACE) & 0x8000)
 	// {
 	// 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
@@ -36,40 +34,38 @@ void CLevel_Logo::Tick(_double TimeDelta)
 	// }
 
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("·Î°í·¹º§ÀÓ"));
+	SetWindowText(g_hWnd, TEXT("Logo Level"));
 #endif
-
 }
 
-HRESULT CLevel_Logo::Ready_Layer_BackGround(const _tchar * pLayerTag)
-{
-	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	SPRITE_INFO tSpriteInfo;
-
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, pLayerTag, tSpriteInfo)))
-		return E_FAIL;
-
-	Safe_Release(pGameInstance);
-	return S_OK;
-}
-
-HRESULT CLevel_Logo::Ready_Layer_UI(const _tchar * pLayerTag)
+HRESULT CLevel_Logo::Ready_Layer_GameObject()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	SPRITE_INFO tSpriteInfo;
-	tSpriteInfo.fSizeRatio.x = 2.f;
-	tSpriteInfo.fSizeRatio.y = 2.f;
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Player"), LEVEL_LOGO, pLayerTag, tSpriteInfo)))
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, LAYER_BACKGROUND, tSpriteInfo)))
+	//	return E_FAIL;
+
+	tSpriteInfo.fSize = _float2{ 300.f, 320.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
+		return E_FAIL;
+	CPlayerInfo::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+
+	tSpriteInfo.fSize = _float2{ 200.f, 150.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
+		return E_FAIL;
+	CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
 	return S_OK;
+
 }
+
 
 CLevel_Logo * CLevel_Logo::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 {

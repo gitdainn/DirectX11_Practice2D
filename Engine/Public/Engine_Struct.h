@@ -2,14 +2,14 @@
 
 namespace Engine
 {
-	/** @note - Typedef.h Çì´õ¸¦ ¸ÕÀú ¼±¾ğÇØ¾ß Çü½Ä ÁöÁ¤ÀÚ¸¦ ÀĞÀ½ */
+	/** @note - Typedef.h í—¤ë”ë¥¼ ë¨¼ì € ì„ ì–¸í•´ì•¼ í˜•ì‹ ì§€ì •ìë¥¼ ì½ìŒ */
 	typedef struct ENGINE_DLL tSpriteInfo
 	{
-		int		iOrder = { 0 };
-		_float2	fSizeRatio = { 10.f, 10.f };
+		_uint		iOrder = { 0 };
+		_float2	fSize = { 300.f, 320.f };
 		_float2	fPosition = { 0.f, 0.f };
 
-		int		iTextureIndex = { 0 };
+		_uint		iTextureIndex = { 0 };
 		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
 	}SPRITE_INFO;
 
@@ -21,7 +21,7 @@ namespace Engine
 		double			Time;
 	}KEYFRAME;
 
-	/* ¸Ş½Ã¿¡°Ô Àû¿ëÇÏ±âÀ§ÇÑ ¸ÓÅ×¸®¾óÅØ½ºÃÄµé(Diffuse, AMbient, Specular, Normal) */
+	/* ë©”ì‹œì—ê²Œ ì ìš©í•˜ê¸°ìœ„í•œ ë¨¸í…Œë¦¬ì–¼í…ìŠ¤ì³ë“¤(Diffuse, AMbient, Specular, Normal) */
 	typedef struct tagMeshMaterial
 	{	
 		class CTexture*	pMtrlTexture[AI_TEXTURE_TYPE_MAX] = { nullptr };
@@ -39,7 +39,7 @@ namespace Engine
 
 		XMFLOAT4		vDiffuse;
 		XMFLOAT4		vAmbient;		
-		XMFLOAT4		vSpecular; /* Á¤¹İ»ç */
+		XMFLOAT4		vSpecular; /* ì •ë°˜ì‚¬ */
 	}LIGHTDESC;
 
 	typedef struct tagGraphicDesc
@@ -122,8 +122,8 @@ namespace Engine
 		XMFLOAT3			vPosition;
 		XMFLOAT3			vNormal;
 		XMFLOAT2			vTexUV;
-		XMUINT4				vBlendIndex; /* ÀÌ Á¤Á¡ÀÌ µû¶ó´Ù³à¾ßÇÒ »ÀÀÇÀÎµ¦½ºµé(»ÀÀÇ ÀÎµ¦½º : ¸ğµ¨ÀüÃ¼ÀÇ »À Áß Æ¯Á¤ ÀÎµ¦½º(x) ¸Ş½Ã¿¡ ¿µÇâÀ» ÁÖ´Â »Àµé Áß Æ¯Á¤ ÀÎµ¦½º(0), ÃÖ´ë »ÀÀÇ °¹¼ö´Â : 4°³) */
-		XMFLOAT4			vBlendWeight; /* ÀÌ Á¤Á¡ÀÌ ¿µÇâÀ» ¹Ş°í ÀÖ´Â »ÀµéÀÇ »óÅÂ¸¦ ¸îÆÛ¼¾Æ®(0 ~ 1)³ª ÀÌ¿ëÇÒÁö¿¡ ´ëÇÑ °ª. */
+		XMUINT4				vBlendIndex; /* ì´ ì •ì ì´ ë”°ë¼ë‹¤ë…€ì•¼í•  ë¼ˆì˜ì¸ë±ìŠ¤ë“¤(ë¼ˆì˜ ì¸ë±ìŠ¤ : ëª¨ë¸ì „ì²´ì˜ ë¼ˆ ì¤‘ íŠ¹ì • ì¸ë±ìŠ¤(x) ë©”ì‹œì— ì˜í–¥ì„ ì£¼ëŠ” ë¼ˆë“¤ ì¤‘ íŠ¹ì • ì¸ë±ìŠ¤(0), ìµœëŒ€ ë¼ˆì˜ ê°¯ìˆ˜ëŠ” : 4ê°œ) */
+		XMFLOAT4			vBlendWeight; /* ì´ ì •ì ì´ ì˜í–¥ì„ ë°›ê³  ìˆëŠ” ë¼ˆë“¤ì˜ ìƒíƒœë¥¼ ëª‡í¼ì„¼íŠ¸(0 ~ 1)ë‚˜ ì´ìš©í• ì§€ì— ëŒ€í•œ ê°’. */
 	}VTXANIMMODEL;
 
 	typedef struct ENGINE_DLL tagVertex_AnimModel_Declaration

@@ -26,38 +26,27 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
-
-	m_tSpriteInfo.fSizeRatio.x = 2.f;
-	m_tSpriteInfo.fSizeRatio.y = 2.f;
 	
-	Change_TextureSize();
+	m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 1.f));
 
-	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
 }
 
 _uint CBackGround::Tick(_double TimeDelta)
 {
-	return _uint();
+	return __super::Tick(TimeDelta);
 }
 
 _uint CBackGround::LateTick(_double TimeDelta)
 {
-	m_pRendererCom->Add_RenderGroup(CRenderer::RENDER_PRIORITY, this);
-
-	return _uint();
+	return __super::LateTick(TimeDelta);
 }
 
 HRESULT CBackGround::Render()
 {
-	if (FAILED(SetUp_ShaderResources()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin(m_iShaderPassIndex);
-
-	m_pVIBufferCom->Render();		
-
-	return S_OK;
+	return __super::Render();
 }
 
 HRESULT CBackGround::Add_Components(void* pArg)
@@ -71,7 +60,7 @@ HRESULT CBackGround::Add_Components(void* pArg)
 		return E_FAIL;	
 
 	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Logo"),
+	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 		return E_FAIL;	
 	
@@ -104,7 +93,7 @@ CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg)
+CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
 {
 	CBackGround*		pInstance = new CBackGround(*this);
 

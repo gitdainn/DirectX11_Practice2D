@@ -67,8 +67,8 @@ namespace Engine
 		return dwRefCnt;
 	}
 
-#pragma region operator ¿¬»êÀÚ
-	/** @qurious - ¿Ö _float2 ±âÁØ operator¸¦ Çß´Âµ¥ vector¿¡ += ÇÑ °Ô ÀÎ½Ä ¸øÇÑ´Ù°í ¿À·ù°¡ ¶ß³ª? */
+#pragma region operator ì—°ì‚°ì
+	/** @qurious - ì™œ _float2 ê¸°ì¤€ operatorë¥¼ í–ˆëŠ”ë° vectorì— += í•œ ê²Œ ì¸ì‹ ëª»í•œë‹¤ê³  ì˜¤ë¥˜ê°€ ëœ¨ë‚˜? */
 	//const _float2 operator *=(_float2& fA, const _float2& fB)
 	//{
 	//	fA.x *= fB.x;

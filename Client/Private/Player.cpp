@@ -1,9 +1,15 @@
 #include "stdafx.h"
 #include "Player.h"
+#include "PlayerIdle.h"
+#include "PlayerJump.h"
 
-// @qurious. ºÎ¸ğ »ı¼ºÀÚµµ ²À È£ÃâÇØÁà¾ßÇÏ´Â ÀÌÀ¯°¡ ±Ã±İÇÔ. (¸Å°³º¯¼ö·Î)
+// @qurious. ë¶€ëª¨ ìƒì„±ìë„ ê¼­ í˜¸ì¶œí•´ì¤˜ì•¼í•˜ëŠ” ì´ìœ ê°€ ê¶ê¸ˆí•¨. (ë§¤ê°œë³€ìˆ˜ë¡œ)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
+	, m_pTextureTag(nullptr)
+	, m_bIsEquipped(false)
+	, m_bIsInAir(false)
+	, m_pAirState(nullptr)
 {
 }
 
@@ -21,22 +27,29 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	Add_Animation();
-
-	m_iShaderPassIndex = (_uint)VTXTEXPASS::Default;
-	m_iCurrentAnim = (_uint)PLAYER_ANIM::WAIT;
+	m_pState = new CPlayerIdle();
+	m_pAirState = new CPlayerJump();
 	return S_OK;
 }
 
 _uint CPlayer::Tick(_double TimeDelta)
 {
-	Play_Animation(TimeDelta);
+	if (!m_bIsEquipped)
+		return _uint();
+
+	m_pState->Update(this, TimeDelta);
+
+	if(m_bIsInAir)
+		m_pAirState->Update(this, TimeDelta);
 
 	return __super::Tick(TimeDelta);
 }
 
 _uint CPlayer::LateTick(_double TimeDelta)
 {
+	if (!m_bIsEquipped)
+		return _uint();
+
 	return __super::LateTick(TimeDelta);
 }
 
@@ -45,15 +58,26 @@ HRESULT CPlayer::Render()
 	return __super::Render();
 }
 
-void CPlayer::Add_Animation()
+void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
-	m_pAnimInfo = new ANIM_INFO[(_uint)PLAYER_ANIM::ANIM_END];
+	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
+	CState* pAirState = m_pAirState->Input_Handler(this, Input, eDirection);
 
-	m_pAnimInfo[(_uint)PLAYER_ANIM::WAIT].iStartIndex = 0;
-	m_pAnimInfo[(_uint)PLAYER_ANIM::WAIT].iEndIndex = 47;
+	if (nullptr != pState)
+	{
+		//m_eCurrentState = Input;
+		delete m_pState;
 
-	m_pAnimInfo[(_uint)PLAYER_ANIM::RUN].iStartIndex = 0;
-	m_pAnimInfo[(_uint)PLAYER_ANIM::RUN].iEndIndex = 47;
+		m_pState = pState;
+		m_pState->Enter(this);
+	}
+
+	if (nullptr != pAirState)
+	{
+		delete m_pAirState;
+		m_pAirState = pAirState;
+		m_pAirState->Enter(this);
+	}
 }
 
 HRESULT CPlayer::Add_Components(void* pArg)
@@ -67,7 +91,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		return E_FAIL;
 
 	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_LittleBorn"),
+	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, m_pTextureTag,
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 		return E_FAIL;
 
@@ -82,35 +106,11 @@ HRESULT CPlayer::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CPlayer* CPlayer::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	CPlayer* pInstance = new CPlayer(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype()))
-	{
-		MSG_BOX("Failed to Created CPlayer");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CSpriteObject* CPlayer::Clone(const tSpriteInfo& InSpriteInfo, void* pArg)
-{
-	CPlayer* pInstance = new CPlayer(*this);
-
-	if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
-	{
-		MSG_BOX("Failed to Cloned CPlayer");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
 void CPlayer::Free()
 {
 	__super::Free();
 
-	Safe_Delete_Array(m_pAnimInfo);
+	/** @qurious - ì™œ _tchar*ì„ ë©”ëª¨ë¦¬ í•´ì œ í•˜ë©´ ì•ˆë˜ëŠ”ê°€? */
+	//Safe_Delete_Array(m_pTextureTag);
+	Safe_Delete(m_pAirState);
 }
