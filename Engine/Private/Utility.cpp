@@ -9,21 +9,26 @@ CUtility::~CUtility()
 {
 }
 
-CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const char* pFolderPath)
+CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFolderPath)
 {
 	// _pLoadFilePath
-		/*"../Bin/Resources/Sound/ ±îÁö ¹Ş¾Æ¿À°í, starcatÀ¸·Î *.* ºÙÀÌ±â*/
+	/*"../Bin/Resources/Sound/ ê¹Œì§€ ë°›ì•„ì˜¤ê³ , starcatìœ¼ë¡œ *.* ë¶™ì´ê¸° */
 
-	// _finddata_t : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ÆÄÀÏ Á¤º¸¸¦ ÀúÀåÇÏ´Â ±¸Á¶Ã¼
-	// <io.h>´Â char Çü½ÄÀ» »ç¿ëÇÏ±â¿¡ charÀ» »ç¿ëÇÑ´Ù.
+	// _finddata_t : <io.h>ì—ì„œ ì œê³µí•˜ë©° íŒŒì¼ ì •ë³´ë¥¼ ì €ì¥í•˜ëŠ” êµ¬ì¡°ì²´
+	// <io.h>ëŠ” char í˜•ì‹ì„ ì‚¬ìš©í•˜ê¸°ì— charì„ ì‚¬ìš©í•œë‹¤.
 	_finddata_t fd;
 
 	char szCurPath[128] = "";
-	strcpy_s(szCurPath, pFolderPath); // ../BIn/Texture/
+	char szPath[128] = "";
+	char* pPath = { nullptr };
+	WCToC(pFolderPath, pPath);
+	strcpy_s(szCurPath, pPath); // ../BIn/Texture/
+	strcpy_s(szPath, pPath); // ../BIn/Texture/
+	Safe_Delete_Array(pPath);
 
 	strcat_s(szCurPath, "*.*"); // ../BIn/Texture/*.*
 
-	// _findfirst : <io.h>¿¡¼­ Á¦°øÇÏ¸ç »ç¿ëÀÚ°¡ ¼³Á¤ÇÑ °æ·Î ³»¿¡¼­ °¡Àå Ã¹ ¹øÂ° ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö
+	// _findfirst : <io.h>ì—ì„œ ì œê³µí•˜ë©° ì‚¬ìš©ìê°€ ì„¤ì •í•œ ê²½ë¡œ ë‚´ì—ì„œ ê°€ì¥ ì²« ë²ˆì§¸ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜
 	intptr_t handle = _findfirst(szCurPath, &fd);
 
 	if (handle == -1)
@@ -40,9 +45,9 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// ÀÓ½Ã ¸®½ºÆ®. ´Ù Ãß°¡ÇÏ°í º¹»çÇØ¼­ Áı¾î³ÖÀ½
+	// ì„ì‹œ ë¦¬ìŠ¤íŠ¸. ë‹¤ ì¶”ê°€í•˜ê³  ë³µì‚¬í•´ì„œ ì§‘ì–´ë„£ìŒ
 	// list<const _tchar*> ResourceTagList = {};
-	// list<const _tchar*> MemoryList = {}; // ¹®ÀÚ¿­ º¯È¯À¸·Î ÀÎÇÑ µ¿ÀûÇÒ´ç ÇØÁ¦¸¦ À§ÇØ¼­.
+	// list<const _tchar*> MemoryList = {}; // ë¬¸ìì—´ ë³€í™˜ìœ¼ë¡œ ì¸í•œ ë™ì í• ë‹¹ í•´ì œë¥¼ ìœ„í•´ì„œ.
 
 	_uint iTexType = 0;
 	_uint iTexNum = 0; 
@@ -51,29 +56,31 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	while (iResult != -1)
 	{
 		// ../Sound/"
-		strcpy_s(szFullPath, pFolderPath);
+		strcpy_s(szFullPath, szPath);
 
 		// "../ Sound/Success.wav"
 		strcat_s(szFullPath, fd.name);
 
 		TCHAR* pFullPath = new TCHAR[MAX_PATH];
-		CToWC(szFullPath, pFullPath); // wchar_t µÎ ¹øÂ° ÀÎÀÚ°¡ ¹«Á¶°Ç Æ÷ÀÎÅÍ¿©¾ßµÊ
-		FilePathVec.emplace_back(pFullPath);
+		CToWC(szFullPath, pFullPath); // wchar_t ë‘ ë²ˆì§¸ ì¸ìê°€ ë¬´ì¡°ê±´ í¬ì¸í„°ì—¬ì•¼ë¨
 
-		//if (!lstrcmp(L".png", szExt)) // DAINN. ÇØ´ç È®ÀåÀÚ´Â ¾È ºÒ·¯¿ÍÁü
+		_wsplitpath_s(pFullPath, nullptr, 0, szDir, MAX_PATH, szFileName, MAX_PATH, szExt, MAX_PATH);
+
+		//if (!lstrcmp(L".png", szExt)) // DAINN. í•´ë‹¹ í™•ì¥ìëŠ” ì•ˆ ë¶ˆëŸ¬ì™€ì§
 		//{
 		//	iResult = _findnext(handle, &fd);
 		//	continue;
 		//}
 
-		// ¼û±è ÆÄÀÏ Continue
+		// ìˆ¨ê¹€ íŒŒì¼ Continue
 		if ('\0' == szFileName[0] || '.' == szFileName[0])
 		{
 			iResult = _findnext(handle, &fd);
 			continue;
 		}
 
-		//_findnext : <io.h>¿¡¼­ Á¦°øÇÏ¸ç ´ÙÀ½ À§Ä¡ÀÇ ÆÄÀÏÀ» Ã£´Â ÇÔ¼ö, ÇÑ Æú´õ ¾È¿¡ ´õÀÌ»ó Ã£À» °Ô ¾ø´Ù¸é -1À» ¸®ÅÏ
+		//_findnext : <io.h>ì—ì„œ ì œê³µí•˜ë©° ë‹¤ìŒ ìœ„ì¹˜ì˜ íŒŒì¼ì„ ì°¾ëŠ” í•¨ìˆ˜, í•œ í´ë” ì•ˆì— ë”ì´ìƒ ì°¾ì„ ê²Œ ì—†ë‹¤ë©´ -1ì„ ë¦¬í„´
+		FilePathVec.emplace_back(pFullPath);
 		++iTexNum;
 		iResult = _findnext(handle, &fd);
 	}
@@ -84,6 +91,7 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	{
 		Safe_Delete_Array(pFilePath);
 	}
+
 	Safe_Release(pGameInstance);
 
 	_findclose(handle);

@@ -1,19 +1,17 @@
 #include "stdafx.h"
 
-#pragma region IMGUI
-// 다른 헤더보다 먼저 추가해야 오류 안 뜸
-#include "imgui.h"
-#include "imgui_impl_win32.h"
-#include "imgui_impl_dx11.h"
-#pragma endregino
+#include "MyImGui.h"
 
-#include "../Public/MainApp.h"
+#include "MainApp.h"
 #include "GameInstance.h"
+#include "Level_Loading.h"
+#include "Utility.h"
 
 USING(Tool)
 
 CMainApp::CMainApp()
 	: m_pGameInstance(CGameInstance::GetInstance())
+	, m_pImGui(CMyImGui::GetInstance())
 {
 	Safe_AddRef(m_pGameInstance);
 }
@@ -28,9 +26,7 @@ HRESULT CMainApp::Initialize()
 	GraphicDesc.iViewSizeX = g_iWinSizeX;
 	GraphicDesc.iViewSizeY = g_iWinSizeY;
 
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
+	/** @note - m_pDevice와 m_pContext가 할당되는 곳 */
 	if (FAILED(m_pGameInstance->Initialize_Engine(LEVEL_END, g_hInst, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
 
@@ -43,22 +39,18 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(Ready_Prototype_Sprite_For_Static()))
 		return E_FAIL;
 
-	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
+	if (FAILED(SetUp_StartLevel(LEVEL_TOOL)))
 		return E_FAIL;
 
-	/** @ImGui */
-	ImGui::StyleColorsDark();
-
-	ImGui_ImplWin32_Init(g_hWnd);
-	ImGui_ImplDX11_Init(m_pDevice, m_pContext);
+	m_pImGui->Initialize(m_pDevice, m_pContext);
 
 	return S_OK;
 }
 
 void CMainApp::Tick(_double TimeDelta)
 {
+	m_pImGui->Tick(TimeDelta);
 	m_pGameInstance->Tick_Engine(TimeDelta);
-
 
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
@@ -67,14 +59,7 @@ void CMainApp::Tick(_double TimeDelta)
 
 HRESULT CMainApp::Render()
 {
-	ImGui_ImplDX11_NewFrame();
-	ImGui_ImplWin32_NewFrame();
-	ImGui::NewFrame();
-
-	static bool bIsDemo = true;
-	ImGui::ShowDemoWindow(&bIsDemo);
-
-	ImGui::Render();
+	m_pImGui->Render();
 
 	m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f));
 	m_pGameInstance->Clear_DepthStencil_View();
@@ -101,8 +86,7 @@ HRESULT CMainApp::Render()
 
 HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 {
-	//return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));
-	return S_OK;
+	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));
 }
 
 HRESULT CMainApp::Ready_Prototype_Component_For_Static()
@@ -137,6 +121,10 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
+	//if(FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Tile"),
+	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tile/")))))
+	//	return E_FAIL;
+
 	return S_OK;
 }
 
@@ -161,9 +149,7 @@ void CMainApp::Free()
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);
 
-	ImGui_ImplDX11_Shutdown();
-	ImGui_ImplWin32_Shutdown();
-	ImGui::DestroyContext();
+	Safe_Release(m_pImGui);
 
 	CGameInstance::Release_Engine();
 }

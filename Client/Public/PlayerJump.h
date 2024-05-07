@@ -17,7 +17,7 @@ public:
 
 private:
     void    Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    const bool&     IsOnGround(CSpriteObject* pObject);
+    const bool     IsOnGround(CSpriteObject* pObject);
 
 private:
     _bool   m_bCanJump;

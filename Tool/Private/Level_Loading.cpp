@@ -5,13 +5,14 @@
 #include "GameInstance.h"
 #pragma endregion
 
-#pragma region CLIENT_HEADERS
+#pragma region TPP:_HEADERS
 #include "Loader.h"
-#include "Level_Logo.h"
-#include "Level_GamePlay.h"
+#include "Level_Tool.h"
 #pragma endregion
 
-CLevel_Loading::CLevel_Loading(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+USING(Tool)
+
+CLevel_Loading::CLevel_Loading(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CLevel(pDevice, pContext)
 {
 }
@@ -30,26 +31,24 @@ HRESULT CLevel_Loading::Initialize(LEVEL eNextLevelID)
 }
 
 void CLevel_Loading::Tick(_double TimeDelta)
-{	
-	if (GetKeyState(VK_RETURN) & 0x8000)	
+{
+	if (GetKeyState(VK_RETURN) & 0x8000)
 	{
 		if (true == m_pLoader->Get_Finished())
 		{
-			CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
 
-			CLevel*		pNewLevel = { nullptr };
+			CLevel* pNewLevel = { nullptr };
 
 			switch (m_eNextLevelID)
 			{
-			case LEVEL_LOGO:
-				pNewLevel = CLevel_Logo::Create(m_pDevice, m_pContext);
+			case LEVEL_TOOL:
+				pNewLevel = CLevel_Tool::Create(m_pDevice, m_pContext);
 				break;
 
-			case LEVEL_GAMEPLAY:
-				pNewLevel = CLevel_GamePlay::Create(m_pDevice, m_pContext);
+			default:
 				break;
-
 			}
 
 			if (nullptr == pNewLevel)
@@ -71,8 +70,8 @@ void CLevel_Loading::Tick(_double TimeDelta)
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, m_pLoader->Get_LoadingText());
 #endif
-	
-	
+
+
 }
 
 HRESULT CLevel_Loading::Ready_Layer_BackGround()
@@ -85,9 +84,9 @@ HRESULT CLevel_Loading::Ready_Layer_UI()
 	return S_OK;
 }
 
-CLevel_Loading * CLevel_Loading::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, LEVEL eNextLevelID)
+CLevel_Loading* CLevel_Loading::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, LEVEL eNextLevelID)
 {
-	CLevel_Loading*		pInstance = new CLevel_Loading(pDevice, pContext);
+	CLevel_Loading* pInstance = new CLevel_Loading(pDevice, pContext);
 
 	if (FAILED(pInstance->Initialize(eNextLevelID)))
 	{
