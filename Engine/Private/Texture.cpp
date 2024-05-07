@@ -7,9 +7,9 @@ CTexture::CTexture(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 }
 
-/** @qurious - »çº» »ı¼º ½Ã cloneÇØ¼­ »ı¼ºÀÚ ºÒ¸± ¶§, º¹»ç »ı¼ºÀÚ ÀÚµ¿ È£ÃâµÅ¼­ ±âº» ÀÚ·áÇüÀº 1´ë1 ´ëÀÔµÇÁö ¾Ê³ª?
-* vectorÀÎ m_SRVs´Â Safe_AddRef±îÁö Á÷Á¢ ¸í½ÃÇØÁà¾ßÇÑ´ÙÇØµµ m_INumTexturesµµ ±»ÀÌ ¸í½Ã ÇØÁà¾ß ÇÏ´Â°¡? 
--> ¼±¾ğÀ» ¾ÈÇßÀ¸¸é ±âº» ´ëÀÔÀÎµ¥ ¸í½Ã ¼±¾ğÀ» ÇßÀ¸´Ï±î Áöº» ÀÚ·áÇü±îÁö ¸ğµÎ Á÷Á¢ Àû¾î¼­ ÇØÁà¾ßÇÏ´Â°Ç°¡? */
+/** @qurious - ì‚¬ë³¸ ìƒì„± ì‹œ cloneí•´ì„œ ìƒì„±ì ë¶ˆë¦´ ë•Œ, ë³µì‚¬ ìƒì„±ì ìë™ í˜¸ì¶œë¼ì„œ ê¸°ë³¸ ìë£Œí˜•ì€ 1ëŒ€1 ëŒ€ì…ë˜ì§€ ì•Šë‚˜?
+* vectorì¸ m_SRVsëŠ” Safe_AddRefê¹Œì§€ ì§ì ‘ ëª…ì‹œí•´ì¤˜ì•¼í•œë‹¤í•´ë„ m_INumTexturesë„ êµ³ì´ ëª…ì‹œ í•´ì¤˜ì•¼ í•˜ëŠ”ê°€? 
+-> ì„ ì–¸ì„ ì•ˆí–ˆìœ¼ë©´ ê¸°ë³¸ ëŒ€ì…ì¸ë° ëª…ì‹œ ì„ ì–¸ì„ í–ˆìœ¼ë‹ˆê¹Œ ì§€ë³¸ ìë£Œí˜•ê¹Œì§€ ëª¨ë‘ ì§ì ‘ ì ì–´ì„œ í•´ì¤˜ì•¼í•˜ëŠ”ê±´ê°€? */
 CTexture::CTexture(const CTexture& rhs)
 	: CComponent(rhs)
 	, m_iNumTextures(rhs.m_iNumTextures)
@@ -74,14 +74,14 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iNumTextures)
 {
 	m_iNumTextures = iNumTextures;
-	// ÅØ½ºÃ³ °³¼ö ¹Ì¸® ¾Ë°íÀÖ¾î ¸Ş¸ğ¸® ÀçÇÒ´ç ¹®Á¦ ¹æÁö °¡´ÉÇÏ°í, °Ë»öÀÌ Áß¿äÇÏ±â¿¡ º¤ÅÍ ¼±Á¤. 
+	// í…ìŠ¤ì²˜ ê°œìˆ˜ ë¯¸ë¦¬ ì•Œê³ ìˆì–´ ë©”ëª¨ë¦¬ ì¬í• ë‹¹ ë¬¸ì œ ë°©ì§€ ê°€ëŠ¥í•˜ê³ , ê²€ìƒ‰ì´ ì¤‘ìš”í•˜ê¸°ì— ë²¡í„° ì„ ì •. 
 	m_TextureSizeVec.resize(iNumTextures); 
 
 	for (_uint i = 0; i < iNumTextures; ++i)
 	{
 		_tchar		szFullPath[MAX_PATH] = TEXT("");
 
-		// wsprintf: 2¹øÂ° ÀÎÀÚ¿¡ %d·Î µÇ¾î ÀÖ´Â ºÎºĞÀÌ ÀÖÀ¸¸é 3¹øÂ° ÀÎÀÚ°ªÀ¸·Î ´ëÃ¼ÇØ¼­ Ã¹¹øÂ° ÀÎÀÚ¿¡ ÀúÀåÇÏ´Â ÇÔ¼ö
+		// wsprintf: 2ë²ˆì§¸ ì¸ìì— %dë¡œ ë˜ì–´ ìˆëŠ” ë¶€ë¶„ì´ ìˆìœ¼ë©´ 3ë²ˆì§¸ ì¸ìê°’ìœ¼ë¡œ ëŒ€ì²´í•´ì„œ ì²«ë²ˆì§¸ ì¸ìì— ì €ì¥í•˜ëŠ” í•¨ìˆ˜
 		wsprintf(szFullPath, pTextureFilePath, i);
 
 		_tchar		szEXT[MAX_PATH] = TEXT("");
@@ -117,40 +117,6 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 	return S_OK;
 }
 
-//HRESULT CTexture::Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures)
-//{
-//	m_iNumTextures = iNumTextures;
-//
-//	for (_uint i = 0; i < m_iNumTextures; ++i)
-//	{
-//		_tchar		szFullPath[MAX_PATH] = TEXT("");
-//		wsprintf(szFullPath, pTextureFilePath, i);
-//
-//		_tchar		szEXT[MAX_PATH] = TEXT("");
-//		_wsplitpath_s(szFullPath, nullptr, 0, nullptr, 0, nullptr, 0, szEXT, MAX_PATH);
-//
-//		ID3D11ShaderResourceView* pSRV = { nullptr };
-//
-//		HRESULT		hr = { 0 };
-//
-//		if (!lstrcmp(szEXT, TEXT(".tga")))
-//			return E_FAIL;
-//		else if (!lstrcmp(szEXT, TEXT(".dds")))
-//			hr = CreateDDSTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
-//		else
-//			hr = CreateWICTextureFromFile(m_pDevice, szFullPath, nullptr, &pSRV);
-//
-//		if (FAILED(hr)) {
-//			MSG_BOX("Failed to Create Texture From File");
-//			return E_FAIL;
-//		}
-//
-//		m_SRVs.push_back(pSRV);
-//	}
-//
-//	return S_OK;
-//}
-
 HRESULT CTexture::Initialize(void * pArg)
 {
 	return S_OK;
@@ -160,11 +126,11 @@ const _float2 CTexture::Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) 
 {
 	//D3D11_SHADER_RESOURCE_VIEW_DESC TextureDesc;
 
-	// 1. ID3D11ShaderResourceView·ÎºÎÅÍ ÅØ½ºÃ³¸¦ °¡Á®¿È.
+	// 1. ID3D11ShaderResourceViewë¡œë¶€í„° í…ìŠ¤ì²˜ë¥¼ ê°€ì ¸ì˜´.
 	ID3D11Resource* pResource = { nullptr };
 	pSRV->GetResource(&pResource);
 	
-	// 2. °¡Á®¿Â ÅØ½ºÃ³¸¦ ID3D11Texture2D·Î Ä³½ºÆÃÇÔ.
+	// 2. ê°€ì ¸ì˜¨ í…ìŠ¤ì²˜ë¥¼ ID3D11Texture2Dë¡œ ìºìŠ¤íŒ…í•¨.
 	ID3D11Texture2D* pTexture = { nullptr };
 	HRESULT hr = pResource->QueryInterface<ID3D11Texture2D>(&pTexture);
 
@@ -222,7 +188,7 @@ CComponent * CTexture::Clone(void * pArg)
 	return pInstance;
 }
 
-// @qurious - ±âº» ÀÚ·áÇü vectorµµ clear ÇØÁà¾ßÇÏ³ª?
+// @qurious - ê¸°ë³¸ ìë£Œí˜• vectorë„ clear í•´ì¤˜ì•¼í•˜ë‚˜?
 void CTexture::Free()
 {
 	__super::Free();

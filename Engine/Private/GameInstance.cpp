@@ -42,22 +42,22 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
-	/* ¿£ÁøÀ» »ç¿ëÇÏ±âÀ§ÇØ ÇÊ¼öÀûÀ¸·Î ÃÊ±âÈ­°¡ ÇÊ¿äÇÑ ¸Å´ÏÁ®µéÀÇ ±âÅ¸ ÃÊ±âÈ­ÀÛ¾÷À» ¼öÇàÇÑ´Ù. */
-	/* ±×·¡ÇÈ µð¹ÙÀÌ½º ÃÊ±âÈ­. */
+	/* ì—”ì§„ì„ ì‚¬ìš©í•˜ê¸°ìœ„í•´ í•„ìˆ˜ì ìœ¼ë¡œ ì´ˆê¸°í™”ê°€ í•„ìš”í•œ ë§¤ë‹ˆì ¸ë“¤ì˜ ê¸°íƒ€ ì´ˆê¸°í™”ìž‘ì—…ì„ ìˆ˜í–‰í•œë‹¤. */
+	/* ê·¸ëž˜í”½ ë””ë°”ì´ìŠ¤ ì´ˆê¸°í™”. */
 	if (FAILED(m_pGraphic_Device->Ready_Graphic_Device(GraphicDesc.hWnd, GraphicDesc.eWinMode, GraphicDesc.iViewSizeX, GraphicDesc.iViewSizeY, ppDeviceOut, ppContextOut)))
 		return E_FAIL;
 
-	/* ´Ù·ºÀÎÇ² µð¹ÙÀÌ½º ÃÊ±âÈ­. */
+	/* ë‹¤ë ‰ì¸í’‹ ë””ë°”ì´ìŠ¤ ì´ˆê¸°í™”. */
 	if (FAILED(m_pDInput_Manager->Ready_DInput(hInstance, GraphicDesc.hWnd)))
 		return E_FAIL;
 
-	/* »ç¿îµåÃÊ±âÈ­ */
+	/* ì‚¬ìš´ë“œì´ˆê¸°í™” */
 
-	/* ¿ÀºêÁ§Æ® ¸Å´ÏÁ®ÀÇ °ø°£ ¿¹¾à. */
+	/* ì˜¤ë¸Œì íŠ¸ ë§¤ë‹ˆì ¸ì˜ ê³µê°„ ì˜ˆì•½. */
 	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;
 
-	/* ÄÄÆ÷³ÍÆ® ¸Å´ÏÁ®ÀÇ °ø°£ ¿¹¾à. */
+	/* ì»´í¬ë„ŒíŠ¸ ë§¤ë‹ˆì ¸ì˜ ê³µê°„ ì˜ˆì•½. */
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;
 
@@ -66,16 +66,16 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 	return S_OK;
 }
 
-/* È£Ãâ¼ø¼­°¡ x°°¾Æ¿ä. */
+/* í˜¸ì¶œìˆœì„œê°€ xê°™ì•„ìš”. */
 HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 {
-	/* ÀÔ·ÂÀåÄ¡ÀÇ Á¤º¸ ¹Þ¾Æ¿À±â.  */
+	/* ìž…ë ¥ìž¥ì¹˜ì˜ ì •ë³´ ë°›ì•„ì˜¤ê¸°.  */
 	m_pDInput_Manager->Update_DInput();
 
-	/* ·¹º§ ¸Å´ÏÁ®ÀÇ ¾÷µ¥ÀÌÆ® */
+	/* ë ˆë²¨ ë§¤ë‹ˆì ¸ì˜ ì—…ë°ì´íŠ¸ */
 	m_pLevel_Manager->Tick_Level(TimeDelta);
 
-	/* ¿ÀºêÁ§Æ® ¸Å´ÏÁ®ÀÇ ¾÷µ¥ÀÌÆ® */
+	/* ì˜¤ë¸Œì íŠ¸ ë§¤ë‹ˆì ¸ì˜ ì—…ë°ì´íŠ¸ */
 	m_pObject_Manager->Tick(TimeDelta);
 
 	m_pPipeLine->Update();
@@ -246,6 +246,14 @@ HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelI
 		return E_FAIL;
 
 	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, SpriteInfo, pArg);
+}
+
+CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* pArg)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);
 }
 
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)

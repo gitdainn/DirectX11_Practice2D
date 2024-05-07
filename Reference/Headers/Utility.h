@@ -9,7 +9,7 @@ private:
     ~CUtility();
 
 public:
-    /** Æú´õ ¾ÈÀÇ ÀÌ¹ÌÁö¸¦ ÀÌ¸§ »ó°ü¾øÀÌ ¸ğµÎ ºÒ·¯¿À´Â ÇÔ¼öÀÔ´Ï´Ù. */
-    static CTexture* Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const char* pFolderPath);
+    /** í´ë” ì•ˆì˜ ì´ë¯¸ì§€ë¥¼ ì´ë¦„ ìƒê´€ì—†ì´ ëª¨ë‘ ë¶ˆëŸ¬ì˜¤ëŠ” í•¨ìˆ˜ì…ë‹ˆë‹¤. */
+    static CTexture* Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pFolderPath);
 };
 

@@ -19,6 +19,18 @@
     <Filter Include="00.MainApp">
       <UniqueIdentifier>{416fb186-f9a0-437d-8e03-7e2b502fbcf9}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{eff4840e-93dd-4993-a3ce-cafb0aef8742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.MyImGui">
+      <UniqueIdentifier>{0eeccf6c-f3e1-43bb-8931-86e242b67473}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Level">
+      <UniqueIdentifier>{1a72880d-8b98-4d6b-a1ee-7b75ed020364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.Level\Loader">
+      <UniqueIdentifier>{452e081b-6929-4005-9846-7da97f04a7b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -69,6 +81,22 @@
     <ClInclude Include="..\Public\MainApp.h">
       <Filter>00.MainApp</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Level_Loading.h">
+      <Filter>02.Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Level_Tool.h">
+      <Filter>02.Level</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Loader.h">
+      <Filter>02.Level\Loader</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MyImGui.h">
+      <Filter>01.MyImGui</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SpriteObject.h" />
+    <ClInclude Include="..\Public\InstallObject.h">
+      <Filter>02.GameObject</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -103,6 +131,22 @@
     </ClCompile>
     <ClCompile Include="..\Private\MainApp.cpp">
       <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Loading.cpp">
+      <Filter>02.Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Level_Tool.cpp">
+      <Filter>02.Level</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Loader.cpp">
+      <Filter>02.Level\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MyImGui.cpp">
+      <Filter>01.MyImGui</Filter>
+    </ClCompile>
+    <ClCompile Include="SpriteObject.cpp" />
+    <ClCompile Include="InstallObject.cpp">
+      <Filter>02.GameObject</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

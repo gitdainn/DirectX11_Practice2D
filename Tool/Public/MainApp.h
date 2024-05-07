@@ -10,6 +10,8 @@ END
 
 BEGIN(Tool)
 
+class CMyImGui;
+
 class CMainApp final : public CBase
 {
 private:
@@ -28,6 +30,7 @@ private:
 private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
+	CMyImGui* m_pImGui = { nullptr };
 
 #ifdef _DEBUG
 private:

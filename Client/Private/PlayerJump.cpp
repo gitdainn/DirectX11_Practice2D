@@ -139,7 +139,7 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
 }
 
-const bool& CPlayerJump::IsOnGround(CSpriteObject* pObject)
+const bool CPlayerJump::IsOnGround(CSpriteObject* pObject)
 {
 	const _float fGround = 0.0f;
 

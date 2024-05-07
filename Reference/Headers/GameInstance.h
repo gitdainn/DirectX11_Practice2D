@@ -4,9 +4,9 @@
 #include "PipeLine.h"
 #include "DInput_Manager.h"
 
-/* ¿£ÁøÀÇ ÇÙ½ÉÀÌ µÇ´Â ½Ì±ÛÅÏ Å¬·¡½º.  */
-/* ¿£Áø¿¡¼­ »ç¿ëµÇ´Â ´Ù¾çÇÑ ¸Å´ÏÁ®Å¬·¡½º¸¦ °¡Áö°í ÀÖ´Â´Ù. */
-/* º¸¿©Áà¾ßÇÒ ÇÔ¼ö¸¸ Á¤ÀÇÇÏ¿© Å¬¶ó·Î º¸¿©ÁØ´Ù. */
+/* ì—”ì§„ì˜ í•µì‹¬ì´ ë˜ëŠ” ì‹±ê¸€í„´ í´ë˜ìŠ¤.  */
+/* ì—”ì§„ì—ì„œ ì‚¬ìš©ë˜ëŠ” ë‹¤ì–‘í•œ ë§¤ë‹ˆì ¸í´ë˜ìŠ¤ë¥¼ ê°€ì§€ê³  ìˆëŠ”ë‹¤. */
+/* ë³´ì—¬ì¤˜ì•¼í•  í•¨ìˆ˜ë§Œ ì •ì˜í•˜ì—¬ í´ë¼ë¡œ ë³´ì—¬ì¤€ë‹¤. */
 
 BEGIN(Engine)
 
@@ -50,8 +50,9 @@ public: /* For.Object_Manager */
 	class CComponent* Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
 	const list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* ¿øÇüÀ» º¹Á¦ÇÏ¿© »çº»À» Ãß°¡ÇÑ´Ù. */
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* ¿øÇüÀ» º¹Á¦ÇÏ¿© »çº»À» Ãß°¡ÇÑ´Ù. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* ì›í˜•ì„ ë³µì œí•˜ì—¬ ì‚¬ë³¸ì„ ì¶”ê°€í•œë‹¤. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* ì›í˜•ì„ ë³µì œí•˜ì—¬ ì‚¬ë³¸ì„ ì¶”ê°€í•œë‹¤. */
+	class CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg = nullptr);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);

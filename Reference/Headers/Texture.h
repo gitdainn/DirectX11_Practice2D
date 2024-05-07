@@ -2,8 +2,8 @@
 
 #include "Component.h"
 
-/* °æ·Î¿¡ ÇØ´çÇÏ´Â ÅØ½ºÃÄµéÀ» ·ÎµåÇÏ¿© ÀúÀåÇÑ´Ù. */
-/* ÀúÀåÇÏ°í ÀÖ´Â ÅØ½ºÃÄ Áß, ÁöÁ¤ÇÑ indexÀÇ ÅØ½ºÃÄ¸¦ ¼ÎÀÌ´õ Àü¿ªÀ¸·Î ´øÁø´Ù. */
+/* ê²½ë¡œì— í•´ë‹¹í•˜ëŠ” í…ìŠ¤ì³ë“¤ì„ ë¡œë“œí•˜ì—¬ ì €ì¥í•œë‹¤. */
+/* ì €ì¥í•˜ê³  ìˆëŠ” í…ìŠ¤ì³ ì¤‘, ì§€ì •í•œ indexì˜ í…ìŠ¤ì³ë¥¼ ì…°ì´ë” ì „ì—­ìœ¼ë¡œ ë˜ì§„ë‹¤. */
 
 BEGIN(Engine)
 
@@ -18,9 +18,9 @@ public:
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pConstantName, _uint iTextureIndex = 0);
 	HRESULT Set_ShaderResourceArray(class CShader* pShader, const char* pConstantName);
 public:
-	/** Æú´õ °æ·Î ¹ŞÀ¸¸é Æú´õ ¾È ÀÌ¹ÌÁö °æ·Î ¸ğµÎ º¸°ü */
+	/** í´ë” ê²½ë¡œ ë°›ìœ¼ë©´ í´ë” ì•ˆ ì´ë¯¸ì§€ ê²½ë¡œ ëª¨ë‘ ë³´ê´€ */
 	virtual HRESULT Initialize_Prototype(const vector<TCHAR*>& TextureFileVec);
-	/** ÅØ½ºÃ³ °æ·Î Á÷Á¢ ¸ğµÎ ¸í½Ã */
+	/** í…ìŠ¤ì²˜ ê²½ë¡œ ì§ì ‘ ëª¨ë‘ ëª…ì‹œ */
 	virtual HRESULT Initialize_Prototype(const _tchar* pTextureFilePath, _uint iNumTextures);
 	virtual HRESULT Initialize(void* pArg);
 
