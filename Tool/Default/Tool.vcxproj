@@ -110,7 +110,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../Bin/../../Reference/Headers;../Default/;../ImGui/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../Bin/../../Reference/Headers;../Default/;../ImGui/;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>48194819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -141,15 +141,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\ImGui\imconfig.h" />
-    <ClInclude Include="..\ImGui\imgui.h" />
-    <ClInclude Include="..\ImGui\ImGuiFileBrowser.h" />
-    <ClInclude Include="..\ImGui\imgui_impl_dx11.h" />
-    <ClInclude Include="..\ImGui\imgui_impl_win32.h" />
-    <ClInclude Include="..\ImGui\imgui_internal.h" />
-    <ClInclude Include="..\ImGui\imstb_rectpack.h" />
-    <ClInclude Include="..\ImGui\imstb_textedit.h" />
-    <ClInclude Include="..\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Public\ImGui\imconfig.h" />
+    <ClInclude Include="..\Public\ImGui\imgui.h" />
+    <ClInclude Include="..\Public\ImGui\ImGuiFileBrowser.h" />
+    <ClInclude Include="..\Public\ImGui\imgui_impl_dx11.h" />
+    <ClInclude Include="..\Public\ImGui\imgui_impl_win32.h" />
+    <ClInclude Include="..\Public\ImGui\imgui_internal.h" />
+    <ClInclude Include="..\Public\ImGui\imstb_rectpack.h" />
+    <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
+    <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
     <ClInclude Include="..\Public\MainApp.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="framework.h" />
@@ -159,14 +159,14 @@
     <ClInclude Include="Tool.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\ImGui\imgui.cpp" />
-    <ClCompile Include="..\ImGui\ImGuiFileBrowser.cpp" />
-    <ClCompile Include="..\ImGui\imgui_demo.cpp" />
-    <ClCompile Include="..\ImGui\imgui_draw.cpp" />
-    <ClCompile Include="..\ImGui\imgui_impl_dx11.cpp" />
-    <ClCompile Include="..\ImGui\imgui_impl_win32.cpp" />
-    <ClCompile Include="..\ImGui\imgui_tables.cpp" />
-    <ClCompile Include="..\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui.cpp" />
+    <ClCompile Include="..\Private\ImGui\ImGuiFileBrowser.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_demo.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_draw.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_impl_dx11.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_impl_win32.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_tables.cpp" />
+    <ClCompile Include="..\Private\ImGui\imgui_widgets.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Tool.cpp" />

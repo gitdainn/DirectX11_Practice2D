@@ -24,9 +24,6 @@
     <ClInclude Include="stdafx.h">
       <Filter>98.Default</Filter>
     </ClInclude>
-    <ClInclude Include="Tool_Defines.h">
-      <Filter>99.Defines</Filter>
-    </ClInclude>
     <ClInclude Include="framework.h">
       <Filter>98.Default</Filter>
     </ClInclude>
@@ -38,6 +35,9 @@
     </ClInclude>
     <ClInclude Include="Tool.h">
       <Filter>98.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\MainApp.h">
+      <Filter>00.MainApp</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\ImGui\imconfig.h">
       <Filter>97.ImGui\header</Filter>
@@ -66,8 +66,8 @@
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h">
       <Filter>97.ImGui\header</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\MainApp.h">
-      <Filter>00.MainApp</Filter>
+    <ClInclude Include="..\Public\Tool_Defines.h">
+      <Filter>99.Defines</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -76,6 +76,9 @@
     </ClCompile>
     <ClCompile Include="Tool.cpp">
       <Filter>98.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\ImGui\imgui.cpp">
       <Filter>97.ImGui\cpp</Filter>
@@ -100,9 +103,6 @@
     </ClCompile>
     <ClCompile Include="..\Private\ImGui\ImGuiFileBrowser.cpp">
       <Filter>97.ImGui\cpp</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Private\MainApp.cpp">
-      <Filter>00.MainApp</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
