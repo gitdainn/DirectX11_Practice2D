@@ -1,7 +1,7 @@
 ---
 name: "\U0001F4CBDocument"
 about: C++ 지식 획득 시 작성해주세요.
-title: ''
+title: "[C++]"
 labels: documentation
 assignees: gitdainn
 
