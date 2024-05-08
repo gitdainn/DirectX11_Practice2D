@@ -7,7 +7,7 @@ assignees: gitdainn
 
 ---
 
-## 🚩Cotents
+## 🚩Contents
 목차
 
 ## 📝Report
