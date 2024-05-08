@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
     <ClInclude Include="..\Public\ImGui\imgui.h" />
     <ClInclude Include="..\Public\ImGui\ImGuiFileBrowser.h" />
@@ -150,7 +151,13 @@
     <ClInclude Include="..\Public\ImGui\imstb_rectpack.h" />
     <ClInclude Include="..\Public\ImGui\imstb_textedit.h" />
     <ClInclude Include="..\Public\ImGui\imstb_truetype.h" />
+    <ClInclude Include="..\Public\InstallObject.h" />
+    <ClInclude Include="..\Public\Level_Loading.h" />
+    <ClInclude Include="..\Public\Level_Tool.h" />
+    <ClInclude Include="..\Public\Loader.h" />
     <ClInclude Include="..\Public\MainApp.h" />
+    <ClInclude Include="..\Public\MyImGui.h" />
+    <ClInclude Include="..\Public\SpriteObject.h" />
     <ClInclude Include="..\Public\Tool_Defines.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="Resource.h" />
@@ -167,7 +174,13 @@
     <ClCompile Include="..\Private\ImGui\imgui_impl_win32.cpp" />
     <ClCompile Include="..\Private\ImGui\imgui_tables.cpp" />
     <ClCompile Include="..\Private\ImGui\imgui_widgets.cpp" />
+    <ClCompile Include="..\Private\InstallObject.cpp" />
+    <ClCompile Include="..\Private\Level_Loading.cpp" />
+    <ClCompile Include="..\Private\Level_Tool.cpp" />
+    <ClCompile Include="..\Private\Loader.cpp" />
     <ClCompile Include="..\Private\MainApp.cpp" />
+    <ClCompile Include="..\Private\MyImGui.cpp" />
+    <ClCompile Include="..\Private\SpriteObject.cpp" />
     <ClCompile Include="stdafx.cpp" />
     <ClCompile Include="Tool.cpp" />
   </ItemGroup>
@@ -177,6 +190,14 @@
   <ItemGroup>
     <Image Include="small.ico" />
     <Image Include="Tool.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">5.0</ShaderModel>
+      <ShaderModel Condition="'$(Configuration)|$(Platform)'=='Release|x64'">5.0</ShaderModel>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Effect</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Effect</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

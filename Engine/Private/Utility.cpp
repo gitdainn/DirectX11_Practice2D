@@ -14,8 +14,8 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	// _pLoadFilePath
 	/*"../Bin/Resources/Sound/ 까지 받아오고, starcat으로 *.* 붙이기 */
 
-	// _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
-	// <io.h>는 char 형식을 사용하기에 char을 사용한다.
+	 // _finddata_t : <io.h>에서 제공하며 파일 정보를 저장하는 구조체
+	 // <io.h>는 char 형식을 사용하기에 char을 사용한다.
 	_finddata_t fd;
 
 	char szCurPath[128] = "";
@@ -45,14 +45,15 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	// 임시 리스트. 다 추가하고 복사해서 집어넣음
-	// list<const _tchar*> ResourceTagList = {};
-	// list<const _tchar*> MemoryList = {}; // 문자열 변환으로 인한 동적할당 해제를 위해서.
+	 // 임시 리스트. 다 추가하고 복사해서 집어넣음
+	 list<const _tchar*> ResourceTagList = {};
+	 list<const _tchar*> MemoryList = {}; // 문자열 변환으로 인한 동적할당 해제를 위해서.
 
 	_uint iTexType = 0;
 	_uint iTexNum = 0; 
 
 	vector<TCHAR*> FilePathVec;
+	TCHAR* pFullPath = nullptr;
 	while (iResult != -1)
 	{
 		// ../Sound/"
@@ -61,13 +62,13 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 		// "../ Sound/Success.wav"
 		strcat_s(szFullPath, fd.name);
 
-		TCHAR* pFullPath = new TCHAR[MAX_PATH];
+		// @note - .. CToWC 내부에서 동적할당한 값을 두번째 인자에 Out으로 반환함 .. 
 		CToWC(szFullPath, pFullPath); // wchar_t 두 번째 인자가 무조건 포인터여야됨
-
 		_wsplitpath_s(pFullPath, nullptr, 0, szDir, MAX_PATH, szFileName, MAX_PATH, szExt, MAX_PATH);
 
 		//if (!lstrcmp(L".png", szExt)) // DAINN. 해당 확장자는 안 불러와짐
 		//{
+		//	Safe_Delete_Array(pFullPath);
 		//	iResult = _findnext(handle, &fd);
 		//	continue;
 		//}
@@ -75,11 +76,12 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 		// 숨김 파일 Continue
 		if ('\0' == szFileName[0] || '.' == szFileName[0])
 		{
+			Safe_Delete_Array(pFullPath);
 			iResult = _findnext(handle, &fd);
 			continue;
 		}
 
-		//_findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 한 폴더 안에 더이상 찾을 게 없다면 -1을 리턴
+		// _findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 한 폴더 안에 더이상 찾을 게 없다면 -1을 리턴
 		FilePathVec.emplace_back(pFullPath);
 		++iTexNum;
 		iResult = _findnext(handle, &fd);
@@ -91,6 +93,7 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	{
 		Safe_Delete_Array(pFilePath);
 	}
+	FilePathVec.clear();
 
 	Safe_Release(pGameInstance);
 

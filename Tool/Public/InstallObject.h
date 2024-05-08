@@ -5,7 +5,7 @@ class CInstallObject : public CSpriteObject
 {
 public:
 	explicit CInstallObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	~CInstallObject() {}
+	virtual ~CInstallObject() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;

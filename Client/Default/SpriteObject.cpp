@@ -13,6 +13,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_pState(nullptr)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_eCurrentState(STATE_TYPE::IDLE)
+	, m_pTextureTag(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -189,6 +190,9 @@ void CSpriteObject::Free()
 		m_pAnimInfo->fDelayTimeMap.clear();
 		Safe_Delete_Array(m_pAnimInfo);
 	}
+
+	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
+	//Safe_Delete_Array(m_pTextureTag);
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌

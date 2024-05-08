@@ -4,12 +4,12 @@
 #include "stdafx.h"
 #include "Time.h"
 
-namespace Client
+namespace Tool
 {
 	const unsigned int g_iWinSizeX = 1280;
 	const unsigned int g_iWinSizeY = 720;
 
-	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_LOGO, LEVEL_GAMEPLAY, LEVEL_END};
+	enum LEVEL {LEVEL_STATIC, LEVEL_LOADING, LEVEL_TOOL, LEVEL_END};
 
 	enum class SPRITE_DIRECTION { LEFT, RIGHT , DIRECTION_END };
 
@@ -40,7 +40,7 @@ namespace Client
 extern HINSTANCE g_hInst;
 extern HWND g_hWnd;
 
-using namespace Client;
+using namespace Tool;
 
 #pragma region LAYER
 #define	PLAYER_LAYER			TEXT("Layer_Player")
@@ -68,6 +68,7 @@ using namespace Client;
 #pragma endregion
 
 #pragma region LAYER_TAG
+#define LAYER_DEFAULT			TEXT("Layer_Default")
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_PLAYER			TEXT("Layer_Player")
 #define LAYER_UI				TEXT("Layer_UI")

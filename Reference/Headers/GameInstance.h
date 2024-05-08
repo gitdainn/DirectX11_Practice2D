@@ -53,6 +53,7 @@ public: /* For.Object_Manager */
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	class CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg = nullptr);
+	class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& SpriteInfo, void* pArg = nullptr);
 
 public: /* For.Component_Manager */
 	HRESULT Add_Prototype(_uint iLevelIndex, const _tchar* pPrototypeTag, class CComponent* pPrototype);

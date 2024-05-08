@@ -11,6 +11,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
+	, m_pTextureTag(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -96,15 +97,45 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
 		TAG_TRANSFORM, (CComponent**)(&m_pTransformCom))))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
 
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TAG_RENDERER, (CComponent**)(&m_pRendererCom))))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
 
 	if (FAILED(__super::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TAG_BUFFER, (CComponent**)(&m_pVIBufferCom))))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
+
+	/* For.Com_Shader */
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	/* For.Com_Texture */
+	if (FAILED(CGameObject::Add_Components(LEVEL_TOOL, m_pTextureTag,
+		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 
@@ -172,6 +203,9 @@ void CSpriteObject::Free()
 		Safe_Delete_Array(m_pAnimInfo);
 	}
 
+	/** @note - _tchar* m_pTextureTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
+	// Safe_Delete_Array(m_pTextureTag);
+	// 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌
 	// @note - Add_Component의 Clone()할 때, new로 생성 또는 AddRef()해서 사본 주기 때문에 얘네는 따로 여기서 해제해줘야함.
@@ -180,6 +214,4 @@ void CSpriteObject::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-
-
 }

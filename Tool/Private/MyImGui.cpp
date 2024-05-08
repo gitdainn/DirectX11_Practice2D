@@ -160,16 +160,17 @@ _uint CMyImGui::Tick(_double TimeDelta)
 
     SPRITE_INFO tSpriteInfo;
     tSpriteInfo.fPosition = _float2(0.f, 0.f); // 마우스 클릭 위치
-    //if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
-    //{
-    //    // 왜 m_Prototypes에 없지?
-    //    m_pSelectedObject = pGameInstance->Clone_GameObject(TEXT("Prototype_GameObject_Install"), &tSpriteInfo);
+    if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
+    {
+        // 왜 m_Prototypes에 없지?
+        pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo);
+        //m_pSelectedObject =
 
-    //    if(nullptr != m_pSelectedObject)
-    //    {
-    //        m_InstalledList.emplace_back(m_pSelectedObject);
-    //    }
-    //}
+        if(nullptr != m_pSelectedObject)
+        {
+            m_InstalledList.emplace_back(m_pSelectedObject);
+        }
+    }
 
     Safe_Release(pGameInstance);
 
@@ -210,11 +211,23 @@ HRESULT CMyImGui::Render()
     ImGui::End();
     ImGui::Render();
 
+    ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
     return S_OK;
 }
 
 void CMyImGui::Free()
 {
+    /** @note - 포인터 주의사항
+    * 1. const CGameObject* pObj : pObj가 가리키는 값을 상수화 시킴 -> 형변환 불가능(포인터 자료형의 타입을 변환하는 건데 불가능임)
+    * 2. CGameObject* const pObj : pObj 포인터 자체의 주소를 변경 불가능 -> 이중 포문으로 다른 포인터들의 값을 받아올 수 없음
+    * => 즉, 이중포문은 const 변수&를 같이 쓰는 게 변경 불가 + 복사생성자X로 좋으나 포인터는 불가능하다! */
+    //for (CGameObject* pObj : m_InstalledList)
+    //{
+    //    Safe_Release(pObj);
+    //}
+    m_InstalledList.clear();
+
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
     ImGui::DestroyContext();

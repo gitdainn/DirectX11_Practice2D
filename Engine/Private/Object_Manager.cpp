@@ -60,12 +60,12 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 
 HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg)
 {
-	/* ¿øÇüÀ» Ã£´Â´Ù. */
+	/* ì›í˜•ì„ ì°¾ëŠ”ë‹¤. */
 	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
 		return E_FAIL;
 
-	/* »çº»À» »ý¼ºÇÑ´Ù. */
+	/* ì‚¬ë³¸ì„ ìƒì„±í•œë‹¤. */
 	CGameObject* pGameObject = pPrototype->Clone(pArg);
 
 	if (nullptr == pGameObject)
@@ -92,15 +92,15 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	return S_OK;
 }
 
-/* ¿øÇü°´Ã¼¸¦ Ã£¾Æ º¹Á¦ÇÏ¿© ·¹ÀÌ¾î¿¡ Ãß°¡ÇÑ´Ù. */
+/* ì›í˜•ê°ì²´ë¥¼ ì°¾ì•„ ë³µì œí•˜ì—¬ ë ˆì´ì–´ì— ì¶”ê°€í•œë‹¤. */
 HRESULT CObject_Manager::Add_GameObject(const _tchar * pPrototypeTag, _uint iLevelIndex, const _tchar * pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
 {
-	/* ¿øÇüÀ» Ã£´Â´Ù. */
+	/* ì›í˜•ì„ ì°¾ëŠ”ë‹¤. */
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
 		return E_FAIL;
 
-	/* »çº»À» »ý¼ºÇÑ´Ù. */
+	/* ì‚¬ë³¸ì„ ìƒì„±í•œë‹¤. */
 	CGameObject* pGameObject = pPrototype->Clone(SpriteInfo, pArg);
 
 	if (nullptr == pGameObject)
@@ -127,20 +127,35 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar * pPrototypeTag, _uint iLev
 	return S_OK;
 }
 
-/* ¿øÇüÀ» Ã£¾Æ º¹Á¦ÇÏ¿© ¸®ÅÏÇÑ´Ù. */
+/* ì›í˜•ì„ ì°¾ì•„ ë³µì œí•˜ì—¬ ë¦¬í„´í•œë‹¤. */
 CGameObject* CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, void * pArg)
 {
-	/* ¿øÇüÀ» Ã£´Â´Ù. */
+	/* ì›í˜•ì„ ì°¾ëŠ”ë‹¤. */
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)
 		return nullptr;
 
-	/* »çº»À» »ý¼ºÇÑ´Ù. */
+	/* ì‚¬ë³¸ì„ ìƒì„±í•œë‹¤. */
 	CGameObject*		pGameObject = pPrototype->Clone(pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
 
 	return pGameObject;	
+}
+
+CGameObject* CObject_Manager::Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& tSpriteInfo, void* pArg)
+{
+	/* ì›í˜•ì„ ì°¾ëŠ”ë‹¤. */
+	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
+	if (nullptr == pPrototype)
+		return nullptr;
+
+	/* ì‚¬ë³¸ì„ ìƒì„±í•œë‹¤. */
+	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	return pGameObject;
 }
 
 void CObject_Manager::Tick(_double TimeDelta)

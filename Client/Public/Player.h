@@ -36,7 +36,6 @@ protected:
 
 protected:
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
-	_tchar* m_pTextureTag;
 	bool	m_bIsEquipped;
 
 	CState* m_pAirState;

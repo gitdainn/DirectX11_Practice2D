@@ -129,6 +129,7 @@ protected:
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
+	_tchar* m_pTextureTag;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
 	_uint	m_iUVTexNumY;

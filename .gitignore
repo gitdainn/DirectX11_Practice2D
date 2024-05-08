@@ -21,7 +21,6 @@
 mono_crash.*
 
 # Build results
-!Engine/Default/x64/Debug
 [Dd]ebug/
 [Dd]ebugPublic/
 [Rr]elease/
@@ -236,7 +235,7 @@ _pkginfo.txt
 
 # Others
 ClientBin/
-!ClientBin/Resources/Skul
+ClientBin/Resources/Skul
 ~$*
 *~
 *.dbmdl

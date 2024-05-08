@@ -6,7 +6,6 @@
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
-	, m_pTextureTag(nullptr)
 	, m_bIsEquipped(false)
 	, m_bIsInAir(false)
 	, m_pAirState(nullptr)
@@ -110,7 +109,5 @@ void CPlayer::Free()
 {
 	__super::Free();
 
-	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
-	//Safe_Delete_Array(m_pTextureTag);
 	Safe_Delete(m_pAirState);
 }

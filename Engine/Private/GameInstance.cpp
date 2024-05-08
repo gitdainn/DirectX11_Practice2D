@@ -256,6 +256,14 @@ CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* 
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);
 }
 
+CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& tSpriteInfo, void* pArg)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, tSpriteInfo, pArg);
+}
+
 HRESULT CGameInstance::Add_Prototype(_uint iLevelIndex, const _tchar * pPrototypeTag, CComponent * pPrototype)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -359,8 +367,6 @@ void CGameInstance::Release_Engine()
 	CPipeLine::GetInstance()->DestroyInstance();
 
 	CLight_Manager::GetInstance()->DestroyInstance();
-
-	CDInput_Manager::GetInstance()->DestroyInstance();
 
 	CFont_Manager::GetInstance()->DestroyInstance();
 

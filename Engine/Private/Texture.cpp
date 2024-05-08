@@ -39,7 +39,8 @@ HRESULT CTexture::Set_ShaderResourceArray(CShader * pShader, const char * pConst
 
 HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 {
-	m_TextureSizeVec.resize(TextureFileVec.size());
+	m_iNumTextures = TextureFileVec.size();
+	m_TextureSizeVec.resize(m_iNumTextures);
 	_uint iIndex = { 0 };
 
 	for (const TCHAR* pFilePath : TextureFileVec)
@@ -75,7 +76,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 {
 	m_iNumTextures = iNumTextures;
 	// 텍스처 개수 미리 알고있어 메모리 재할당 문제 방지 가능하고, 검색이 중요하기에 벡터 선정. 
-	m_TextureSizeVec.resize(iNumTextures); 
+	m_TextureSizeVec.resize(m_iNumTextures);
 
 	for (_uint i = 0; i < iNumTextures; ++i)
 	{
@@ -197,5 +198,5 @@ void CTexture::Free()
 		Safe_Release(pSRV);
 	
 	m_SRVs.clear();
-	//m_TextureSizeVec.clear();
+	m_TextureSizeVec.clear();
 }

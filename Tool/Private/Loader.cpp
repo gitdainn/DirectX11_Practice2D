@@ -2,6 +2,7 @@
 #include "..\Public\Loader.h"
 #include "GameInstance.h"
 #include "InstallObject.h"
+#include "Utility.h"
 
 USING(Tool)
 
@@ -75,7 +76,7 @@ HRESULT CLoader::Loading_ForToolLevel()
 
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(pGameInstance->Add_Prototype(eLevel, TEXT("Prototype_Component_Sprite_Tile"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tile/platformPack_tile001.png")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

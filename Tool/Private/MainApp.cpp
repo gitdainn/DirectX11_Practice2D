@@ -59,7 +59,6 @@ void CMainApp::Tick(_double TimeDelta)
 
 HRESULT CMainApp::Render()
 {
-	m_pImGui->Render();
 
 	m_pGameInstance->Clear_BackBuffer_View(_float4(0.f, 0.f, 1.f, 1.f));
 	m_pGameInstance->Clear_DepthStencil_View();
@@ -77,7 +76,7 @@ HRESULT CMainApp::Render()
 	}
 #endif
 
-	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+	m_pImGui->Render();
 
 	m_pGameInstance->Present();
 
@@ -87,6 +86,8 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 {
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));
+
+	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Prototype_Component_For_Static()
@@ -101,15 +102,15 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CTransform::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
-	///* For.Prototype_Component_VIBuffer_Rect */
-	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-	//	CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-	//	return E_FAIL;
+	/* For.Prototype_Component_VIBuffer_Rect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
+		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
-	///* For.Prototype_Component_Shader_VtxTex*/
-	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-	//	CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-	//	return E_FAIL;
+	/* For.Prototype_Component_Shader_VtxTex*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -121,9 +122,6 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
-	//if(FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Tile"),
-	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tile/")))))
-	//	return E_FAIL;
 
 	return S_OK;
 }
