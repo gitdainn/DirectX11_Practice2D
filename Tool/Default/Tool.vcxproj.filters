@@ -34,6 +34,9 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{00bd9e07-5c00-41d0-ad4f-5d880fc175c8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Camera">
+      <UniqueIdentifier>{6c167da3-d367-4079-ac50-dea691aa5e36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -103,6 +106,9 @@
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp">
       <Filter>97.ShaderFiles</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Camera_Dynamic.h">
+      <Filter>02.GameObject\Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -153,6 +159,9 @@
     <ClCompile Include="..\Private\SpriteObject.cpp" />
     <ClCompile Include="..\Private\Loader.cpp">
       <Filter>02.Level\Loader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Camera_Dynamic.cpp">
+      <Filter>02.GameObject\Camera</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

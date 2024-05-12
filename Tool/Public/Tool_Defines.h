@@ -69,6 +69,7 @@ using namespace Tool;
 
 #pragma region LAYER_TAG
 #define LAYER_DEFAULT			TEXT("Layer_Default")
+#define LAYER_CAMERA			TEXT("Layer_Camera")
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_PLAYER			TEXT("Layer_Player")
 #define LAYER_UI				TEXT("Layer_UI")

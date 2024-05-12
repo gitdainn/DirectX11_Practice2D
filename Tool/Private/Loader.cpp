@@ -1,8 +1,12 @@
 #include "stdafx.h"
 #include "..\Public\Loader.h"
 #include "GameInstance.h"
-#include "InstallObject.h"
 #include "Utility.h"
+
+#pragma region OBJECT
+#include "InstallObject.h"
+#include "Camera_Dynamic.h"
+#pragma endregion
 
 USING(Tool)
 
@@ -77,7 +81,13 @@ HRESULT CLoader::Loading_ForToolLevel()
 #pragma endregion
 
 #pragma region OBJECT
-
+	/* For.Prototype_GameObject_Install */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"),
+		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 #pragma endregion
 
 	wsprintf(m_szLoadingText, TEXT("로딩이 완료되었습니다."));

@@ -34,17 +34,17 @@ HRESULT CCamera::Initialize(void * pArg)
 	if (nullptr != pArg)
 		memcpy(&m_CameraDesc, pArg, sizeof m_CameraDesc);
 
-	m_pTransform = CTransform::Create(m_pDevice, m_pContext);
-	if (nullptr == m_pTransform)
+	m_pTransformCom = CTransform::Create(m_pDevice, m_pContext);
+	if (nullptr == m_pTransformCom)
 		return E_FAIL;
 
-	m_pTransform->Set_TransformDesc(m_CameraDesc.TransformDesc);
+	m_pTransformCom->Set_TransformDesc(m_CameraDesc.tTransformDesc);
 
 	/*_vector		vPosition = XMLoadFloat3(&m_CameraDesc.vEye);
 	vPosition = XMVectorSetW(vPosition, 1.f);*/
 
-	m_pTransform->Set_State(CTransform::STATE_POSITION, XMLoadFloat4(&m_CameraDesc.vEye));
-	m_pTransform->LookAt(XMLoadFloat4(&m_CameraDesc.vAt));	
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMLoadFloat4(&m_CameraDesc.vEye));
+	m_pTransformCom->LookAt(XMLoadFloat4(&m_CameraDesc.vAt));	
 
 	return S_OK;
 }
@@ -55,9 +55,9 @@ _uint CCamera::Tick(_double TimeDelta)
 
 	if (nullptr != m_pPipeLine)
 	{
-		/* Ä«¸Þ¶ó ¿ùµåº¯È¯Çà·ÄÀÇ ¿ªÇà·Ä == ºä½ºÆäÀÌ½º º¯È¯Çà·Ä. */
+		/* ì¹´ë©”ë¼ ì›”ë“œë³€í™˜í–‰ë ¬ì˜ ì—­í–‰ë ¬ == ë·°ìŠ¤íŽ˜ì´ìŠ¤ ë³€í™˜í–‰ë ¬. */
 		m_pPipeLine->Set_Transform(CPipeLine::D3DTS_VIEW,
-			m_pTransform->Get_WorldMatrix_Inverse());
+			m_pTransformCom->Get_WorldMatrix_Inverse());
 
 		m_pPipeLine->Set_Transform(CPipeLine::D3DTS_PROJ,
 			XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
@@ -77,8 +77,6 @@ _uint CCamera::LateTick(_double TimeDelta)
 
 HRESULT CCamera::Render()
 {
-
-
 	return S_OK;
 }
 
@@ -92,6 +90,6 @@ void CCamera::Free()
 	__super::Free();
 
 	Safe_Release(m_pPipeLine);
-	Safe_Release(m_pTransform);
+	Safe_Release(m_pTransformCom);
 
 }

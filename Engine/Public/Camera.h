@@ -3,7 +3,7 @@
 #include "GameObject.h"
 #include "Transform.h"
 
-/* Å¬¶óÀÌ¾ğÆ®¿¡¼­ Á¦ÀÛÇÑ Ä«¸Ş¶óÀÇ ºÎ¸ğ */
+/* í´ë¼ì´ì–¸íŠ¸ì—ì„œ ì œì‘í•œ ì¹´ë©”ë¼ì˜ ë¶€ëª¨ */
 
 BEGIN(Engine)
 
@@ -16,7 +16,7 @@ public:
 
 		_float		fFovy, fAspect, fNear, fFar;
 
-		CTransform::TRANSFORM_DESC		TransformDesc;
+		CTransform::TRANSFORM_DESC		tTransformDesc;
 	}CAMERADESC;
 
 protected:
@@ -32,7 +32,6 @@ public:
 	virtual HRESULT Render() override;
 
 protected:
-	class CTransform*			m_pTransform = { nullptr };
 	class CPipeLine*			m_pPipeLine = { nullptr };
 	CAMERADESC					m_CameraDesc;
 
