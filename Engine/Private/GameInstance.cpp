@@ -9,7 +9,7 @@
 #include "PipeLine.h"
 #include "Frustum.h"
 #include "Input_Device.h"
-
+#include "GarbageCollector.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 

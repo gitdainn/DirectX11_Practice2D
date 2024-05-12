@@ -69,6 +69,16 @@ public:
 		m_eSpriteDirection = eDirection;
 	}
 
+	void Set_SpriteInfo(const SPRITE_INFO tSpriteInfo)
+	{
+		m_tSpriteInfo = tSpriteInfo;
+	}
+
+	const SPRITE_INFO& Get_SpriteInfo() const
+	{
+		return m_tSpriteInfo;
+	}
+
 public:
 	const bool IsEndSprite()
 	{
@@ -82,9 +92,15 @@ public:
 		return m_eSpriteDirection;
 	}
 
+	const vector<const _tchar*>* Get_TexturePathVec() const
+	{
+		return m_pTextureCom->Get_TexturePathVec();
+	}
+
 public:
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
+	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);

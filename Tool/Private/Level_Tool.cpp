@@ -10,6 +10,7 @@ CLevel_Tool::CLevel_Tool(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 }
 
 HRESULT CLevel_Tool::Initialize()
+
 {
 	/* 검색시에 어떤 레벨에 있는 특정 태그에 있는 몇번째 녀석. */
 	if (FAILED(Ready_Layer_GameObject()))
@@ -27,16 +28,8 @@ void CLevel_Tool::Tick(_double TimeDelta)
 
 HRESULT CLevel_Tool::Ready_Layer_GameObject()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	SPRITE_INFO tSpriteInfo;
-
-
-	Safe_Release(pGameInstance);
 	return S_OK;
 }
-
 
 CLevel_Tool* CLevel_Tool::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

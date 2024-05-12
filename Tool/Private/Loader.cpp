@@ -74,23 +74,10 @@ HRESULT CLoader::Loading_ForToolLevel()
 #pragma region TEXTURES	
 	wsprintf(m_szLoadingText, TEXT("텍스쳐를 로딩중입니다."));
 
-	/* For.Prototype_Component_Sprite_GrimReaper */
-	if (FAILED(pGameInstance->Add_Prototype(eLevel, TEXT("Prototype_Component_Sprite_Tile"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	};
 #pragma endregion
 
 #pragma region OBJECT
-	/* For.Prototype_GameObject_Install */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Install"),
-		CInstallObject::Create(m_pDevice, m_pContext))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	};
+
 #pragma endregion
 
 	wsprintf(m_szLoadingText, TEXT("로딩이 완료되었습니다."));

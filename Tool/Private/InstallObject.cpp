@@ -39,7 +39,7 @@ HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 _uint CInstallObject::Tick(_double TimeDelta)
 {
     //Play_Animation(m_tSpriteInfo.iTextureIndex, TimeDelta);
-
+    m_pTextureCom->Get_TexturePathVec();
     return __super::Tick(TimeDelta);
 }
 
@@ -56,8 +56,6 @@ HRESULT CInstallObject::Render()
 
 HRESULT CInstallObject::Add_Components(void* pArg)
 {
-    m_pTextureTag = TEXT("Prototype_Component_Sprite_Tile");
-
     if (FAILED(__super::Add_Components(pArg)))
         return E_FAIL;
 

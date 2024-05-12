@@ -5,6 +5,7 @@
 #include "MainApp.h"
 #include "GameInstance.h"
 #include "Level_Loading.h"
+#include "InstallObject.h"
 #include "Utility.h"
 
 USING(Tool)
@@ -117,11 +118,44 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* For.Prototype_GameObject_Install */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Install"),
+		CInstallObject::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	Safe_Release(pGameInstance);
+
 	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	/* For.Prototype_Component_Sprite_Tile */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Tile"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_ForestObject */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Environment/Forest/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

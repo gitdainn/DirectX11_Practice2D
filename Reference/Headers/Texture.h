@@ -46,11 +46,17 @@ public:
 		return m_TextureSizeVec[iTextureIndex];
 	}
 
+	const vector<const _tchar*>* Get_TexturePathVec() const
+	{
+		return &m_TexturePathVec;
+	}
+
 private:
 	const _float2 Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) const;
 
 private:
 	vector<ID3D11ShaderResourceView*>			m_SRVs;
+	vector<const _tchar*>								m_TexturePathVec;
 	vector<_float2>								m_TextureSizeVec;
 	_uint										m_iNumTextures = { 0 };
 

@@ -18,6 +18,16 @@ CTexture::CTexture(const CTexture& rhs)
 {
 	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
+
+	_uint iIndex = 0;
+	m_TexturePathVec.resize(rhs.m_TexturePathVec.size());
+	for (const _tchar* pFilePath : rhs.m_TexturePathVec)
+	{
+		_tchar* pPath = new _tchar[lstrlen(pFilePath) + 1];
+		lstrcpy(pPath, pFilePath);
+		m_TexturePathVec[iIndex] = pPath;
+		++iIndex;
+	}
 }
 
 HRESULT CTexture::Set_ShaderResource(CShader * pShader, const char * pConstantName, _uint iTextureIndex)
@@ -39,11 +49,14 @@ HRESULT CTexture::Set_ShaderResourceArray(CShader * pShader, const char * pConst
 
 HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 {
-	m_iNumTextures = TextureFileVec.size();
+	m_iNumTextures = (_uint)TextureFileVec.size();
+	/** @qurious - resize와 reverse 차이, 그리고 emplace_back */
 	m_TextureSizeVec.resize(m_iNumTextures);
+	m_TexturePathVec.resize(m_iNumTextures);
+
 	_uint iIndex = { 0 };
 
-	for (const TCHAR* pFilePath : TextureFileVec)
+	for (const _tchar* pFilePath : TextureFileVec)
 	{
 		_tchar		szDrive[MAX_PATH] = TEXT("");
 		_tchar		szDir[MAX_PATH] = TEXT("");
@@ -66,7 +79,13 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 			hr = CreateWICTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
 
 		m_SRVs.emplace_back(pSRV);
-		m_TextureSizeVec[iIndex++] = (Get_OriginalTextureSize(pSRV));
+		m_TextureSizeVec[iIndex] = (Get_OriginalTextureSize(pSRV));
+
+		_tchar* pPath = new _tchar[lstrlen(pFilePath) + 1];
+		lstrcpy(pPath, pFilePath);
+
+		m_TexturePathVec[iIndex] = pPath;
+		++iIndex;
 	}
 
 	return S_OK;
@@ -77,6 +96,7 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 	m_iNumTextures = iNumTextures;
 	// 텍스처 개수 미리 알고있어 메모리 재할당 문제 방지 가능하고, 검색이 중요하기에 벡터 선정. 
 	m_TextureSizeVec.resize(m_iNumTextures);
+	m_TexturePathVec.resize(m_iNumTextures);
 
 	for (_uint i = 0; i < iNumTextures; ++i)
 	{
@@ -113,6 +133,11 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 
 		m_SRVs.emplace_back(pSRV);
 		m_TextureSizeVec[i] = (Get_OriginalTextureSize(pSRV));
+
+		_tchar* pPath = new _tchar[lstrlen(szFullPath) + 1];
+		lstrcpy(pPath, szFullPath);
+
+		m_TexturePathVec[i] = pPath;
 	}	
 
 	return S_OK;
@@ -196,7 +221,13 @@ void CTexture::Free()
 
 	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_Release(pSRV);
-	
 	m_SRVs.clear();
+	
+	for (const _tchar* pPath : m_TexturePathVec)
+	{
+		Safe_Delete_Array(pPath);
+	}
+	m_TexturePathVec.clear();
+
 	m_TextureSizeVec.clear();
 }

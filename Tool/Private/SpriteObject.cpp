@@ -36,6 +36,10 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
+	if (nullptr == m_tSpriteInfo.pTextureTag)
+		m_pTextureTag = TEXT("Prototype_Component_Sprite_Tile");
+	else
+		m_pTextureTag = m_tSpriteInfo.pTextureTag;
 
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
@@ -90,6 +94,17 @@ HRESULT CSpriteObject::Render()
 	return S_OK;
 }
 
+HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
+{
+	if (FAILED(CGameObject::Change_Component(LEVEL_STATIC, pPrototypeTag, TAG_TEXTURE, (CComponent**)&m_pTextureCom)))
+	{
+		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
+		return E_FAIL;
+	}
+
+	return S_OK;
+}
+
 HRESULT CSpriteObject::Add_Components(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -129,7 +144,7 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	}
 
 	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_TOOL, m_pTextureTag,
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureTag,
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 	{
 		MSG_BOX("CSpriteObject - Add_Components() - FAILED");

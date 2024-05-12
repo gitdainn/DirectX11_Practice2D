@@ -115,8 +115,11 @@
     <Filter Include="00.System\02.DInput">
       <UniqueIdentifier>{d263ae99-03b8-4042-bf24-ba2876f7cd50}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\08.Utility">
+    <Filter Include="01.Utility\09.Utility">
       <UniqueIdentifier>{bb2866b6-beb9-4ce0-bc26-122ab2199094}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="10.GarbageCollector">
+      <UniqueIdentifier>{0954c81d-a449-4fc3-94b4-3ab6efd3903a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -226,7 +229,10 @@
       <Filter>00.System\02.DInput</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Utility.cpp">
-      <Filter>01.Utility\08.Utility</Filter>
+      <Filter>01.Utility\09.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GarbageCollector.cpp">
+      <Filter>10.GarbageCollector</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -348,7 +354,10 @@
       <Filter>00.System\02.DInput</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Utility.h">
-      <Filter>01.Utility\08.Utility</Filter>
+      <Filter>01.Utility\09.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GarbageCollector.h">
+      <Filter>10.GarbageCollector</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

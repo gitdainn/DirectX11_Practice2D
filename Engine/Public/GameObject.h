@@ -39,13 +39,14 @@ protected:
 	CRenderer* m_pRendererCom = { nullptr };
 
 protected:
-	/* «ÿΩ√≈◊¿Ã∫Ì */
+	/* Ìï¥ÏãúÌÖåÏù¥Î∏î */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 
 protected:
 	HRESULT Add_Components(_uint iLevelIndex, const _tchar* pPrototypeTag, 
 		const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
 	class CComponent* Find_Component(const _tchar* pComponentTag);
+	HRESULT Change_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppOut, void* pArg = nullptr);
 
 public:			
 	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const = 0;

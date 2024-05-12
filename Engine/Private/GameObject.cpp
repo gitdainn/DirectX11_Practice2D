@@ -87,6 +87,39 @@ CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
 	return iter->second;
 }
 
+HRESULT CGameObject::Change_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppOut, void* pArg)
+{
+	if (nullptr == Find_Component(pComponentTag))
+	{
+		MSG_BOX("CGameObject - Change_Component() - You Have to Add_Component()");
+		return E_FAIL;
+	}
+
+	CComponent_Manager* pComponent_Manager = CComponent_Manager::GetInstance();
+	Safe_AddRef(pComponent_Manager);
+
+	/* 원형객체를 복사하여 사본 컴포넌트를 만든다. */
+	CComponent* pComponent = pComponent_Manager->Clone_Component(iLevelIndex, pPrototypeTag, pArg);
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	Safe_Release(pComponent_Manager);
+
+	/* 부모의 맵컨테이너에 복제한 컴포넌트를 추가한다. */
+	m_Components.erase(pComponentTag);
+	m_Components.emplace(pComponentTag, pComponent);
+
+	Safe_Release(*ppOut);
+	Safe_Release(*ppOut);
+	*ppOut = pComponent;
+
+	Safe_AddRef(pComponent);
+
+	return S_OK;
+}
+
+
+
 void CGameObject::Free()
 {
 	for (auto& Pair : m_Components)

@@ -92,6 +92,16 @@ public:
 		return m_eCurrentState;
 	}
 
+	void Set_SpriteInfo(const SPRITE_INFO tSpriteInfo)
+	{
+		m_tSpriteInfo = tSpriteInfo;
+	}
+
+	const SPRITE_INFO& Get_SpriteInfo() const
+	{
+		return m_tSpriteInfo;
+	}
+
 public: 
 	template<typename T>
 	void Change_Sprite(const T& Sprite);

@@ -76,6 +76,14 @@ public: /* For.Font_Manager */
 public: /* For.Frustum */
 	_bool isIn_WorldFrustum(_fvector vPosition, _float fRange = 0.f);
 
+public: /* For.GarbageCollector */
+	template<typename T>
+	void	Add_Garbage(T& Garbage);
+	template<typename T>
+	void	Add_CurLevelGarbage(T& Garbage);
+	template<typename T>
+	void	Clear_CurLevelGarbage(T Null = nullptr); // 이거.. 어케해야할지 몰겠음.
+
 public:
 	static void Release_Engine();
 

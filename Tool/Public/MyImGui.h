@@ -16,6 +16,8 @@ END
 
 BEGIN(Tool)
 
+class CSpriteObject;
+
 class CMyImGui : public CBase
 {
 	DECLARE_SINGLETON(CMyImGui)
@@ -38,8 +40,22 @@ public:
 	virtual HRESULT Render();
 
 private:
+	void Add_SpriteListBox(const char* pFolderName);
+	_tchar* ConvertSpriteComponentWithFolderName(const char* pFolderName) const;
+
+private:
+	CSpriteObject* m_pPreviewObject;
 	CGameObject* m_pSelectedObject;
 	list<CGameObject*>		m_InstalledList;
+	vector<const char*>		m_FolderName;
+	unique_ptr<_uint[]>		m_pSpriteListIndex;
+	_uint					m_iFolderIndex;
+
+	/** @note - 자료구조 선택 이유
+	* 1. 토글 열 때마다 추가해야하는 폴더 경우 map으로 key값으로 찾아 상수 시간복잡도이고, 삽입 부담X
+	* 2. 폴더 내 파일 경우 크기를 미리 알 수 있으므로 삽입 시 재할당 방지 가능하고, 인덱스 검색 시 상수시간복잡도인 vector
+	* */
+	unordered_map<const char*, vector<const char*>>	m_SpritePathMap; // <폴더명, 폴더 내 파일명>
 
 private:
 	virtual void Free() override;
