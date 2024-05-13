@@ -37,7 +37,7 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Tick(_double TimeDelta)
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("°ÔÀÓ ÇÃ·¹ÀÌ ·¹º§ÀÓ"));
+	SetWindowText(g_hWnd, TEXT("ê²Œìž„ í”Œë ˆì´ ë ˆë²¨ìž„"));
 #endif
 }
 
@@ -102,8 +102,8 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar * pLayerTag)
 	CameraDynamicDesc.CameraDesc.fNear = 0.2f;
 	CameraDynamicDesc.CameraDesc.fFar = 300;
 
-	CameraDynamicDesc.CameraDesc.TransformDesc.SpeedPerSec = 20.f;
-	CameraDynamicDesc.CameraDesc.TransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
+	CameraDynamicDesc.CameraDesc.tTransformDesc.SpeedPerSec = 20.f;
+	CameraDynamicDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
 
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_GAMEPLAY, pLayerTag, &CameraDynamicDesc)))
 		return E_FAIL;
