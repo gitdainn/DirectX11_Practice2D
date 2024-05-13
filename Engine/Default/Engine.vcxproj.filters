@@ -118,8 +118,11 @@
     <Filter Include="01.Utility\09.Utility">
       <UniqueIdentifier>{bb2866b6-beb9-4ce0-bc26-122ab2199094}</UniqueIdentifier>
     </Filter>
-    <Filter Include="10.GarbageCollector">
+    <Filter Include="01.Utility\10.GarbageCollector">
       <UniqueIdentifier>{0954c81d-a449-4fc3-94b4-3ab6efd3903a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\11.ScrollManager">
+      <UniqueIdentifier>{498e7732-5e19-4675-a52b-1db76cd20852}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -232,7 +235,10 @@
       <Filter>01.Utility\09.Utility</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GarbageCollector.cpp">
-      <Filter>10.GarbageCollector</Filter>
+      <Filter>01.Utility\10.GarbageCollector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Scroll_Manager.cpp">
+      <Filter>01.Utility\11.ScrollManager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -357,7 +363,10 @@
       <Filter>01.Utility\09.Utility</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GarbageCollector.h">
-      <Filter>10.GarbageCollector</Filter>
+      <Filter>01.Utility\10.GarbageCollector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Scroll_Manager.h">
+      <Filter>01.Utility\11.ScrollManager</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

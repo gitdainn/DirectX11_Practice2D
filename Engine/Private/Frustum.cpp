@@ -9,7 +9,7 @@ CFrustum::CFrustum()
 
 HRESULT CFrustum::Initialize()
 {
-	/* Åõ¿µ½ºÆäÀÌ½º »óÀÇ ÀıµÎÃ¼ ²ÀÁşÁ¡À» Á¤ÀÇÇÑ´Ù. */
+	/* íˆ¬ì˜ìŠ¤í˜ì´ìŠ¤ ìƒì˜ ì ˆë‘ì²´ ê¼­ì§“ì ì„ ì •ì˜í•œë‹¤. */
 	m_vPoints_Original[0] = _float3(-1.f, 1.f, 0.f);
 	m_vPoints_Original[1] = _float3(1.f, 1.f, 0.f);
 	m_vPoints_Original[2] = _float3(1.f, -1.f, 0.f);
@@ -31,14 +31,14 @@ void CFrustum::Tick()
 	_matrix		ProjMatrixInverse = pPipeLine->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_PROJ);
 	_matrix		ViewMatrixInverse = pPipeLine->Get_Transform_Matrix_Inverse(CPipeLine::D3DTS_VIEW);
 
-	/* ºä½ºÆäÀÌ½º */
+	/* ë·°ìŠ¤í˜ì´ìŠ¤ */
 	for (_uint i = 0; i < 8; ++i)
 	{
 		XMStoreFloat3(&m_vPoints[i], 
 			XMVector3TransformCoord(XMLoadFloat3(&m_vPoints_Original[i]), ProjMatrixInverse));
 	}
 
-	/* ¿ùµå½ºÆäÀÌ½º */
+	/* ì›”ë“œìŠ¤í˜ì´ìŠ¤ */
 	for (_uint i = 0; i < 8; ++i)
 	{
 		XMStoreFloat3(&m_vPoints[i],

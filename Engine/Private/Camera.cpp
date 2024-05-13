@@ -51,8 +51,6 @@ HRESULT CCamera::Initialize(void * pArg)
 
 _uint CCamera::Tick(_double TimeDelta)
 {
-	
-
 	if (nullptr != m_pPipeLine)
 	{
 		/* 카메라 월드변환행렬의 역행렬 == 뷰스페이스 변환행렬. */

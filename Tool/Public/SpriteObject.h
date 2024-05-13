@@ -106,6 +106,7 @@ protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
+	void	Scroll_Screen(_float4x4& WorldMatrix) const;
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -126,10 +127,11 @@ protected:
 	_float4x4	m_ProjMatrix;
 
 protected:
-	bool	m_bIsDead;
-	bool	m_bIsRender;
-	bool	m_bIsAnimUV;
-	bool	m_bIsEndSprite;
+	_bool	m_bIsDead;
+	_bool	m_bIsRender;
+	_bool	m_bIsAnimUV;
+	_bool	m_bIsEndSprite;
+	_bool	m_bIsScroll;
 
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	CRenderer::RENDERGROUP	m_eRenderGroup;

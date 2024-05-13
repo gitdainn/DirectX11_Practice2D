@@ -1,2 +1,6 @@
-﻿  Camera.cpp
+﻿  Scroll_Manager.cpp
+  GameInstance.cpp
+  코드를 생성하고 있습니다...
+D:\1. GameProject\DirectX11_Practice2D\Engine\private\GameInstance.cpp(369,1): warning C4172: 지역 변수 또는 임시의 주소를 반환하고 있습니다.
+D:\1. GameProject\DirectX11_Practice2D\Engine\private\GameInstance.cpp(361,1): warning C4172: 지역 변수 또는 임시의 주소를 반환하고 있습니다.
   Engine.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Engine\Bin\Engine.dll

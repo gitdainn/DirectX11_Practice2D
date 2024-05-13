@@ -12,6 +12,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureTag(nullptr)
+	, m_bIsScroll(true)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -159,8 +160,24 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 
 HRESULT CSpriteObject::SetUp_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	// 실제 Transform에 더해버리면 계속누적해서 더해버리니까 실제 위치에는 적용 안되도록 출려갛ㄹ 때만 + Scroll
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
+
+	if (m_bIsScroll)
+	{
+		Scroll_Screen(WorldMatrix);
+	}
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
+
+	Safe_Release(pGameInstance);
+
+	//if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	//	return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -175,6 +192,18 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	WorldMatrix._41 = XMVectorGetX(vPosition) + pGameInstance->Get_ScrollX();
+	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
+
+	Safe_Release(pGameInstance);
 }
 
 void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)

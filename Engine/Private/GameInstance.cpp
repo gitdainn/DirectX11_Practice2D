@@ -10,6 +10,7 @@
 #include "Frustum.h"
 #include "Input_Device.h"
 #include "GarbageCollector.h"
+#include "Scroll_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -24,6 +25,7 @@ CGameInstance::CGameInstance()
 	, m_pFont_Manager(CFont_Manager::GetInstance())
 	, m_pFrustum(CFrustum::GetInstance())
 	, m_pDInput_Manager(CDInput_Manager::GetInstance())
+	, m_pScroll_Manager(CScroll_Manager::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -35,6 +37,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pGraphic_Device);	
 	Safe_AddRef(m_pTimer_Manager);
 	Safe_AddRef(m_pDInput_Manager);
+	Safe_AddRef(m_pScroll_Manager);
 }
 
 HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
@@ -352,6 +355,38 @@ _bool CGameInstance::isIn_WorldFrustum(_fvector vPosition, _float fRange)
 	return m_pFrustum->isIn_World(vPosition, fRange);
 }
 
+const _float& CGameInstance::Get_ScrollX() const
+{
+	if (nullptr == m_pScroll_Manager)
+		return _float(0.f);
+
+	return m_pScroll_Manager->Get_ScrollX();
+}
+
+const _float& CGameInstance::Get_ScrollY() const
+{
+	if (nullptr == m_pScroll_Manager)
+		return _float(0.f);
+
+	return m_pScroll_Manager->Get_ScrollY();
+}
+
+void CGameInstance::Set_ScrollX(const _float fX)
+{
+	if (nullptr == m_pScroll_Manager)
+		return;
+
+	return m_pScroll_Manager->Set_ScrollX(fX);
+}
+
+void CGameInstance::Set_ScrollY(const _float fY)
+{
+	if (nullptr == m_pScroll_Manager)
+		return;
+
+	return m_pScroll_Manager->Set_ScrollY(fY);
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -377,6 +412,8 @@ void CGameInstance::Release_Engine()
 	CGraphic_Device::GetInstance()->DestroyInstance();
 
 	CDInput_Manager::GetInstance()->DestroyInstance();
+
+	CScroll_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
@@ -391,4 +428,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pGraphic_Device);
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pDInput_Manager);
+	Safe_Release(m_pScroll_Manager);
 }

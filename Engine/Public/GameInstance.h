@@ -76,13 +76,19 @@ public: /* For.Font_Manager */
 public: /* For.Frustum */
 	_bool isIn_WorldFrustum(_fvector vPosition, _float fRange = 0.f);
 
-public: /* For.GarbageCollector */
-	template<typename T>
-	void	Add_Garbage(T& Garbage);
-	template<typename T>
-	void	Add_CurLevelGarbage(T& Garbage);
-	template<typename T>
-	void	Clear_CurLevelGarbage(T Null = nullptr); // 이거.. 어케해야할지 몰겠음.
+public: /* For.Scroll_Manager */
+	const _float& Get_ScrollX() const;
+	const _float& Get_ScrollY() const;
+	void		Set_ScrollX(const _float _fX);
+	void		Set_ScrollY(const _float _fY);
+
+//public: /* For.GarbageCollector */
+//	template<typename T>
+//	void	Add_Garbage(T& Garbage);
+//	template<typename T>
+//	void	Add_CurLevelGarbage(T& Garbage);
+//	template<typename T>
+//	void	Clear_CurLevelGarbage(T Null = nullptr); // 이거.. 어케해야할지 몰겠음.
 
 public:
 	static void Release_Engine();
@@ -98,6 +104,7 @@ private:
 	class CFont_Manager*				m_pFont_Manager = { nullptr };
 	class CFrustum*						m_pFrustum = { nullptr };
 	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
+	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
 
 public:
 	virtual void Free() override;
