@@ -43,11 +43,21 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	//if (pGameInstance->Get_KeyStay(DIK_A))
-	//	m_pTransformCom->Go_Straight(TimeDelta);
+	if (pGameInstance->Get_KeyStay(DIK_W))
+	{
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		m_pTransformCom->Go_Up(TimeDelta);
+		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		pGameInstance->Set_ScrollY(-1 * abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
+	}
 
-	//if (pGameInstance->Get_KeyStay(DIK_A))
-	//	m_pTransformCom->Go_Backward(TimeDelta);
+	if (pGameInstance->Get_KeyStay(DIK_S))
+	{
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		m_pTransformCom->Go_Down(TimeDelta);
+		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		pGameInstance->Set_ScrollY(abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
+	}
 
 	if (pGameInstance->Get_KeyStay(DIK_A))
 	{

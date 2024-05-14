@@ -2,8 +2,9 @@
 #include "Shader.h"
 #include "Navigation.h"
 
-CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
+CTransform::CTransform(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
+	, m_fScaleRatio(_float3(1.f, 1.f, 1.f))
 {
 	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
@@ -12,6 +13,7 @@ CTransform::CTransform(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
+	, m_fScaleRatio(rhs.m_fScaleRatio)
 {
 	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
 }
@@ -49,8 +51,24 @@ HRESULT CTransform::Initialize(void * pArg)
 	return S_OK;
 }
 
-void CTransform::Go_Straight(_double TimeDelta, CNavigation* pNavigation)
+void CTransform::Go_Up(_double TimeDelta)
 {
+	_vector		vPosition = Get_State(CTransform::STATE_POSITION);
+	_vector		vUp = Get_State(CTransform::STATE_UP);
+
+	vPosition += XMVector3Normalize(vUp) * (_float)(m_TransformDesc.SpeedPerSec * TimeDelta);
+
+	Set_State(CTransform::STATE_POSITION, vPosition);
+}
+
+void CTransform::Go_Down(_double TimeDelta)
+{
+	_vector		vPosition = Get_State(CTransform::STATE_POSITION);
+	_vector		vUp = Get_State(CTransform::STATE_UP);
+
+	vPosition -= XMVector3Normalize(vUp) * (_float)(m_TransformDesc.SpeedPerSec * TimeDelta);
+
+	Set_State(CTransform::STATE_POSITION, vPosition);
 }
 
 void CTransform::Go_Left(_double TimeDelta)
@@ -69,16 +87,6 @@ void CTransform::Go_Right(_double TimeDelta)
 	_vector		vRight = Get_State(CTransform::STATE_RIGHT);
 
 	vPosition += XMVector3Normalize(vRight) * (_float)(m_TransformDesc.SpeedPerSec * TimeDelta);
-
-	Set_State(CTransform::STATE_POSITION, vPosition);
-}
-
-void CTransform::Go_Backward(_double TimeDelta)
-{
-	_vector		vPosition = Get_State(CTransform::STATE_POSITION);
-	_vector		vLook = Get_State(CTransform::STATE_LOOK);
-
-	vPosition -= XMVector3Normalize(vLook) * (_float)(m_TransformDesc.SpeedPerSec * TimeDelta);
 
 	Set_State(CTransform::STATE_POSITION, vPosition);
 }

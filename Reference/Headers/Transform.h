@@ -49,6 +49,11 @@ public: /* Getter */
 		return m_WorldMatrix;
 	}
 
+	const _float3& Get_ScaleRatio() const
+	{
+		return m_fScaleRatio;
+	}
+
 public: /* Setter */
 	void Set_WorldMatrix(_matrix matWorld) {
 		_matrix matWorldW = matWorld;
@@ -65,6 +70,11 @@ public: /* Setter */
 
 	void Set_Scaled(const _float3& vScale);
 
+	void Set_ScaleRatio(const _float3& fScaleRatio)
+	{
+		m_fScaleRatio = fScaleRatio;
+	}
+
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pContantName);
 
 public:
@@ -72,10 +82,10 @@ public:
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
-	void Go_Straight(_double TimeDelta, class CNavigation* pNavigation = nullptr);
+	void Go_Up(_double TimeDelta);
+	void Go_Down(_double TimeDelta);
 	void Go_Left(_double TimeDelta);
 	void Go_Right(_double TimeDelta);
-	void Go_Backward(_double TimeDelta);
 
 	/* 정적인 회전. : 항등상태기준 vAxis축으로 Radian만큼 회전해 있는다. */
 	void Rotation(_fvector vAxis, _double Radian);
@@ -95,6 +105,7 @@ private:
 	_float4x4			m_WorldMatrix;
 	// _matrix : 행렬의 연산을 위한 데이터 타입. 
 	TRANSFORM_DESC		m_TransformDesc;
+	_float3				m_fScaleRatio;
 
 public:
 	static CTransform* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

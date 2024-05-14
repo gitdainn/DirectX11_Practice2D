@@ -3,6 +3,7 @@
 #include "SpriteObject.h"
 #include "GameInstance.h"
 #include "DInput_Manager.h"
+#include "Utility.h"
 #include <array>
 #include <memory>
 
@@ -22,6 +23,7 @@ CMyImGui::CMyImGui()
     , m_pSpriteListIndex(nullptr)
     , m_iFolderIndex(0)
 {
+    m_CreateObjectVec.reserve(100);
 }
 
 HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -34,9 +36,9 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     ImGui_ImplWin32_Init(g_hWnd);
     ImGui_ImplDX11_Init(pDevice, pContext);
 
-    m_FolderName.emplace_back("Tile");
-    m_FolderName.emplace_back("ForestEnvironment");
-    m_pSpriteListIndex = make_unique<_uint[]>(m_FolderName.size());
+    m_FolderNameVec.emplace_back("Tile");
+    m_FolderNameVec.emplace_back("ForestEnvironment");
+    m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
 
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
@@ -61,34 +63,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 _uint CMyImGui::Tick(_double TimeDelta)
 {
-    CGameInstance* pGameInstance = CGameInstance::GetInstance();
-    Safe_AddRef(pGameInstance);
-
-    SPRITE_INFO tSpriteInfo;
-    tSpriteInfo.fPosition = _float2(0.f, 0.f); // 마우스 클릭 위치
-
-    if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
-    {
-        SPRITE_INFO tSpriteInfo;
-        tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
-        tSpriteInfo.pTextureTag = ConvertSpriteComponentWithFolderName(m_FolderName[m_iFolderIndex]);
-        if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo))))
-        {
-            MSG_BOX("CMyImGui - Tick() - NULL");
-            Safe_Release(pGameInstance);
-            return E_FAIL;
-        }
-        // @qurious - 이러면.. 오브젝트 안의 pTextureTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-        Safe_Delete_Array(tSpriteInfo.pTextureTag); 
-        m_pSelectedObject = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT)->back();
-
-        if(nullptr != m_pSelectedObject)
-        {
-            m_InstalledList.emplace_back(m_pSelectedObject);
-        }
-    }
-
-    Safe_Release(pGameInstance);
+    Key_Input(TimeDelta);
 
     return _uint();
 }
@@ -141,68 +116,35 @@ inline HRESULT CMyImGui::ShowDemoWindow()
 
 HRESULT CMyImGui::ShowInstalledWindow()
 {
-    //static bool bIsShow = true;
-    //ImGui::Begin("Installed Object", &bIsShow);
+    static bool bIsShow = true;
+    ImGui::Begin("Create", &bIsShow);
 
-    //ImGuiIO& io = ImGui::GetIO();
-    //ImTextureID my_tex_id = io.Fonts->TexID;
-    //float my_tex_w = (float)io.Fonts->TexWidth;
-    //float my_tex_h = (float)io.Fonts->TexHeight;
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
 
-    //static int pressed_count = 0;
-    //for (int i = 0; i < 8; i++)
-    //{
-    //    // UV coordinates are often (0.0f, 0.0f) and (1.0f, 1.0f) to display an entire textures.
-    //    // Here are trying to display only a 32x32 pixels area of the texture, hence the UV computation.
-    //    // Read about UV coordinates here: https://github.com/ocornut/imgui/wiki/Image-Loading-and-Displaying-Examples
-    //    ImGui::PushID(i);
-    //    if (i > 0)
-    //        ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(i - 1.0f, i - 1.0f));
-    //    ImVec2 size = ImVec2(32.f, 32.f);                         // Size of the image we want to make visible
-    //    ImVec2 uv0 = ImVec2(0.0f, 0.0f);                            // UV coordinates for lower-left
-    //    ImVec2 uv1 = ImVec2(32.0f / my_tex_w, 32.0f / my_tex_h);    // UV coordinates for (32,32) in our texture
-    //    ImVec4 bg_col = ImVec4(0.0f, 0.0f, 0.0f, 1.0f);             // Black background
-    //    ImVec4 tint_col = ImVec4(1.0f, 1.0f, 1.0f, 1.0f);           // No tint
-    //    if (ImGui::ImageButton("", my_tex_id, size, uv0, uv1, bg_col, tint_col))
-    //        pressed_count += 1;
-    //    if (i > 0)
-    //        ImGui::PopStyleVar();
-    //    ImGui::PopID();
-    //    ImGui::SameLine();
-    //}
+    static int iSelectIndex = { 0 };
 
-    //// @Dainn.
-    ///* For.Prototype_Component_Sprite_LittleBorn */
-    ////if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_LittleBorn"),
-    ////    CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
-    ////{
-    ////    Safe_Release(pGameInstance);
-    ////    return E_FAIL;
-    ////};
+    if (ImGui::BeginListBox("InstalledObject"))
+    {
+        for (int iListIndex = 0; iListIndex < m_CreateObjectVec.size(); iListIndex++)
+        {
+            const bool is_selected = (iSelectIndex == iListIndex);
+            // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+            if (ImGui::Selectable(m_CreateObjectVec[iListIndex].second->c_str(), is_selected))
+            {
+                m_pSelectedObject = m_CreateObjectVec[iListIndex].first;
+                iSelectIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+            }
 
-    ////// ->  폴더명 LittleBorn들만 FolderList에 넣어서 출력한 다음에 클릭하면 해당 
-    ////if (ImGui::BeginListBox("Group_UI"))
-    ////{
-    ////    if (0 < m_GroupUIVec.size())
-    ////    {
-    ////        for (auto it = m_GroupUIVec[m_iGroupIndex].begin(); it != m_GroupUIVec[m_iGroupIndex].end(); ++it)
-    ////        {
-    ////            const bool is_selected = (iter == it);
-    ////            if (ImGui::Selectable((*it).pTag, is_selected))
-    ////            {
-    ////                iter = it;
-    ////                m_iPickedGroupUI = _uint(std::distance(m_GroupUIVec[m_iGroupIndex].begin(), it));
-    ////            }
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndListBox();
+    }
 
-    ////            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-    ////            if (is_selected)
-    ////                ImGui::SetItemDefaultFocus();
-    ////        }
-    ////    }
-    ////    ImGui::EndListBox();
-    ////}
+    Safe_Release(pGameInstance);
 
-    //ImGui::End();
+    ImGui::End();
     return S_OK;
 }
 
@@ -215,9 +157,9 @@ HRESULT CMyImGui::ShowSpriteWindow()
     Safe_AddRef(pGameInstance);
 
     /** @note - Tree는 열어야 내부 코드 실행됨 */
-    for (_uint iFolderIndex = 0; iFolderIndex < m_FolderName.size(); ++iFolderIndex)
+    for (_uint iFolderIndex = 0; iFolderIndex < m_FolderNameVec.size(); ++iFolderIndex)
     {
-        if (ImGui::TreeNode(m_FolderName[iFolderIndex]))
+        if (ImGui::TreeNode(m_FolderNameVec[iFolderIndex]))
         {
             // Add는 한 번만 해야함
             /** @note - unique_ptr
@@ -225,16 +167,16 @@ HRESULT CMyImGui::ShowSpriteWindow()
             2. unique_ptr은 기존 C 배열 초기화 가능, shared_ptr은 불가능 -> std::array나 std::vector 권장
             3. unique_ptr<자료형> 변수명(new 클래스()); 로도 생성 가능하나 make_unique로 생성할 것을 추천
             4. make_unique<bool[]>(개수); 배열 초기화는 memset 권장 (for문보다 속도 빠름)*/
-            static unique_ptr<bool[]> bIsOnce = make_unique<bool[]>(m_FolderName.size());
-            //memset(&bIsOnce, false, sizeof(bool) * m_FolderName.size());
+            static unique_ptr<bool[]> bIsOnce = make_unique<bool[]>(m_FolderNameVec.size());
+            //memset(&bIsOnce, false, sizeof(bool) * m_FolderNameVec.size());
 
             if (!bIsOnce[iFolderIndex])
             {
-                Add_SpriteListBox(m_FolderName[iFolderIndex]);
+                Add_SpriteListBox(m_FolderNameVec[iFolderIndex]);
                 bIsOnce[iFolderIndex] = true;
             }
 
-            vector<const char*> PathVec = m_SpritePathMap.find(m_FolderName[iFolderIndex])->second;
+            vector<const char*> PathVec = m_SpritePathMap.find(m_FolderNameVec[iFolderIndex])->second;
 
             if (ImGui::BeginListBox("Sprite"))
             {
@@ -243,7 +185,7 @@ HRESULT CMyImGui::ShowSpriteWindow()
                     for (_uint iListIndex = 0; iListIndex < PathVec.size(); ++iListIndex)
                     {
                         const bool is_selected = !strcmp(PathVec[iListIndex], PathVec[m_pSpriteListIndex[iFolderIndex]]);
-                        // Selectable(const char* 형태의 첫번째 인자, bool 선택 여부) 
+                        // Selectable(const char* 리스트에 띄울 이름, bool 선택 여부) 
                         if (ImGui::Selectable(PathVec[iListIndex], is_selected))
                         {
                             SPRITE_INFO tSpriteInfo = m_pPreviewObject->Get_SpriteInfo();
@@ -275,7 +217,133 @@ HRESULT CMyImGui::ShowInspectorWindow()
     static bool bIsShow = true;
     ImGui::Begin("Inspector", &bIsShow);
 
+    if (nullptr == m_pSelectedObject)
+    {
+        ImGui::End();
+        return S_OK;
+    }
+
+    static enum eTransform { POSITION, ROTATION, SCALE, TRANS_END };
+    static const _float fSpeed[eTransform::TRANS_END] = { 0.5f, 0.5f, 1.f };
+    static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f };
+    static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 10.f };
+
+    CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
+    CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
+    if (nullptr == pTexture)
+    {
+        ImGui::End();
+        return S_OK;
+    }
+
+    const _vector vPosition = pSelectedObjectTransform->Get_State(CTransform::STATE_POSITION);
+    const int iTextureIndex = { 0 };
+    const _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
+    const _float3 vScaleRatio = pSelectedObjectTransform->Get_ScaleRatio();
+
+    _float fPosition[3] = { XMVectorGetX(vPosition), XMVectorGetY(vPosition), 0.f };
+    _float fScaleRatio[3] = { vScaleRatio.x, vScaleRatio.y, 1.f };
+
+    ImGui::DragFloat3("Position", fPosition
+        , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION]);
+    //ImGui::DragFloat3("Rotation", vPosition
+    //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
+    ImGui::DragFloat3("Scale", fScaleRatio
+        , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE]);
+
+    pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
+    pSelectedObjectTransform->Set_ScaleRatio(_float3(fScaleRatio[0], fScaleRatio[1], 1.f));
+    pSelectedObjectTransform->Set_Scaled(_float3(vScale.x* fScaleRatio[0], vScale.y* fScaleRatio[1], 1.f));
+
     ImGui::End();
+    return S_OK;
+}
+
+void CMyImGui::Key_Input(_double TimeDelta)
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    if (pGameInstance->Get_KeyStay(DIK_LCONTROL))
+    {
+        //_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
+        POINT ptMouse{};
+        GetCursorPos(&ptMouse);
+        ScreenToClient(g_hWnd, &ptMouse);
+
+        _float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
+
+        _vector vMousePos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
+
+        // @qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
+        _float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
+        _float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
+
+        /* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
+        vMousePos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+
+        /* 직교 투영의 경우, 내부적으로 변화는 일어나지만 월드 좌표와 뷰포트 좌표의 차이가 없기에 뷰포트 좌표를 월드로 셋팅 */
+        if (nullptr == m_pSelectedObject)
+            return;
+        m_pSelectedObject->Get_TransformCom()->Set_State(CTransform::STATE_POSITION, vMousePos);
+    }
+    // 설치
+    if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
+    {
+        SPRITE_INFO tSpriteInfo;
+        tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
+        tSpriteInfo.pTextureTag = ConvertSpriteComponentWithFolderName(m_FolderNameVec[m_iFolderIndex]);
+        Install_GameObject(tSpriteInfo);
+    }
+
+    // 복제
+    if (pGameInstance->Get_KeyStay(DIK_LSHIFT) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
+    {
+        CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(m_pSelectedObject);
+        if (nullptr == pObject)
+            return;
+
+        CTransform* pTransform = pObject->Get_TransformCom();
+        _vector vPosition = pTransform->Get_State(CTransform::STATE_POSITION);
+        _float3 vScale = pTransform->Get_Scaled();
+        SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
+        tSpriteInfo.fPosition.x = XMVectorGetX(vPosition) + vScale.x;
+        tSpriteInfo.fPosition.y = XMVectorGetY(vPosition);
+        /** @note - const char* 새로운 메모리 공간에 값만 복사해서 다른 const char*이 가리키도록 하는 방법 */
+        _tchar* pTemp = new _tchar[lstrlen(pObject->Get_SpriteInfo().pTextureTag) + 1]{};
+        lstrcpy(pTemp, pObject->Get_SpriteInfo().pTextureTag);
+        tSpriteInfo.pTextureTag = pTemp;
+        Install_GameObject(tSpriteInfo);
+    }
+
+    Safe_Release(pGameInstance);
+    return;
+}
+
+HRESULT CMyImGui::Install_GameObject(SPRITE_INFO tSpriteInfo)
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    static int iIndex = 0;
+
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo))))
+    {
+        MSG_BOX("CMyImGui - Tick() - NULL");
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+    // @qurious - 이러면.. 오브젝트 안의 pTextureTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
+    m_pSelectedObject = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT)->back();
+    string* sIndex = new string(to_string(++iIndex));
+    m_CreateObjectVec.push_back(make_pair(m_pSelectedObject, sIndex));
+
+    if (nullptr != m_pSelectedObject)
+    {
+        m_InstalledList.emplace_back(m_pSelectedObject);
+    }
+
+    Safe_Release(pGameInstance);
     return S_OK;
 }
 
@@ -283,7 +351,6 @@ void CMyImGui::Add_SpriteListBox(const char* pFolderName)
 {
     _tchar* pPrototypeTag = ConvertSpriteComponentWithFolderName(pFolderName);
     m_pPreviewObject->Change_TextureComponent(pPrototypeTag);
-    Safe_Delete_Array(pPrototypeTag);
     vector<const _tchar*> m_TexturePathVec = *m_pPreviewObject->Get_TexturePathVec();
 
     vector<const char*> CPathVec;
@@ -325,8 +392,20 @@ void CMyImGui::Free()
         }
         (iter->second).clear();
     }
-    m_SpritePathMap.clear();
 
+    /** @note - string의 c_str() 주의사항 // c_str()은 string으로부터 const 문자열을 얻기 위해 사용
+    * - string 객체는 일반 자료형처럼 스코프 벗어나면 자동으로 소멸자가 호출되어 삭제되나, 동적할당 시 당연하게도 직접 해제해줘야함.
+    * 1. c_str()은 string 문자열의 문자열 재할당(+=), 삭제가 이뤄지면 바로 무효됨.
+    * 2. string이 지역변수인 경우 절대 c_str()을 반환값으로 넘기면 안됨. -> string은 스코프를 벗어나면 소멸자가 호출되어 객체가 삭제되기 때문
+    * 3. c_str()은 사용할 타이밍에만 최근 string을 c_str()로 변환해서 사용하는 것 (vector에 c_str()을 담는 것은 X) 
+    * */
+    for (pair<CGameObject*, string*>& Pair : m_CreateObjectVec)
+    {
+        Safe_Delete(Pair.second);
+    }
+    m_CreateObjectVec.clear();
+
+    m_SpritePathMap.clear();
     m_InstalledList.clear();
 
     ImGui_ImplDX11_Shutdown();

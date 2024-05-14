@@ -101,3 +101,21 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 
 	return pTexture;
 }
+
+_vector CUtility::Get_MousePos(HWND hWnd, const _uint& iWinSizeX, const _uint& iWinSizeY)
+{
+	POINT ptMouse{};
+	GetCursorPos(&ptMouse);
+	ScreenToClient(hWnd, &ptMouse);
+
+	_float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
+
+	_vector vPos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
+
+	_float fX = XMVectorGetX(vPos);
+	_float fY = XMVectorGetY(vPos);
+
+	/* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
+	vPos = XMVectorSet(fX - (iWinSizeX >> 1), -fY + (iWinSizeY >> 1), 0.f, 1.f);
+	return vPos;
+}

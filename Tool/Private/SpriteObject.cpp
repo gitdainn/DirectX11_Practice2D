@@ -102,6 +102,8 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
 		return E_FAIL;
 	}
+	Safe_Delete_Array(m_tSpriteInfo.pTextureTag);
+	m_tSpriteInfo.pTextureTag = pPrototypeTag;
 
 	return S_OK;
 }
@@ -246,6 +248,8 @@ void CSpriteObject::Free()
 		m_pAnimInfo->fDelayTimeMap.clear();
 		Safe_Delete_Array(m_pAnimInfo);
 	}
+
+	Safe_Delete_Array(m_tSpriteInfo.pTextureTag);
 
 	/** @note - _tchar* m_pTextureTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
 	// Safe_Delete_Array(m_pTextureTag);
