@@ -124,7 +124,6 @@ protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 	_uint	m_iShaderPassIndex = { 0 };
-	Engine::tSpriteInfo m_tSpriteInfo;
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;

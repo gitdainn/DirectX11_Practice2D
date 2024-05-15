@@ -11,7 +11,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
-	, m_pTextureTag(nullptr)
+	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
 	, m_bIsScroll(true)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
@@ -37,10 +37,10 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
-	if (nullptr == m_tSpriteInfo.pTextureTag)
-		m_pTextureTag = TEXT("Prototype_Component_Sprite_Tile");
+	if (nullptr == m_tSpriteInfo.pTextureComTag)
+		m_pTextureComTag = TEXT("Prototype_Component_Sprite_Tile");
 	else
-		m_pTextureTag = m_tSpriteInfo.pTextureTag;
+		m_pTextureComTag = m_tSpriteInfo.pTextureComTag;
 
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
@@ -49,8 +49,8 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
 	// 위치 지정
-	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
-	WorldMatrix._22 = m_tSpriteInfo.fSize.x;
+	WorldMatrix._11 = m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.x;
+	WorldMatrix._22 = m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.y;
 	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
 	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
@@ -102,8 +102,8 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
 		return E_FAIL;
 	}
-	Safe_Delete_Array(m_tSpriteInfo.pTextureTag);
-	m_tSpriteInfo.pTextureTag = pPrototypeTag;
+	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	m_tSpriteInfo.pTextureComTag = pPrototypeTag;
 
 	return S_OK;
 }
@@ -147,7 +147,7 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	}
 
 	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureTag,
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureComTag,
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 	{
 		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
@@ -167,7 +167,6 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
-
 	if (m_bIsScroll)
 	{
 		Scroll_Screen(WorldMatrix);
@@ -249,10 +248,11 @@ void CSpriteObject::Free()
 		Safe_Delete_Array(m_pAnimInfo);
 	}
 
-	Safe_Delete_Array(m_tSpriteInfo.pTextureTag);
+	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	Safe_Delete_Array(m_pSpriteTag);
 
-	/** @note - _tchar* m_pTextureTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
-	// Safe_Delete_Array(m_pTextureTag);
+	/** @note - _tchar* m_pTextureComTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
+	// Safe_Delete_Array(m_pTextureComTag);
 	// 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌

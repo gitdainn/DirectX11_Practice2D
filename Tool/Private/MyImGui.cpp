@@ -130,9 +130,9 @@ HRESULT CMyImGui::ShowInstalledWindow()
         {
             const bool is_selected = (iSelectIndex == iListIndex);
             // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
-            if (ImGui::Selectable(m_CreateObjectVec[iListIndex].second->c_str(), is_selected))
+            if (ImGui::Selectable(m_CreateObjectVec[iListIndex]->Get_SpriteTag(), is_selected))
             {
-                m_pSelectedObject = m_CreateObjectVec[iListIndex].first;
+                m_pSelectedObject = m_CreateObjectVec[iListIndex];
                 iSelectIndex = iListIndex; // 선택한 항목의 인덱스를 저장
             }
 
@@ -223,37 +223,68 @@ HRESULT CMyImGui::ShowInspectorWindow()
         return S_OK;
     }
 
-    static enum eTransform { POSITION, ROTATION, SCALE, TRANS_END };
-    static const _float fSpeed[eTransform::TRANS_END] = { 0.5f, 0.5f, 1.f };
-    static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f };
-    static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 10.f };
-
-    CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
-    CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
-    if (nullptr == pTexture)
+    CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(m_pSelectedObject);
+    if (nullptr == pObject)
     {
         ImGui::End();
         return S_OK;
     }
 
-    const _vector vPosition = pSelectedObjectTransform->Get_State(CTransform::STATE_POSITION);
-    const int iTextureIndex = { 0 };
-    const _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
-    const _float3 vScaleRatio = pSelectedObjectTransform->Get_ScaleRatio();
+    const _bool bIsSelectionChanged = CheckSelectionChanged();
+    //char* pTag = new char[strlen(pObject->Get_SpriteTag() + 1)] {};
+    static char* pTag = { nullptr };
+    //if (bIsSelectionChanged)
+    //{
+    //    strcpy(pTag, pObject->Get_SpriteTag());
+    //}
+    //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
+    //pObject->Set_SpriteTag(pTag);
 
-    _float fPosition[3] = { XMVectorGetX(vPosition), XMVectorGetY(vPosition), 0.f };
-    _float fScaleRatio[3] = { vScaleRatio.x, vScaleRatio.y, 1.f };
+    if (ImGui::TreeNode("Transform"))
+    {
+        static enum eTransform { POSITION, ROTATION, SCALE, TRANS_END };
+        static const _float fSpeed[eTransform::TRANS_END] = { 0.5f, 0.5f, 1.f };
+        static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f };
+        static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 10.f };
+        
+        CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
+        CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
 
-    ImGui::DragFloat3("Position", fPosition
-        , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION]);
-    //ImGui::DragFloat3("Rotation", vPosition
-    //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
-    ImGui::DragFloat3("Scale", fScaleRatio
-        , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE]);
+        if (nullptr == pTexture)
+        {
+            ImGui::End();
+            return S_OK;
+        }
 
-    pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
-    pSelectedObjectTransform->Set_ScaleRatio(_float3(fScaleRatio[0], fScaleRatio[1], 1.f));
-    pSelectedObjectTransform->Set_Scaled(_float3(vScale.x* fScaleRatio[0], vScale.y* fScaleRatio[1], 1.f));
+        _vector vPosition = pSelectedObjectTransform->Get_State(CTransform::STATE_POSITION);
+        const int iTextureIndex = m_pSelectedObject->Get_SpriteInfo().iTextureIndex;
+        _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
+        _float2 vScaleRatio = m_pSelectedObject->Get_ScaleRatio();
+
+        _float fPosition[3] = { XMVectorGetX(vPosition), XMVectorGetY(vPosition), 0.f };
+        _float fScaleRatio[3] = { vScaleRatio.x, vScaleRatio.y, 1.f };
+
+        ImGui::DragFloat3("Position", fPosition
+            , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION]);
+        //ImGui::DragFloat3("Rotation", vPosition
+        //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
+        ImGui::DragFloat3("Scale", fScaleRatio
+            , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE]);
+
+        pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
+        m_pSelectedObject->Set_ScaleRatio(_float2(fScaleRatio[0], fScaleRatio[1]));
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("SpriteRenderer"))
+    {
+        static int iOrder = { 0 };
+        if(bIsSelectionChanged)
+            iOrder = m_pSelectedObject->Get_Order();
+        ImGui::InputInt("Order in Layer", &iOrder);
+        m_pSelectedObject->Set_Order(iOrder);
+        ImGui::TreePop();
+    }
 
     ImGui::End();
     return S_OK;
@@ -292,7 +323,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
     {
         SPRITE_INFO tSpriteInfo;
         tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
-        tSpriteInfo.pTextureTag = ConvertSpriteComponentWithFolderName(m_FolderNameVec[m_iFolderIndex]);
+        tSpriteInfo.pTextureComTag = ConvertSpriteComponentWithFolderName(m_FolderNameVec[m_iFolderIndex]);
         Install_GameObject(tSpriteInfo);
     }
 
@@ -306,13 +337,16 @@ void CMyImGui::Key_Input(_double TimeDelta)
         CTransform* pTransform = pObject->Get_TransformCom();
         _vector vPosition = pTransform->Get_State(CTransform::STATE_POSITION);
         _float3 vScale = pTransform->Get_Scaled();
+        _float2 vScaleRatio = m_pSelectedObject->Get_SpriteInfo().fSizeRatio;
+
         SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
-        tSpriteInfo.fPosition.x = XMVectorGetX(vPosition) + vScale.x;
+        tSpriteInfo.fPosition.x = XMVectorGetX(vPosition) + (vScale.x/* * vScaleRatio.x*/);
         tSpriteInfo.fPosition.y = XMVectorGetY(vPosition);
+
         /** @note - const char* 새로운 메모리 공간에 값만 복사해서 다른 const char*이 가리키도록 하는 방법 */
-        _tchar* pTemp = new _tchar[lstrlen(pObject->Get_SpriteInfo().pTextureTag) + 1]{};
-        lstrcpy(pTemp, pObject->Get_SpriteInfo().pTextureTag);
-        tSpriteInfo.pTextureTag = pTemp;
+        _tchar* pTemp = new _tchar[lstrlen(pObject->Get_SpriteInfo().pTextureComTag) + 1]{};
+        lstrcpy(pTemp, pObject->Get_SpriteInfo().pTextureComTag);
+        tSpriteInfo.pTextureComTag = pTemp;
         Install_GameObject(tSpriteInfo);
     }
 
@@ -329,19 +363,35 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO tSpriteInfo)
 
     if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo))))
     {
-        MSG_BOX("CMyImGui - Tick() - NULL");
+        MSG_BOX("CMyImGui - Install_GameObject() - NULL");
         Safe_Release(pGameInstance);
         return E_FAIL;
     }
-    // @qurious - 이러면.. 오브젝트 안의 pTextureTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-    m_pSelectedObject = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT)->back();
-    string* sIndex = new string(to_string(++iIndex));
-    m_CreateObjectVec.push_back(make_pair(m_pSelectedObject, sIndex));
-
-    if (nullptr != m_pSelectedObject)
+    // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
+    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+    if (nullptr == pObjectList)
     {
-        m_InstalledList.emplace_back(m_pSelectedObject);
+        MSG_BOX("CMyImGui - Install_GameObject() - NULL");
+        Safe_Release(pGameInstance);
+        return E_FAIL;
     }
+    m_pSelectedObject = dynamic_cast<CSpriteObject*>(pObjectList->back());
+    if (nullptr == m_pSelectedObject)
+    {
+        MSG_BOX("CMyImGui - Install_GameObject() - NULL");
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+    char* pTag = new char[MAX_PATH] {};
+    strcpy(pTag, m_FolderNameVec[m_iFolderIndex]);
+    strcat(pTag, to_string(++iIndex).c_str());
+    m_pSelectedObject->Set_SpriteTag(pTag);
+    m_CreateObjectVec.emplace_back(m_pSelectedObject);
+
+    //if (nullptr != m_pSelectedObject)
+    //{
+    //    m_InstalledList.emplace_back(m_pSelectedObject);
+    //}
 
     Safe_Release(pGameInstance);
     return S_OK;
@@ -379,6 +429,18 @@ _tchar* CMyImGui::ConvertSpriteComponentWithFolderName(const char* pFolderName) 
     return pPrototypeTag;
 }
 
+const _bool& CMyImGui::CheckSelectionChanged() const
+{
+    static CSpriteObject* pPreviousObject = { nullptr };
+
+    if (m_pSelectedObject != pPreviousObject)
+    {
+        pPreviousObject = m_pSelectedObject;
+        return true;
+    }
+    return false;
+}
+
 void CMyImGui::Free()
 {
     /** @note - const vector<자료형>하면 값을 바꿀 수 없기에 clear도 불가능 */
@@ -399,14 +461,9 @@ void CMyImGui::Free()
     * 2. string이 지역변수인 경우 절대 c_str()을 반환값으로 넘기면 안됨. -> string은 스코프를 벗어나면 소멸자가 호출되어 객체가 삭제되기 때문
     * 3. c_str()은 사용할 타이밍에만 최근 string을 c_str()로 변환해서 사용하는 것 (vector에 c_str()을 담는 것은 X) 
     * */
-    for (pair<CGameObject*, string*>& Pair : m_CreateObjectVec)
-    {
-        Safe_Delete(Pair.second);
-    }
     m_CreateObjectVec.clear();
 
     m_SpritePathMap.clear();
-    m_InstalledList.clear();
 
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();

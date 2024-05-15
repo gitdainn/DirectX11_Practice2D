@@ -219,7 +219,7 @@ CComponent * CGameInstance::Get_Component(_uint iLevelIndex, const _tchar * pLay
 	return m_pObject_Manager->Get_Component(iLevelIndex, pLayerTag, pComponentTag, iIndex);	
 }
 
-const list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
+list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
@@ -355,7 +355,8 @@ _bool CGameInstance::isIn_WorldFrustum(_fvector vPosition, _float fRange)
 	return m_pFrustum->isIn_World(vPosition, fRange);
 }
 
-const _float& CGameInstance::Get_ScrollX() const
+/** @note - const float&인 경우, 임시변수를 반환하는 것은 위험! */
+const _float CGameInstance::Get_ScrollX() const
 {
 	if (nullptr == m_pScroll_Manager)
 		return _float(0.f);
@@ -363,7 +364,7 @@ const _float& CGameInstance::Get_ScrollX() const
 	return m_pScroll_Manager->Get_ScrollX();
 }
 
-const _float& CGameInstance::Get_ScrollY() const
+const _float CGameInstance::Get_ScrollY() const
 {
 	if (nullptr == m_pScroll_Manager)
 		return _float(0.f);

@@ -23,6 +23,17 @@ public:
 		return m_pTransformCom;
 	};
 
+	const _uint& Get_Order() const
+	{
+		return m_tSpriteInfo.iOrder;
+	}
+
+public:
+	void Set_Order(const _uint& iOrder)
+	{
+		m_tSpriteInfo.iOrder = iOrder;
+	}
+
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
@@ -41,6 +52,7 @@ protected:
 protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
+	SPRITE_INFO m_tSpriteInfo;
 
 protected:
 	HRESULT Add_Components(_uint iLevelIndex, const _tchar* pPrototypeTag, 

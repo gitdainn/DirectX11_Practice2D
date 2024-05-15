@@ -17,7 +17,7 @@ CComponent * CObject_Manager::Get_Component(_uint iLevelIndex, const _tchar * pL
 	return pLayer->Get_Component(pComponentTag, iIndex);	
 }
 
-const list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
+list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)

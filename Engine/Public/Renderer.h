@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Component.h"
-
-/* 0.È­¸é¿¡ ±×·ÁÁ®¾ßÇÒ °´Ã¼µéÀ» ±×·Á¾ßÇÏ´Â ¼ø¼­¿¡µû¶ó ¸ğ¾Æ¼­ º¸°üÇÑ´Ù. */
-/* 1.º¸°üÇÏ°í ÀÖ´Â °´Ã¼µéÀÇ µå·Î¿ìÄİÀ» ¼öÇàÇÑ´Ù. */
+#include <queue>
+/* 0.í™”ë©´ì— ê·¸ë ¤ì ¸ì•¼í•  ê°ì²´ë“¤ì„ ê·¸ë ¤ì•¼í•˜ëŠ” ìˆœì„œì—ë”°ë¼ ëª¨ì•„ì„œ ë³´ê´€í•œë‹¤. */
+/* 1.ë³´ê´€í•˜ê³  ìˆëŠ” ê°ì²´ë“¤ì˜ ë“œë¡œìš°ì½œì„ ìˆ˜í–‰í•œë‹¤. */
 
 BEGIN(Engine)
+
+class CGameObject;
 
 class ENGINE_DLL CRenderer final : public CComponent
 {
@@ -25,11 +27,27 @@ public:
 	HRESULT Add_DebugRenderGroup(class CComponent* pGameObject);
 	HRESULT Draw_RenderGroup();
 
+private:
+	/** @note - í•¨ìˆ˜ê°ì²´
+	* 1. í•¨ìˆ˜ê°ì²´ëŠ” operator()ë¡œ ì„ ì–¸í•˜ë©°, í´ë˜ìŠ¤/êµ¬ì¡°ì²´ ì´ë¦„ìœ¼ë¡œ í˜¸ì¶œí•¨.
+	* 2. ì¡°ê±´ìì— ì‚¬ìš©ë˜ë©° boolë¡œ ë°˜í™˜ 
+	* */
+	struct Sort
+	{
+		bool operator()(CGameObject* pA, CGameObject* pB);
+	};
+
 private:		
-	list<class CGameObject*>			m_RenderGroups[RENDER_END];
+	list<CGameObject*>			m_RenderGroups[RENDER_END];
+	/** @note - ìš°ì„ ìˆœìœ„í
+	* 1. ì •ë ¬ ê¸°ì¤€ì„ ì •í•œë‹¤ë©´ í•¨ìˆ˜ê°ì²´ë¥¼ ì§ì ‘ ë§Œë“¤ê³  priority_queue<ê°ì²´, í•¨ìˆ˜ê°ì²´ ë˜ëŠ” ì¡°ê±´ì>
+	* */
+	// @qurious - ìš°ì„ ìˆœìœ„í ì •ë ¬: O(log n), vector ë˜ëŠ” <algorithm>ì˜ sortëŠ” O(n)?
+	// @qurious - í•œ ë²ˆë§Œ ì •ë ¬ ì‹œ sortê°€ íš¨ìœ¨, ì‚½ì…/ì‚­ì œ ë¹ˆë²ˆ ì‹œ ìš°ì„ ìˆœìœ„íê°€ íš¨ìœ¨?
+	// priority_queue<class CGameObject*, Sort>	m_RenderGroupsQueue[RENDER_END];
 
 private:
-	list<class CComponent*>				m_DebugGroup;
+	list<CComponent*>				m_DebugGroup;
 
 private:
 	class CLight_Manager*				m_pLight_Manager = { nullptr };
@@ -44,7 +62,7 @@ private:
 
 	
 
-private: /* ±×¸®´Â ±×·ìµé¿¡ µû¶ó ¼ÂÆÃÀÌ ¹Ù²î¾î¾ßÇÒ ÇÊ¿ä°¡ »ı±æ ¼ö ÀÖ±â¶§¹®¿¡ ±×·ìº°·Î ÇÔ¼ö¸¦ ¸¸µé¾î Ã³¸®. */
+private: /* ê·¸ë¦¬ëŠ” ê·¸ë£¹ë“¤ì— ë”°ë¼ ì…‹íŒ…ì´ ë°”ë€Œì–´ì•¼í•  í•„ìš”ê°€ ìƒê¸¸ ìˆ˜ ìˆê¸°ë•Œë¬¸ì— ê·¸ë£¹ë³„ë¡œ í•¨ìˆ˜ë¥¼ ë§Œë“¤ì–´ ì²˜ë¦¬. */
 	HRESULT Draw_Priority();
 	HRESULT Draw_NonBlend();
 	HRESULT Draw_Blend();

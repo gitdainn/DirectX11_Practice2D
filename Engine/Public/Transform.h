@@ -49,11 +49,6 @@ public: /* Getter */
 		return m_WorldMatrix;
 	}
 
-	const _float3& Get_ScaleRatio() const
-	{
-		return m_fScaleRatio;
-	}
-
 public: /* Setter */
 	void Set_WorldMatrix(_matrix matWorld) {
 		_matrix matWorldW = matWorld;
@@ -69,11 +64,6 @@ public: /* Setter */
 		m_TransformDesc = TransformDesc; }
 
 	void Set_Scaled(const _float3& vScale);
-
-	void Set_ScaleRatio(const _float3& fScaleRatio)
-	{
-		m_fScaleRatio = fScaleRatio;
-	}
 
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pContantName);
 

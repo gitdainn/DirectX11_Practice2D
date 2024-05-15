@@ -28,6 +28,14 @@ private:
     virtual ~CMyImGui() = default;
 
 private:
+	struct SAVE_DESC
+	{
+		SPRITE_INFO	tSpriteInfo;
+		const _tchar* pLayer = { nullptr };
+
+	};
+
+private:
 	HRESULT	ShowDemoWindow();
 	HRESULT	ShowInstalledWindow();
 	HRESULT	ShowSpriteWindow();
@@ -44,15 +52,15 @@ private:
 	HRESULT Install_GameObject(SPRITE_INFO tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertSpriteComponentWithFolderName(const char* pFolderName) const;
+	const _bool&		CheckSelectionChanged() const;
 
 private:
 	CSpriteObject* m_pPreviewObject;
-	CGameObject* m_pSelectedObject;
-	list<CGameObject*>		m_InstalledList;
+	CSpriteObject* m_pSelectedObject;
 	vector<const char*>		m_FolderNameVec;
 	unique_ptr<_uint[]>		m_pSpriteListIndex;
 	_uint					m_iFolderIndex;
-	vector<pair<CGameObject*, string*>>	m_CreateObjectVec;
+	vector<CSpriteObject*>	m_CreateObjectVec;
 
 	/** @note - 자료구조 선택 이유
 	* 1. 토글 열 때마다 추가해야하는 폴더 경우 map으로 key값으로 찾아 상수 시간복잡도이고, 삽입 부담X

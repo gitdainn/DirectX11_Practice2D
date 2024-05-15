@@ -74,9 +74,20 @@ public:
 		m_tSpriteInfo = tSpriteInfo;
 	}
 
-	const SPRITE_INFO& Get_SpriteInfo() const
+	void Set_SpriteTag(const char* pTag)
 	{
-		return m_tSpriteInfo;
+		Safe_Delete_Array(m_pSpriteTag);
+		m_pSpriteTag = pTag;
+	}
+
+	void Set_ScaleRatio(const _float2& fSizeRatio)
+	{
+		m_tSpriteInfo.fSizeRatio = fSizeRatio;
+		_float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
+		fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
+		fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
+		m_tSpriteInfo.fSize = fOriginalSize;
+		m_pTransformCom->Set_Scaled(_float3(fOriginalSize.x, fOriginalSize.y, 1.f));
 	}
 
 public:
@@ -87,6 +98,11 @@ public:
 		return bIsSprite;
 	}
 
+	const SPRITE_INFO& Get_SpriteInfo() const
+	{
+		return m_tSpriteInfo;
+	}
+
 	const SPRITE_DIRECTION& Get_SpriteDirection() const
 	{
 		return m_eSpriteDirection;
@@ -95,6 +111,16 @@ public:
 	const vector<const _tchar*>* Get_TexturePathVec() const
 	{
 		return m_pTextureCom->Get_TexturePathVec();
+	}
+
+	const char* Get_SpriteTag() const
+	{
+		return m_pSpriteTag;
+	}
+
+	const _float2& Get_ScaleRatio() const
+	{
+		return m_tSpriteInfo.fSizeRatio;
 	}
 
 public:
@@ -121,7 +147,6 @@ protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, class CComponent*>			m_Components;
 	_uint	m_iShaderPassIndex = { 0 };
-	Engine::tSpriteInfo m_tSpriteInfo;
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix;
 	_float4x4	m_ProjMatrix;
@@ -133,9 +158,10 @@ protected:
 	_bool	m_bIsEndSprite;
 	_bool	m_bIsScroll;
 
+	const char*		m_pSpriteTag;
+	const _tchar*	m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	CRenderer::RENDERGROUP	m_eRenderGroup;
-	const _tchar* m_pTextureTag;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
 	_uint	m_iUVTexNumY;

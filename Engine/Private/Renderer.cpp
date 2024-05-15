@@ -32,7 +32,7 @@ HRESULT CRenderer::Initialize_Prototype()
 	if (nullptr == m_pVIBuffer)
 		return E_FAIL;
 
-	//@ error - Shader_Deffered ¾ø¾î¼­ ¿À·ù m_pTarget_Manager·Î Ãâ·ÂÀ» ¼öÇàÇÏ´Â ±¸¹®Àº ÇöÀç ÀüºÎ ¿À·ù ¶ä
+	//@ error - Shader_Deffered ì—†ì–´ì„œ ì˜¤ë¥˜ m_pTarget_Managerë¡œ ì¶œë ¥ì„ ìˆ˜í–‰í•˜ëŠ” êµ¬ë¬¸ì€ í˜„ì¬ ì „ë¶€ ì˜¤ë¥˜ ëœ¸
 	//m_pShader = CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_Deferred.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements);
 	//if (nullptr == m_pShader)
 	//	return E_FAIL;
@@ -90,6 +90,8 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 HRESULT CRenderer::Draw_Priority()
 {	
+	m_RenderGroups[RENDER_PRIORITY].sort(Sort());
+
 	for (auto& pGameObject : m_RenderGroups[RENDER_PRIORITY])
 	{
 		if (nullptr != pGameObject)
@@ -105,7 +107,9 @@ HRESULT CRenderer::Draw_Priority()
 
 HRESULT CRenderer::Draw_NonBlend()
 {
-	/* Diffuse + Normal Å¸°Ù¿¡ ±×¸®´Â ÀÛ¾÷À» ¼öÇàÇÑ´Ù. */
+	m_RenderGroups[RENDER_NONBLEND].sort(Sort());
+
+	/* Diffuse + Normal íƒ€ê²Ÿì— ê·¸ë¦¬ëŠ” ì‘ì—…ì„ ìˆ˜í–‰í•œë‹¤. */
 	for (auto& pGameObject : m_RenderGroups[RENDER_NONBLEND])
 	{
 		if (nullptr != pGameObject)
@@ -121,6 +125,8 @@ HRESULT CRenderer::Draw_NonBlend()
 
 HRESULT CRenderer::Draw_Blend()
 {	
+	m_RenderGroups[RENDER_BLEND].sort(Sort());
+
 	m_RenderGroups[RENDER_BLEND].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
 	{
 		return ((CBlendObject*)pSour)->Get_ViewZ() > ((CBlendObject*)pDest)->Get_ViewZ();
@@ -141,6 +147,8 @@ HRESULT CRenderer::Draw_Blend()
 
 HRESULT CRenderer::Draw_UI()
 {
+	m_RenderGroups[RENDER_UI].sort(Sort());
+
 	for (auto& pGameObject : m_RenderGroups[RENDER_UI])
 	{
 		if (nullptr != pGameObject)
@@ -169,8 +177,8 @@ CRenderer * CRenderer::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pCon
 
 CComponent * CRenderer::Clone(void * pArg)
 {	
-	// µı ÄÄÆ÷³ÍÆ®µéÀº »çº» ÁÙ ¶§ new·Î ¸¸µé±â ¶§¹®¿¡ AddRef ¾øÀÌ ÇØ´ç ÄÄÆ÷³ÍÆ®¸¦ ÇØÁöÇØÁÜ.
-	// ¾ê´Â ¿øº»À» Ãß°¡ÀûÀ¸·Î ÂüÁ¶ÇÏ´Â °Å´Ï±î AddRef() ÇØÁÖ°í ÇØÁ¦ÇØÁÖ±â
+	// ë”´ ì»´í¬ë„ŒíŠ¸ë“¤ì€ ì‚¬ë³¸ ì¤„ ë•Œ newë¡œ ë§Œë“¤ê¸° ë•Œë¬¸ì— AddRef ì—†ì´ í•´ë‹¹ ì»´í¬ë„ŒíŠ¸ë¥¼ í•´ì§€í•´ì¤Œ.
+	// ì–˜ëŠ” ì›ë³¸ì„ ì¶”ê°€ì ìœ¼ë¡œ ì°¸ì¡°í•˜ëŠ” ê±°ë‹ˆê¹Œ AddRef() í•´ì£¼ê³  í•´ì œí•´ì£¼ê¸°
 	AddRef();
 	return this;
 }
@@ -193,4 +201,11 @@ void CRenderer::Free()
 	Safe_Release(m_pVIBuffer);
 	
 
+}
+
+// CGameObject ì „ë°©ì„ ì–¸ì´ë¼, í—¤ë” ë‚´ìš©ì€ ì•Œ ìˆ˜ ì—†ì–´ ì•ˆì˜ í•¨ìˆ˜ ì‚¬ìš©ì€ ì„ ì–¸ë¶€ì—ì„œ ë¶ˆê°€
+// trueë©´ êµì²´í•˜ëŠ” ê²ƒ! -> ë’¤ì—ê°€ ë” í¬ë©´ trueë¡œ êµì²´í•´ì„œ ë” í° ìˆ«ìê°€ ì•ìœ¼ë¡œ ì •ë ¬ë˜ë„ë¡¯í•¨.
+bool CRenderer::Sort::operator()(CGameObject* pA, CGameObject* pB)
+{
+	return pA->Get_Order() < pB->Get_Order();
 }

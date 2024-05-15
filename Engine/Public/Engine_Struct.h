@@ -7,11 +7,12 @@ namespace Engine
 	{
 		_uint		iOrder = { 0 };
 		_float2	fSize = { 300.f, 320.f };
+		_float2	fSizeRatio = { 1.f, 1.f };
 		_float2	fPosition = { 0.f, 0.f };
 
 		_uint		iTextureIndex = { 0 };
 		/** @note - const타입을 nullptr로 지정했는데도 구조체 생성 시 값을 넣을 수 있는 이유는 구조체는 호출 시 그때 생성되어 초기화하는 것이기 때문 */
-		const _tchar* pTextureTag = { nullptr };
+		const _tchar* pTextureComTag = { nullptr };
 		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
 	}SPRITE_INFO;
 
