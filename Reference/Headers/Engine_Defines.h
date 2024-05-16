@@ -33,6 +33,9 @@
 #include <DirectXMath.h>
 #include <Process.h>
 
+// File
+#include <commdlg.h>
+
 using namespace std;
 using namespace DirectX;
 

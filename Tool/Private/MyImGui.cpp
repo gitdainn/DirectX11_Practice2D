@@ -38,18 +38,22 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
     m_FolderNameVec.emplace_back("Tile");
     m_FolderNameVec.emplace_back("ForestEnvironment");
+    m_FolderNameVec.emplace_back("Background");
     m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
 
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
     SPRITE_INFO tSpriteInfo;
+    tSpriteInfo.fPosition = _float2(-(g_iWinSizeX * 0.5f) + 20.f, g_iWinSizeY * 0.5f - 20.f);
     if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, LAYER_DEFAULT, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Tick() - NULL");
     }
 
     m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER_DEFAULT)->front());
+    m_pPreviewObject->Set_IsScroll(false);
+
     if (nullptr == m_pPreviewObject)
     {
         MSG_BOX("CMyImGui - Initialize - NULL");
@@ -106,6 +110,137 @@ HRESULT CMyImGui::Render()
     return S_OK;
 }
 
+HRESULT CMyImGui::Save_Object()
+{
+    // 저장은 전체 한번에 저장하면, Dat파일을 나눌 수 없어서 안됨.
+    // 로드는 파일별로 자동으로 들어갈 수 있게 모델 인덱스까지 저장한다.
+    if (ImGui::Button("Save"))
+    {
+        if (m_CreateObjectVec.empty())
+        {
+            MSG_BOX("Save_Object is Empty");
+            return S_OK;
+        }
+
+        // Win Api Save File Dialog
+        OPENFILENAME OFN;
+        TCHAR filePathName[128] = L"";
+        TCHAR lpstrFile[256] = L".data";
+        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+        //static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+
+        ZeroMemory(&OFN, sizeof(OPENFILENAME));
+        OFN.lStructSize = sizeof(OPENFILENAME);
+        OFN.hwndOwner = g_hWnd;
+        OFN.lpstrFilter = filter;
+        OFN.lpstrFile = lpstrFile;
+        OFN.nMaxFile = 256;
+        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+
+        if (GetSaveFileName(&OFN) != 0)
+        {
+            const TCHAR* pGetPath = OFN.lpstrFile;
+
+            HANDLE hFile = CreateFile(pGetPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+            if (INVALID_HANDLE_VALUE == hFile)
+                return E_FAIL;
+
+            DWORD dwByte = 0;
+
+#pragma region SAVE
+            _uint iVecSize = (_uint)m_CreateObjectVec.size();
+            WriteFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+
+            for (CSpriteObject* pObject : m_CreateObjectVec) // 현재 선택된 그룹 저장
+            {
+                _vector vPos = pObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+                SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
+                tSpriteInfo.fPosition = _float2(XMVectorGetX(vPos), XMVectorGetY(vPos));
+                WriteFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
+
+                _uint iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pTextureComTag) + 1;
+                WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+                WriteFile(hFile, tSpriteInfo.pTextureComTag, iLength, &dwByte, nullptr); // 길이 저장
+
+            }
+            CloseHandle(hFile);
+        }
+    }
+
+    return S_OK;
+}
+
+HRESULT CMyImGui::Load_Object()
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    /* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
+    if (ImGui::Button("Load"))
+    {
+        OPENFILENAME OFN;
+        TCHAR filePathName[128] = L"";
+        TCHAR lpstrFile[256] = L".data";
+        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+
+        ZeroMemory(&OFN, sizeof(OPENFILENAME));
+        OFN.lStructSize = sizeof(OPENFILENAME);
+        OFN.hwndOwner = g_hWnd;
+        OFN.lpstrFilter = filter;
+        OFN.lpstrFile = lpstrFile;
+        OFN.nMaxFile = 256;
+        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+
+        if (GetOpenFileName(&OFN) != 0)
+        {
+            const TCHAR* pGetPath = OFN.lpstrFile;
+
+            HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+            if (INVALID_HANDLE_VALUE == hFile)
+                return E_FAIL;
+
+            DWORD   dwByte = 0;
+            _bool      bRes = { false };
+
+#pragma region LOAD
+            // Load : 현재 모델이 가지고 있는 이펙트 사이즈
+            _uint iVecSize = { 0 };
+            bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
+
+            _uint	iTagIndex = { 0 };
+            for (_uint i = 0; i < iVecSize; ++i)
+            {
+                SPRITE_INFO tSpriteInfo;
+                bRes = ReadFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
+
+                _uint iLength = { 0 };
+                bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+                _tchar* pTag = new _tchar[iLength]{};
+                if (-1 != iLength)
+                {
+                    bRes = ReadFile(hFile, pTag, iLength, &dwByte, nullptr);
+                    tSpriteInfo.pTextureComTag = pTag;
+                }
+
+                if (FAILED(Install_GameObject(tSpriteInfo)))
+                {
+                    MSG_BOX("CMyImGui - Load_Object() - FAILED");
+                    CloseHandle(hFile);
+                    Safe_Release(pGameInstance);
+                    return E_FAIL;
+                }
+            }
+            CloseHandle(hFile);
+        }
+    }
+
+    Safe_Release(pGameInstance);
+
+    return S_OK;
+}
+
 inline HRESULT CMyImGui::ShowDemoWindow()
 {
     static bool bIsShow = true;
@@ -140,6 +275,16 @@ HRESULT CMyImGui::ShowInstalledWindow()
                 ImGui::SetItemDefaultFocus();
         }
         ImGui::EndListBox();
+    }
+
+    if (FAILED(Save_Object()))
+    {
+        MSG_BOX("CMyImGui - ShowInspectorWindow - FAILED");
+    }
+    ImGui::SameLine();
+    if (FAILED(Load_Object()))
+    {
+        MSG_BOX("CMyImGui - ShowInspectorWindow - FAILED");
     }
 
     Safe_Release(pGameInstance);
@@ -286,6 +431,8 @@ HRESULT CMyImGui::ShowInspectorWindow()
         ImGui::TreePop();
     }
 
+
+
     ImGui::End();
     return S_OK;
 }
@@ -295,7 +442,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-    if (pGameInstance->Get_KeyStay(DIK_LCONTROL))
+    if (pGameInstance->Get_MouseStay(CDInput_Manager::MOUSEKEYSTATE::DIMK_RB))
     {
         //_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
         POINT ptMouse{};
@@ -350,11 +497,77 @@ void CMyImGui::Key_Input(_double TimeDelta)
         Install_GameObject(tSpriteInfo);
     }
 
+    if (pGameInstance->Get_KeyStay(DIK_LCONTROL) && pGameInstance->Get_KeyDown(DIK_Z))
+    {
+        if (m_CreateObjectVec.empty())
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+        // 사실 이러면 실질적인 객체는 삭제가 안된 상태
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+        if (nullptr == pObjectList)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+        (*pObjectList).remove(m_CreateObjectVec.back());
+        m_CreateObjectVec.pop_back();
+        Safe_Release(m_pSelectedObject);
+
+        if (m_CreateObjectVec.empty())
+        {
+            m_pSelectedObject = nullptr;
+            Safe_Release(pGameInstance);
+            return;
+        }
+        else
+            m_pSelectedObject = m_CreateObjectVec.back();
+    }
+
+    if (pGameInstance->Get_KeyDown(DIK_DELETE))
+    {
+        if (m_CreateObjectVec.empty())
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+        if (nullptr == pObjectList)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+        /** @note - remove와 erase
+        * 1. list는 void remove를 멤버로 보유, 인자값과 동일한 요소를 list상에서 삭제 (vector는 remove X)
+        * 2. erase는 모든 컨테이너가 보관하고 있는 멤버, 인자값 iter와 동일한 원소를 삭제하고 뒤의 원소를 앞으로 당긴 다음 ++iter를 반한함.
+        * 3. <algorithm>의 remove 함수는 삭제할 요소에 유지할 요소를 덮어씌우는 방식으로 맨 뒤에는 필요없는 기존값들이 그대로 유지되어 있음 (용량은 그대로란 뜻)
+        * -> 이를 지우기 위해 erase(remove(begin, end, 요소), end)를 사용하여 remove의 반환값인 new end 부터 end까지 해당 범위를 erase하는 방식 채택
+        * */
+        (*pObjectList).remove(m_pSelectedObject);
+        m_CreateObjectVec.erase(remove(m_CreateObjectVec.begin(), m_CreateObjectVec.end(), m_pSelectedObject), m_CreateObjectVec.end());
+        Safe_Release(m_pSelectedObject);
+
+        if(m_CreateObjectVec.empty())
+        {
+            m_pSelectedObject = nullptr;
+            Safe_Release(pGameInstance);
+            return;
+        }
+        else
+            m_pSelectedObject = m_CreateObjectVec.back();
+    }
+
     Safe_Release(pGameInstance);
     return;
 }
 
-HRESULT CMyImGui::Install_GameObject(SPRITE_INFO tSpriteInfo)
+HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);

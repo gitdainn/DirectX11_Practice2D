@@ -48,8 +48,12 @@ public:
 	virtual HRESULT Render();
 
 private:
+	HRESULT	Save_Object();
+	HRESULT	Load_Object();
+
+private:
 	void	Key_Input(_double TimeDelta);
-	HRESULT Install_GameObject(SPRITE_INFO tSpriteInfo);
+	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertSpriteComponentWithFolderName(const char* pFolderName) const;
 	const _bool&		CheckSelectionChanged() const;

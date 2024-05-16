@@ -14,7 +14,7 @@ public:
 	class CComponent* Get_Component(const _tchar* pComponentTag, _uint iIndex);
 	list<class CGameObject*>* Get_ObjectList()
 	{
-		return &m_GameObjects;
+		return &m_GameObjectList;
 	}
 
 public:
@@ -23,7 +23,7 @@ public:
 	void LateTick(_double TimeDelta);
 
 private:
-	list<class CGameObject*>				m_GameObjects;	
+	list<class CGameObject*>				m_GameObjectList;	
 
 public:
 	static CLayer* Create();

@@ -90,6 +90,11 @@ public:
 		m_pTransformCom->Set_Scaled(_float3(fOriginalSize.x, fOriginalSize.y, 1.f));
 	}
 
+	void Set_IsScroll(const _bool& bIsScroll)
+	{
+		m_bIsScroll = bIsScroll;
+	};
+
 public:
 	const bool IsEndSprite()
 	{

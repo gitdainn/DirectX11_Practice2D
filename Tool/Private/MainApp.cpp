@@ -154,6 +154,14 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 		return E_FAIL;
 	};
 
+	/* For.Prototype_Component_Sprite_ForestObject */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Background/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

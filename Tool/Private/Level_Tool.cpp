@@ -47,7 +47,7 @@ HRESULT CLevel_Tool::Ready_Layer_Camera()
 	tCameraDesc.CameraDesc.fNear = 0.2f;
 	tCameraDesc.CameraDesc.fFar = 300;
 
-	tCameraDesc.CameraDesc.tTransformDesc.SpeedPerSec = 30.f;
+	tCameraDesc.CameraDesc.tTransformDesc.SpeedPerSec = 50.f;
 	tCameraDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
 
 	tCameraDesc.CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
