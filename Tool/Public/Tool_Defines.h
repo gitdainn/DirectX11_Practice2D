@@ -43,7 +43,13 @@ extern HWND g_hWnd;
 using namespace Tool;
 
 #pragma region LAYER
-#define	PLAYER_LAYER			TEXT("Layer_Player")
+#define	LAYER_DEFAULT			TEXT("Layer_Default")
+#define	LAYER_NONINTERACTIVE	TEXT("Layer_NonInteractiveObjects")
+#define	LAYER_INTERACTIVE		TEXT("Layer_InteractiveBackground")
+#define	LAYER_COLLECT			TEXT("Layer_Collectibles")
+#define	LAYER_ENEMY				TEXT("Layer_Enemy")
+#define	LAYER_PLAYER			TEXT("Layer_Player")
+#define	LAYER_CAMERA			TEXT("Layer_Camera")
 #pragma endregion
 
 #pragma region COMPONENT_TAG
@@ -65,14 +71,6 @@ using namespace Tool;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
-#pragma endregion
-
-#pragma region LAYER_TAG
-#define LAYER_DEFAULT			TEXT("Layer_Default")
-#define LAYER_CAMERA			TEXT("Layer_Camera")
-#define LAYER_BACKGROUND		TEXT("Layer_Background")
-#define LAYER_PLAYER			TEXT("Layer_Player")
-#define LAYER_UI				TEXT("Layer_UI")
 #pragma endregion
 
 #pragma region DINPUT

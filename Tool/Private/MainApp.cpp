@@ -146,15 +146,15 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_ForestObject */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
+	/* For.Prototype_Component_Sprite_Environment */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Environment"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Environment/Forest/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_ForestObject */
+	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Background/")))))
 	{

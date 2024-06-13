@@ -37,7 +37,7 @@ HRESULT CLevel_GamePlay::Initialize()
 void CLevel_GamePlay::Tick(_double TimeDelta)
 {
 #ifdef _DEBUG
-	SetWindowText(g_hWnd, TEXT("게임 플레이 레벨임"));
+	SetWindowText(g_hWnd, TEXT("GamePlay Level"));
 #endif
 }
 

@@ -25,7 +25,6 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
     m_tSpriteInfo.iTextureIndex = 0;

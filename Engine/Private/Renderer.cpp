@@ -127,10 +127,12 @@ HRESULT CRenderer::Draw_Blend()
 {	
 	m_RenderGroups[RENDER_BLEND].sort(Sort());
 
-	m_RenderGroups[RENDER_BLEND].sort([](CGameObject* pSour, CGameObject* pDest)->_bool
-	{
-		return ((CBlendObject*)pSour)->Get_ViewZ() > ((CBlendObject*)pDest)->Get_ViewZ();
-	});
+	auto DepthLamda = [](CGameObject* pSour, CGameObject* pDest)->_bool
+		{
+			return ((CBlendObject*)pSour)->Get_ViewZ() > ((CBlendObject*)pDest)->Get_ViewZ();
+		};
+
+	m_RenderGroups[RENDER_BLEND].sort(DepthLamda);
 
 	for (auto& pGameObject : m_RenderGroups[RENDER_BLEND])
 	{

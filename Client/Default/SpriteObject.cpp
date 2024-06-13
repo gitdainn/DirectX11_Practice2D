@@ -47,7 +47,7 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 	// 위치 지정
 	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
-	WorldMatrix._22 = m_tSpriteInfo.fSize.x;
+	WorldMatrix._22 = m_tSpriteInfo.fSize.y;
 	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
 	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
@@ -191,7 +191,11 @@ void CSpriteObject::Free()
 		Safe_Delete_Array(m_pAnimInfo);
 	}
 
-	/** @qurious - 왜 _tchar*을 메모리 해제 하면 안되는가? */
+	/** @note - m_pTextureTag 해제하면 안되는 이유
+	현재 m_pTextureTag는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/
+	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
+
 	//Safe_Delete_Array(m_pTextureTag);
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)

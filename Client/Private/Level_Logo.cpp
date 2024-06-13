@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Public\Level_Logo.h"
 
+#include "FileLoader.h"
 #include "Level_Loading.h"
 #include "GameInstance.h"
 #include "PlayerInfo.h"
@@ -16,6 +17,7 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_GameObject()))
 		return E_FAIL;
 
+	CFileLoader::Load_FIle(TEXT("d"), LEVEL_LOGO);
 	return S_OK;
 }
 

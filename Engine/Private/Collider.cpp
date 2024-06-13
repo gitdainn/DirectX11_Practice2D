@@ -1,6 +1,9 @@
 #include "..\Public\Collider.h"
 #include "DebugDraw.h"
 #include "PipeLine.h"
+#include "GameObject.h"
+
+#include "GameInstance.h"
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
@@ -10,10 +13,6 @@ CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 CCollider::CCollider(const CCollider & rhs)
 	: CComponent(rhs)
-	, m_eType(rhs.m_eType)
-	, m_pSphere_Original(nullptr == rhs.m_pSphere_Original ? rhs.m_pSphere_Original : new BoundingSphere(*rhs.m_pSphere_Original))
-	, m_pAABB_Original(nullptr == rhs.m_pAABB_Original ? rhs.m_pAABB_Original : new BoundingBox(*rhs.m_pAABB_Original))
-	, m_pOBB_Original(nullptr == rhs.m_pOBB_Original ? rhs.m_pOBB_Original : new BoundingOrientedBox(*rhs.m_pOBB_Original))
 #ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)
@@ -25,22 +24,10 @@ CCollider::CCollider(const CCollider & rhs)
 #endif _DEBUG
 }
 
-HRESULT CCollider::Initialize_Prototype(TYPE eType)
+HRESULT CCollider::Initialize_Prototype()
 {
-	m_eType = eType;
-
-	switch (m_eType)
-	{
-	case TYPE_AABB:
-		m_pAABB_Original = new BoundingBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f));
-		break;
-	case TYPE_OBB:
-		m_pOBB_Original = new BoundingOrientedBox(_float3(0.f, 0.f, 0.f), _float3(0.5f, 0.5f, 0.5f), _float4(0.0f, 0.f, 0.f, 1.f));
-		break;
-	case TYPE_SPHERE:
-		m_pSphere_Original = new BoundingSphere(_float3(0.f, 0.f, 0.f), 0.5f);
-		break;
-	}
+	memset(&m_tColliderDesc, 0, sizeof(COLLIDER_DESC));
+	m_tColliderDesc.vScale = _float3(20.f, 20.f, 1.f);
 
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pContext);
@@ -58,11 +45,14 @@ HRESULT CCollider::Initialize_Prototype(TYPE eType)
 
 	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
 
+	/** IA(입력-어셈블러) 단계에 대한 입력 버퍼 데이터를 설명하는 입력 레이아웃 객체 생성 */
+	// 각 단일 버텍스(정점)에 대한 데이터 요소(위치, 색상, 벡터 등) 지정
+	// D3D11_INPUT_ELEMENT_DESC: 입력 레이아웃 정의 (Position, Color등 단일 꼭짓점 버텍스가 가지는 요소들에 대한 설명인듯)
+	// 
 	if (FAILED(m_pDevice->CreateInputLayout(DirectX::VertexPositionColor::InputElements,
 		DirectX::VertexPositionColor::InputElementCount,
 		pShaderByteCode, iShaderByteCodeLength, &m_pInputLayout)))
 		return E_FAIL;
-
 #endif // _DEBUG
 	
 	return S_OK;
@@ -70,135 +60,235 @@ HRESULT CCollider::Initialize_Prototype(TYPE eType)
 
 HRESULT CCollider::Initialize(void * pArg)
 {
-	COLLIDERDESC	ColliderDesc = *(COLLIDERDESC*)pArg;
-
-	_matrix ScaleMatrix, RotationXMatrix, RotationYMatrix, RotationZMatrix, TranslationMatrix;
-
-	ScaleMatrix = XMMatrixScaling(ColliderDesc.vScale.x, ColliderDesc.vScale.y, ColliderDesc.vScale.z);
-	RotationXMatrix = XMMatrixRotationX(ColliderDesc.vRotation.x);
-	RotationYMatrix = XMMatrixRotationY(ColliderDesc.vRotation.y);
-	RotationZMatrix = XMMatrixRotationZ(ColliderDesc.vRotation.z);
-	TranslationMatrix = XMMatrixTranslation(ColliderDesc.vPosition.x, ColliderDesc.vPosition.y, ColliderDesc.vPosition.z);
-
-	switch (m_eType)
+	if (FAILED(__super::Initialize(pArg)))
 	{
-	case CCollider::TYPE_AABB:
-		m_pAABB_Original->Transform(*m_pAABB_Original, ScaleMatrix * TranslationMatrix);
-		m_pAABB = new BoundingBox(*m_pAABB_Original);
-		break;
+		return E_FAIL;
+	}
 
-	case CCollider::TYPE_OBB:
-		m_pOBB_Original->Transform(*m_pOBB_Original, RotationXMatrix * RotationYMatrix * RotationZMatrix * TranslationMatrix);
-		m_pOBB_Original->Extents = _float3(ColliderDesc.vScale.x * 0.5f, ColliderDesc.vScale.y* 0.5f, ColliderDesc.vScale.z * 0.5f);
-		m_pOBB = new BoundingOrientedBox(*m_pOBB_Original);
-		break;
+	m_tColliderDesc = *(COLLIDER_DESC*)pArg;
+	m_pOwner = m_tColliderDesc.pOwner;
 
-	case CCollider::TYPE_SPHERE:		
-		m_pSphere_Original->Transform(*m_pSphere_Original, ScaleMatrix * TranslationMatrix);
-		m_pSphere = new BoundingSphere(*m_pSphere_Original);
-		break;
-	}	
-		
+	if (nullptr == m_pOwner)
+	{
+		MSG_BOX("CCollider - Initialize - Owner is NULL");
+		return E_FAIL;
+	}
+
 	return S_OK;
 }
 
 void CCollider::Tick(_fmatrix TransformMatrix)
 {
-	switch (m_eType)
+	if (nullptr == m_pOwner)
 	{
-	case CCollider::TYPE_AABB:
-		m_pAABB_Original->Transform(*m_pAABB, Remove_Rotation(TransformMatrix));
-		break;
-	case CCollider::TYPE_OBB:
-		m_pOBB_Original->Transform(*m_pOBB, TransformMatrix);
-		break;
-	case CCollider::TYPE_SPHERE:
-		m_pSphere_Original->Transform(*m_pSphere, TransformMatrix);
-		break;
+		return;
 	}
 
-	m_isCollision = false;
+	_vector vOwnerPos = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+	m_tColliderDesc.vPosition = _float3(XMVectorGetX(vOwnerPos), XMVectorGetY(vOwnerPos), 1.f);
 }
 
-_bool CCollider::Collision(CCollider * pTarget)
-{
-	if (TYPE_AABB == m_eType)
-	{
-		if (TYPE_AABB == pTarget->m_eType)
-			m_isCollision = m_pAABB->Intersects(*pTarget->m_pAABB);
-		else if (TYPE_OBB == pTarget->m_eType)
-			m_isCollision = m_pAABB->Intersects(*pTarget->m_pOBB);
-		else if (TYPE_SPHERE == pTarget->m_eType)
-			m_isCollision = m_pAABB->Intersects(*pTarget->m_pSphere);
-	}
-
-	else if (TYPE_OBB == m_eType)
-	{
-		if (TYPE_AABB == pTarget->m_eType)
-			m_isCollision = m_pOBB->Intersects(*pTarget->m_pAABB);
-		else if (TYPE_OBB == pTarget->m_eType)
-			m_isCollision = m_pOBB->Intersects(*pTarget->m_pOBB);
-		else if (TYPE_SPHERE == pTarget->m_eType)
-			m_isCollision = m_pOBB->Intersects(*pTarget->m_pSphere);
-	}
-
-	else if (TYPE_SPHERE == m_eType)
-	{
-		if (TYPE_AABB == pTarget->m_eType)
-			m_isCollision = m_pSphere->Intersects(*pTarget->m_pAABB);
-		else if (TYPE_OBB == pTarget->m_eType)
-			m_isCollision = m_pSphere->Intersects(*pTarget->m_pOBB);
-		else if (TYPE_SPHERE == pTarget->m_eType)
-			m_isCollision = m_pSphere->Intersects(*pTarget->m_pSphere);
-	}
-
-	if (true == m_isCollision)
-		pTarget->m_isCollision = true;
-
-	return m_isCollision;
-}
+//#ifdef _DEBUG
+//HRESULT CCollider::Render()
+//{
+//	_float4x4 WorldMatrix = m_pOwner->Get_TransformCom()->Get_WorldMatrixFloat();
+//	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+//	Safe_AddRef(pGameInstance);
+//
+//	_vector vPosition = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+//	WorldMatrix._41 = XMVectorGetX(vPosition) + pGameInstance->Get_ScrollX();
+//	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
+//
+//	Safe_Release(pGameInstance);
+//
+//	m_pEffect->SetWorld(DirectX::XMLoadFloat4x4(&WorldMatrix));
+//
+//	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+//	Safe_AddRef(pPipeLine);
+//
+//	_float4x4 ViewMatrix;
+//	_float4x4 ProjMatrix;
+//	DirectX::XMStoreFloat4x4(&ViewMatrix, XMMatrixIdentity());
+//	DirectX::XMStoreFloat4x4(&ProjMatrix, XMMatrixOrthographicLH(1280, 720, 0.f, 1.f));
+//
+//	m_pEffect->SetView(DirectX::XMLoadFloat4x4(&ViewMatrix));
+//	m_pEffect->SetProjection(DirectX::XMLoadFloat4x4(&ProjMatrix));
+//
+//	Safe_Release(pPipeLine);
+//
+//	/** 입력 레이아웃 객체를 IA(Input-Assembler) 단계에 바인딩한다.
+//	입력 레이아웃 객체: 꼭짓점 버퍼 데이터가 IA 파이프라인 단계로 스트리밍되는 방법 설명
+//	입력 레이아웃 객체는 CreateInputLayout으로 생성*/
+//	m_pContext->IASetInputLayout(m_pInputLayout);
+//	/** 기하 도형 쉐이더를 디바이스로 설정한다.
+//	(기하 도형 셰이더에 대한 포인터 null이면 쉐이더 X, 클래스 인스턴스 인터페이스 배열 - 셰이더 각 인터페이스는 인스턴스 필요, 배열 수)*/
+//	m_pContext->GSSetShader(nullptr, nullptr, 0);
+//
+//	/* 출력 전에 셰이더에 반드시 던져야할 리소스(텍스쳐, 행렬, 벡터 etc) 던지기. */
+//	/** 한 번 지정한 출력 상태 등은 모든 렌더링 상태에 적용되므로 각 오브젝트마다
+//	* 자기 자신의 입력 레이아웃 객체 등으로 설정한 후 매번 출력 전에 Apply로 던져줘야 한다. */
+//	m_pEffect->Apply(m_pContext);
+//
+//	// Begin batch drawing
+//	m_pBatch->Begin();
+//
+//	XMFLOAT4 vColor = m_bIsCollision ? XMFLOAT4(1.f, 0.f, 0.f, 1.f) : XMFLOAT4(0.f, 1.f, 0.f, 1.f);
+//
+//	VertexPositionColor vertices[] =
+//	{
+//		// 상단 선분
+//		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
+//		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+//
+//		// 우측 선분
+//		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+//		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+//
+//		// 하단 선분
+//		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+//		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+//
+//		// 좌측 선분
+//		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+//		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor }     // 왼쪽 상단
+//	};
+//
+//	/** DirectX Tool Kit의 PrimitiveBatch는 SetVertex, SetIndex 할 필요없이
+//	* 내부적으로 이미 구현되어 있어 매개변수로 (토폴로지, 정점 한 번씩만 선언, 정점 개수)
+//	* 이렇게만 알려주면 간단하게 폴리곤 정점을 그릴 수 있다. */
+//	m_pBatch->Draw(D3D11_PRIMITIVE_TOPOLOGY_LINELIST, vertices, 8);
+//
+//	// End batch drawing
+//	m_pBatch->End();
+//
+//	return S_OK;
+//}
+//#endif // _DEBUG
 
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {
-	m_pEffect->SetWorld(XMMatrixIdentity());
-	
-	CPipeLine*		pPipeLine = CPipeLine::GetInstance();
+	// 효과 설정
+	_float4x4 WorldMatrix = m_pOwner->Get_TransformCom()->Get_WorldMatrixFloat();
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_vector vPosition = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+	WorldMatrix._41 = XMVectorGetX(vPosition) + pGameInstance->Get_ScrollX();
+	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
+
+	Safe_Release(pGameInstance);
+
+	m_pEffect->SetWorld(DirectX::XMLoadFloat4x4(&WorldMatrix));
+	//m_pEffect->SetWorld(XMMatrixIdentity());
+
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
 	Safe_AddRef(pPipeLine);
 
-	m_pEffect->SetView(pPipeLine->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW));
-	m_pEffect->SetProjection(pPipeLine->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ));
+	_float4x4 ViewMatrix;
+	_float4x4 ProjMatrix;
+	DirectX::XMStoreFloat4x4(&ViewMatrix, XMMatrixIdentity());
+	DirectX::XMStoreFloat4x4(&ProjMatrix, XMMatrixOrthographicLH(1280, 720, 0.f, 1.f));
+
+	m_pEffect->SetView(DirectX::XMLoadFloat4x4(&ViewMatrix));
+	m_pEffect->SetProjection(DirectX::XMLoadFloat4x4(&ProjMatrix));
 
 	Safe_Release(pPipeLine);
 
+	// 입력 레이아웃 설정
 	m_pContext->IASetInputLayout(m_pInputLayout);
 
+	// 기하 도형 셰이더 설정
 	m_pContext->GSSetShader(nullptr, nullptr, 0);
 
+	// 출력 전에 셰이더에 반드시 던져야할 리소스(텍스쳐, 행렬, 벡터 등) 적용
 	m_pEffect->Apply(m_pContext);
 
-	m_pBatch->Begin();
+	XMFLOAT4 vColor = m_bIsCollision ? XMFLOAT4(1.f, 0.f, 0.f, 1.f) : XMFLOAT4(0.f, 1.f, 0.f, 1.f);
 
-	_vector		vColor = true == m_isCollision ? XMVectorSet(1.f, 0.f, 0.f, 1.f) : XMVectorSet(0.f, 1.f, 0.f, 1.f);	
-
-	switch (m_eType)
+	// 정점 배열 선언
+	VertexPositionColor Test[] =
 	{
-	case CCollider::TYPE_AABB:
-		DX::Draw(m_pBatch, *m_pAABB, vColor);
-		break;
-	case CCollider::TYPE_OBB:
-		DX::Draw(m_pBatch, *m_pOBB, vColor);
-		break;
-	case CCollider::TYPE_SPHERE:
-		DX::Draw(m_pBatch, *m_pSphere, vColor);
-		break;
-	}
+		{ XMFLOAT3(10.f, 0.f, 1.f), vColor },
+		{ XMFLOAT3(-10.f, 0.f, 1.f), vColor },
+	};
 
-	m_pBatch->End();
+	VertexPositionColor vertices[] =
+	{
+		// 상단 선분
+		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
+		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+
+		// 우측 선분
+		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+
+		// 하단 선분
+		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+
+		// 좌측 선분
+		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor }     // 왼쪽 상단
+	};
+
+
+	//// 사각형의 네 꼭지점 정의
+	//VertexPositionColor vertices[] =
+	//{
+	//	// 첫 번째 삼각형 (왼쪽 위에서 시계 방향으로)
+	//	{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
+	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+
+	//	// 두 번째 삼각형 (오른쪽 아래에서 반시계 방향으로)
+	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+	//	{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor }     // 오른쪽 하단
+	//};
+
+
+	//VertexPositionColor vertices[] =
+	//{
+	//	{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor }, // 왼쪽 상단
+	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },  // 오른쪽 상단
+	//	{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor }, // 오른쪽 하단
+	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor } // 왼쪽 하단
+	//};
+
+	// 버텍스 버퍼 생성
+	D3D11_BUFFER_DESC vertexBufferDesc;
+	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
+	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth = sizeof(vertices);
+	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.CPUAccessFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA vertexBufferData;
+	ZeroMemory(&vertexBufferData, sizeof(vertexBufferData));
+	vertexBufferData.pSysMem = vertices;
+
+	ID3D11Buffer* pVertexBuffer = nullptr;
+	m_pDevice->CreateBuffer(&vertexBufferDesc, &vertexBufferData, &pVertexBuffer);
+
+	// 프리미티브 유형 및 토폴로지 설정 (라인 리스트로 설정)
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
+
+	// 정점 버퍼 설정
+	UINT stride = sizeof(VertexPositionColor);
+	UINT offset = 0;
+	m_pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
+
+	// 사각형 외곽선 그리기
+	m_pContext->Draw(8, 0); // 4개의 선분을 그리므로 정점 개수는 8입니다.
+
+	// 정점 버퍼 해제
+	Safe_Release(pVertexBuffer);
 
 	return S_OK;
 }
 #endif // _DEBUG
+
 
 _matrix CCollider::Remove_Rotation(_fmatrix TransformMatrix)
 {
@@ -209,32 +299,6 @@ _matrix CCollider::Remove_Rotation(_fmatrix TransformMatrix)
 	Matrix.r[2] = XMVectorSet(0.f, 0.f, 1.f, 0.f) * XMVectorGetX(XMVector3Length(Matrix.r[2]));
 
 	return Matrix;
-}
-
-CCollider * CCollider::Create(ID3D11Device * pDevice, ID3D11DeviceContext * pContext, TYPE eType)
-{
-	CCollider *	pInstance = new CCollider(pDevice, pContext);
-
-	if (FAILED(pInstance->Initialize_Prototype(eType)))
-	{
-		MSG_BOX("Failed to Created : CCollider");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
-}
-
-CComponent * CCollider::Clone(void * pArg)
-{
-	CCollider *	pInstance = new CCollider(*this);
-
-	if (FAILED(pInstance->Initialize(pArg)))
-	{
-		MSG_BOX("Failed to Cloned : CCollider");
-		Safe_Release(pInstance);
-	}
-
-	return pInstance;
 }
 
 void CCollider::Free()
@@ -249,12 +313,4 @@ void CCollider::Free()
 	}
 	Safe_Release(m_pInputLayout);
 #endif // _DEBUG
-
-	Safe_Delete(m_pSphere_Original);
-	Safe_Delete(m_pAABB_Original);
-	Safe_Delete(m_pOBB_Original);
-
-	Safe_Delete(m_pSphere);
-	Safe_Delete(m_pAABB);
-	Safe_Delete(m_pOBB);
 }

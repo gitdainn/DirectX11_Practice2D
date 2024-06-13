@@ -5,6 +5,7 @@ class CInstallObject : public CSpriteObject
 {
 public:
 	explicit CInstallObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CInstallObject(const CInstallObject& rhs);
 	virtual ~CInstallObject() = default;
 
 public:

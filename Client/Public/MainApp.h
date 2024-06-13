@@ -42,6 +42,9 @@ private:
 	HRESULT Ready_Prototype_GameObject_For_Static();
 	HRESULT Ready_Prototype_Sprite_For_Static();
 
+private:
+	HRESULT Add_SpriteObject(const _tchar* pFileName, const SPRITE_INFO& tSprite);
+
 public:
 	static CMainApp* Create();
 	virtual void Free() override;

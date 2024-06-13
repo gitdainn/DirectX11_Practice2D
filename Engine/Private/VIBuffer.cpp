@@ -52,7 +52,7 @@ HRESULT CVIBuffer::Render()
 	m_pContext->IASetIndexBuffer(m_pIB, m_eFormat, 0);
 
 	m_pContext->IASetPrimitiveTopology(m_eTopology);
-	
+
 	m_pContext->DrawIndexed(m_iNumIndicesPrimitive * m_iNumPrimitives, 0, 0);
 	
 	return S_OK;

@@ -2,67 +2,69 @@
 
 #include "Component.h"
 
-/* CCollider ∞¥√º «œ≥™¥¬ «œ≥™¿« √Êµπ√º∏¶ ¿«πÃ«—¥Ÿ. */
+/* CCollider Í∞ùÏ≤¥ ÌïòÎÇòÎäî ÌïòÎÇòÏùò Ï∂©ÎèåÏ≤¥Î•º ÏùòÎØ∏ÌïúÎã§. */
 
 BEGIN(Engine)
 
-class ENGINE_DLL CCollider final : public CComponent
-{
-public:
-	enum TYPE { TYPE_SPHERE, TYPE_AABB, TYPE_OBB, TYPE_END };
+class CGameObject;
+class CColliderAABB2D;
+class CColliderOBB2D;
+class CColliderSphere2D;
 
+class CCollider abstract : public CComponent
+{
 public:
 	typedef struct tagColliderDesc
 	{
+		CGameObject* pOwner = { nullptr };
 		_float3		vScale;
 		_float3		vRotation;
 		_float3		vPosition;				
-	}COLLIDERDESC;
+	}COLLIDER_DESC;
 
-private:
+protected:
 	CCollider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CCollider(const CCollider& rhs);
 	virtual ~CCollider() = default;
 
 public:
-	HRESULT Initialize_Prototype(TYPE eType);
-	HRESULT Initialize(void* pArg) override;
-	void Tick(_fmatrix TransformMatrix);
-	_bool Collision(CCollider* pTarget);
+	virtual HRESULT Initialize_Prototype();
+	virtual HRESULT Initialize(void* pArg) override;
+	virtual void Tick(_fmatrix TransformMatrix = XMMatrixIdentity());
+
+public:
+	const COLLIDER_DESC& Get_ColliderDesc() const
+	{
+		return m_tColliderDesc;
+	}
+
+	virtual _bool IsCollision(CColliderAABB2D* pTarget) const = 0;
+	virtual _bool IsCollision(CColliderOBB2D* pTarget) const = 0;
+	virtual _bool IsCollision(CColliderSphere2D* pTarget) const = 0;
+
+protected:
+	_matrix Remove_Rotation(_fmatrix TranformMatrix);
 
 #ifdef _DEBUG
 public:
 	virtual HRESULT Render() override;
 #endif // _DEBUG
 
-private:
-	BoundingBox*			m_pAABB_Original = { nullptr };
-	BoundingOrientedBox*	m_pOBB_Original = { nullptr };
-	BoundingSphere*			m_pSphere_Original = { nullptr };
-
-	BoundingBox*			m_pAABB = { nullptr };
-	BoundingOrientedBox*	m_pOBB = { nullptr };
-	BoundingSphere*			m_pSphere = { nullptr };
-
-	TYPE					m_eType = { TYPE_END };
-	_bool					m_isCollision = { false };
-
 #ifdef _DEBUG
-private:
+protected:
 	PrimitiveBatch<DirectX::VertexPositionColor>*	m_pBatch = { nullptr };
 	BasicEffect*				m_pEffect = { nullptr };
 	ID3D11InputLayout*			m_pInputLayout = { nullptr };
 #endif // _DEBUG
 
-private:
-	_matrix Remove_Rotation(_fmatrix TranformMatrix);
-
-
+protected:
+	CGameObject*			m_pOwner;
+	COLLIDER_DESC			m_tColliderDesc;
+	_bool					m_bIsCollision = { false };
 
 public:
-	static CCollider* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, TYPE eType);
-	virtual CComponent* Clone(void* pArg = nullptr) override;
-	virtual void Free() override;
+	virtual CComponent* Clone(void* pArg = nullptr) = 0;
+	virtual void Free() = 0;
 };
 
 END

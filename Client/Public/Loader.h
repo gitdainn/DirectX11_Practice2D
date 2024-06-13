@@ -1,6 +1,6 @@
 #pragma once
 
-/* ½º·¹µå¸¦ ÅëÇÏ¿© Æ¯Á¤ ·¹º§ÀÇ ÁØºñ¸¦ ÇÑ´Ù. */
+/* ìŠ¤ë ˆë“œë¥¼ í†µí•˜ì—¬ íŠ¹ì • ë ˆë²¨ì˜ ì¤€ë¹„ë¥¼ í•œë‹¤. */
 
 #include "Client_Defines.h"
 #include "Base.h"
@@ -33,6 +33,9 @@ public:
 public:
 	HRESULT Initialize(LEVEL eNextLevelID);
 	HRESULT Loading_ForLogoLevel();
+	HRESULT Loading_Sprite_Logo();
+	HRESULT Loaiding_GameObject_Logo();
+
 	HRESULT Loading_ForGamePlayLevel();
 
 private:

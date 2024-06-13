@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "LittleBorn.h"
 
-/* @note - »ı¼ºÀÚ¿¡ ºÎ¸ğ »ı¼ºÀÚµµ ÃÊ±âÈ­ÇØ¾ß ÇÏ´Â ÀÌÀ¯
+/* @note - ìƒì„±ìì— ë¶€ëª¨ ìƒì„±ìë„ ì´ˆê¸°í™”í•´ì•¼ í•˜ëŠ” ì´ìœ 
 * */
 CLittleBorn::CLittleBorn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer(pDevice, pContext)
@@ -29,7 +29,6 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
 
-    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
     return S_OK;

@@ -172,6 +172,9 @@
     <ClCompile Include="..\private\BlendObject.cpp" />
     <ClCompile Include="..\private\Camera.cpp" />
     <ClCompile Include="..\private\Collider.cpp" />
+    <ClCompile Include="..\Private\ColliderAABB2D.cpp" />
+    <ClCompile Include="..\Private\ColliderOBB2D.cpp" />
+    <ClCompile Include="..\Private\ColliderSphere2D.cpp" />
     <ClCompile Include="..\private\Component.cpp" />
     <ClCompile Include="..\private\Component_Manager.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
@@ -215,6 +218,9 @@
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Camera.h" />
     <ClInclude Include="..\public\Collider.h" />
+    <ClInclude Include="..\Public\ColliderAABB2D.h" />
+    <ClInclude Include="..\Public\ColliderOBB2D.h" />
+    <ClInclude Include="..\Public\ColliderSphere2D.h" />
     <ClInclude Include="..\public\Component.h" />
     <ClInclude Include="..\public\Component_Manager.h" />
     <ClInclude Include="..\public\CustomFont.h" />

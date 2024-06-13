@@ -79,7 +79,7 @@ HRESULT CShader::Begin(_uint iPassIndex)
 	m_pContext->IASetInputLayout(m_Passes[iPassIndex].pInputLayout);
 
 	/* dx9 : BeginPass(iIndex) */
-	/* ¹Ýµå½Ã È£Ãâ Àü¿¡ ¼ÎÀÌ´õ¿¡ ´øÁ®¾ßÇÒ ¸®¼Ò½º(ÅØ½ºÃÄ, Çà·Ä, º¤ÅÍ etc) µéÀ» ¸ðµÎ ´øÁ®¶ó. */
+	/* ë°˜ë“œì‹œ í˜¸ì¶œ ì „ì— ì…°ì´ë”ì— ë˜ì ¸ì•¼í•  ë¦¬ì†ŒìŠ¤(í…ìŠ¤ì³, í–‰ë ¬, ë²¡í„° etc) ë“¤ì„ ëª¨ë‘ ë˜ì ¸ë¼. */
 	m_Passes[iPassIndex].pPass->Apply(0, m_pContext);	
 
 	return S_OK;
@@ -102,7 +102,7 @@ HRESULT CShader::Set_Matrix(const char* pConstantName, _float4x4* pMatrix)
 	if (nullptr == m_pEffect)
 		return E_FAIL;
 
-	/*pConstantNameÀÇ ÀÌ¸§À» °¡Áø ¸Þ¸ð¸®°ø°£À» ´ëÇ¥ÇÏ´Â ÄÄ°´Ã¼ÀÇ ÁÖ¼Ò¸¦ ¾ò¾î¿Ô´Ù. (Å¸ÀÔ¸í½Ã:x)*/
+	/*pConstantNameì˜ ì´ë¦„ì„ ê°€ì§„ ë©”ëª¨ë¦¬ê³µê°„ì„ ëŒ€í‘œí•˜ëŠ” ì»´ê°ì²´ì˜ ì£¼ì†Œë¥¼ ì–»ì–´ì™”ë‹¤. (íƒ€ìž…ëª…ì‹œ:x)*/
 	//ID3DX11EffectVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName);
 	ID3DX11EffectMatrixVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName)->AsMatrix();
 	if (nullptr == pVariable)
@@ -116,7 +116,7 @@ HRESULT CShader::Set_MatrixArray(const char * pConstantName, _float4x4* pMatrix,
 	if (nullptr == m_pEffect)
 		return E_FAIL;
 
-	/*pConstantNameÀÇ ÀÌ¸§À» °¡Áø ¸Þ¸ð¸®°ø°£À» ´ëÇ¥ÇÏ´Â ÄÄ°´Ã¼ÀÇ ÁÖ¼Ò¸¦ ¾ò¾î¿Ô´Ù. (Å¸ÀÔ¸í½Ã:x)*/
+	/*pConstantNameì˜ ì´ë¦„ì„ ê°€ì§„ ë©”ëª¨ë¦¬ê³µê°„ì„ ëŒ€í‘œí•˜ëŠ” ì»´ê°ì²´ì˜ ì£¼ì†Œë¥¼ ì–»ì–´ì™”ë‹¤. (íƒ€ìž…ëª…ì‹œ:x)*/
 	//ID3DX11EffectVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName);
 	ID3DX11EffectMatrixVariable*		pVariable = m_pEffect->GetVariableByName(pConstantName)->AsMatrix();
 	if (nullptr == pVariable)

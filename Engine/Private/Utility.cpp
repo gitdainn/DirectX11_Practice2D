@@ -1,4 +1,6 @@
 #include "Utility.h"
+#include "Utility.h"
+#include "Utility.h"
 #include "GameInstance.h"
 
 CUtility::CUtility()

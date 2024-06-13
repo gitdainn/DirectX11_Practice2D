@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "SpriteObject.h"
 
+#include "Collider.h"
+
 USING(Tool)
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -13,6 +15,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
 	, m_bIsScroll(true)
+	, m_pLayer(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -50,7 +53,7 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 	// 위치 지정
 	WorldMatrix._11 = m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.x;
-	WorldMatrix._22 = m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.y;
+	WorldMatrix._22 = m_tSpriteInfo.fSize.y * m_tSpriteInfo.fSizeRatio.y;
 	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
 	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
@@ -69,6 +72,9 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 	if (m_bIsDead)
 		return OBJ_DEAD;
 
+	if (nullptr != m_pColliderCom)
+		m_pColliderCom->Tick();
+
 	return _uint();
 }
 
@@ -85,6 +91,9 @@ _uint CSpriteObject::LateTick(_double TimeDelta)
 
 HRESULT CSpriteObject::Render()
 {
+	if (nullptr != m_pColliderCom)
+		m_pColliderCom->Render();
+
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
 
@@ -149,6 +158,24 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureComTag,
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::Add_Components(const _tchar* pComponentTag, void* pArg)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_TOOL, pComponentTag,
+		TAG_COLL_AABB, (CComponent**)(&m_pColliderCom), pArg)))
 	{
 		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
 		Safe_Release(pGameInstance);
@@ -249,7 +276,10 @@ void CSpriteObject::Free()
 	}
 
 	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
+
 	Safe_Delete_Array(m_pSpriteTag);
+	Safe_Delete_Array(m_pLayer);
 
 	/** @note - _tchar* m_pTextureComTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
 	// Safe_Delete_Array(m_pTextureComTag);

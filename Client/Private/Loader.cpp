@@ -3,10 +3,14 @@
 #include "GameInstance.h"
 
 #include "Camera_Dynamic.h"
-#include "BackGround.h"
 #include "GrimReaper.h"
 #include "LittleBorn.h"
 #include "WaterSkul.h"
+#include "Utility.h"
+
+#include "BackGround.h"
+#include "Tile.h"
+#include "Environment.h"
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
@@ -65,19 +69,33 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 HRESULT CLoader::Loading_ForLogoLevel()
 {
-	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
+	if (FAILED(Loading_Sprite_Logo()))
+		return E_FAIL;
+	
+	if (FAILED(Loaiding_GameObject_Logo()))
+		return E_FAIL;
+
+	wsprintf(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
+	m_isFinished = true;
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loading_Sprite_Logo()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
-	/*  */
+
 #pragma region TEXTURES	
 	wsprintf(m_szLoadingText, TEXT("텍스쳐를 로딩중입니다."));
 
-	/* For.Prototype_Component_Texture_Logo */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	};
+	///* For.Prototype_Component_Texture_Logo */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Texture_Background"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//};
 
 	/* For.Prototype_Component_Sprite_LittleBorn */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_LittleBorn"),
@@ -112,25 +130,44 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	};
 #pragma endregion
 
-//#pragma region SHADERS
-//	wsprintf(m_szLoadingText, TEXT("셰이더를 로딩중입니다."));
-//	for (_uint i = 0; i < 999999999; ++i)
-//	{
-//		int a = 10;
-//	}
-//#pragma endregion
-//
-#pragma region GAMEOBJECTS
-	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
-
-	/* For.Prototype_GameObject_BackGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
-		CBackGround::Create(m_pDevice, m_pContext))))
+#pragma region TextureFolder
+	/* For.Prototype_Component_Sprite_Tile */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Tile"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Tiles/ForestTile/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
 
+	/* For.Prototype_Component_Sprite_ForestObject */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Environment/Forest/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_ForestObject */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Background"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Background/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CLoader::Loaiding_GameObject_Logo()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	wsprintf(m_szLoadingText, TEXT("객체원형을 로딩중."));
+
+#pragma region PLAYER
 	/* For.Prototype_GameObject_GrimReaper */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_GrimReaper"),
 		CGrimReaper::Create(m_pDevice, m_pContext))))
@@ -154,11 +191,33 @@ HRESULT CLoader::Loading_ForLogoLevel()
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
-
 #pragma endregion
 
-	wsprintf(m_szLoadingText, TEXT("로딩이 완료되었습니다."));
-	m_isFinished = true;
+#pragma region ENVIRONMENT
+	/* For.Prototype_GameObject_BackGround */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Background"),
+		CBackGround::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_Tile */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Tile"),
+		CTile::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_Environment */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Environment"),
+		CEnvironment::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
 
 	Safe_Release(pGameInstance);
 

@@ -124,6 +124,12 @@
     <Filter Include="01.Utility\11.ScrollManager">
       <UniqueIdentifier>{498e7732-5e19-4675-a52b-1db76cd20852}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\ColliderBox2D">
+      <UniqueIdentifier>{aa611165-fa44-4947-8c70-0dca33d4c345}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Component\Collider\ColliderSphere2D">
+      <UniqueIdentifier>{73a9c7d6-c67b-4c5a-a9f3-36106205239a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -239,6 +245,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\Scroll_Manager.cpp">
       <Filter>01.Utility\11.ScrollManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ColliderAABB2D.cpp">
+      <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ColliderSphere2D.cpp">
+      <Filter>01.Utility\03.Component\Collider\ColliderSphere2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\ColliderOBB2D.cpp">
+      <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -367,6 +382,15 @@
     </ClInclude>
     <ClInclude Include="..\Public\Scroll_Manager.h">
       <Filter>01.Utility\11.ScrollManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ColliderAABB2D.h">
+      <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ColliderSphere2D.h">
+      <Filter>01.Utility\03.Component\Collider\ColliderSphere2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\ColliderOBB2D.h">
+      <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

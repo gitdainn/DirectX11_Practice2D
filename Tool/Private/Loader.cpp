@@ -8,6 +8,10 @@
 #include "Camera_Dynamic.h"
 #pragma endregion
 
+#pragma region COMPONENT
+#include "ColliderAABB2D.h"
+#pragma endregion
+
 USING(Tool)
 
 CLoader::CLoader(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -84,6 +88,16 @@ HRESULT CLoader::Loading_ForToolLevel()
 	/* For.Prototype_GameObject_Install */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"),
 		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region COLLIDER
+	/* For.Prototype_Component_Sprite_Background */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Collider_AABB"),
+		CColliderAABB2D::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

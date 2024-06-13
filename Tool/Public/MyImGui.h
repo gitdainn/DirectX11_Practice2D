@@ -35,6 +35,19 @@ private:
 
 	};
 
+	typedef struct tPreviousSpriteInfo
+	{
+		_uint		iOrder = { 0 };
+		_float2	fSize = { 300.f, 320.f };
+		_float2	fSizeRatio = { 1.f, 1.f };
+		_float2	fPosition = { 0.f, 0.f };
+
+		_uint		iTextureIndex = { 0 };
+		/** @note - const타입을 nullptr로 지정했는데도 구조체 생성 시 값을 넣을 수 있는 이유는 구조체는 호출 시 그때 생성되어 초기화하는 것이기 때문 */
+		const _tchar* pTextureComTag = { nullptr };
+		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
+	}PREVIOUS_SPRITE_INFO;
+
 private:
 	HRESULT	ShowDemoWindow();
 	HRESULT	ShowInstalledWindow();
@@ -50,18 +63,22 @@ public:
 private:
 	HRESULT	Save_Object();
 	HRESULT	Load_Object();
+	HRESULT Load_PreviousData(); // 구조체 수정 전에 저장했떤 파일 불러오기
 
 private:
 	void	Key_Input(_double TimeDelta);
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
-	_tchar* ConvertSpriteComponentWithFolderName(const char* pFolderName) const;
+	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;
 	const _bool&		CheckSelectionChanged() const;
 
 private:
 	CSpriteObject* m_pPreviewObject;
 	CSpriteObject* m_pSelectedObject;
 	vector<const char*>		m_FolderNameVec;
+	vector<const char*>		m_RenderGroupVec;
+	vector<const char*>		m_LayerVec;
+	vector<const char*>		m_ComponentsVec;
 	unique_ptr<_uint[]>		m_pSpriteListIndex;
 	_uint					m_iFolderIndex;
 	vector<CSpriteObject*>	m_CreateObjectVec;

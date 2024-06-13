@@ -26,6 +26,8 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
+	m_eRenderGroup = CRenderer::RENDER_UI;
+
 	m_pState = new CPlayerIdle();
 	m_pAirState = new CPlayerJump();
 	return S_OK;

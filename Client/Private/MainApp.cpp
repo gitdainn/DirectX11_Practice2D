@@ -44,7 +44,6 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
 		return E_FAIL;
 
-
 	return S_OK;
 }
 
@@ -164,6 +163,11 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 }
 
 HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
+{
+	return S_OK;
+}
+
+HRESULT CMainApp::Add_SpriteObject(const _tchar* pFileName, const SPRITE_INFO& tSprite)
 {
 	return S_OK;
 }

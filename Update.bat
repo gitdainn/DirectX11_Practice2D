@@ -7,3 +7,4 @@ xcopy			/y			.\Engine\ThirdPartyLib\*.lib			.\Reference\Librarys\
 xcopy			/y/s		.\Engine\Public\*.*				.\Reference\Headers\
 xcopy			/y			.\Engine\Bin\ShaderFiles\*.*	.\Client\Bin\ShaderFiles\	
 xcopy			/y			.\Engine\Bin\ShaderFiles\*.*	.\Tool\Bin\ShaderFiles\	
+xcopy			/y			.\Tool\Bin\DataFiles\*.*		.\Client\Bin\DataFiles\

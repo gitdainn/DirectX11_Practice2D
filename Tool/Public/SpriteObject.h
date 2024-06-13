@@ -22,6 +22,7 @@ class CTransform;
 class CVIBuffer_Rect;
 class CShader;
 class CTexture;
+class CCollider;
 END
 
 BEGIN(Tool)
@@ -95,6 +96,19 @@ public:
 		m_bIsScroll = bIsScroll;
 	};
 
+	void Set_RenderGroup(const CRenderer::RENDERGROUP& eRenderGroup)
+	{
+		m_eRenderGroup = eRenderGroup;
+	}
+
+	void Set_Layer(const char* pLayer)
+	{
+		Safe_Delete_Array(m_pLayer);
+		char* Layer = new char[strlen(pLayer) + 1];
+		strcpy(Layer, pLayer);
+		m_pLayer = Layer;
+	}
+
 public:
 	const bool IsEndSprite()
 	{
@@ -128,10 +142,21 @@ public:
 		return m_tSpriteInfo.fSizeRatio;
 	}
 
+	const CRenderer::RENDERGROUP& Get_RenderGroup() const
+	{
+		return m_eRenderGroup;
+	}
+
+	const char* Get_Layer() const
+	{
+		return m_pLayer;
+	}
+
 public:
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
+	virtual HRESULT Add_Components(const _tchar* pComponentTag, void* pArg = nullptr);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
@@ -147,6 +172,7 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
 protected:
 	/* 해시테이블 */
@@ -164,6 +190,7 @@ protected:
 	_bool	m_bIsScroll;
 
 	const char*		m_pSpriteTag;
+	const char*		m_pLayer;
 	const _tchar*	m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	CRenderer::RENDERGROUP	m_eRenderGroup;

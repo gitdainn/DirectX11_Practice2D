@@ -88,6 +88,15 @@
     <Filter Include="02.GameObject\Player\WaterSkul">
       <UniqueIdentifier>{b4bbdb24-1900-4bcd-b390-4afd9e215c6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="06.Utility">
+      <UniqueIdentifier>{135f3cc5-ee20-4a61-94af-957564217e64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Tile">
+      <UniqueIdentifier>{bf710720-e638-41a3-9065-c44a63d6c785}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Environment">
+      <UniqueIdentifier>{f761d0a0-5b8e-49e7-8189-7d66ebaffa70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -178,6 +187,15 @@
     <ClInclude Include="Client_Defines.h">
       <Filter>99.Defines</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\FileLoader.h">
+      <Filter>06.Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Tile.h">
+      <Filter>02.GameObject\Tile</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Environment.h">
+      <Filter>02.GameObject\Environment</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -255,6 +273,15 @@
     </ClCompile>
     <ClCompile Include="..\Private\WaterSkul.cpp">
       <Filter>02.GameObject\Player\WaterSkul</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\FileLoader.cpp">
+      <Filter>06.Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Tile.cpp">
+      <Filter>02.GameObject\Tile</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Environment.cpp">
+      <Filter>02.GameObject\Environment</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
