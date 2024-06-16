@@ -1,7 +1,7 @@
 ---
 name: "HELP"
 about: 도움이 필요한 사항에 대해 작성해주세요.
-title: "[HELP] 한줄요약"
+title: "[HELP]"
 labels: help wanted
 assignees: limjh1
 ---
