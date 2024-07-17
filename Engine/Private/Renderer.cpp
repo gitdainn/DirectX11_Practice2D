@@ -47,9 +47,12 @@ HRESULT CRenderer::Initialize(void * pArg)
 
 HRESULT CRenderer::Add_RenderGroup(RENDERGROUP eRenderGroup, CGameObject* pGameObject)
 {
-	if (RENDER_END <= eRenderGroup || 0 > (_uint)eRenderGroup
+	/** @note - unsigned int로 변환 시 무조건 0 이상이 되어 eRenderGroup이 쓰레기 값이 와도 0 이하가 성립X */
+	if (RENDER_END <= eRenderGroup || 0 > (int)eRenderGroup
 		|| nullptr == pGameObject)
+	{
 		return E_FAIL;
+	}
 
 	m_RenderGroups[eRenderGroup].push_back(pGameObject);
 

@@ -23,7 +23,6 @@ public:
 	virtual _bool IsCollision(CColliderOBB2D* pTarget) const override;
 	virtual _bool IsCollision(CColliderSphere2D* pTarget) const override;
 
-
 public:
 	static CColliderAABB2D* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CComponent* Clone(void* pArg = nullptr) override;

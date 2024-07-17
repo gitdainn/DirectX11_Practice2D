@@ -4,9 +4,14 @@
 CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
+	, m_bIsDead(false), m_bIsRender(true)
+	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 /** @note - 자식 객체가 삭제될 때 최상위 부모의 소멸자까지 호출되는가
@@ -20,6 +25,9 @@ CGameObject::CGameObject(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 CGameObject::CGameObject(const CGameObject & rhs)
 	: m_pDevice(rhs.m_pDevice)
 	, m_pContext(rhs.m_pContext)
+	, m_bIsDead(rhs.m_bIsDead), m_bIsRender(rhs.m_bIsRender)
+	, m_eRenderGroup(rhs.m_eRenderGroup)
+	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -37,16 +45,43 @@ HRESULT CGameObject::Initialize(void * pArg)
 
 _uint CGameObject::Tick(_double TimeDelta)
 {
+	if (m_bIsDead)
+		return OBJ_DEAD;
+
+	if (!m_ColliderList.empty())
+	{
+		for (CCollider* pCollider : m_ColliderList)
+		{
+			if (nullptr != pCollider)
+				pCollider->Tick();
+		}
+	}
+
 	return _uint();
 }
 
 _uint CGameObject::LateTick(_double TimeDelta)
 {
+	if (m_bIsRender)
+	{
+		//@qurious. enum class가 아니라 일반 enum이면 engine의 열거체를 멤버로 선언 시 사용불가임.
+		m_pRendererCom->Add_RenderGroup(m_eRenderGroup, this);
+	}
+
 	return _uint();
 }
 
 HRESULT CGameObject::Render()
 {
+	if (!m_ColliderList.empty())
+	{
+		for (CCollider* pCollider : m_ColliderList)
+		{
+			if (nullptr != pCollider)
+				pCollider->Render();
+		}
+	}
+
 	return S_OK;
 }
 
@@ -74,6 +109,17 @@ HRESULT CGameObject::Add_Components(_uint iLevelIndex, const _tchar * pPrototype
 
 	Safe_AddRef(pComponent);
 	
+	return S_OK;
+}
+
+HRESULT CGameObject::Add_Colliders(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, void* pArg)
+{
+	CCollider* pCollider = nullptr;
+	if (FAILED(Add_Components(iLevelIndex, pPrototypeTag, pComponentTag, (CComponent**)&pCollider, pArg)))
+		return E_FAIL;
+
+	m_ColliderList.emplace_back(pCollider);
+
 	return S_OK;
 }
 
@@ -118,14 +164,19 @@ HRESULT CGameObject::Change_Component(_uint iLevelIndex, const _tchar* pPrototyp
 	return S_OK;
 }
 
-
-
 void CGameObject::Free()
 {
 	for (auto& Pair : m_Components)
+	{
 		Safe_Release(Pair.second);
-
+	}
 	m_Components.clear();
+
+	for (CCollider* pCollider : m_ColliderList)
+	{
+		Safe_Release(pCollider);
+	}
+	m_ColliderList.clear();
 
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pContext);

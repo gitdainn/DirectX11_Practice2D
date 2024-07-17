@@ -17,13 +17,6 @@ CTransform::CTransform(const CTransform & rhs)
 {
 	ZeroMemory(&m_TransformDesc, sizeof m_TransformDesc);
 }
-  
-void CTransform::Set_Scaled(const _float3 & vScale)
-{
-	Set_State(CTransform::STATE_RIGHT, XMVector3Normalize(Get_State(CTransform::STATE_RIGHT)) * vScale.x);
-	Set_State(CTransform::STATE_UP, XMVector3Normalize(Get_State(CTransform::STATE_UP)) * vScale.y);
-	Set_State(CTransform::STATE_LOOK, XMVector3Normalize(Get_State(CTransform::STATE_LOOK)) * vScale.z);
-}
 
 HRESULT CTransform::Set_ShaderResource(CShader * pShader, const char * pContantName)
 {

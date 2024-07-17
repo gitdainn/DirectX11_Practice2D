@@ -7,10 +7,8 @@ USING(Tool)
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_bIsDead(false), m_bIsRender(true)
 	, m_iUVTextureIndex(0)
 	, m_iUVTexNumX(0), m_iUVTexNumY(0)
-	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
@@ -21,9 +19,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
-
-	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 HRESULT CSpriteObject::Initialize_Prototype()
@@ -69,30 +64,33 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 _uint CSpriteObject::Tick(_double TimeDelta)
 {
-	if (m_bIsDead)
-		return OBJ_DEAD;
-
-	if (nullptr != m_pColliderCom)
-		m_pColliderCom->Tick();
+	if (FAILED(__super::Tick(TimeDelta)))
+	{
+		MSG_BOX("CSpriteObject - Tick - __super Error");
+		return E_FAIL;
+	};
 
 	return _uint();
 }
 
 _uint CSpriteObject::LateTick(_double TimeDelta)
 {
-	if (m_bIsRender)
+	if (FAILED(__super::LateTick(TimeDelta)))
 	{
-		//@qurious. enum class가 아니라 일반 enum이면 engine의 열거체를 멤버로 선언 시 사용불가임.
-		m_pRendererCom->Add_RenderGroup(m_eRenderGroup, this);
-	}
+		MSG_BOX("CSpriteObject - LateTick - __super Error");
+		return E_FAIL;
+	};
 
 	return _uint();
 }
 
 HRESULT CSpriteObject::Render()
 {
-	if (nullptr != m_pColliderCom)
-		m_pColliderCom->Render();
+	if (FAILED(__super::Render()))
+	{
+		MSG_BOX("CSpriteObject - Render - __super Error");
+		return E_FAIL;
+	};
 
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
@@ -158,24 +156,6 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	/* For.Com_Texture */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureComTag,
 		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
-	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
-}
-
-HRESULT CSpriteObject::Add_Components(const _tchar* pComponentTag, void* pArg)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_TOOL, pComponentTag,
-		TAG_COLL_AABB, (CComponent**)(&m_pColliderCom), pArg)))
 	{
 		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
 		Safe_Release(pGameInstance);

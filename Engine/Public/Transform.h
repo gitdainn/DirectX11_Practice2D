@@ -26,26 +26,27 @@ private:
 	virtual ~CTransform() = default;
 
 public: /* Getter */
-	_vector Get_State(STATE eState) {		
+	_vector Get_State(STATE eState) const {		
 		return XMLoadFloat4x4(&m_WorldMatrix).r[eState];
 		// return XMLoadFloat4((_float4*)&m_WorldMatrix.m[eState][0]);		
 	}
 
-	_float3 Get_Scaled() {
+	/** @note - const 함수 내에서는 const 함수만 사용 가능 */
+	_float3 Get_Scaled() const {
 		return _float3(XMVectorGetX(XMVector3Length(Get_State(STATE_RIGHT))), 
 			XMVectorGetX(XMVector3Length(Get_State(STATE_UP))), 
 			XMVectorGetX(XMVector3Length(Get_State(STATE_LOOK))));
 	}
 
-	_matrix Get_WorldMatrix_Inverse() {
+	_matrix Get_WorldMatrix_Inverse() const {
 		return XMMatrixInverse(nullptr, XMLoadFloat4x4(&m_WorldMatrix));
 	}
 
-	_matrix Get_WorldMatrix() {
+	_matrix Get_WorldMatrix() const {
 		return XMLoadFloat4x4(&m_WorldMatrix);
 	}
 
-	_float4x4 Get_WorldMatrixFloat() {
+	_float4x4 Get_WorldMatrixFloat() const {
 		return m_WorldMatrix;
 	}
 
@@ -63,7 +64,12 @@ public: /* Setter */
 	void Set_TransformDesc(const TRANSFORM_DESC& TransformDesc) {
 		m_TransformDesc = TransformDesc; }
 
-	void Set_Scaled(const _float3& vScale);
+	void Set_Scaled(const _float3& vScale)
+	{
+		Set_State(CTransform::STATE_RIGHT, XMVector3Normalize(Get_State(CTransform::STATE_RIGHT)) * vScale.x);
+		Set_State(CTransform::STATE_UP, XMVector3Normalize(Get_State(CTransform::STATE_UP)) * vScale.y);
+		Set_State(CTransform::STATE_LOOK, XMVector3Normalize(Get_State(CTransform::STATE_LOOK)) * vScale.z);
+	}
 
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pContantName);
 

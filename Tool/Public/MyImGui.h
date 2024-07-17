@@ -12,6 +12,7 @@
 
 BEGIN(Engine)
 class CGameObject;
+class CCollider;
 END
 
 BEGIN(Tool)
@@ -54,6 +55,14 @@ private:
 	HRESULT	ShowSpriteWindow();
 	HRESULT	ShowInspectorWindow();
 
+private: // Inspector //
+	HRESULT Inspector_Transform();
+	HRESULT Inspector_SpriteRenderer();
+	HRESULT Inspector_Components();
+
+private:
+	HRESULT Inpsector_Collider(CCollider* pCollider);
+
 public:
 	virtual HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual _uint Tick(_double TimeDelta);
@@ -73,12 +82,16 @@ private:
 	const _bool&		CheckSelectionChanged() const;
 
 private:
+	const int m_iComponentsNum = 2;
+
+private:
 	CSpriteObject* m_pPreviewObject;
 	CSpriteObject* m_pSelectedObject;
 	vector<const char*>		m_FolderNameVec;
 	vector<const char*>		m_RenderGroupVec;
 	vector<const char*>		m_LayerVec;
 	vector<const char*>		m_ComponentsVec;
+	vector<const char*>		m_ColliderLayer;
 	unique_ptr<_uint[]>		m_pSpriteListIndex;
 	_uint					m_iFolderIndex;
 	vector<CSpriteObject*>	m_CreateObjectVec;

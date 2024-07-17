@@ -7,7 +7,7 @@ CCamera::CCamera(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	, m_pPipeLine(CPipeLine::GetInstance())
 {
 	Safe_AddRef(m_pPipeLine);
-
+	m_bIsRender = false;
 }
 
 CCamera::CCamera(const CCamera & rhs)
@@ -67,9 +67,6 @@ _uint CCamera::Tick(_double TimeDelta)
 
 _uint CCamera::LateTick(_double TimeDelta)
 {
-
-
-
 	return __super::LateTick(TimeDelta);
 }
 

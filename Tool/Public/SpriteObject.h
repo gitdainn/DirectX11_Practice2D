@@ -60,11 +60,6 @@ protected: // Animation
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
 
 public:
-	void Set_ShaderPass(const _uint iPassIndex)
-	{
-		m_iShaderPassIndex = iPassIndex;
-	}
-
 	void Set_SpriteDirection(const SPRITE_DIRECTION eDirection)
 	{
 		m_eSpriteDirection = eDirection;
@@ -95,11 +90,6 @@ public:
 	{
 		m_bIsScroll = bIsScroll;
 	};
-
-	void Set_RenderGroup(const CRenderer::RENDERGROUP& eRenderGroup)
-	{
-		m_eRenderGroup = eRenderGroup;
-	}
 
 	void Set_Layer(const char* pLayer)
 	{
@@ -156,7 +146,6 @@ public:
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
-	virtual HRESULT Add_Components(const _tchar* pComponentTag, void* pArg = nullptr);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
@@ -172,19 +161,8 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-	CCollider* m_pColliderCom = { nullptr };
 
 protected:
-	/* 해시테이블 */
-	unordered_map<const _tchar*, class CComponent*>			m_Components;
-	_uint	m_iShaderPassIndex = { 0 };
-	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
-	_float4x4	m_ViewMatrix;
-	_float4x4	m_ProjMatrix;
-
-protected:
-	_bool	m_bIsDead;
-	_bool	m_bIsRender;
 	_bool	m_bIsAnimUV;
 	_bool	m_bIsEndSprite;
 	_bool	m_bIsScroll;
@@ -193,7 +171,7 @@ protected:
 	const char*		m_pLayer;
 	const _tchar*	m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
-	CRenderer::RENDERGROUP	m_eRenderGroup;
+	
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
 	_uint	m_iUVTexNumY;

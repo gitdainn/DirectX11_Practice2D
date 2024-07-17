@@ -5,10 +5,8 @@
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_bIsDead(false), m_bIsRender(true)
 	, m_iUVTextureIndex(0)
 	, m_iUVTexNumX(0), m_iUVTexNumY(0)
-	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_bIsAnimUV(false)
 	, m_pState(nullptr)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
@@ -19,9 +17,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
-
-	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixIdentity());
 }
 
 HRESULT CSpriteObject::Initialize_Prototype()

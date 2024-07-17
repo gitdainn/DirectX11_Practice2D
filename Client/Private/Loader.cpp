@@ -12,6 +12,8 @@
 #include "Tile.h"
 #include "Environment.h"
 
+#include "ColliderAABB2D.h"
+
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
 	, m_pContext(pContext)
@@ -140,7 +142,7 @@ HRESULT CLoader::Loading_Sprite_Logo()
 	};
 
 	/* For.Prototype_Component_Sprite_ForestObject */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Environment"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Environment/Forest/")))))
 	{
 		Safe_Release(pGameInstance);

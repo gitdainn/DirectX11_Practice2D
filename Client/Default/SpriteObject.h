@@ -121,23 +121,12 @@ protected:
 	CTexture* m_pTextureCom = { nullptr };
 
 protected:
-	/* 해시테이블 */
-	unordered_map<const _tchar*, class CComponent*>			m_Components;
-	_uint	m_iShaderPassIndex = { 0 };
-	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
-	_float4x4	m_ViewMatrix;
-	_float4x4	m_ProjMatrix;
-
-protected:
-	bool	m_bIsDead;
-	bool	m_bIsRender;
 	bool	m_bIsAnimUV;
 	bool	m_bIsEndSprite;
 
 	CState*					m_pState;
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
-	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_tchar* m_pTextureTag;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;

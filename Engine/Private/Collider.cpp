@@ -2,23 +2,28 @@
 #include "DebugDraw.h"
 #include "PipeLine.h"
 #include "GameObject.h"
-
 #include "GameInstance.h"
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
+	, m_pOwner(nullptr)
 {
-	
+	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
+	ZeroMemory(&m_tColliderDesc, sizeof(COLLIDER_DESC));
 }
 
 CCollider::CCollider(const CCollider & rhs)
 	: CComponent(rhs)
+	, m_WorldMatrix(rhs.m_WorldMatrix)
+	, m_tColliderDesc(rhs.m_tColliderDesc)
+	, m_pOwner(rhs.m_pOwner)
 #ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)
 	, m_pInputLayout(rhs.m_pInputLayout)
 #endif // _DEBUG
 {
+
 #ifdef _DEBUG
 	Safe_AddRef(m_pInputLayout);
 #endif _DEBUG
@@ -26,9 +31,6 @@ CCollider::CCollider(const CCollider & rhs)
 
 HRESULT CCollider::Initialize_Prototype()
 {
-	memset(&m_tColliderDesc, 0, sizeof(COLLIDER_DESC));
-	m_tColliderDesc.vScale = _float3(20.f, 20.f, 1.f);
-
 #ifdef _DEBUG
 	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pContext);
 	if (nullptr == m_pBatch)
@@ -58,20 +60,33 @@ HRESULT CCollider::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CCollider::Initialize(void * pArg)
+HRESULT CCollider::Initialize(void* pArg)
 {
+	/** @note - dynamic_cast는 완전한 클래스 형식에만 가능하므로 void형에는 불가능 (C타입의 형변환 사용할 것) */
+	COLLIDER_DESC* tColliderDesc = (COLLIDER_DESC*)pArg;
+	if (nullptr == tColliderDesc)
+	{
+		MSG_BOX("CColider - Initialize - Argument is NULL");
+		return E_FAIL;
+	}
+	m_tColliderDesc = *tColliderDesc;
+
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		return E_FAIL;
 	}
 
-	m_tColliderDesc = *(COLLIDER_DESC*)pArg;
-	m_pOwner = m_tColliderDesc.pOwner;
-
-	if (nullptr == m_pOwner)
+	if (nullptr == m_tColliderDesc.pOwner)
 	{
 		MSG_BOX("CCollider - Initialize - Owner is NULL");
 		return E_FAIL;
+	}
+	m_pOwner = m_tColliderDesc.pOwner;
+
+	CTransform* pOwnerTransformCom = m_pOwner->Get_TransformCom();
+	if (nullptr != pOwnerTransformCom)
+	{
+		m_WorldMatrix = pOwnerTransformCom->Get_WorldMatrixFloat();
 	}
 
 	return S_OK;
@@ -84,8 +99,22 @@ void CCollider::Tick(_fmatrix TransformMatrix)
 		return;
 	}
 
-	_vector vOwnerPos = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-	m_tColliderDesc.vPosition = _float3(XMVectorGetX(vOwnerPos), XMVectorGetY(vOwnerPos), 1.f);
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CTransform* pOwnerTransformCom = m_pOwner->Get_TransformCom();
+	if (nullptr != pOwnerTransformCom)
+	{
+		_vector vOwnerPos = pOwnerTransformCom->Get_State(CTransform::STATE_POSITION);
+		m_tColliderDesc.vPosition = _float3(XMVectorGetX(vOwnerPos) + m_tColliderDesc.vOffset.x + pGameInstance->Get_ScrollX()
+											, XMVectorGetY(vOwnerPos) + m_tColliderDesc.vOffset.y + pGameInstance->Get_ScrollY(), 1.f);
+	}
+
+	_matrix ScaleMatrix = XMMatrixScaling(m_tColliderDesc.vScale.x, m_tColliderDesc.vScale.y, 1.f);
+	_matrix TranslationMatrix = XMMatrixTranslation(m_tColliderDesc.vPosition.x, m_tColliderDesc.vPosition.y, 0.f);
+	XMStoreFloat4x4(&m_WorldMatrix, ScaleMatrix * TranslationMatrix);
+
+	Safe_Release(pGameInstance);
 }
 
 //#ifdef _DEBUG
@@ -168,18 +197,7 @@ void CCollider::Tick(_fmatrix TransformMatrix)
 #ifdef _DEBUG
 HRESULT CCollider::Render()
 {
-	// 효과 설정
-	_float4x4 WorldMatrix = m_pOwner->Get_TransformCom()->Get_WorldMatrixFloat();
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	_vector vPosition = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-	WorldMatrix._41 = XMVectorGetX(vPosition) + pGameInstance->Get_ScrollX();
-	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
-
-	Safe_Release(pGameInstance);
-
-	m_pEffect->SetWorld(DirectX::XMLoadFloat4x4(&WorldMatrix));
+	m_pEffect->SetWorld(DirectX::XMLoadFloat4x4(&m_WorldMatrix));
 	//m_pEffect->SetWorld(XMMatrixIdentity());
 
 	CPipeLine* pPipeLine = CPipeLine::GetInstance();
@@ -233,7 +251,7 @@ HRESULT CCollider::Render()
 	};
 
 
-	//// 사각형의 네 꼭지점 정의
+	//// 사각형의 네 꼭지점 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST일 때)
 	//VertexPositionColor vertices[] =
 	//{
 	//	// 첫 번째 삼각형 (왼쪽 위에서 시계 방향으로)

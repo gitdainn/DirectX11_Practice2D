@@ -34,7 +34,6 @@ HRESULT CColliderAABB2D::Initialize(void* pArg)
 
 	ScaleMatrix = XMMatrixScaling(m_tColliderDesc.vScale.x, m_tColliderDesc.vScale.y, m_tColliderDesc.vScale.z);
 	TranslationMatrix = XMMatrixTranslation(m_tColliderDesc.vPosition.x, m_tColliderDesc.vPosition.y, m_tColliderDesc.vPosition.z);
-
 	
 	//m_pAABB_Original->Transform(*m_pAABB_Original, ScaleMatrix * TranslationMatrix);
 	//m_pAABB = new BoundingBox(*m_pAABB_Original);

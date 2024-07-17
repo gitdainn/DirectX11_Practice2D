@@ -64,10 +64,18 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 #pragma endregion
 
 #pragma region 충돌
-    const _uint iComponentsNum = { 2 };
-    m_ComponentsVec.reserve(iComponentsNum);
-    m_ComponentsVec.emplace_back("ColliderBox2D");
-    m_ComponentsVec.emplace_back("ColliderCircle2D");
+    m_ComponentsVec.reserve(m_iComponentsNum);
+    m_ComponentsVec.emplace_back("Collider_AABB");
+    m_ComponentsVec.emplace_back("Collider_OBB");
+#pragma endregion
+
+#pragma region 충돌 레이어
+    const _uint iColliderLayerNum = { 4 };
+    m_ColliderLayer.reserve(iColliderLayerNum);
+    m_ColliderLayer.emplace_back("Coll_Default");
+    m_ColliderLayer.emplace_back("Coll_UI");
+    m_ColliderLayer.emplace_back("Coll_Player");
+    m_ColliderLayer.emplace_back("Coll_Enemy");
 #pragma endregion
 
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -526,14 +534,6 @@ HRESULT CMyImGui::ShowInspectorWindow()
         return S_OK;
     }
 
-    CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(m_pSelectedObject);
-    if (nullptr == pObject)
-    {
-        ImGui::End();
-        return S_OK;
-    }
-
-    const _bool bIsSelectionChanged = CheckSelectionChanged();
     //char* pTag = new char[strlen(pObject->Get_SpriteTag() + 1)] {};
     static char* pTag = { nullptr };
     //if (bIsSelectionChanged)
@@ -543,13 +543,28 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
     //pObject->Set_SpriteTag(pTag);
 
+    if (FAILED(Inspector_Transform()))
+        return E_FAIL;
+
+    if (FAILED(Inspector_SpriteRenderer()))
+        return E_FAIL;
+
+    if (FAILED(Inspector_Components()))
+        return E_FAIL;
+
+    ImGui::End();
+    return S_OK;
+}
+
+HRESULT CMyImGui::Inspector_Transform()
+{
     if (ImGui::TreeNode("Transform"))
     {
         static enum eTransform { POSITION, ROTATION, SCALE, TRANS_END };
         static const _float fSpeed[eTransform::TRANS_END] = { 0.5f, 0.5f, 1.f };
         static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f };
         static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 10.f };
-        
+
         CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
         CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
 
@@ -579,10 +594,17 @@ HRESULT CMyImGui::ShowInspectorWindow()
         ImGui::TreePop();
     }
 
+    return S_OK;
+}
+
+HRESULT CMyImGui::Inspector_SpriteRenderer()
+{
+    const _bool bIsSelectionChanged = CheckSelectionChanged();
+
     if (ImGui::TreeNode("SpriteRenderer"))
     {
         static int iOrder = { 0 };
-        if(bIsSelectionChanged)
+        if (bIsSelectionChanged)
             iOrder = m_pSelectedObject->Get_Order();
         ImGui::InputInt("Order in Layer", &iOrder);
         m_pSelectedObject->Set_Order(iOrder);
@@ -613,7 +635,7 @@ HRESULT CMyImGui::ShowInspectorWindow()
 
         static _uint iLayerIndex = { 0 };
         //static unique_ptr<char> pLayer = make_unique<char>(MAX_PATH);
-        
+
         if (bIsSelectionChanged)
         {
             for (_uint i = 0; i < m_LayerVec.size(); ++i)
@@ -647,30 +669,121 @@ HRESULT CMyImGui::ShowInspectorWindow()
         ImGui::TreePop();
     }
 
-    if (ImGui::TreeNode("Components"))
-    {
-        static ImGuiComboFlags flags = 0;
-        static _uint iComponentIndex = { 0 };
+    return S_OK;
+}
 
-        if (ImGui::BeginCombo("Add Component", m_ComponentsVec[iComponentIndex], flags))
+HRESULT CMyImGui::Inspector_Components()
+{
+#pragma region 컴포넌트 추가
+    static ImGuiComboFlags flags = 0;
+    static _uint iComponentIndex = { 0 };
+    if (ImGui::BeginCombo("Component List", m_ComponentsVec[iComponentIndex], flags))
+    {
+        for (int iIndex = 0; iIndex < m_ComponentsVec.size(); iIndex++)
         {
-            for (int iIndex = 0; iIndex < m_ComponentsVec.size(); iIndex++)
+            const bool is_selected = (iComponentIndex == iIndex);
+            // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+            if (ImGui::Selectable(m_ComponentsVec[iIndex], is_selected))
             {
-                const bool is_selected = (iComponentIndex == iIndex);
+                iComponentIndex = iIndex; // 선택한 항목의 인덱스를 저장  
+                // 콜라이더명과 각 콜라이더는... 보관하고 있는 게 낫지 않을까?//
+                // 현재 그냥 동일한 컴포넌트 하나만 가져오는 듯함..! 맨 앞에 있는 컴포넌트 .!
+            }
+
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+        ImGui::EndCombo();
+    }
+
+    static char ComponentTag[128] = "";
+    _tchar* pComponentTag = nullptr;
+
+    if (ImGui::Button("Add Component"))
+    {
+        if (!lstrcmp(TEXT(""), pComponentTag))
+        {
+            MSG_BOX("Part Tag is NULL");
+            return S_OK;
+        }
+        CCollider::COLLIDER_DESC tColliderDesc;
+        tColliderDesc.pOwner = m_pSelectedObject;
+        _vector vPos = m_pSelectedObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+        tColliderDesc.vPosition = _float3(XMVectorGetX(vPos), XMVectorGetY(vPos), 1.f);
+        tColliderDesc.vScale = m_pSelectedObject->Get_TransformCom()->Get_Scaled();
+        tColliderDesc.vRotation = _float3(1.f, 1.f, 1.f);
+
+        _tchar* pPrototypeTag = ConvertCWithWC(m_ComponentsVec[iComponentIndex], TEXT("Prototype_Component_"));
+        if (FAILED(m_pSelectedObject->Add_Colliders(LEVEL_TOOL, pPrototypeTag, L"TAG_HEAD", &tColliderDesc)))
+        {
+            MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
+        }
+        Safe_Delete_Array(pPrototypeTag); // 가비지 컬렉터에 넣고 한번에 없애줘야 함. 여기서 없애면 컨테이너에도 사라짐
+    }
+#pragma endregion
+    unordered_map<const _tchar*, CComponent*>* m_Components = m_pSelectedObject->Get_Components();
+    if (nullptr != m_Components)
+    {
+        if (m_Components->empty())
+            return S_OK;
+
+        for (auto iter = m_Components->begin(); iter != m_Components->end(); ++iter)
+        {
+            CCollider* pCollider = dynamic_cast<CCollider*>(iter->second);
+            if (nullptr != pCollider)
+            {
+                Inpsector_Collider(pCollider);
+            }
+        }
+    }
+}
+
+HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider)
+{
+    if (nullptr == pCollider)
+    {
+        return E_FAIL;
+    }
+
+    if (ImGui::TreeNode("ColliderAABB"))
+    {
+        /** @qurious - 미해결 문제(열 받음ㅜ)
+        * 시도 내용: 1. 2차원 배열을 하자니 m_ColliderSize()는 상수가 아니라 불가능
+        * 2. Collider 종류마다 함수를 파서 if(nullptr != dynamic_cast<ColliderAABB*>)처럼 일일이 비교는 비효율적)
+        */
+        //ImGui::InputTextWithHint("Component Tag", "Write Part Name", ComponentTag, IM_ARRAYSIZE(ComponentTag));
+        //CToWC(ComponentTag, pComponentTag);
+
+        static CCollider::COLLIDER_DESC tColliderDesc = pCollider->Get_ColliderDesc();
+        static _float fOffset[3] = { tColliderDesc.vOffset.x, tColliderDesc.vOffset.y, 1.f };
+        static _float fScale[3] = { tColliderDesc.vScale.x, tColliderDesc.vScale.y, 1.f };
+
+        enum INFO { OFFSET, SIZE, INS_END };
+        const float fSpeed[INS_END] = { 1.f, 1.f };
+        const float fMin[INS_END] = { -10000.f, 1.f };
+        const float fMax[INS_END] = { 10000.f, 300.f };
+        ImGui::DragFloat3("Offset", fOffset
+            , fSpeed[INFO::OFFSET], fMin[INFO::OFFSET], fMax[INFO::OFFSET]);
+        tColliderDesc.vOffset = _float3(fOffset[0], fOffset[1], fOffset[2]);
+
+        ImGui::DragFloat3("Size", fScale
+            , fSpeed[INFO::SIZE], fMin[INFO::SIZE], fMax[INFO::SIZE]);
+        tColliderDesc.vScale = _float3(fScale[0], fScale[1], fScale[2]);
+
+        static ImGuiComboFlags flags = 0;
+        static _uint iColliderIndex = { 0 };
+        pCollider->Set_ColliderDesc(tColliderDesc);
+
+        if (ImGui::BeginCombo("Collider Layer", m_ColliderLayer[iColliderIndex], flags))
+        {
+            for (int iIndex = 0; iIndex < m_ColliderLayer.size(); iIndex++)
+            {
+                const bool is_selected = (iColliderIndex == iIndex);
                 // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
-                if (ImGui::Selectable(m_ComponentsVec[iIndex], is_selected))
+                if (ImGui::Selectable(m_ColliderLayer[iIndex], is_selected))
                 {
-                    iComponentIndex = iIndex; // 선택한 항목의 인덱스를 저장
-                    CCollider::COLLIDER_DESC tColliderDesc;
-                    _vector vPos = m_pSelectedObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-                    tColliderDesc.pOwner = dynamic_cast<CGameObject*>(m_pSelectedObject);
-                    tColliderDesc.vPosition = _float3(XMVectorGetX(vPos), XMVectorGetY(vPos), 1.f);
-                    tColliderDesc.vScale = m_pSelectedObject->Get_TransformCom()->Get_Scaled();
-                    tColliderDesc.vRotation = _float3(1.f, 1.f, 1.f);
-                    if (FAILED(m_pSelectedObject->Add_Components(TEXT("Prototype_Component_Collider_AABB"), &tColliderDesc)))
-                    {
-                        MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
-                    }
+                    iColliderIndex = iIndex;
+                    // 콜라이더를 해당 레이어로 설정
                 }
 
                 if (is_selected)
@@ -678,11 +791,9 @@ HRESULT CMyImGui::ShowInspectorWindow()
             }
             ImGui::EndCombo();
         }
-
         ImGui::TreePop();
     }
 
-    ImGui::End();
     return S_OK;
 }
 

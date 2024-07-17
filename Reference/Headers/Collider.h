@@ -17,9 +17,10 @@ public:
 	typedef struct tagColliderDesc
 	{
 		CGameObject* pOwner = { nullptr };
-		_float3		vScale;
-		_float3		vRotation;
-		_float3		vPosition;				
+		_float3		vScale = { 1.f, 1.f, 1.f };
+		_float3		vRotation = { 0.f, 0.f, 0.f };
+		_float3		vPosition = { 0.f, 0.f, 0.f };
+		_float3		vOffset = { 0.f, 0.f, 0.f };
 	}COLLIDER_DESC;
 
 protected:
@@ -33,14 +34,20 @@ public:
 	virtual void Tick(_fmatrix TransformMatrix = XMMatrixIdentity());
 
 public:
+	virtual _bool IsCollision(CColliderAABB2D* pTarget) const = 0;
+	virtual _bool IsCollision(CColliderOBB2D* pTarget) const = 0;
+	virtual _bool IsCollision(CColliderSphere2D* pTarget) const = 0;
+
+public:
 	const COLLIDER_DESC& Get_ColliderDesc() const
 	{
 		return m_tColliderDesc;
 	}
 
-	virtual _bool IsCollision(CColliderAABB2D* pTarget) const = 0;
-	virtual _bool IsCollision(CColliderOBB2D* pTarget) const = 0;
-	virtual _bool IsCollision(CColliderSphere2D* pTarget) const = 0;
+	void Set_ColliderDesc(const COLLIDER_DESC& tColliderDesc)
+	{
+		memcpy(&m_tColliderDesc, &tColliderDesc, sizeof(COLLIDER_DESC));
+	}
 
 protected:
 	_matrix Remove_Rotation(_fmatrix TranformMatrix);
@@ -58,6 +65,7 @@ protected:
 #endif // _DEBUG
 
 protected:
+	_float4x4				m_WorldMatrix;
 	CGameObject*			m_pOwner;
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
