@@ -11,6 +11,7 @@
 #include "Input_Device.h"
 #include "GarbageCollector.h"
 #include "Scroll_Manager.h"
+#include "File_Handler.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -26,6 +27,7 @@ CGameInstance::CGameInstance()
 	, m_pFrustum(CFrustum::GetInstance())
 	, m_pDInput_Manager(CDInput_Manager::GetInstance())
 	, m_pScroll_Manager(CScroll_Manager::GetInstance())
+	//, m_pFile_Handler(CFile_Handler::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
 	Safe_AddRef(m_pFont_Manager);
@@ -38,6 +40,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pTimer_Manager);
 	Safe_AddRef(m_pDInput_Manager);
 	Safe_AddRef(m_pScroll_Manager);
+	//Safe_AddRef(m_pFile_Handler);
 }
 
 HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, const GRAPHIC_DESC& GraphicDesc, ID3D11Device** ppDeviceOut, ID3D11DeviceContext** ppContextOut)
@@ -430,4 +433,5 @@ void CGameInstance::Free()
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pDInput_Manager);
 	Safe_Release(m_pScroll_Manager);
+	//Safe_Release(m_pFile_Handler);
 }

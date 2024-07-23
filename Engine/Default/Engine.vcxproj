@@ -105,14 +105,14 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../libxl-4.3.0.14/include_cpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc140-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;libxl64.lib;Effects11d.lib;DirectXTKd.lib;assimp-vc140-mtd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../libxl-4.3.0.14/lib64_32/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -149,7 +149,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>../public/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../public/;../libxl-4.3.0.14/include_cpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>;4819</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -157,8 +157,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>d3d11.lib;dinput8.lib;Effects11.lib;DirectXTK.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../ThirdPartyLib/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>d3d11.lib;dinput8.lib;libxl64.lib;Effects11.lib;DirectXTK.lib;assimp-vc140-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../ThirdPartyLib/;../libxl-4.3.0.14/lib64_32/</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -180,6 +180,7 @@
     <ClCompile Include="..\private\CustomFont.cpp" />
     <ClCompile Include="..\Private\DebugDraw.cpp" />
     <ClCompile Include="..\Private\DInput_Manager.cpp" />
+    <ClCompile Include="..\Private\File_Handler.cpp" />
     <ClCompile Include="..\private\Font_Manager.cpp" />
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameInstance.cpp" />
@@ -214,6 +215,19 @@
     <ClCompile Include="..\Public\Engine_Struct.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\enum.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IAutoFilterT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IBookT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IConditionalFormatT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IConditionalFormattingT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFilterColumnT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFontT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFormatT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFormControlT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IRichStringT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\ISheetT.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\libxl.h" />
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\setup.h" />
     <ClInclude Include="..\Public\Base.h" />
     <ClInclude Include="..\public\BlendObject.h" />
     <ClInclude Include="..\public\Camera.h" />
@@ -231,6 +245,7 @@
     <ClInclude Include="..\Public\Engine_Macro.h" />
     <ClInclude Include="..\Public\Engine_Struct.h" />
     <ClInclude Include="..\Public\Engine_Typedef.h" />
+    <ClInclude Include="..\Public\File_Handler.h" />
     <ClInclude Include="..\public\Font_Manager.h" />
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\GameInstance.h" />

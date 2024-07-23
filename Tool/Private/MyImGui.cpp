@@ -17,6 +17,8 @@ USING(Tool)
 
 IMPLEMENT_SINGLETON(CMyImGui);
 
+#include "File_Handler.h"
+
 CMyImGui::CMyImGui()
     : m_pPreviewObject(nullptr)
     , m_pSelectedObject(nullptr)
@@ -105,6 +107,12 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 _uint CMyImGui::Tick(_double TimeDelta)
 {
     Key_Input(TimeDelta);
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (pGameInstance->Get_KeyDown(DIK_H))
+    {
+        CFile_Handler::WriteFile();
+    }
 
     return _uint();
 }
@@ -755,20 +763,20 @@ HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider)
         //CToWC(ComponentTag, pComponentTag);
 
         static CCollider::COLLIDER_DESC tColliderDesc = pCollider->Get_ColliderDesc();
-        static _float fOffset[3] = { tColliderDesc.vOffset.x, tColliderDesc.vOffset.y, 1.f };
-        static _float fScale[3] = { tColliderDesc.vScale.x, tColliderDesc.vScale.y, 1.f };
+        static _float fOffset[2] = { tColliderDesc.vOffset.x, tColliderDesc.vOffset.y};
+        static _float fScale[2] = { tColliderDesc.vScale.x, tColliderDesc.vScale.y};
 
         enum INFO { OFFSET, SIZE, INS_END };
         const float fSpeed[INS_END] = { 1.f, 1.f };
         const float fMin[INS_END] = { -10000.f, 1.f };
         const float fMax[INS_END] = { 10000.f, 300.f };
-        ImGui::DragFloat3("Offset", fOffset
+        ImGui::DragFloat2("Offset", fOffset
             , fSpeed[INFO::OFFSET], fMin[INFO::OFFSET], fMax[INFO::OFFSET]);
-        tColliderDesc.vOffset = _float3(fOffset[0], fOffset[1], fOffset[2]);
+        tColliderDesc.vOffset = _float3(fOffset[0], fOffset[1], 0.f);
 
-        ImGui::DragFloat3("Size", fScale
+        ImGui::DragFloat2("Size", fScale
             , fSpeed[INFO::SIZE], fMin[INFO::SIZE], fMax[INFO::SIZE]);
-        tColliderDesc.vScale = _float3(fScale[0], fScale[1], fScale[2]);
+        tColliderDesc.vScale = _float3(fScale[0], fScale[1], 1.f);
 
         static ImGuiComboFlags flags = 0;
         static _uint iColliderIndex = { 0 };

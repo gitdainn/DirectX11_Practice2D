@@ -16,12 +16,6 @@
     <Filter Include="01.MyImGui">
       <UniqueIdentifier>{0eeccf6c-f3e1-43bb-8931-86e242b67473}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.Level">
-      <UniqueIdentifier>{1a72880d-8b98-4d6b-a1ee-7b75ed020364}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.Level\Loader">
-      <UniqueIdentifier>{452e081b-6929-4005-9846-7da97f04a7b3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="96.ImGui">
       <UniqueIdentifier>{cb666fe2-c064-4d89-a27c-86f3f006ab9e}</UniqueIdentifier>
     </Filter>
@@ -36,6 +30,15 @@
     </Filter>
     <Filter Include="02.GameObject\Camera">
       <UniqueIdentifier>{6c167da3-d367-4079-ac50-dea691aa5e36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Level">
+      <UniqueIdentifier>{1a72880d-8b98-4d6b-a1ee-7b75ed020364}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.Level\Loader">
+      <UniqueIdentifier>{452e081b-6929-4005-9846-7da97f04a7b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Handler">
+      <UniqueIdentifier>{5ae0c0e1-61f0-4f63-a3e4-fafbd57ee1cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -88,10 +91,10 @@
       <Filter>01.MyImGui</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Loading.h">
-      <Filter>02.Level</Filter>
+      <Filter>03.Level</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Level_Tool.h">
-      <Filter>02.Level</Filter>
+      <Filter>03.Level</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\InstallObject.h">
       <Filter>02.GameObject</Filter>
@@ -101,7 +104,7 @@
     </ClInclude>
     <ClInclude Include="..\Public\SpriteObject.h" />
     <ClInclude Include="..\Public\Loader.h">
-      <Filter>02.Level\Loader</Filter>
+      <Filter>03.Level\Loader</Filter>
     </ClInclude>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp">
       <Filter>97.ShaderFiles</Filter>
@@ -148,17 +151,17 @@
       <Filter>01.MyImGui</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_Loading.cpp">
-      <Filter>02.Level</Filter>
+      <Filter>03.Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Level_Tool.cpp">
-      <Filter>02.Level</Filter>
+      <Filter>03.Level</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\InstallObject.cpp">
       <Filter>02.GameObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SpriteObject.cpp" />
     <ClCompile Include="..\Private\Loader.cpp">
-      <Filter>02.Level\Loader</Filter>
+      <Filter>03.Level\Loader</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Camera_Dynamic.cpp">
       <Filter>02.GameObject\Camera</Filter>

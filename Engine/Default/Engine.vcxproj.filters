@@ -130,6 +130,12 @@
     <Filter Include="01.Utility\03.Component\Collider\ColliderSphere2D">
       <UniqueIdentifier>{73a9c7d6-c67b-4c5a-a9f3-36106205239a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\12.FileHandler">
+      <UniqueIdentifier>{c02baa79-1b7e-44c0-a7a4-0d24fa7af017}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\12.FileHandler\libxl">
+      <UniqueIdentifier>{52a04e4a-3f69-428e-bfdb-3e28171a3be8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -254,6 +260,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\ColliderOBB2D.cpp">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\File_Handler.cpp">
+      <Filter>01.Utility\12.FileHandler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -391,6 +400,48 @@
     </ClInclude>
     <ClInclude Include="..\Public\ColliderOBB2D.h">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\File_Handler.h">
+      <Filter>01.Utility\12.FileHandler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\enum.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IAutoFilterT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IBookT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IConditionalFormatT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IConditionalFormattingT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFilterColumnT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFontT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFormatT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IFormControlT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\IRichStringT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\ISheetT.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\libxl.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libxl-4.3.0.14\include_cpp\setup.h">
+      <Filter>01.Utility\12.FileHandler\libxl</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

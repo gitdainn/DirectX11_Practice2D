@@ -3,6 +3,7 @@
 #include "Component_Manager.h"
 #include "PipeLine.h"
 #include "DInput_Manager.h"
+#include "File_Handler.h"
 
 /* 엔진의 핵심이 되는 싱글턴 클래스.  */
 /* 엔진에서 사용되는 다양한 매니져클래스를 가지고 있는다. */
@@ -105,6 +106,7 @@ private:
 	class CFrustum*						m_pFrustum = { nullptr };
 	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
 	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
+	//class CFile_Handler*				m_pFile_Handler = { nullptr };
 
 public:
 	virtual void Free() override;

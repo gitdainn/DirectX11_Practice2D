@@ -173,4 +173,28 @@ namespace Engine
 		unsigned long			_0, _1, _2;
 	}FACEINDICES32;
 
+	struct ENGINE_DLL tObjectMetaData
+	{
+		_uint iObjectID;
+		_uint iParentID;
+		const _tchar* pClassName;
+		const _tchar* pPrototypeTag;
+		const _tchar* pTextureTag;
+		const _tchar* pLayer;
+	};
+
+	struct ENGINE_DLL tObjectTransform
+	{
+		_uint iObjectID;
+		_float ScaleX;
+		_float ScaleY;
+		_float PositionX;
+		_float PositionY;
+		_float RotationX;
+		_float RotationY;
+	};
+
+	enum class METADATA { OBJECT_ID, CLASSNAME, PROTOTYPETAG, TEXTURETAG, LAYER, PARENT_ID, METADATA_END };
+	enum class TRANSFORM { OBJECT_ID, SCALE_X, SCALE_Y, POSITION_X, POSITION_Y, ROTATION_X, ROTATION_Y, TRANS_END };
+
 }
