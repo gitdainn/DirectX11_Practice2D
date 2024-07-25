@@ -71,7 +71,7 @@ HRESULT CLoader::Initialize(LEVEL eNextLevelID)
 
 HRESULT CLoader::Loading_ForLogoLevel()
 {
-	if (FAILED(Loading_Sprite_Logo()))
+	if (FAILED(Loading_Component_Logo()))
 		return E_FAIL;
 	
 	if (FAILED(Loaiding_GameObject_Logo()))
@@ -83,7 +83,7 @@ HRESULT CLoader::Loading_ForLogoLevel()
 	return S_OK;
 }
 
-HRESULT CLoader::Loading_Sprite_Logo()
+HRESULT CLoader::Loading_Component_Logo()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -152,6 +152,16 @@ HRESULT CLoader::Loading_Sprite_Logo()
 	/* For.Prototype_Component_Sprite_ForestObject */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Background"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Background/")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region COLLIDER
+	/* For.Prototype_Component_Sprite_Background */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Collider_AABB"),
+		CColliderAABB2D::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

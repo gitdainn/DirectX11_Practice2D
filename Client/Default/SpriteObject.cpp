@@ -2,6 +2,7 @@
 #include "SpriteObject.h"
 #include "State.h"
 #include "PlayerIdle.h"
+#include "FileLoader.h"
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -11,7 +12,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_pState(nullptr)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_eCurrentState(STATE_TYPE::IDLE)
-	, m_pTextureTag(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -26,6 +26,37 @@ HRESULT CSpriteObject::Initialize_Prototype()
 
 HRESULT CSpriteObject::Initialize(void* pArg)
 {
+	if (FAILED(Add_Components(pArg)))
+		return E_FAIL;
+
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CSpriteObject - Initialize - FileLoader is NULL");
+		return E_FAIL;
+	}
+
+	if (FAILED(pFileLoader->Get_SpriteInfo(m_ID, m_tSpriteInfo)))
+	{
+		MSG_BOX("CSpriteObject - Initialize - FileLoad FAILED");
+		return E_FAIL;
+	}
+	_float4x4 WorldMatrix;
+	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+
+	// 위치 지정
+	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
+	WorldMatrix._22 = m_tSpriteInfo.fSize.y;
+	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
+	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+
+	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
+	m_pTransformCom->Set_TransformDesc(TransformDesc);
+
 	return S_OK;
 }
 
@@ -61,6 +92,9 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 	if (m_bIsDead)
 		return OBJ_DEAD;
 
+	if (nullptr != m_pColliderCom)
+		m_pColliderCom->Tick();
+
 	return _uint();
 }
 
@@ -79,6 +113,9 @@ HRESULT CSpriteObject::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
+
+	if (nullptr != m_pColliderCom)
+		m_pColliderCom->Render();
 
 	m_pShaderCom->Begin(m_iShaderPassIndex);
 
@@ -106,14 +143,60 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	Safe_AddRef(pFileLoader);
+
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CSpriteObject - Add_Components - FileLoader is NULL");
+		return E_FAIL;
+	}
+	list<COMPONENT_INFO> ComponentList;
+	
+	if (FAILED(pFileLoader->Get_ComponentInfoList(m_ID, ComponentList)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components - ComponentList is NULL");
+		return E_FAIL;
+	}
+	CComponent* pComponent = { nullptr };
+	for (COMPONENT_INFO tInfo : ComponentList)
+	{
+		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_LOGO, tInfo.pPrototypeTag,
+			tInfo.pComponentTag, &pComponent, &tInfo)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components - FAILED");
+			continue;
+		}
+		pComponent->Set_Owner(this);
+	}
+	Safe_Release(pFileLoader);
+
+	/* For.Com_Texture */
+	pComponent = Find_Component(TAG_TEXTURE);
+	if (nullptr == pComponent)
+	{
+		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
+		return E_FAIL;
+	}
+
+	m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
+	if (nullptr == m_pTextureCom)
+	{
+		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
+		return E_FAIL;
+	}
+
+	/* For.Com_Transform */
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
 		TAG_TRANSFORM, (CComponent**)(&m_pTransformCom))))
 		return E_FAIL;
 
+	/* For.Com_Renderer */
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
 		TAG_RENDERER, (CComponent**)(&m_pRendererCom))))
 		return E_FAIL;
 
+	/* For.Com_VIBuffer_Rect */
 	if (FAILED(__super::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TAG_BUFFER, (CComponent**)(&m_pVIBufferCom))))
 		return E_FAIL;
@@ -125,8 +208,21 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 
 HRESULT CSpriteObject::SetUp_ShaderResources()
 {
-	if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	//if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
+	//	return E_FAIL;
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
+	//if (m_bIsScroll)
+	//{
+	//	Scroll_Screen(WorldMatrix);
+	//}
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 		return E_FAIL;
+
+	Safe_Release(pGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -168,12 +264,6 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	}
 }
 
-CGameObject* CSpriteObject::Clone(void* pArg) const
-{
-	MSG_BOX("CSpriteObject - Clone(void* pArg) - 2D용 Clone 함수를 사용해주세요");
-	return nullptr;
-}
-
 void CSpriteObject::Free()
 {
 	__super::Free();
@@ -201,6 +291,5 @@ void CSpriteObject::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-
-
+	Safe_Release(m_pColliderCom);
 }

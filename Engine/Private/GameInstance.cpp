@@ -12,6 +12,7 @@
 #include "GarbageCollector.h"
 #include "Scroll_Manager.h"
 #include "File_Handler.h"
+#include "GarbageCollector.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -27,6 +28,7 @@ CGameInstance::CGameInstance()
 	, m_pFrustum(CFrustum::GetInstance())
 	, m_pDInput_Manager(CDInput_Manager::GetInstance())
 	, m_pScroll_Manager(CScroll_Manager::GetInstance())
+	, m_pGarbageCollector(CGarbageCollector::GetInstance())
 	//, m_pFile_Handler(CFile_Handler::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
@@ -40,6 +42,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pTimer_Manager);
 	Safe_AddRef(m_pDInput_Manager);
 	Safe_AddRef(m_pScroll_Manager);
+	Safe_AddRef(m_pGarbageCollector);
 	//Safe_AddRef(m_pFile_Handler);
 }
 
@@ -391,6 +394,38 @@ void CGameInstance::Set_ScrollY(const _float fY)
 	return m_pScroll_Manager->Set_ScrollY(fY);
 }
 
+void CGameInstance::Add_Garbage(char* pChar)
+{
+	if (nullptr == m_pGarbageCollector)
+		return;
+
+	m_pGarbageCollector->Add_Garbage(pChar);
+}
+
+void CGameInstance::Add_Garbage(_tchar* pTChar)
+{
+	if (nullptr == m_pGarbageCollector)
+		return;
+
+	m_pGarbageCollector->Add_Garbage(pTChar);
+}
+
+//void CGarbageCollector::Add_CurLevelGarbage(char* pChar)
+//{
+//	if (nullptr == m_pGarbageCollector)
+//		return;
+//
+//	m_pGarbageCollector->Add_CurLevelGarbage(pChar);
+//}
+//
+//void CGarbageCollector::Add_CurLevelGarbage(_tchar* pTChar)
+//{
+//	if (nullptr == m_pGarbageCollector)
+//		return;
+//
+//	m_pGarbageCollector->Add_CurLevelGarbage(pTChar);
+//}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -418,6 +453,8 @@ void CGameInstance::Release_Engine()
 	CDInput_Manager::GetInstance()->DestroyInstance();
 
 	CScroll_Manager::GetInstance()->DestroyInstance();
+
+	CGarbageCollector::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
@@ -433,5 +470,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pTimer_Manager);
 	Safe_Release(m_pDInput_Manager);
 	Safe_Release(m_pScroll_Manager);
+	Safe_Release(m_pGarbageCollector);
 	//Safe_Release(m_pFile_Handler);
 }

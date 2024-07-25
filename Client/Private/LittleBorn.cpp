@@ -34,6 +34,33 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     return S_OK;
 }
 
+HRESULT CLittleBorn::Initialize(void* pArg)
+{
+    m_ID = 3;
+
+    if (FAILED(__super::Initialize(pArg)))
+    {
+        return E_FAIL;
+    }
+
+
+    CTransform::TRANSFORM_DESC tTransDesc;
+    tTransDesc.SpeedPerSec = 20.f;
+    m_pTransformCom->Set_TransformDesc(tTransDesc);
+
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
+    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_tSpriteInfo.iTextureIndex = 0;
+
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 15;
+    m_bIsAnimUV = true;
+
+    Add_Animation();
+
+    return S_OK;
+}
+
 _uint CLittleBorn::Tick(_double TimeDelta)
 {
     Play_Animation(m_tSpriteInfo.iTextureIndex, TimeDelta);
@@ -66,8 +93,6 @@ void CLittleBorn::Add_Animation()
 
 HRESULT CLittleBorn::Add_Components(void* pArg)
 {
-    m_pTextureTag = TEXT("Prototype_Component_Sprite_LittleBorn");
-
     if (FAILED(__super::Add_Components(pArg)))
         return E_FAIL;
 
@@ -100,6 +125,19 @@ CSpriteObject* CLittleBorn::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) c
     CLittleBorn* pInstance = new CLittleBorn(*this);
 
     if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
+    {
+        MSG_BOX("Failed to Cloned CLittleBorn");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CSpriteObject* CLittleBorn::Clone(void* pArg) const
+{
+    CLittleBorn* pInstance = new CLittleBorn(*this);
+
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Cloned CLittleBorn");
         Safe_Release(pInstance);

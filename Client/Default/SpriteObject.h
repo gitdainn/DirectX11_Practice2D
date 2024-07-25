@@ -119,6 +119,7 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
 protected:
 	bool	m_bIsAnimUV;
@@ -127,7 +128,6 @@ protected:
 	CState*					m_pState;
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
-	_tchar* m_pTextureTag;
 	_uint	m_iUVTextureIndex;
 	_uint	m_iUVTexNumX;
 	_uint	m_iUVTexNumY;
@@ -136,7 +136,7 @@ protected:
 
 public:
 	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
-	virtual CGameObject* Clone(void* pArg = nullptr) const override;
+	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };
 

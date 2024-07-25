@@ -3,6 +3,7 @@
 #include "PlayerIdle.h"
 #include "PlayerJump.h"
 
+
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
@@ -16,12 +17,27 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
+	//m_ID = "P";
 	return S_OK;
 }
 
 HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
+	{
+		return E_FAIL;
+	}
+
+	m_eRenderGroup = CRenderer::RENDER_UI;
+
+	m_pState = new CPlayerIdle();
+	m_pAirState = new CPlayerJump();
+	return S_OK;
+}
+
+HRESULT CPlayer::Initialize(void* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
 	{
 		return E_FAIL;
 	}
@@ -91,10 +107,25 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
 
-	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, m_pTextureTag,
-		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+	/* For.Com_Collider */
+	CComponent* pComponent = Find_Component(TAG_COLL_AABB);
+	if (nullptr == pComponent)
+	{
+		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
 		return E_FAIL;
+	}
+
+	m_pColliderCom = dynamic_cast<CCollider*>(pComponent);
+	if (nullptr == pComponent)
+	{
+		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
+		return E_FAIL;
+	}
+
+	///* For.Com_Texture */
+	//if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, m_pTextureTag,
+	//	TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+	//	return E_FAIL;
 
 	return S_OK;
 }

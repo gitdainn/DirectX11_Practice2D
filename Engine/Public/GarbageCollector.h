@@ -1,46 +1,44 @@
 #pragma once
+#include "Engine_Defines.h"
 #include "Base.h"
 
 BEGIN(Engine)
 
-template <typename T>
-class ENGINE_DLL CGarbageCollector final : public CBase
+class CGarbageCollector final : public CBase
 {
-public:
-	CGarbageCollector()
-		: CGarbageCollectorBase()
-	{}
-	virtual ~CGarbageCollector()
-	{
-		__super::Free();
-
-		Clear_CurLevelGarbage();
-
-		for (auto& pGarbage : m_GarbageList)
-			Safe_Delete_Array(pGarbage);
-		m_GarbageList.clear();
-	}
+	DECLARE_SINGLETON(CGarbageCollector)
+private:
+	CGarbageCollector();
+	virtual ~CGarbageCollector() = default;
 
 public:
 	HRESULT Initialize();
 
 public:
-	// 게임이 끝날 때 삭제될 메모리
-	void	Add_Garbage(const T& Garbage);
+	// 게임이 끝날 때 삭제될 문자열
+	void	Add_Garbage(char* pChar);
+	// 게임이 끝날 때 삭제될 문자열
+	void	Add_Garbage(_tchar* pTChar);
 
 public:
-	// 레벨이 바뀔 때 삭제될 메모리
-	void	Add_CurLevelGarbage(const T& Garbage);
+	// 레벨이 바뀔 때 삭제될 문자열
+	void	Add_CurLevelGarbage(char* pChar);
+	// 레벨이 바뀔 때 삭제될 문자열
+	void	Add_CurLevelGarbage(_tchar* pTChar);
 
 public:
 	void	Clear_CurLevelGarbage();
 
 private:
-	list<T>			m_GarbageList;
-	list<T>			m_CurLevelGarbageList;
+	list<char*>		m_CharList;
+	list<_tchar*>	m_TCharList;
+
+private:
+	list<char*>		m_CurLevelCharList;
+	list<_tchar*>	m_CurLevelTCharList;
 
 public:
-	virtual void Free() override {}
+	virtual void Free() override;
 };
 
 END

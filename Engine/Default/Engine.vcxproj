@@ -185,7 +185,8 @@
     <ClCompile Include="..\private\Frustum.cpp" />
     <ClCompile Include="..\private\GameInstance.cpp" />
     <ClCompile Include="..\private\GameObject.cpp" />
-    <ClCompile Include="..\Private\GarbageCollector.cpp">
+    <ClCompile Include="..\Private\GarbageCollector.cpp" />
+    <ClCompile Include="..\Private\GarbageCollectorX.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -250,7 +251,8 @@
     <ClInclude Include="..\public\Frustum.h" />
     <ClInclude Include="..\public\GameInstance.h" />
     <ClInclude Include="..\public\GameObject.h" />
-    <ClInclude Include="..\Public\GarbageCollector.h">
+    <ClInclude Include="..\Public\GarbageCollector.h" />
+    <ClInclude Include="..\Public\GarbageCollectorX.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>

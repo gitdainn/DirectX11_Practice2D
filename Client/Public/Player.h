@@ -10,6 +10,7 @@ public:
 public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) override;
+	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
@@ -44,6 +45,7 @@ protected:
 public:
 	/* Prototype */
 	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CSpriteObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 
 };

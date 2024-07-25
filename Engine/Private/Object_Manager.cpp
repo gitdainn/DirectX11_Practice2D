@@ -164,6 +164,11 @@ void CObject_Manager::Tick(_double TimeDelta)
 	{
 		for (auto& Pair : m_pLayers[i])
 		{
+			if (nullptr == Pair.second)
+			{
+				MSG_BOX("CObject_Manager - Tick - Null");
+				continue;
+			}
 			Pair.second->Tick(TimeDelta);			
 		}
 	}	

@@ -3,10 +3,10 @@
 #include "PipeLine.h"
 #include "GameObject.h"
 #include "GameInstance.h"
+#include "Transform.h"
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
-	, m_pOwner(nullptr)
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	ZeroMemory(&m_tColliderDesc, sizeof(COLLIDER_DESC));
@@ -16,7 +16,6 @@ CCollider::CCollider(const CCollider & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 	, m_tColliderDesc(rhs.m_tColliderDesc)
-	, m_pOwner(rhs.m_pOwner)
 #ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)
@@ -63,32 +62,25 @@ HRESULT CCollider::Initialize_Prototype()
 HRESULT CCollider::Initialize(void* pArg)
 {
 	/** @note - dynamic_cast는 완전한 클래스 형식에만 가능하므로 void형에는 불가능 (C타입의 형변환 사용할 것) */
-	COLLIDER_DESC* tColliderDesc = (COLLIDER_DESC*)pArg;
-	if (nullptr == tColliderDesc)
+	COMPONENT_INFO* tComponentInfo = (COMPONENT_INFO*)pArg;
+	if (nullptr == tComponentInfo)
 	{
 		MSG_BOX("CColider - Initialize - Argument is NULL");
 		return E_FAIL;
 	}
-	m_tColliderDesc = *tColliderDesc;
+
+	m_tColliderDesc.vScale.x = tComponentInfo->fSize.x;
+	m_tColliderDesc.vScale.y = tComponentInfo->fSize.y;
+	m_tColliderDesc.vOffset.x = tComponentInfo->fOffset.y;
+	m_tColliderDesc.vOffset.y = tComponentInfo->fOffset.y;
+	m_tColliderDesc.vPosition.x = tComponentInfo->fPosition.y;
+	m_tColliderDesc.vPosition.x = tComponentInfo->fPosition.y;
 
 	if (FAILED(__super::Initialize(pArg)))
 	{
 		return E_FAIL;
 	}
-
-	if (nullptr == m_tColliderDesc.pOwner)
-	{
-		MSG_BOX("CCollider - Initialize - Owner is NULL");
-		return E_FAIL;
-	}
-	m_pOwner = m_tColliderDesc.pOwner;
-
-	CTransform* pOwnerTransformCom = m_pOwner->Get_TransformCom();
-	if (nullptr != pOwnerTransformCom)
-	{
-		m_WorldMatrix = pOwnerTransformCom->Get_WorldMatrixFloat();
-	}
-
+	
 	return S_OK;
 }
 
@@ -115,6 +107,18 @@ void CCollider::Tick(_fmatrix TransformMatrix)
 	XMStoreFloat4x4(&m_WorldMatrix, ScaleMatrix * TranslationMatrix);
 
 	Safe_Release(pGameInstance);
+}
+
+void CCollider::Set_Owner(CGameObject* pOwner)
+{
+	__super::Set_Owner(pOwner);
+
+	// @error - 이거 어차피 Transform 컴포넌트 할당 전이라 의미 없음 
+	CTransform* pOwnerTransformCom = m_pOwner->Get_TransformCom();
+	if (nullptr != pOwnerTransformCom)
+	{
+		m_WorldMatrix = pOwnerTransformCom->Get_WorldMatrixFloat();
+	}
 }
 
 //#ifdef _DEBUG

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "WaterSkul.h"
+#include "PlayerInfo.h"
 
 CWaterSkul::CWaterSkul(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer(pDevice, pContext)
@@ -18,7 +19,6 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
         return E_FAIL;
     }
 
-
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
@@ -36,8 +36,36 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     return S_OK;
 }
 
-_uint CWaterSkul::Tick(_double TimeDelta)
+HRESULT CWaterSkul::Initialize(void* pArg)
 {
+    m_ID = 1;
+
+    if (FAILED(__super::Initialize(pArg)))
+    {
+        return E_FAIL;
+    }
+
+    CTransform::TRANSFORM_DESC tTransDesc;
+    tTransDesc.SpeedPerSec = 20.f;
+    m_pTransformCom->Set_TransformDesc(tTransDesc);
+
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
+    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_tSpriteInfo.iTextureIndex = 0;
+
+    m_iUVTexNumX = 8;
+    m_iUVTexNumY = 9;
+    m_bIsAnimUV = true;
+
+    // @error - 장착한 플레이어만 뜨는데 이거 일단 고정으로 장착하게 해뒀으니 추후 수정해야함! //
+    CPlayerInfo::GetInstance()->Set_EquippedSkul(this);
+    Add_Animation();
+
+    return S_OK;
+}
+
+_uint CWaterSkul::Tick(_double TimeDelta)
+{    
     Play_Animation(m_iUVTextureIndex, TimeDelta);
     return CPlayer::Tick(TimeDelta);
 }
@@ -108,8 +136,6 @@ void CWaterSkul::Add_Animation()
 
 HRESULT CWaterSkul::Add_Components(void* pArg)
 {
-    m_pTextureTag = TEXT("Prototype_Component_Sprite_WaterSkulUV");
-
     if (FAILED(__super::Add_Components(pArg)))
         return E_FAIL;
 
@@ -159,6 +185,19 @@ CSpriteObject* CWaterSkul::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) co
     CWaterSkul* pInstance = new CWaterSkul(*this);
 
     if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
+    {
+        MSG_BOX("Failed to Cloned CWaterSkul");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CSpriteObject* CWaterSkul::Clone(void* pArg) const
+{
+    CWaterSkul* pInstance = new CWaterSkul(*this);
+
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Cloned CWaterSkul");
         Safe_Release(pInstance);

@@ -34,6 +34,18 @@ HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	return S_OK;
 }
 
+HRESULT CBackGround::Initialize(void* pArg)
+{
+	if (FAILED(__super::Initialize(pArg)))
+		return E_FAIL;
+
+	m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 1.f));
+
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+	return S_OK;
+}
+
 _uint CBackGround::Tick(_double TimeDelta)
 {
 	return __super::Tick(TimeDelta);
@@ -98,6 +110,19 @@ CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) 
 	CBackGround*		pInstance = new CBackGround(*this);
 
 	if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
+	{
+		MSG_BOX("Failed to Cloned CBackGround");
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+CSpriteObject* CBackGround::Clone(void* pArg) const
+{
+	CBackGround* pInstance = new CBackGround(*this);
+
+	if (FAILED(pInstance->Initialize(pArg)))
 	{
 		MSG_BOX("Failed to Cloned CBackGround");
 		Safe_Release(pInstance);

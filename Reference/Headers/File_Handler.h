@@ -26,7 +26,13 @@ private:
     virtual ~CFile_Handler() = default;
 
 public:
-    static HRESULT WriteFile();
+    static HRESULT AddSheet(const _tchar* pSheetName, const _tchar* pSavePath);
+    static HRESULT GetSheet(const _tchar* pSheetName, const _tchar* pSavePath);
+
+    static list<tObjectMetaData> ReadObjectMetaData(const _tchar* pExcelPath);
+    static tObjectTransform ReadObjectTransform();
+    static HRESULT WriteObjectMetaData(const _tchar* pExcelPath, const tObjectMetaData& tOMD);
+    static HRESULT WriteObjectTransform();
 
 public:
     virtual void Free() override;

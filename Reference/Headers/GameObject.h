@@ -33,6 +33,11 @@ public:
 		return m_pTransformCom;
 	};
 
+	const int& Get_ObjectID() const
+	{
+		return m_ID;
+	}
+
 	const _uint& Get_Order() const
 	{
 		return m_tSpriteInfo.iOrder;
@@ -65,14 +70,16 @@ public:
 	}
 
 public:
-	HRESULT Add_Colliders(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, void* pArg = nullptr);
-
-protected:
 	HRESULT Add_Components(_uint iLevelIndex, const _tchar* pPrototypeTag,
 		const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
 
+protected:
 	class CComponent* Find_Component(const _tchar* pComponentTag);
 	HRESULT Change_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppOut, void* pArg = nullptr);
+
+	// 파일 읽어서 Add_Component하는 함수 //
+	// CComponent* 를 넘겨서 null이면 FAIL인거고, 일단 각 오브젝트의 m_Components의 컨테이너에 다 넣는 것! //
+	// 그리고 각자 Initialize에서 find 키로 할당해주기1 //
 
 protected:
 	ID3D11Device*			m_pDevice = { nullptr };
@@ -85,17 +92,18 @@ protected:
 protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, CComponent*>			m_Components;
-	list<CCollider*>									m_ColliderList;
 	SPRITE_INFO m_tSpriteInfo;
 
 protected:
+	static int g_iObjectID;
+	int		m_ID;
 	_bool	m_bIsDead;
 	_bool	m_bIsRender;
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_uint	m_iShaderPassIndex = { 0 };
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
-	_float4x4	m_ViewMatrix;
+	_float4x4	m_ViewMatrix; 
 	_float4x4	m_ProjMatrix;
 
 public:			

@@ -4,6 +4,7 @@
 #include "Level_Loading.h"
 #include "InputHandler.h"
 #include "PlayerInfo.h"
+#include "FileLoader.h"
 
 USING(Client)
 
@@ -197,6 +198,7 @@ void CMainApp::Free()
 	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
 	CPlayerInfo::GetInstance()->DestroyInstance();
 	CInputHandler::GetInstance()->DestroyInstance();
+	CFileLoader::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 
 	//해제안된 COM객체 추적

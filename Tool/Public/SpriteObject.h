@@ -148,7 +148,7 @@ public:
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 
 protected:
-	virtual HRESULT Add_Components(void* pArg = nullptr);
+	HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 	void	Scroll_Screen(_float4x4& WorldMatrix) const;

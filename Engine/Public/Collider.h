@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Component.h"
-
 /* CCollider 객체 하나는 하나의 충돌체를 의미한다. */
 
 BEGIN(Engine)
@@ -39,6 +38,9 @@ public:
 	virtual _bool IsCollision(CColliderSphere2D* pTarget) const = 0;
 
 public:
+	virtual void Set_Owner(CGameObject* pOwner) override;
+
+public:
 	const COLLIDER_DESC& Get_ColliderDesc() const
 	{
 		return m_tColliderDesc;
@@ -66,7 +68,6 @@ protected:
 
 protected:
 	_float4x4				m_WorldMatrix;
-	CGameObject*			m_pOwner;
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
 

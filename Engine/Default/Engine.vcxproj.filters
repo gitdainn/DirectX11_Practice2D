@@ -246,7 +246,7 @@
     <ClCompile Include="..\Private\Utility.cpp">
       <Filter>01.Utility\09.Utility</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GarbageCollector.cpp">
+    <ClCompile Include="..\Private\GarbageCollectorX.cpp">
       <Filter>01.Utility\10.GarbageCollector</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Scroll_Manager.cpp">
@@ -264,6 +264,7 @@
     <ClCompile Include="..\Private\File_Handler.cpp">
       <Filter>01.Utility\12.FileHandler</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\GarbageCollector.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -386,7 +387,7 @@
     <ClInclude Include="..\Public\Utility.h">
       <Filter>01.Utility\09.Utility</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GarbageCollector.h">
+    <ClInclude Include="..\Public\GarbageCollectorX.h">
       <Filter>01.Utility\10.GarbageCollector</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Scroll_Manager.h">
@@ -443,5 +444,6 @@
     <ClInclude Include="..\libxl-4.3.0.14\include_cpp\setup.h">
       <Filter>01.Utility\12.FileHandler\libxl</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\GarbageCollector.h" />
   </ItemGroup>
 </Project>

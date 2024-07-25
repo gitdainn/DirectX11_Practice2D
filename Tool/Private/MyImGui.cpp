@@ -111,7 +111,7 @@ _uint CMyImGui::Tick(_double TimeDelta)
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     if (pGameInstance->Get_KeyDown(DIK_H))
     {
-        CFile_Handler::WriteFile();
+        //CFile_Handler::WriteFile();
     }
 
     return _uint();
@@ -722,7 +722,9 @@ HRESULT CMyImGui::Inspector_Components()
         tColliderDesc.vRotation = _float3(1.f, 1.f, 1.f);
 
         _tchar* pPrototypeTag = ConvertCWithWC(m_ComponentsVec[iComponentIndex], TEXT("Prototype_Component_"));
-        if (FAILED(m_pSelectedObject->Add_Colliders(LEVEL_TOOL, pPrototypeTag, L"TAG_HEAD", &tColliderDesc)))
+        CComponent* pComponent = { nullptr };
+        /** @qurious. CGameObject 상속을 받아 함수 오버로딩이 될텐데 .. 왜 CGameObject*의 Add_Components를 인식 못하지? */
+        if (FAILED(m_pSelectedObject->CGameObject::Add_Components(LEVEL_TOOL, pPrototypeTag, L"TAG_HEAD", &pComponent, &tColliderDesc)))
         {
             MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
         }

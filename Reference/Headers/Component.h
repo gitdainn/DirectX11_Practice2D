@@ -4,6 +4,8 @@
 
 BEGIN(Engine)
 
+class CGameObject;
+
 class ENGINE_DLL CComponent abstract : public CBase
 {
 protected:
@@ -16,11 +18,23 @@ public:
 	virtual HRESULT Initialize(void* pArg);	
 	virtual HRESULT Render() { return S_OK; }
 
+public:
+	virtual void Set_Owner(CGameObject* pOwner)
+	{
+		if (nullptr == pOwner)
+		{
+			MSG_BOX("CComponent - Set_Owner - NULL");
+			return;
+		}
+		m_pOwner = pOwner;
+	}
+
 protected:
 	ID3D11Device*				m_pDevice = { nullptr };
 	ID3D11DeviceContext*		m_pContext = { nullptr };
 
 protected:
+	CGameObject*				m_pOwner = { nullptr };
 	_bool						m_isCloned = { false };
 
 public:

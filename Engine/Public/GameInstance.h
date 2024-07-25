@@ -83,13 +83,12 @@ public: /* For.Scroll_Manager */
 	void		Set_ScrollX(const _float _fX);
 	void		Set_ScrollY(const _float _fY);
 
-//public: /* For.GarbageCollector */
-//	template<typename T>
-//	void	Add_Garbage(T& Garbage);
-//	template<typename T>
-//	void	Add_CurLevelGarbage(T& Garbage);
-//	template<typename T>
-//	void	Clear_CurLevelGarbage(T Null = nullptr); // 이거.. 어케해야할지 몰겠음.
+public: /* For.GarbageCollector */
+	void	Add_Garbage(char* pChar);
+	void	Add_Garbage(_tchar* pTChar);
+	void	Add_CurLevelGarbage(char* pChar);
+	void	Add_CurLevelGarbage(_tchar* pTChar);
+	void	Clear_CurLevelGarbage();
 
 public:
 	static void Release_Engine();
@@ -106,6 +105,7 @@ private:
 	class CFrustum*						m_pFrustum = { nullptr };
 	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
 	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
+	class CGarbageCollector*			m_pGarbageCollector = { nullptr };
 	//class CFile_Handler*				m_pFile_Handler = { nullptr };
 
 public:

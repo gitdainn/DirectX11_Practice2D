@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "GrimReaper.h"
+#include "PlayerInfo.h"
 
 /* @note - 생성자에 부모 생성자도 초기화해야 하는 이유
 * */
@@ -32,6 +33,35 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_iUVTexNumX = 10;
     m_iUVTexNumY = 15;
     m_bIsAnimUV = true;
+
+    Add_Animation();
+
+    return S_OK;
+}
+
+HRESULT CGrimReaper::Initialize(void* pArg)
+{
+    m_ID = 2;
+
+    if (FAILED(__super::Initialize(pArg)))
+    {
+        return E_FAIL;
+    }
+
+
+    CTransform::TRANSFORM_DESC tTransDesc;
+    tTransDesc.SpeedPerSec = 20.f;
+    m_pTransformCom->Set_TransformDesc(tTransDesc);
+
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
+    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_tSpriteInfo.iTextureIndex = 0;
+
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 15;
+    m_bIsAnimUV = true;
+
+    //CPlayerInfo::GetInstance()->Set_EquippedSkul(this);
 
     Add_Animation();
 
@@ -103,8 +133,6 @@ void CGrimReaper::Add_Animation()
 
 HRESULT CGrimReaper::Add_Components(void* pArg)
 {
-    m_pTextureTag = TEXT("Prototype_Component_Sprite_GrimReaperUV");
-
     if (FAILED(__super::Add_Components(pArg)))
         return E_FAIL;
 
@@ -152,6 +180,19 @@ CSpriteObject* CGrimReaper::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) c
     CGrimReaper* pInstance = new CGrimReaper(*this);
 
     if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
+    {
+        MSG_BOX("Failed to Cloned CGrimReaper");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CSpriteObject* CGrimReaper::Clone(void* pArg) const
+{
+    CGrimReaper* pInstance = new CGrimReaper(*this);
+
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Cloned CGrimReaper");
         Safe_Release(pInstance);

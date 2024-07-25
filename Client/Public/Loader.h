@@ -33,7 +33,7 @@ public:
 public:
 	HRESULT Initialize(LEVEL eNextLevelID);
 	HRESULT Loading_ForLogoLevel();
-	HRESULT Loading_Sprite_Logo();
+	HRESULT Loading_Component_Logo();
 	HRESULT Loaiding_GameObject_Logo();
 
 	HRESULT Loading_ForGamePlayLevel();
