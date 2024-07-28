@@ -39,8 +39,8 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     ImGui_ImplDX11_Init(pDevice, pContext);
 
 #pragma region 폴더명
-    m_FolderNameVec.emplace_back("Tile");
-    m_FolderNameVec.emplace_back("Environment");
+    m_FolderNameVec.emplace_back("ForestTile");
+    m_FolderNameVec.emplace_back("ForestEnvironment");
     m_FolderNameVec.emplace_back("Background");
     m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
 #pragma endregion
@@ -85,6 +85,9 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
     SPRITE_INFO tSpriteInfo;
     tSpriteInfo.fPosition = _float2(-(g_iWinSizeX * 0.5f) + 20.f, g_iWinSizeY * 0.5f - 20.f);
+    _tchar* pTag = new _tchar[MAX_PATH];
+    lstrcpy(pTag, TEXT("Prototype_Component_Sprite_ForestTile"));
+    tSpriteInfo.pTextureComTag = pTag;
     if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, LAYER_DEFAULT, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Tick() - NULL");
@@ -507,9 +510,8 @@ HRESULT CMyImGui::ShowSpriteWindow()
                         // Selectable(const char* 리스트에 띄울 이름, bool 선택 여부) 
                         if (ImGui::Selectable(PathVec[iListIndex], is_selected))
                         {
-                            SPRITE_INFO tSpriteInfo = m_pPreviewObject->Get_SpriteInfo();
-                            tSpriteInfo.iTextureIndex = m_pSpriteListIndex[iFolderIndex] = iListIndex;
-                            m_pPreviewObject->Set_SpriteInfo(tSpriteInfo);
+                            m_pSpriteListIndex[iFolderIndex] = iListIndex;
+                            m_pPreviewObject->Set_TextureIndex(iListIndex);
                             m_iFolderIndex = iFolderIndex;
                         }
 
@@ -840,6 +842,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
     {
         SPRITE_INFO tSpriteInfo;
         tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
+        // 1. 클래스 이름을 누르면 .second에 있는 Texture, TextureIndex 정보로 생성됨.
         tSpriteInfo.pPrototypeTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_GameObject_"));
         tSpriteInfo.pTextureComTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_Component_Sprite_"));
         Install_GameObject(tSpriteInfo);

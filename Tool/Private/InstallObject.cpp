@@ -42,7 +42,7 @@ HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
-    _float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
+    _float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
     fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
     fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
     m_tSpriteInfo.fSize = fOriginalSize;

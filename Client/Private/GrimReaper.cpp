@@ -28,7 +28,7 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
-    m_tSpriteInfo.iTextureIndex = 0;
+    m_iTextureIndex = 0;
 
     m_iUVTexNumX = 10;
     m_iUVTexNumY = 15;
@@ -55,7 +55,7 @@ HRESULT CGrimReaper::Initialize(void* pArg)
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
-    m_tSpriteInfo.iTextureIndex = 0;
+    m_iTextureIndex = 0;
 
     m_iUVTexNumX = 10;
     m_iUVTexNumY = 15;

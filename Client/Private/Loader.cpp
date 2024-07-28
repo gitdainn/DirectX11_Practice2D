@@ -133,23 +133,23 @@ HRESULT CLoader::Loading_Component_Logo()
 #pragma endregion
 
 #pragma region TextureFolder
-	/* For.Prototype_Component_Sprite_Tile */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Tile"),
+	/* For.Prototype_Component_Sprite_ForestTile */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_ForestTile"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Tiles/ForestTile/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_ForestObject */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Environment"),
+	/* For.Prototype_Component_Sprite_ForestEnvironment */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Environment/Forest/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_ForestObject */
+	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_Background"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Background/")))))
 	{

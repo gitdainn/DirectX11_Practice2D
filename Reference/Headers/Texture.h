@@ -51,6 +51,11 @@ public:
 		return &m_TexturePathVec;
 	}
 
+	const _uint& Get_TextureIndex() const
+	{
+		return m_iTextureIndex;
+	}
+
 private:
 	const _float2 Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) const;
 
@@ -59,6 +64,7 @@ private:
 	vector<const _tchar*>								m_TexturePathVec;
 	vector<_float2>								m_TextureSizeVec;
 	_uint										m_iNumTextures = { 0 };
+	_uint										m_iTextureIndex = { 0 };
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);

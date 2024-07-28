@@ -65,6 +65,8 @@ HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
 
+	m_iTextureIndex = m_tSpriteInfo.iTextureIndex;
+
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
@@ -143,36 +145,10 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	CFileLoader* pFileLoader = CFileLoader::GetInstance();
-	Safe_AddRef(pFileLoader);
-
-	if (nullptr == pFileLoader)
-	{
-		MSG_BOX("CSpriteObject - Add_Components - FileLoader is NULL");
-		return E_FAIL;
-	}
-	list<COMPONENT_INFO> ComponentList;
-	
-	if (FAILED(pFileLoader->Get_ComponentInfoList(m_ID, ComponentList)))
-	{
-		MSG_BOX("CSpriteObject - Add_Components - ComponentList is NULL");
-		return E_FAIL;
-	}
-	CComponent* pComponent = { nullptr };
-	for (COMPONENT_INFO tInfo : ComponentList)
-	{
-		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_LOGO, tInfo.pPrototypeTag,
-			tInfo.pComponentTag, &pComponent, &tInfo)))
-		{
-			MSG_BOX("CSpriteObject - Add_Components - FAILED");
-			continue;
-		}
-		pComponent->Set_Owner(this);
-	}
-	Safe_Release(pFileLoader);
+	Add_Components_Excel();
 
 	/* For.Com_Texture */
-	pComponent = Find_Component(TAG_TEXTURE);
+	CComponent* pComponent = Find_Component(TAG_TEXTURE);
 	if (nullptr == pComponent)
 	{
 		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
@@ -185,6 +161,7 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
 		return E_FAIL;
 	}
+	m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
 
 	/* For.Com_Transform */
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
@@ -230,11 +207,45 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_tSpriteInfo.iTextureIndex)))
+	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::Add_Components_Excel()
+{
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CSpriteObject - Add_Components - FileLoader is NULL");
+		return E_FAIL;
+	}
+
+	Safe_AddRef(pFileLoader);
+
+	list<COMPONENT_INFO> ComponentList;
+	if (FAILED(pFileLoader->Get_ComponentInfoList(m_ID, ComponentList)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components - ComponentList is NULL");
+		Safe_Release(pFileLoader);
+		return E_FAIL;
+	}
+	CComponent* pComponent = { nullptr };
+	for (COMPONENT_INFO tInfo : ComponentList)
+	{
+		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_LOGO, tInfo.pPrototypeTag,
+			tInfo.pComponentTag, &pComponent, &tInfo)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components - FAILED");
+			continue;
+		}
+		pComponent->Set_Owner(this);
+	}
+	Safe_Release(pFileLoader);
 
 	return S_OK;
 }
@@ -244,7 +255,7 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
 	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
 
-	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_tSpriteInfo.iTextureIndex;
+	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_iTextureIndex;
 	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
 	_float fDelayTime = { 0.f };
 	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())

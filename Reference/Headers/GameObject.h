@@ -102,6 +102,7 @@ protected:
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	_uint	m_iShaderPassIndex = { 0 };
+	_uint	m_iTextureIndex = { 0 };
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix; 
 	_float4x4	m_ProjMatrix;

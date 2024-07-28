@@ -50,7 +50,7 @@ HRESULT CLittleBorn::Initialize(void* pArg)
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
-    m_tSpriteInfo.iTextureIndex = 0;
+    m_iTextureIndex = 0;
 
     m_iUVTexNumX = 10;
     m_iUVTexNumY = 15;
@@ -63,7 +63,7 @@ HRESULT CLittleBorn::Initialize(void* pArg)
 
 _uint CLittleBorn::Tick(_double TimeDelta)
 {
-    Play_Animation(m_tSpriteInfo.iTextureIndex, TimeDelta);
+    Play_Animation(m_iTextureIndex, TimeDelta);
 
     return __super::Tick(TimeDelta);
 }

@@ -35,10 +35,14 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
+	m_iTextureIndex = m_tSpriteInfo.iTextureIndex;
+
 	if (nullptr == m_tSpriteInfo.pTextureComTag)
-		m_pTextureComTag = TEXT("Prototype_Component_Sprite_Tile");
-	else
-		m_pTextureComTag = m_tSpriteInfo.pTextureComTag;
+	{
+		MSG_BOX("CSpriteObject - Initialize() - NULL");
+		return E_FAIL;
+	}
+	m_pTextureComTag = m_tSpriteInfo.pTextureComTag;
 
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
@@ -109,7 +113,7 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
 		return E_FAIL;
 	}
-	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag); 
 	m_tSpriteInfo.pTextureComTag = pPrototypeTag;
 
 	return S_OK;
@@ -193,7 +197,7 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_tSpriteInfo.iTextureIndex)))
+	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
@@ -219,7 +223,7 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
 	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
 
-	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_tSpriteInfo.iTextureIndex;
+	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_iTextureIndex;
 	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
 	_float fDelayTime = { 0.f };
 	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())

@@ -108,11 +108,12 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel)
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 4;
+		const int iLastCol = 5;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
-			const int iObjectID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			const int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 			_tchar* pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -159,13 +160,14 @@ HRESULT CFileLoader::Load_SpriteInfo_Excel(const _tchar* pFilePath, LEVEL eLevel
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 10;
+		const int iLastCol = 11;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
-			int iObjectID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			const int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 
-			if (m_SpriteInfoMap.end() != m_SpriteInfoMap.find(iObjectID))
+			if (m_SpriteInfoMap.end() != m_SpriteInfoMap.find(iInstanceID))
 			{
 				MSG_BOX("CFileLoader - Load_SpriteInfo_Excel() - FAIL");
 				continue;
@@ -179,7 +181,7 @@ HRESULT CFileLoader::Load_SpriteInfo_Excel(const _tchar* pFilePath, LEVEL eLevel
 			tSpriteInfo.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tSpriteInfo.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
-			m_SpriteInfoMap.emplace(iObjectID, tSpriteInfo);
+			m_SpriteInfoMap.emplace(iInstanceID, tSpriteInfo);
 		}
 	}
 
@@ -207,15 +209,17 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 10;
+		const int iLastCol = 11;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
-			int iObjectID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 
 			tComponentInfo.pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pComponentTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			tComponentInfo.iTextureIndex = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fOffset.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
@@ -223,7 +227,7 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 			tComponentInfo.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
-			auto iter = m_ComponentInfoMap.find(iObjectID);
+			auto iter = m_ComponentInfoMap.find(iInstanceID);
 			if (m_ComponentInfoMap.end() != iter)
 			{
 				(*iter).second.emplace_back(tComponentInfo);
@@ -233,7 +237,7 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 				list<COMPONENT_INFO> ComponentList;
 				ComponentList.emplace_back(tComponentInfo);
 				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
-				m_ComponentInfoMap.emplace(iObjectID, ComponentList);
+				m_ComponentInfoMap.emplace(iInstanceID, ComponentList);
 			}
 		}
 	}

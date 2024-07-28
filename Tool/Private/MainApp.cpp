@@ -139,15 +139,15 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	Safe_AddRef(pGameInstance);
 
 	/* For.Prototype_Component_Sprite_Tile */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Tile"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_Environment */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Environment"),
+	/* For.Prototype_Component_Sprite_ForestEnvironment */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Environment/Forest/")))))
 	{
 		Safe_Release(pGameInstance);

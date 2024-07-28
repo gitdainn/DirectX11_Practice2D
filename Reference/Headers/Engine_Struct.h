@@ -43,6 +43,7 @@ namespace Engine
 		const _tchar* pPrototypeTag;
 		const _tchar* pComponentTag;
 		const _tchar* pLayer;
+		_uint iTextureIndex;
 		_float2 fSize;
 		_float2 fOffset;
 		_float2 fPosition;

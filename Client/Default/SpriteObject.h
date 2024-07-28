@@ -110,6 +110,7 @@ protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
+	HRESULT Add_Components_Excel();
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -154,7 +155,7 @@ inline void CSpriteObject::Change_Sprite(const T& Sprite)
 	}
 	else
 	{
-		m_tSpriteInfo.iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
+		m_iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
 	}
 }
 

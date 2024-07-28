@@ -60,6 +60,11 @@ protected: // Animation
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
 
 public:
+	void	Set_TextureIndex(const _uint& iIndex)
+	{
+		m_iTextureIndex = iIndex;
+	}
+
 	void Set_SpriteDirection(const SPRITE_DIRECTION eDirection)
 	{
 		m_eSpriteDirection = eDirection;
@@ -79,7 +84,7 @@ public:
 	void Set_ScaleRatio(const _float2& fSizeRatio)
 	{
 		m_tSpriteInfo.fSizeRatio = fSizeRatio;
-		_float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_tSpriteInfo.iTextureIndex);
+		_float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
 		fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
 		fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
 		m_tSpriteInfo.fSize = fOriginalSize;
@@ -197,7 +202,7 @@ inline void CSpriteObject::Change_Sprite(const T& Sprite)
 	}
 	else
 	{
-		m_tSpriteInfo.iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
+		m_iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
 	}
 }
 

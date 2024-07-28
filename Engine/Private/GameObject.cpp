@@ -71,7 +71,6 @@ HRESULT CGameObject::Render()
 	return S_OK;
 }
 
-
 HRESULT CGameObject::Add_Components(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppOut, void * pArg)
 {
 	if (nullptr != Find_Component(pComponentTag))
