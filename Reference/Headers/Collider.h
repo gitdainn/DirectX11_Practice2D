@@ -41,6 +41,19 @@ public:
 	virtual void Set_Owner(CGameObject* pOwner) override;
 
 public:
+	virtual const HRESULT Get_ComponentInfo(COMPONENT_INFO& tComponentInfo) const override
+	{
+		tComponentInfo.pPrototypeTag = m_pPrototypeTag;
+		tComponentInfo.fSize.x = m_tColliderDesc.vScale.x;
+		tComponentInfo.fSize.y = m_tColliderDesc.vScale.y;
+		tComponentInfo.fOffset.x = m_tColliderDesc.vOffset.x;
+		tComponentInfo.fOffset.y = m_tColliderDesc.vOffset.y;
+		tComponentInfo.fPosition.x = m_tColliderDesc.vPosition.x;
+		tComponentInfo.fPosition.y = m_tColliderDesc.vPosition.y;
+
+		return S_OK;
+	}
+
 	const COLLIDER_DESC& Get_ColliderDesc() const
 	{
 		return m_tColliderDesc;

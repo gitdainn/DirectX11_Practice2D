@@ -5,49 +5,57 @@ namespace Engine
 	/** @note - Typedef.h 헤더를 먼저 선언해야 형식 지정자를 읽음 */
 	typedef struct ENGINE_DLL tSpriteInfo
 	{
-		_uint		iOrder = { 0 };
 		_float2	fSize = { 300.f, 320.f };
 		_float2	fSizeRatio = { 1.f, 1.f };
 		_float2	fPosition = { 0.f, 0.f };
 
-		_uint		iTextureIndex = { 0 };
+		_uint	iTextureIndex = { 0 };
 		/** @note - const타입을 nullptr로 지정했는데도 구조체 생성 시 값을 넣을 수 있는 이유는 구조체는 호출 시 그때 생성되어 초기화하는 것이기 때문 */
 		const _tchar* pPrototypeTag = { nullptr };
 		const _tchar* pTextureComTag = { nullptr };
 		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
 	}SPRITE_INFO;
 
-	struct ENGINE_DLL tObjectMetaData
+	typedef struct ENGINE_DLL tObjectMetaData
 	{
-		_uint iObjectID;
-		_uint iParentID;
+		_uint iInstanceID;
+		const _tchar* pObjectID;
 		const _tchar* pClassName;
-		const _tchar* pPrototypeTag;
-		const _tchar* pTextureTag;
 		const _tchar* pLayer;
-	};
+	}OBJECT_METADATA;
 
-	struct ENGINE_DLL tObjectTransform
+	typedef struct ENGINE_DLL tObjectTransform
 	{
-		_uint iObjectID;
-		_float ScaleX;
-		_float ScaleY;
-		_float PositionX;
-		_float PositionY;
-		_float RotationX;
-		_float RotationY;
-	};
+		_uint iInstanceID;
+		const _tchar* pObjectID;
+		_float2 fSize;
+		_float2 fSizeRatio;
+		_float2 fPosition;
+		_float2 fRotation;
+	}OBJECT_TRANSFORM;
 
 	typedef struct ENGINE_DLL tComponentInfo
 	{
+		_uint iInstanceID;
+		const _tchar* pObjectID;
 		const _tchar* pPrototypeTag;
 		const _tchar* pComponentTag;
-		const _tchar* pLayer;
+		const _tchar* pSortingLayer;
+		_uint iOrder;
 		_uint iTextureIndex;
 		_float2 fSize;
 		_float2 fOffset;
 		_float2 fPosition;
 	}COMPONENT_INFO;
+
+	typedef struct ENGINE_DLL tOriginalData
+	{
+		const _tchar* pObjectID;
+		const _tchar* pClass;
+		const _tchar* pLayer;
+		const _tchar* pTextureTag;
+		_uint iTextureIndex;
+	}ORIGINAL_DATA;
 
 	typedef struct tagKeyFrame
 	{

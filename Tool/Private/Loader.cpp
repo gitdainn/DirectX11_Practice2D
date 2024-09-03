@@ -96,7 +96,7 @@ HRESULT CLoader::Loading_ForToolLevel()
 
 #pragma region COLLIDER
 	/* For.Prototype_Component_Sprite_Background */
-	if (FAILED(pGameInstance->Add_Prototype(LEVEL_TOOL, TEXT("Prototype_Component_Collider_AABB"),
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		CColliderAABB2D::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);

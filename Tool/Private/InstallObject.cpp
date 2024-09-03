@@ -51,6 +51,20 @@ HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     return S_OK;
 }
 
+HRESULT CInstallObject::Initialize(void* pArg)
+{
+    if (FAILED(__super::Initialize(pArg)))
+    {
+        return E_FAIL;
+    }
+
+    CTransform::TRANSFORM_DESC tTransDesc;
+    tTransDesc.SpeedPerSec = 20.f;
+    m_pTransformCom->Set_TransformDesc(tTransDesc);
+
+    return S_OK;
+}
+
 _uint CInstallObject::Tick(_double TimeDelta)
 {
     //Play_Animation(m_tSpriteInfo.iTextureIndex, TimeDelta);
@@ -72,6 +86,11 @@ HRESULT CInstallObject::Render()
 HRESULT CInstallObject::Add_Components(void* pArg)
 {
     if (FAILED(__super::Add_Components(pArg)))
+        return E_FAIL;
+
+    /* For.Com_Shader */
+    if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+        TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
         return E_FAIL;
 
     return S_OK;
@@ -103,6 +122,19 @@ CSpriteObject* CInstallObject::Clone(const tSpriteInfo& InSpriteInfo, void* pArg
     CInstallObject* pInstance = new CInstallObject(*this);
 
     if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
+    {
+        MSG_BOX("Failed to Cloned CInstallObject");
+        Safe_Release(pInstance);
+    }
+
+    return pInstance;
+}
+
+CSpriteObject* CInstallObject::Clone(void* pArg) const
+{
+    CInstallObject* pInstance = new CInstallObject(*this);
+
+    if (FAILED(pInstance->Initialize(pArg)))
     {
         MSG_BOX("Failed to Cloned CInstallObject");
         Safe_Release(pInstance);

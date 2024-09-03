@@ -56,6 +56,17 @@ public:
 		return m_iTextureIndex;
 	}
 
+	const _uint& Get_Order() const
+	{
+		return m_iOrder;
+	}
+
+	virtual const HRESULT Get_ComponentInfo(COMPONENT_INFO& tComponentInfo) const override
+	{
+		tComponentInfo.pPrototypeTag = m_pPrototypeTag;
+		return S_OK;
+	}
+
 private:
 	const _float2 Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) const;
 
@@ -65,6 +76,7 @@ private:
 	vector<_float2>								m_TextureSizeVec;
 	_uint										m_iNumTextures = { 0 };
 	_uint										m_iTextureIndex = { 0 };
+	_uint										m_iOrder = { 0 };
 
 public:
 	static CTexture* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, const _tchar* pTextureFilePath, _uint iNumTextures = 1);

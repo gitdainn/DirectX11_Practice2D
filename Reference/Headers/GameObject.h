@@ -29,18 +29,18 @@ public:
 		return Find_Component(pComponentTag);
 	}
 
+	const _tchar* Get_ClassName() const
+	{
+		return m_pClassName;
+	}
+
 	CTransform* Get_TransformCom() const {
 		return m_pTransformCom;
 	};
 
-	const int& Get_ObjectID() const
-	{
-		return m_ID;
-	}
-
 	const _uint& Get_Order() const
 	{
-		return m_tSpriteInfo.iOrder;
+		return m_iOrder;
 	}
 
 	unordered_map<const _tchar*, CComponent*>* Get_Components()
@@ -53,10 +53,20 @@ public:
 		return &m_Components;
 	}
 
+	const _uint& Get_TextureIndex() const
+	{
+		return m_iTextureIndex;
+	}
+
 public:
+	void Set_InstanceID(const _uint& iID)
+	{
+		m_iInstanceID = iID;
+	}
+
 	void Set_Order(const _uint& iOrder)
 	{
-		m_tSpriteInfo.iOrder = iOrder;
+		m_iOrder = iOrder;
 	}
 
 	void Set_ShaderPass(const _uint iPassIndex)
@@ -67,6 +77,15 @@ public:
 	void Set_RenderGroup(const CRenderer::RENDERGROUP& eRenderGroup)
 	{
 		m_eRenderGroup = eRenderGroup;
+	}
+
+	void Set_ClassName(const _tchar* pClassName)
+	{
+		if (nullptr == pClassName)
+			return;
+
+		Safe_Delete_Array(m_pClassName);
+		m_pClassName = pClassName;
 	}
 
 public:
@@ -96,13 +115,16 @@ protected:
 
 protected:
 	static int g_iObjectID;
-	int		m_ID;
+	_uint		m_iInstanceID;
+	const _tchar*		m_pObjectID;
 	_bool	m_bIsDead;
 	_bool	m_bIsRender;
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
+	const _tchar* m_pClassName = { nullptr };
 	_uint	m_iShaderPassIndex = { 0 };
 	_uint	m_iTextureIndex = { 0 };
+	_uint	m_iOrder = { 0 };
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix; 
 	_float4x4	m_ProjMatrix;

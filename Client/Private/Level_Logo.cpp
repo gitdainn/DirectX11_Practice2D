@@ -29,19 +29,19 @@ HRESULT CLevel_Logo::Initialize()
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_SpriteInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;

@@ -36,8 +36,6 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 HRESULT CLittleBorn::Initialize(void* pArg)
 {
-    m_ID = 3;
-
     if (FAILED(__super::Initialize(pArg)))
     {
         return E_FAIL;

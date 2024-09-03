@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "SpriteObject.h"
-
+#include "FileLoader.h"
 #include "Collider.h"
 
 USING(Tool)
@@ -18,6 +18,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
+	m_tSpriteInfo.fSizeRatio = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
 }
 
@@ -28,6 +29,57 @@ HRESULT CSpriteObject::Initialize_Prototype()
 
 HRESULT CSpriteObject::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+	{
+		MSG_BOX("CSpriteObject - Initialize - Argument is NULL");
+		return E_FAIL;
+	}
+	m_iInstanceID = *(_uint*)pArg;
+
+	if (FAILED(Load_Components_Excel()))
+	{
+		MSG_BOX("CSpriteObject - Add_Components_Excel() - FAILED");
+		return E_FAIL;
+	}
+
+	if (FAILED(Add_Components(pArg)))
+		return E_FAIL;
+
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CSpriteObject - Initialize - FileLoader is NULL");
+		return E_FAIL;
+	}
+	Safe_AddRef(pFileLoader);
+
+	OBJECT_TRANSFORM tObjectTransform;
+	if (FAILED(pFileLoader->Get_ObjectTransform(m_iInstanceID, tObjectTransform)))
+	{
+		MSG_BOX("CSpriteObject - Initialize - FileLoad FAILED");
+		return E_FAIL;
+	}
+	_float4x4 WorldMatrix;
+	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
+
+	// 위치 지정
+	if(nullptr != m_pTextureCom)
+		m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+	m_tSpriteInfo.fSizeRatio = tObjectTransform.fSizeRatio;
+	WorldMatrix._11 = tObjectTransform.fSize.x * m_tSpriteInfo.fSizeRatio.x;
+	WorldMatrix._22 = tObjectTransform.fSize.y * m_tSpriteInfo.fSizeRatio.y;
+	WorldMatrix._41 = tObjectTransform.fPosition.x;
+	WorldMatrix._42 = tObjectTransform.fPosition.y;
+
+	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
+
+	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+
+	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
+	m_pTransformCom->Set_TransformDesc(TransformDesc);
+
+	Safe_Release(pFileLoader);
 	return S_OK;
 }
 
@@ -148,25 +200,74 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 		return E_FAIL;
 	}
 
-	/* For.Com_Shader */
-	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
+	if (nullptr == m_pTextureCom)
 	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureComTag,
-		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
-	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
-		Safe_Release(pGameInstance);
-		return E_FAIL;
+		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_pTextureComTag,
+			TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			Safe_Release(pGameInstance);
+			return E_FAIL;
+		}
 	}
 
 	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::Load_Components_Excel()
+{
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CSpriteObject - Add_Components - FileLoader is NULL");
+		return E_FAIL;
+	}
+	Safe_AddRef(pFileLoader);
+
+	list<COMPONENT_INFO> ComponentList;
+	if (FAILED(pFileLoader->Get_ComponentInfoList(m_iInstanceID, ComponentList)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components - ComponentList is NULL");
+		Safe_Release(pFileLoader);
+		return E_FAIL;
+	}
+
+	CComponent* pComponent = { nullptr };
+	for (COMPONENT_INFO tInfo : ComponentList)
+	{
+		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, tInfo.pPrototypeTag,
+			tInfo.pComponentTag, &pComponent, &tInfo)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components - FAILED");
+			continue;
+		}
+		pComponent->Set_Owner(this);
+	}
+
+	/* For.Com_Texture */
+	pComponent = Find_Component(TAG_TEXTURE);
+	if (nullptr != pComponent)
+	{
+		m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
+		if (nullptr == m_pTextureCom)
+		{
+			MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
+			return E_FAIL;
+		}
+		m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
+		
+	}
+
+	/* For.Com_Collider */
+	pComponent = Find_Component(TAG_COLL_AABB);
+	if (nullptr != pComponent)
+	{
+		m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
+	}
+
+	Safe_Release(pFileLoader);
 
 	return S_OK;
 }
@@ -243,12 +344,6 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	}
 }
 
-CGameObject* CSpriteObject::Clone(void* pArg) const
-{
-	MSG_BOX("CSpriteObject - Clone(void* pArg) - 2D용 Clone 함수를 사용해주세요");
-	return nullptr;
-}
-
 void CSpriteObject::Free()
 {
 	__super::Free();
@@ -276,4 +371,5 @@ void CSpriteObject::Free()
 	Safe_Release(m_pVIBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pColliderCom);
 }

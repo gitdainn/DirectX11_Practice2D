@@ -145,6 +145,16 @@ HRESULT CTexture::Initialize_Prototype(const _tchar * pTextureFilePath, _uint iN
 
 HRESULT CTexture::Initialize(void * pArg)
 {
+	// @note - 엑셀에 모든 컴포너느 정보를 동일한 구조체에 담은 후, 통째로 넘겨받아 자신의 정보만 골라 받는 형식으로 사용 중
+	// @refactoring - Texture 컴포넌트가 TextureIndex와 Order을 관리해버리므로 Owner가 외부에서 다시 Get 해가야하는 문제 발생
+	if (nullptr != pArg)
+	{
+		COMPONENT_INFO tComponentInfo;
+		memcpy(&tComponentInfo, pArg, sizeof(COMPONENT_INFO));
+		m_pPrototypeTag = tComponentInfo.pPrototypeTag;
+		m_iTextureIndex = tComponentInfo.iTextureIndex;
+		m_iOrder = tComponentInfo.iOrder;
+	}
 	return S_OK;
 }
 

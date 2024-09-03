@@ -58,6 +58,7 @@ protected: // Animation
 
 	//virtual void Add_Animation();
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
+	HRESULT Load_Components_Excel();
 
 public:
 	void	Set_TextureIndex(const _uint& iIndex)
@@ -81,14 +82,17 @@ public:
 		m_pSpriteTag = pTag;
 	}
 
+	void Set_PrototypeTag(const _tchar* pTag)
+	{
+		Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
+		m_tSpriteInfo.pPrototypeTag = pTag;
+	}
+
 	void Set_ScaleRatio(const _float2& fSizeRatio)
 	{
 		m_tSpriteInfo.fSizeRatio = fSizeRatio;
-		_float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
-		fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
-		fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
-		m_tSpriteInfo.fSize = fOriginalSize;
-		m_pTransformCom->Set_Scaled(_float3(fOriginalSize.x, fOriginalSize.y, 1.f));
+		m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.x
+											, m_tSpriteInfo.fSize.y * m_tSpriteInfo.fSizeRatio.y, 1.f));
 	}
 
 	void Set_IsScroll(const _bool& bIsScroll)
@@ -153,7 +157,7 @@ public:
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 
 protected:
-	HRESULT Add_Components(void* pArg = nullptr);
+	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 	void	Scroll_Screen(_float4x4& WorldMatrix) const;
@@ -166,6 +170,7 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
+	Engine::CCollider* m_pColliderCom = { nullptr };
 
 protected:
 	_bool	m_bIsAnimUV;
@@ -185,7 +190,7 @@ protected:
 
 public:
 	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
-	virtual CGameObject* Clone(void* pArg = nullptr) const override;
+	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };
 

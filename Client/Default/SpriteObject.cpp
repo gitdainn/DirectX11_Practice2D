@@ -26,6 +26,19 @@ HRESULT CSpriteObject::Initialize_Prototype()
 
 HRESULT CSpriteObject::Initialize(void* pArg)
 {
+	if (nullptr == pArg)
+	{
+		MSG_BOX("CSpriteObject - Initialize - Argument is NULL");
+		return E_FAIL;
+	}
+	m_iInstanceID = *(_uint*)pArg;
+
+	if (FAILED(Load_Components_Excel()))
+	{
+		MSG_BOX("CSpriteObject - Add_Components_Excel() - FAILED");
+		return E_FAIL;
+	}
+
 	if (FAILED(Add_Components(pArg)))
 		return E_FAIL;
 
@@ -36,7 +49,8 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Get_SpriteInfo(m_ID, m_tSpriteInfo)))
+	OBJECT_TRANSFORM tObjectTransform;
+	if (FAILED(pFileLoader->Get_ObjectTransform(m_iInstanceID, tObjectTransform)))
 	{
 		MSG_BOX("CSpriteObject - Initialize - FileLoad FAILED");
 		return E_FAIL;
@@ -45,10 +59,11 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
 	// 위치 지정
-	WorldMatrix._11 = m_tSpriteInfo.fSize.x;
-	WorldMatrix._22 = m_tSpriteInfo.fSize.y;
-	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
-	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+	WorldMatrix._11 = tObjectTransform.fSize.x;
+	WorldMatrix._22 = tObjectTransform.fSize.y;
+	WorldMatrix._41 = tObjectTransform.fPosition.x;
+	WorldMatrix._42 = tObjectTransform.fPosition.y;
+	
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
@@ -145,24 +160,6 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	Add_Components_Excel();
-
-	/* For.Com_Texture */
-	CComponent* pComponent = Find_Component(TAG_TEXTURE);
-	if (nullptr == pComponent)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
-
-	m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
-	if (nullptr == m_pTextureCom)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
-	m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
-
 	/* For.Com_Transform */
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
 		TAG_TRANSFORM, (CComponent**)(&m_pTransformCom))))
@@ -177,6 +174,17 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	if (FAILED(__super::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
 		TAG_BUFFER, (CComponent**)(&m_pVIBufferCom))))
 		return E_FAIL;
+
+	if (nullptr == m_pTextureCom)
+	{
+		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, m_tSpriteInfo.pTextureComTag,
+			TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			Safe_Release(pGameInstance);
+			return E_FAIL;
+		}
+	}
 
 	Safe_Release(pGameInstance);
 
@@ -216,7 +224,7 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	return S_OK;
 }
 
-HRESULT CSpriteObject::Add_Components_Excel()
+HRESULT CSpriteObject::Load_Components_Excel()
 {
 	CFileLoader* pFileLoader = CFileLoader::GetInstance();
 	if (nullptr == pFileLoader)
@@ -224,16 +232,16 @@ HRESULT CSpriteObject::Add_Components_Excel()
 		MSG_BOX("CSpriteObject - Add_Components - FileLoader is NULL");
 		return E_FAIL;
 	}
-
 	Safe_AddRef(pFileLoader);
 
 	list<COMPONENT_INFO> ComponentList;
-	if (FAILED(pFileLoader->Get_ComponentInfoList(m_ID, ComponentList)))
+	if (FAILED(pFileLoader->Get_ComponentInfoList(m_iInstanceID, ComponentList)))
 	{
 		MSG_BOX("CSpriteObject - Add_Components - ComponentList is NULL");
 		Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
+
 	CComponent* pComponent = { nullptr };
 	for (COMPONENT_INFO tInfo : ComponentList)
 	{
@@ -245,6 +253,27 @@ HRESULT CSpriteObject::Add_Components_Excel()
 		}
 		pComponent->Set_Owner(this);
 	}
+
+	/* For.Com_Texture */
+	pComponent = Find_Component(TAG_TEXTURE);
+	if (nullptr != pComponent)
+	{
+		m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
+		if (nullptr == m_pTextureCom)
+		{
+			MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
+			return E_FAIL;
+		}
+		m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
+	}
+
+	/* For.Com_Collider */
+	pComponent = Find_Component(TAG_COLL_AABB);
+	if (nullptr != pComponent)
+	{
+		m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
+	}
+
 	Safe_Release(pFileLoader);
 
 	return S_OK;

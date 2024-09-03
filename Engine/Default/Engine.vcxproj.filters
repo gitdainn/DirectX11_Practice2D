@@ -261,9 +261,6 @@
     <ClCompile Include="..\Private\ColliderOBB2D.cpp">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\File_Handler.cpp">
-      <Filter>01.Utility\12.FileHandler</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\GarbageCollector.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -401,9 +398,6 @@
     </ClInclude>
     <ClInclude Include="..\Public\ColliderOBB2D.h">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Public\File_Handler.h">
-      <Filter>01.Utility\12.FileHandler</Filter>
     </ClInclude>
     <ClInclude Include="..\libxl-4.3.0.14\include_cpp\enum.h">
       <Filter>01.Utility\12.FileHandler\libxl</Filter>

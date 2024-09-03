@@ -22,6 +22,11 @@ void CGarbageCollector::Add_Garbage(_tchar* pTChar)
 	m_TCharList.push_back(pTChar);
 }
 
+void CGarbageCollector::Add_Garbage(const _tchar* pTChar)
+{
+	m_ConstTCharList.push_back(pTChar);
+}
+
 void CGarbageCollector::Add_CurLevelGarbage(char* pChar)
 {
 	m_CurLevelCharList.push_back(pChar);
@@ -55,4 +60,8 @@ void CGarbageCollector::Free()
 	for (auto& pTChar : m_TCharList)
 		Safe_Delete_Array(pTChar);
 	m_TCharList.clear();
+
+	for (auto& pTChar : m_ConstTCharList)
+		Safe_Delete_Array(pTChar);
+	m_ConstTCharList.clear();
 }

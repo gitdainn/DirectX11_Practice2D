@@ -70,11 +70,6 @@ HRESULT CBackGround::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;	
-
-	/* For.Com_Texture */
-	if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, m_tSpriteInfo.pTextureComTag,
-		TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
-		return E_FAIL;	
 	
 	return S_OK;
 }

@@ -8,7 +8,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_pContext(pContext)
 	, m_bIsDead(false), m_bIsRender(true)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
-	, m_ID(0)
+	, m_iInstanceID(0)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -31,7 +31,7 @@ CGameObject::CGameObject(const CGameObject & rhs)
 	, m_bIsDead(rhs.m_bIsDead), m_bIsRender(rhs.m_bIsRender)
 	, m_eRenderGroup(rhs.m_eRenderGroup)
 	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
-	, m_ID(rhs.m_ID)
+	, m_iInstanceID(rhs.m_iInstanceID)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -140,6 +140,8 @@ HRESULT CGameObject::Change_Component(_uint iLevelIndex, const _tchar* pPrototyp
 
 void CGameObject::Free()
 {
+	Safe_Delete_Array(m_pClassName);
+
 	for (auto& Pair : m_Components)
 	{
 		Safe_Release(Pair.second);

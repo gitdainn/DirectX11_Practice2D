@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "FileLoader.h"
 #include "GameInstance.h"
+#include "GameObject.h"
 #include "libxl.h"
 
 using namespace libxl;
@@ -64,7 +65,6 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 			{
 				bRes = ReadFile(hFile, pPrototypeTag, iLength, &dwByte, nullptr);
 				tSpriteInfo.pPrototypeTag = pPrototypeTag;
-
 			}
 
 			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
@@ -89,7 +89,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 	Safe_Release(pGameInstance);
 }
 
-HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel)
+HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 {
 	Book* pBook = xlCreateXMLBookW();
 	if (nullptr == pBook)
@@ -101,31 +101,35 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel)
 	tObjectTransform tObjectTransform;
 	if (pBook->load(pFilePath))
 	{
-		Sheet* pSheet = pBook->getSheet(SHEET::OBJECT_METADATA);
+		const int iSheetNum = { 0 };
+		Sheet* pSheet = pBook->getSheet(iSheetNum);
 		if (nullptr == pSheet)
 		{
 			pBook->release();
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 5;
+		const int iLastCol = 4;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
-			const int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			_tchar* pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			const _tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer)))
+
+			_tchar pPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
+			lstrcat(pPrototypeTag, pClassName);
+			Safe_Delete_Array(pClassName);
+			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &iInstanceID)))
 			{
 				MSG_BOX("CMyImGui - Load_Object() - FAILED");
 				Safe_Release(pGameInstance);
 				return E_FAIL;
 			}
-			/** @error - 프로토는 지워도 되지만.. Layer는 지우면 컨테이너에서 값이 사라짐.. ㅜ */
-			Safe_Delete_Array(pPrototypeTag);
 			pGameInstance->Add_Garbage(pLayer);
 			Safe_Release(pGameInstance);
 
@@ -141,7 +145,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel)
 	return S_OK;
 }
 
-HRESULT CFileLoader::Load_SpriteInfo_Excel(const _tchar* pFilePath, LEVEL eLevel)
+HRESULT CFileLoader::Load_ObjectTransform_Excel(const _tchar* pFilePath)
 {
 	Book* pBook = xlCreateXMLBookW();
 	if (nullptr == pBook)
@@ -150,38 +154,37 @@ HRESULT CFileLoader::Load_SpriteInfo_Excel(const _tchar* pFilePath, LEVEL eLevel
 		return E_FAIL;
 	}
 
-	SPRITE_INFO tSpriteInfo;
+	OBJECT_TRANSFORM tTransform;
 	if (pBook->load(pFilePath))
 	{
-		Sheet* pSheet = pBook->getSheet(SHEET::OBJECT_INFO);
+		Sheet* pSheet = pBook->getSheet(m_iObjectTransform);
 		if (nullptr == pSheet)
 		{
 			pBook->release();
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 11;
+		const int iLastCol = 8;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
 			const int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 
-			if (m_SpriteInfoMap.end() != m_SpriteInfoMap.find(iInstanceID))
+			if (m_ObjectTransformMap.end() != m_ObjectTransformMap.find(iInstanceID))
 			{
 				MSG_BOX("CFileLoader - Load_SpriteInfo_Excel() - FAIL");
 				continue;
 			}
 
-			tSpriteInfo.iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fSizeRatio.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fSizeRatio.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			tSpriteInfo.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fRotation.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fRotation.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
-			m_SpriteInfoMap.emplace(iInstanceID, tSpriteInfo);
+			m_ObjectTransformMap.emplace(iInstanceID, tTransform);
 		}
 	}
 
@@ -190,7 +193,7 @@ HRESULT CFileLoader::Load_SpriteInfo_Excel(const _tchar* pFilePath, LEVEL eLevel
 	return S_OK;
 }
 
-HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLevel)
+HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 {
 	Book* pBook = xlCreateXMLBookW();
 	if (nullptr == pBook)
@@ -202,14 +205,14 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 	COMPONENT_INFO tComponentInfo;
 	if (pBook->load(pFilePath))
 	{
-		Sheet* pSheet = pBook->getSheet(SHEET::COMPONENT);
+		Sheet* pSheet = pBook->getSheet(m_iComponentInfo);
 		if (nullptr == pSheet)
 		{
 			pBook->release();
 			return E_FAIL;
 		}
 		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = 11;
+		const int iLastCol = 13;
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
@@ -218,7 +221,8 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 
 			tComponentInfo.pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pComponentTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			tComponentInfo.pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			tComponentInfo.pSortingLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			tComponentInfo.iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.iTextureIndex = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
@@ -247,6 +251,7 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath, LEVEL eLe
 	return S_OK;
 }
 
+
 _tchar* CFileLoader::Copy_WChar(const _tchar* pWChar)
 {
 	if (nullptr == pWChar)
@@ -261,6 +266,7 @@ _tchar* CFileLoader::Copy_WChar(const _tchar* pWChar)
 	};
 
 	lstrcpy(pChar, pWChar);
+
 	return pChar;
 }
 
@@ -268,15 +274,20 @@ inline void CFileLoader::Free(void)
 {
 	__super::Free();
 
-	m_SpriteInfoMap.clear();
+	//for (auto iter : m_ObjectTransformMap)
+	//{
+	//	Safe_Delete_Array(iter.second.pObjectID);
+	//}
+	m_ObjectTransformMap.clear();
 
 	for (auto iter : m_ComponentInfoMap)
 	{
 		for (auto List : iter.second)
 		{
+			//Safe_Delete_Array(List.pObjectID); // @error. pObjectID는 null도 아니고 그냥 이상한 없는 값이라서 오류
 			Safe_Delete_Array(List.pPrototypeTag);
 			Safe_Delete_Array(List.pComponentTag);
-			Safe_Delete_Array(List.pLayer);
+			Safe_Delete_Array(List.pSortingLayer);
 		}
 	}
 	m_ComponentInfoMap.clear();

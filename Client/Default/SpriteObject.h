@@ -110,7 +110,7 @@ protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
-	HRESULT Add_Components_Excel();
+	HRESULT Load_Components_Excel();
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };

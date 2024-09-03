@@ -1047,13 +1047,13 @@ STBTT_DEF const char *stbtt_GetFontNameString(const stbtt_fontinfo *font, int *l
 //     http://www.microsoft.com/typography/otspec/name.htm
 
 enum { // platformID
-   STBTT_PLATFORM_ID_UNICODE   =0,
-   STBTT_PLATFORM_ID_MAC       =1,
-   STBTT_PLATFORM_ID_ISO       =2,
-   STBTT_PLATFORM_ID_MICROSOFT =3
+   STBTT_PLATFORm_iInstanceID_UNICODE   =0,
+   STBTT_PLATFORm_iInstanceID_MAC       =1,
+   STBTT_PLATFORm_iInstanceID_ISO       =2,
+   STBTT_PLATFORm_iInstanceID_MICROSOFT =3
 };
 
-enum { // encodingID for STBTT_PLATFORM_ID_UNICODE
+enum { // encodingID for STBTT_PLATFORm_iInstanceID_UNICODE
    STBTT_UNICODE_EID_UNICODE_1_0    =0,
    STBTT_UNICODE_EID_UNICODE_1_1    =1,
    STBTT_UNICODE_EID_ISO_10646      =2,
@@ -1061,21 +1061,21 @@ enum { // encodingID for STBTT_PLATFORM_ID_UNICODE
    STBTT_UNICODE_EID_UNICODE_2_0_FULL=4
 };
 
-enum { // encodingID for STBTT_PLATFORM_ID_MICROSOFT
+enum { // encodingID for STBTT_PLATFORm_iInstanceID_MICROSOFT
    STBTT_MS_EID_SYMBOL        =0,
    STBTT_MS_EID_UNICODE_BMP   =1,
    STBTT_MS_EID_SHIFTJIS      =2,
    STBTT_MS_EID_UNICODE_FULL  =10
 };
 
-enum { // encodingID for STBTT_PLATFORM_ID_MAC; same as Script Manager codes
+enum { // encodingID for STBTT_PLATFORm_iInstanceID_MAC; same as Script Manager codes
    STBTT_MAC_EID_ROMAN        =0,   STBTT_MAC_EID_ARABIC       =4,
    STBTT_MAC_EID_JAPANESE     =1,   STBTT_MAC_EID_HEBREW       =5,
    STBTT_MAC_EID_CHINESE_TRAD =2,   STBTT_MAC_EID_GREEK        =6,
    STBTT_MAC_EID_KOREAN       =3,   STBTT_MAC_EID_RUSSIAN      =7
 };
 
-enum { // languageID for STBTT_PLATFORM_ID_MICROSOFT; same as LCID...
+enum { // languageID for STBTT_PLATFORm_iInstanceID_MICROSOFT; same as LCID...
        // problematic because there are e.g. 16 english LCIDs and 16 arabic LCIDs
    STBTT_MS_LANG_ENGLISH     =0x0409,   STBTT_MS_LANG_ITALIAN     =0x0410,
    STBTT_MS_LANG_CHINESE     =0x0804,   STBTT_MS_LANG_JAPANESE    =0x0411,
@@ -1085,7 +1085,7 @@ enum { // languageID for STBTT_PLATFORM_ID_MICROSOFT; same as LCID...
    STBTT_MS_LANG_HEBREW      =0x040d,   STBTT_MS_LANG_SWEDISH     =0x041D
 };
 
-enum { // languageID for STBTT_PLATFORM_ID_MAC
+enum { // languageID for STBTT_PLATFORm_iInstanceID_MAC
    STBTT_MAC_LANG_ENGLISH      =0 ,   STBTT_MAC_LANG_JAPANESE     =11,
    STBTT_MAC_LANG_ARABIC       =12,   STBTT_MAC_LANG_KOREAN       =23,
    STBTT_MAC_LANG_DUTCH        =4 ,   STBTT_MAC_LANG_RUSSIAN      =32,
@@ -1475,7 +1475,7 @@ static int stbtt_InitFont_internal(stbtt_fontinfo *info, unsigned char *data, in
       stbtt_uint32 encoding_record = cmap + 4 + 8 * i;
       // find an encoding we understand:
       switch(ttUSHORT(data+encoding_record)) {
-         case STBTT_PLATFORM_ID_MICROSOFT:
+         case STBTT_PLATFORm_iInstanceID_MICROSOFT:
             switch (ttUSHORT(data+encoding_record+2)) {
                case STBTT_MS_EID_UNICODE_BMP:
                case STBTT_MS_EID_UNICODE_FULL:
@@ -1484,7 +1484,7 @@ static int stbtt_InitFont_internal(stbtt_fontinfo *info, unsigned char *data, in
                   break;
             }
             break;
-        case STBTT_PLATFORM_ID_UNICODE:
+        case STBTT_PLATFORm_iInstanceID_UNICODE:
             // Mac/iOS has these
             // all the encodingIDs are unicode, so we don't bother to check it
             info->index_map = cmap + ttULONG(data+encoding_record+4);

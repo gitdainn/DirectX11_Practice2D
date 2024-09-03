@@ -19,6 +19,7 @@ public:
 	void	Add_Garbage(char* pChar);
 	// 게임이 끝날 때 삭제될 문자열
 	void	Add_Garbage(_tchar* pTChar);
+	void	Add_Garbage(const _tchar* pTChar);
 
 public:
 	// 레벨이 바뀔 때 삭제될 문자열
@@ -32,6 +33,7 @@ public:
 private:
 	list<char*>		m_CharList;
 	list<_tchar*>	m_TCharList;
+	list<const _tchar*>	m_ConstTCharList;
 
 private:
 	list<char*>		m_CurLevelCharList;

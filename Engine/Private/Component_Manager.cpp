@@ -36,6 +36,7 @@ HRESULT CComponent_Manager::Add_Prototype(_uint iLevelIndex, const _tchar * pPro
 		return E_FAIL;
 	}
 
+	pPrototype->Set_PrototypeTag(pPrototypeTag);
 	m_pPrototypes[iLevelIndex].emplace(pPrototypeTag, pPrototype);
 
 	return S_OK;

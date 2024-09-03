@@ -110,14 +110,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/;../libxl-4.3.0.14/include_cpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Reference/Librarys/;../libxl-4.3.0.14/lib/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;libxl.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Reference/Librarys/;../libxl-4.3.0.14/lib64_32/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;libxl64.lib;DirectXTKd.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -128,7 +128,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Public/;../../Reference/Headers;../Default/;../Public/ImGui/;../libxl-4.3.0.14/include_cpp</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4819;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -136,13 +136,14 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>../../Reference/Librarys/;../libxl-4.3.0.14/lib/</AdditionalLibraryDirectories>
-      <AdditionalDependencies>Engine.lib;libxl.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Reference/Librarys/;../libxl-4.3.0.14/lib64_32/</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Engine.lib;libxl64.lib;DirectXTK.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
     <ClInclude Include="..\Public\Camera_Dynamic.h" />
+    <ClInclude Include="..\Public\FileLoader.h" />
     <ClInclude Include="..\Public\ImGui\imconfig.h" />
     <ClInclude Include="..\Public\ImGui\imgui.h" />
     <ClInclude Include="..\Public\ImGui\ImGuiFileBrowser.h" />
@@ -168,6 +169,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Camera_Dynamic.cpp" />
+    <ClCompile Include="..\Private\FileLoader.cpp" />
     <ClCompile Include="..\Private\ImGui\imgui.cpp" />
     <ClCompile Include="..\Private\ImGui\ImGuiFileBrowser.cpp" />
     <ClCompile Include="..\Private\ImGui\imgui_demo.cpp" />

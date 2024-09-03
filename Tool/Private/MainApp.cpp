@@ -138,6 +138,30 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	///* For.Prototype_Component_Sprite_LittleBorn */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_LittleBorn"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//};
+
+	///* For.Prototype_Component_Sprite_GrimReaper */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//};
+
+	///* For.Prototype_Component_Sprite_WaterSkul */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/WaterSkul/WaterSkulUV_%d.png")))))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//};
+
 	/* For.Prototype_Component_Sprite_Tile */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))

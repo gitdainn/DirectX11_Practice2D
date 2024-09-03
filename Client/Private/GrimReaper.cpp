@@ -41,8 +41,6 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 HRESULT CGrimReaper::Initialize(void* pArg)
 {
-    m_ID = 2;
-
     if (FAILED(__super::Initialize(pArg)))
     {
         return E_FAIL;

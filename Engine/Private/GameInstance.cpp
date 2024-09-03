@@ -11,7 +11,6 @@
 #include "Input_Device.h"
 #include "GarbageCollector.h"
 #include "Scroll_Manager.h"
-#include "File_Handler.h"
 #include "GarbageCollector.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
@@ -403,6 +402,14 @@ void CGameInstance::Add_Garbage(char* pChar)
 }
 
 void CGameInstance::Add_Garbage(_tchar* pTChar)
+{
+	if (nullptr == m_pGarbageCollector)
+		return;
+
+	m_pGarbageCollector->Add_Garbage(pTChar);
+}
+
+void CGameInstance::Add_Garbage(const _tchar* pTChar)
 {
 	if (nullptr == m_pGarbageCollector)
 		return;

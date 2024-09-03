@@ -3,7 +3,6 @@
 #include "Component_Manager.h"
 #include "PipeLine.h"
 #include "DInput_Manager.h"
-#include "File_Handler.h"
 
 /* 엔진의 핵심이 되는 싱글턴 클래스.  */
 /* 엔진에서 사용되는 다양한 매니져클래스를 가지고 있는다. */
@@ -86,6 +85,7 @@ public: /* For.Scroll_Manager */
 public: /* For.GarbageCollector */
 	void	Add_Garbage(char* pChar);
 	void	Add_Garbage(_tchar* pTChar);
+	void	Add_Garbage(const _tchar* pTChar);
 	void	Add_CurLevelGarbage(char* pChar);
 	void	Add_CurLevelGarbage(_tchar* pTChar);
 	void	Clear_CurLevelGarbage();

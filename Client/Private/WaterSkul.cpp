@@ -38,8 +38,6 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 HRESULT CWaterSkul::Initialize(void* pArg)
 {
-    m_ID = 1;
-
     if (FAILED(__super::Initialize(pArg)))
     {
         return E_FAIL;

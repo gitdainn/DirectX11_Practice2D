@@ -17,7 +17,6 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	//m_ID = "P";
 	return S_OK;
 }
 
@@ -106,26 +105,6 @@ HRESULT CPlayer::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
-
-	/* For.Com_Collider */
-	CComponent* pComponent = Find_Component(TAG_COLL_AABB);
-	if (nullptr == pComponent)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
-
-	m_pColliderCom = dynamic_cast<CCollider*>(pComponent);
-	if (nullptr == pComponent)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
-
-	///* For.Com_Texture */
-	//if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, m_pTextureTag,
-	//	TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
-	//	return E_FAIL;
 
 	return S_OK;
 }

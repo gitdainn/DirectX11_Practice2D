@@ -13,6 +13,7 @@
 BEGIN(Engine)
 class CGameObject;
 class CCollider;
+class CComponent;
 END
 
 BEGIN(Tool)
@@ -56,8 +57,9 @@ private:
 	HRESULT	ShowInspectorWindow();
 
 private: // Inspector //
-	HRESULT Inspector_Transform();
-	HRESULT Inspector_SpriteRenderer();
+	HRESULT Default_Info(const _bool bIsSelectionChanged);
+	HRESULT Inspector_Transform(const _bool bIsSelectionChanged);
+	HRESULT Inspector_SpriteRenderer(const _bool bIsSelectionChanged);
 	HRESULT Inspector_Components();
 
 private:
@@ -72,10 +74,14 @@ public:
 private:
 	HRESULT	Save_Object();
 	HRESULT	Load_Object();
+	HRESULT Save_Object_Excel();
+	HRESULT Load_Object_Excel();
 	HRESULT Load_PreviousData(); // 구조체 수정 전에 저장했떤 파일 불러오기
 
 private:
 	void	Key_Input(_double TimeDelta);
+	void	Get_MousePos(_vector& vMousePos) const;
+
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;
@@ -88,13 +94,18 @@ private:
 	CSpriteObject* m_pPreviewObject;
 	CSpriteObject* m_pSelectedObject;
 	vector<const char*>		m_FolderNameVec;
+	vector<const char*>		m_ClassNameVec;
 	vector<const char*>		m_RenderGroupVec;
 	vector<const char*>		m_LayerVec;
 	vector<const char*>		m_ComponentsVec;
 	vector<const char*>		m_ColliderLayer;
-	unique_ptr<_uint[]>		m_pSpriteListIndex;
-	_uint					m_iFolderIndex;
 	vector<CSpriteObject*>	m_CreateObjectVec;
+	unique_ptr<_uint[]>		m_pSpriteListIndex;
+	list<CComponent*>		m_ComponentGarbageList;
+
+	_uint					m_iFolderIndex;
+	_uint					m_iClassIndex;
+	unordered_map<const _tchar*, ORIGINAL_DATA>		m_OriginalDataMap;
 
 	/** @note - 자료구조 선택 이유
 	* 1. 토글 열 때마다 추가해야하는 폴더 경우 map으로 key값으로 찾아 상수 시간복잡도이고, 삽입 부담X

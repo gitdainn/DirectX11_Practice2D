@@ -61,20 +61,22 @@ HRESULT CCollider::Initialize_Prototype()
 
 HRESULT CCollider::Initialize(void* pArg)
 {
-	/** @note - dynamic_cast는 완전한 클래스 형식에만 가능하므로 void형에는 불가능 (C타입의 형변환 사용할 것) */
-	COMPONENT_INFO* tComponentInfo = (COMPONENT_INFO*)pArg;
-	if (nullptr == tComponentInfo)
+	if (nullptr == pArg)
 	{
 		MSG_BOX("CColider - Initialize - Argument is NULL");
 		return E_FAIL;
 	}
 
-	m_tColliderDesc.vScale.x = tComponentInfo->fSize.x;
-	m_tColliderDesc.vScale.y = tComponentInfo->fSize.y;
-	m_tColliderDesc.vOffset.x = tComponentInfo->fOffset.y;
-	m_tColliderDesc.vOffset.y = tComponentInfo->fOffset.y;
-	m_tColliderDesc.vPosition.x = tComponentInfo->fPosition.y;
-	m_tColliderDesc.vPosition.x = tComponentInfo->fPosition.y;
+	/** @note - dynamic_cast는 완전한 클래스 형식에만 가능하므로 void형에는 불가능 (C타입의 형변환 사용할 것) */
+	COMPONENT_INFO tComponentInfo;
+	memcpy(&tComponentInfo, (COMPONENT_INFO*)pArg, sizeof(COMPONENT_INFO));
+
+	m_tColliderDesc.vScale.x = tComponentInfo.fSize.x;
+	m_tColliderDesc.vScale.y = tComponentInfo.fSize.y;
+	m_tColliderDesc.vOffset.x = tComponentInfo.fOffset.y;
+	m_tColliderDesc.vOffset.y = tComponentInfo.fOffset.y;
+	m_tColliderDesc.vPosition.x = tComponentInfo.fPosition.y;
+	m_tColliderDesc.vPosition.x = tComponentInfo.fPosition.y;
 
 	if (FAILED(__super::Initialize(pArg)))
 	{

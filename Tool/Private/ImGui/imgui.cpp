@@ -3983,10 +3983,10 @@ bool ImGui::IsClippedEx(const ImRect& bb, ImGuiID id)
 
 // This is also inlined in ItemAdd()
 // Note: if ImGuiItemStatusFlags_HasDisplayRect is set, user needs to set window->DC.LastItemDisplayRect!
-void ImGui::SetLastItemData(ImGuiID item_id, ImGuiItemFlags in_flags, ImGuiItemStatusFlags item_flags, const ImRect& item_rect)
+void ImGui::SetLastItemData(ImGuiID item_iInstanceID, ImGuiItemFlags in_flags, ImGuiItemStatusFlags item_flags, const ImRect& item_rect)
 {
     ImGuiContext& g = *GImGui;
-    g.LastItemData.ID = item_id;
+    g.LastItemData.ID = item_iInstanceID;
     g.LastItemData.InFlags = in_flags;
     g.LastItemData.StatusFlags = item_flags;
     g.LastItemData.Rect = item_rect;
@@ -12909,14 +12909,14 @@ static const char* GetClipboardTextFn_DefaultImpl(void*)
     PasteboardGetItemCount(main_clipboard, &item_count);
     for (ItemCount i = 0; i < item_count; i++)
     {
-        PasteboardItemID item_id = 0;
-        PasteboardGetItemIdentifier(main_clipboard, i + 1, &item_id);
+        PasteboardItemID item_iInstanceID = 0;
+        PasteboardGetItemIdentifier(main_clipboard, i + 1, &item_iInstanceID);
         CFArrayRef flavor_type_array = 0;
-        PasteboardCopyItemFlavors(main_clipboard, item_id, &flavor_type_array);
+        PasteboardCopyItemFlavors(main_clipboard, item_iInstanceID, &flavor_type_array);
         for (CFIndex j = 0, nj = CFArrayGetCount(flavor_type_array); j < nj; j++)
         {
             CFDataRef cf_data;
-            if (PasteboardCopyItemFlavorData(main_clipboard, item_id, CFSTR("public.utf8-plain-text"), &cf_data) == noErr)
+            if (PasteboardCopyItemFlavorData(main_clipboard, item_iInstanceID, CFSTR("public.utf8-plain-text"), &cf_data) == noErr)
             {
                 ImGuiContext& g = *GImGui;
                 g.ClipboardHandlerData.clear();

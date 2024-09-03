@@ -29,21 +29,19 @@ HRESULT CTile::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
-	m_tSpriteInfo.iOrder += 10;
+	m_iOrder += 10;
 
 	return S_OK;
 }
 
 HRESULT CTile::Initialize(void* pArg)
 {
-	m_ID = 4;
-
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
-	m_tSpriteInfo.iOrder += 10;
+	m_iOrder += 10;
 
 	return S_OK;
 }
@@ -72,21 +70,6 @@ HRESULT CTile::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
-
-	/* For.Com_Collider */
-	CComponent* pComponent = Find_Component(TAG_COLL_AABB);
-	if (nullptr == pComponent)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
-
-	m_pColliderCom = dynamic_cast<CCollider*>(pComponent);
-	if (nullptr == pComponent)
-	{
-		MSG_BOX("CSpriteObject - Add_Component - Find Component is NULL");
-		return E_FAIL;
-	}
 
 	return S_OK;
 }

@@ -6,6 +6,7 @@
 #include "Utility.h"
 #include <array>
 #include <memory>
+#include "FileLoader.h"
 
 typedef void (*ImGuiDemoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
 extern ImGuiDemoMarkerCallback      GImGuiDemoMarkerCallback;
@@ -17,13 +18,11 @@ USING(Tool)
 
 IMPLEMENT_SINGLETON(CMyImGui);
 
-#include "File_Handler.h"
-
 CMyImGui::CMyImGui()
     : m_pPreviewObject(nullptr)
     , m_pSelectedObject(nullptr)
     , m_pSpriteListIndex(nullptr)
-    , m_iFolderIndex(0)
+    , m_iFolderIndex(0), m_iClassIndex(0)
 {
     m_CreateObjectVec.reserve(100);
 }
@@ -38,11 +37,29 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     ImGui_ImplWin32_Init(g_hWnd);
     ImGui_ImplDX11_Init(pDevice, pContext);
 
+    CFileLoader* pFileLoader = CFileLoader::GetInstance();
+    if (nullptr == pFileLoader)
+    {
+        return E_FAIL;
+    }
+    Safe_AddRef(pFileLoader);
+    unordered_map<const _tchar*, ORIGINAL_DATA>* pOriginalData = pFileLoader->Get_OriginalDatas();
+    m_OriginalDataMap = *pOriginalData;
+    Safe_Release(pFileLoader);
+
 #pragma region 폴더명
+    m_FolderNameVec.emplace_back("Player");
     m_FolderNameVec.emplace_back("ForestTile");
     m_FolderNameVec.emplace_back("ForestEnvironment");
     m_FolderNameVec.emplace_back("Background");
     m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
+#pragma endregion
+
+#pragma region 클래스명
+    m_ClassNameVec.emplace_back("BackGround");
+    m_ClassNameVec.emplace_back("Environment");
+    m_ClassNameVec.emplace_back("Tile");
+    m_ClassNameVec.emplace_back("BackGround");
 #pragma endregion
 
 #pragma region 렌더그룹
@@ -94,13 +111,12 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     }
 
     m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER_DEFAULT)->front());
-    m_pPreviewObject->Set_IsScroll(false);
-
     if (nullptr == m_pPreviewObject)
     {
         MSG_BOX("CMyImGui - Initialize - NULL");
         Safe_Release(pGameInstance);
     }
+    m_pPreviewObject->Set_IsScroll(false);
 
     Safe_Release(pGameInstance);
 
@@ -162,89 +178,86 @@ HRESULT CMyImGui::Save_Object()
 {
     // 저장은 전체 한번에 저장하면, Dat파일을 나눌 수 없어서 안됨.
     // 로드는 파일별로 자동으로 들어갈 수 있게 모델 인덱스까지 저장한다.
-    if (ImGui::Button("Save"))
+    if (m_CreateObjectVec.empty())
     {
-        if (m_CreateObjectVec.empty())
-        {
-            MSG_BOX("Save_Object is Empty");
-            return S_OK;
-        }
+        MSG_BOX("Save_Object is Empty");
+        return S_OK;
+    }
 
-        // Win Api Save File Dialog
-        OPENFILENAME OFN;
-        TCHAR filePathName[128] = L"";
-        TCHAR lpstrFile[256] = L".data";
-        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+    // Win Api Save File Dialog
+    OPENFILENAME OFN;
+    TCHAR filePathName[128] = L"";
+    TCHAR lpstrFile[256] = L".data";
+    static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
 
-        ZeroMemory(&OFN, sizeof(OPENFILENAME));
-        OFN.lStructSize = sizeof(OPENFILENAME);
-        OFN.hwndOwner = g_hWnd;
-        OFN.lpstrFilter = filter;
-        OFN.lpstrFile = lpstrFile;
-        OFN.nMaxFile = 256;
-        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+    ZeroMemory(&OFN, sizeof(OPENFILENAME));
+    OFN.lStructSize = sizeof(OPENFILENAME);
+    OFN.hwndOwner = g_hWnd;
+    OFN.lpstrFilter = filter;
+    OFN.lpstrFile = lpstrFile;
+    OFN.nMaxFile = 256;
+    OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
 
-        if (GetSaveFileName(&OFN) != 0)
-        {
-            const TCHAR* pGetPath = OFN.lpstrFile;
+    if (GetSaveFileName(&OFN) != 0)
+    {
+        const TCHAR* pGetPath = OFN.lpstrFile;
 
-            HANDLE hFile = CreateFile(pGetPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+        HANDLE hFile = CreateFile(pGetPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
 
-            if (INVALID_HANDLE_VALUE == hFile)
-                return E_FAIL;
+        if (INVALID_HANDLE_VALUE == hFile)
+            return E_FAIL;
 
-            DWORD dwByte = 0;
+        DWORD dwByte = 0;
 
 #pragma region SAVE
-            _uint iVecSize = (_uint)m_CreateObjectVec.size();
-            WriteFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+        _uint iVecSize = (_uint)m_CreateObjectVec.size();
+        WriteFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
 
-            _uint iCount = { 0 };
-            _uint iLength = { 0 };
-            for (CSpriteObject* pObject : m_CreateObjectVec) // 현재 선택된 그룹 저장
+        _uint iCount = { 0 };
+        _uint iLength = { 0 };
+        for (CSpriteObject* pObject : m_CreateObjectVec) // 현재 선택된 그룹 저장
+        {
+            //const char* pLayerC = pObject->Get_Layer();
+            //_tchar* pLayerWC = { nullptr };
+            //CToWC(pLayerC, pLayerWC);
+
+            //iLength = sizeof(_tchar) * lstrlen(pLayerWC) + 1;
+            //WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+            //WriteFile(hFile, pLayerWC, iLength, &dwByte, nullptr); // 길이 저장
+            //Safe_Delete_Array(pLayerWC);
+
+            // 구조체 정보 저장
+            _vector vPos = pObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+            SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
+            tSpriteInfo.fPosition = _float2(XMVectorGetX(vPos), XMVectorGetY(vPos));
+            _float3 vSize = pObject->Get_TransformCom()->Get_Scaled();
+            tSpriteInfo.fSize = _float2(vSize.x, vSize.y);
+
+            WriteFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
+
+/*               if(0 == iCount)
+                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Background");
+            else if(44 >= iCount)
+                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Tile");
+            else
             {
-                //const char* pLayerC = pObject->Get_Layer();
-                //_tchar* pLayerWC = { nullptr };
-                //CToWC(pLayerC, pLayerWC);
-
-                //iLength = sizeof(_tchar) * lstrlen(pLayerWC) + 1;
-                //WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-                //WriteFile(hFile, pLayerWC, iLength, &dwByte, nullptr); // 길이 저장
-                //Safe_Delete_Array(pLayerWC);
-
-                // 구조체 정보 저장
-                _vector vPos = pObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-                SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
-                tSpriteInfo.fPosition = _float2(XMVectorGetX(vPos), XMVectorGetY(vPos));
-                _float3 vSize = pObject->Get_TransformCom()->Get_Scaled();
-                tSpriteInfo.fSize = _float2(vSize.x, vSize.y);
-
-                WriteFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
-
- /*               if(0 == iCount)
-                    tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Background");
-                else if(44 >= iCount)
-                    tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Tile");
-                else
-                {
-                    tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Environment");
-                    tSpriteInfo.pTextureComTag = ConvertCWithWC("Environment", TEXT("Prototype_Component_Sprite_"));
-                }
-                ++iCount;*/
-
-                // 문자열 저장
-                // WriteFile은 byte 크기를 넣어야하므로 _tchar(2byte)를 문자열 개수만큼 곱해줘야 함
-                iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pPrototypeTag) + 1;
-                WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-                WriteFile(hFile, tSpriteInfo.pPrototypeTag, iLength, &dwByte, nullptr); // 길이 저장
-
-                iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pTextureComTag) + 1;
-                WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-                WriteFile(hFile, tSpriteInfo.pTextureComTag, iLength, &dwByte, nullptr); // 길이 저장
-
+                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Environment");
+                tSpriteInfo.pTextureComTag = ConvertCWithWC("Environment", TEXT("Prototype_Component_Sprite_"));
             }
-            CloseHandle(hFile);
+            ++iCount;*/
+
+            // 문자열 저장
+            // WriteFile은 byte 크기를 넣어야하므로 _tchar(2byte)를 문자열 개수만큼 곱해줘야 함
+            iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pPrototypeTag) + 1;
+            WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+            WriteFile(hFile, tSpriteInfo.pPrototypeTag, iLength, &dwByte, nullptr); // 길이 저장
+
+            iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pTextureComTag) + 1;
+            WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+            WriteFile(hFile, tSpriteInfo.pTextureComTag, iLength, &dwByte, nullptr); // 길이 저장
+
         }
+        CloseHandle(hFile);
     }
 
     return S_OK;
@@ -255,76 +268,73 @@ HRESULT CMyImGui::Load_Object()
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-    /* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
-    if (ImGui::Button("Load"))
+/* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
+    OPENFILENAME OFN;
+    TCHAR filePathName[128] = L"";
+    TCHAR lpstrFile[256] = L".data";
+    static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+
+    ZeroMemory(&OFN, sizeof(OPENFILENAME));
+    OFN.lStructSize = sizeof(OPENFILENAME);
+    OFN.hwndOwner = g_hWnd;
+    OFN.lpstrFilter = filter;
+    OFN.lpstrFile = lpstrFile;
+    OFN.nMaxFile = 256;
+    OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+
+    if (GetOpenFileName(&OFN) != 0)
     {
-        OPENFILENAME OFN;
-        TCHAR filePathName[128] = L"";
-        TCHAR lpstrFile[256] = L".data";
-        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+        const TCHAR* pGetPath = OFN.lpstrFile;
 
-        ZeroMemory(&OFN, sizeof(OPENFILENAME));
-        OFN.lStructSize = sizeof(OPENFILENAME);
-        OFN.hwndOwner = g_hWnd;
-        OFN.lpstrFilter = filter;
-        OFN.lpstrFile = lpstrFile;
-        OFN.nMaxFile = 256;
-        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+        HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
-        if (GetOpenFileName(&OFN) != 0)
-        {
-            const TCHAR* pGetPath = OFN.lpstrFile;
+        if (INVALID_HANDLE_VALUE == hFile)
+            return E_FAIL;
 
-            HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-            if (INVALID_HANDLE_VALUE == hFile)
-                return E_FAIL;
-
-            DWORD   dwByte = 0;
-            _bool      bRes = { false };
+        DWORD   dwByte = 0;
+        _bool      bRes = { false };
 
 #pragma region LOAD
-            // Load : 현재 모델이 가지고 있는 이펙트 사이즈
-            _uint iVecSize = { 0 };
-            bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
+        // Load : 현재 모델이 가지고 있는 이펙트 사이즈
+        _uint iVecSize = { 0 };
+        bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
 
-            _uint	iTagIndex = { 0 };
-            _uint   iLength = { 0 };
-            for (_uint i = 0; i < iVecSize; ++i)
+        _uint	iTagIndex = { 0 };
+        _uint   iLength = { 0 };
+        for (_uint i = 0; i < iVecSize; ++i)
+        {
+            //bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            //_tchar* pLayer = new _tchar[iLength]{};
+            //bRes = ReadFile(hFile, pLayer, iLength, &dwByte, nullptr);
+
+            SPRITE_INFO tSpriteInfo;
+            bRes = ReadFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            _tchar* pPrototypeTag = new _tchar[iLength]{};
+            if (-1 != iLength)
             {
-                //bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-                //_tchar* pLayer = new _tchar[iLength]{};
-                //bRes = ReadFile(hFile, pLayer, iLength, &dwByte, nullptr);
-
-                SPRITE_INFO tSpriteInfo;
-                bRes = ReadFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
-
-                bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-                _tchar* pPrototypeTag = new _tchar[iLength]{};
-                if (-1 != iLength)
-                {
-                    bRes = ReadFile(hFile, pPrototypeTag, iLength, &dwByte, nullptr);
-                    tSpriteInfo.pPrototypeTag = pPrototypeTag;
-                }
-
-                bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-                _tchar* pTextureTag = new _tchar[iLength]{};
-                if (-1 != iLength)
-                {
-                    bRes = ReadFile(hFile, pTextureTag, iLength, &dwByte, nullptr);
-                    tSpriteInfo.pTextureComTag = pTextureTag;
-                }
-
-                if (FAILED(Install_GameObject(tSpriteInfo)))
-                {
-                    MSG_BOX("CMyImGui - Load_Object() - FAILED");
-                    CloseHandle(hFile);
-                    Safe_Release(pGameInstance);
-                    return E_FAIL;
-                }
+                bRes = ReadFile(hFile, pPrototypeTag, iLength, &dwByte, nullptr);
+                tSpriteInfo.pPrototypeTag = pPrototypeTag;
             }
-            CloseHandle(hFile);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            _tchar* pTextureTag = new _tchar[iLength]{};
+            if (-1 != iLength)
+            {
+                bRes = ReadFile(hFile, pTextureTag, iLength, &dwByte, nullptr);
+                tSpriteInfo.pTextureComTag = pTextureTag;
+            }
+
+            if (FAILED(Install_GameObject(tSpriteInfo)))
+            {
+                MSG_BOX("CMyImGui - Load_Object() - FAILED");
+                CloseHandle(hFile);
+                Safe_Release(pGameInstance);
+                return E_FAIL;
+            }
         }
+        CloseHandle(hFile);
     }
 
     Safe_Release(pGameInstance);
@@ -332,85 +342,222 @@ HRESULT CMyImGui::Load_Object()
     return S_OK;
 }
 
-HRESULT CMyImGui::Load_PreviousData()
+HRESULT CMyImGui::Save_Object_Excel()
 {
-    CGameInstance* pGameInstance = CGameInstance::GetInstance();
-    Safe_AddRef(pGameInstance);
-
-    /* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
-    if (ImGui::Button("Load"))
+    if (m_CreateObjectVec.empty())
     {
-        OPENFILENAME OFN;
-        TCHAR filePathName[128] = L"";
-        TCHAR lpstrFile[256] = L".data";
-        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
-
-        ZeroMemory(&OFN, sizeof(OPENFILENAME));
-        OFN.lStructSize = sizeof(OPENFILENAME);
-        OFN.hwndOwner = g_hWnd;
-        OFN.lpstrFilter = filter;
-        OFN.lpstrFile = lpstrFile;
-        OFN.nMaxFile = 256;
-        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
-
-        if (GetOpenFileName(&OFN) != 0)
-        {
-            const TCHAR* pGetPath = OFN.lpstrFile;
-
-            HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-            if (INVALID_HANDLE_VALUE == hFile)
-                return E_FAIL;
-
-            DWORD   dwByte = 0;
-            _bool      bRes = { false };
-
-#pragma region LOAD
-            // Load : 현재 모델이 가지고 있는 이펙트 사이즈
-            _uint iVecSize = { 0 };
-            bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
-
-            _uint	iTagIndex = { 0 };
-            for (_uint i = 0; i < iVecSize; ++i)
-            {
-                PREVIOUS_SPRITE_INFO tPreviousSpriteInfo;
-                bRes = ReadFile(hFile, &tPreviousSpriteInfo, sizeof(PREVIOUS_SPRITE_INFO), &dwByte, nullptr);
-
-                _uint iLength = { 0 };
-                bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-                _tchar* pTag = new _tchar[iLength]{};
-                if (-1 != iLength)
-                {
-                    bRes = ReadFile(hFile, pTag, iLength, &dwByte, nullptr);
-                    tPreviousSpriteInfo.pTextureComTag = pTag;
-                }
-
-                tSpriteInfo tSpriteInfo;
-                tSpriteInfo.fPosition = tPreviousSpriteInfo.fPosition;
-                tSpriteInfo.fSize = tPreviousSpriteInfo.fSize;
-                tSpriteInfo.fSizeRatio = tPreviousSpriteInfo.fSizeRatio;
-                tSpriteInfo.iOrder = tPreviousSpriteInfo.iOrder;
-                tSpriteInfo.iTextureIndex = tPreviousSpriteInfo.iTextureIndex;
-                tSpriteInfo.pTextureComTag = tPreviousSpriteInfo.pTextureComTag;
-                tSpriteInfo.pPrototypeTag = nullptr;
-                tSpriteInfo.vColor = tPreviousSpriteInfo.vColor;
-
-                if (FAILED(Install_GameObject(tSpriteInfo)))
-                {
-                    MSG_BOX("CMyImGui - Load_Object() - FAILED");
-                    CloseHandle(hFile);
-                    Safe_Release(pGameInstance);
-                    return E_FAIL;
-                }
-            }
-            CloseHandle(hFile);
-        }
+        MSG_BOX("CMyImGui - Save_Object_Excel - EMPTY");
+        return S_OK;
     }
 
-    Safe_Release(pGameInstance);
+    CFileLoader* pFileLoader = CFileLoader::GetInstance();
+    if (nullptr == pFileLoader)
+    {
+        MSG_BOX("CMyImGui - Save_Object_Excel - NULL");
+        return E_FAIL;
+    }
+    Safe_AddRef(pFileLoader);
 
+    const _tchar* pFilePath = TEXT("../Bin/DataFiles/Level_Logo.xlsx");
+    static int iInstanceID = { 1 };
+    bool bIsReset = { true };
+    for (CSpriteObject* pObject : m_CreateObjectVec)
+    {
+        if (nullptr == pObject)
+            continue;
+
+        SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
+
+        OBJECT_METADATA tMetaData;
+        tMetaData.iInstanceID = iInstanceID;
+        tMetaData.pObjectID = { nullptr };
+        tMetaData.pClassName = pObject->Get_ClassName();
+        tMetaData.pLayer = LAYER_DEFAULT;
+
+        if (FAILED(pFileLoader->Write_ObjectMetaData_Excel(pFilePath, tMetaData, bIsReset)))
+        {
+            MSG_BOX("CMyImGui - Save_Object_Excel() - FAILED");
+        }
+
+        OBJECT_TRANSFORM tTransform;
+        tTransform.iInstanceID = iInstanceID;
+        tTransform.pObjectID = { nullptr };
+        tTransform.fSize.x = tSpriteInfo.fSize.x;
+        tTransform.fSize.y = tSpriteInfo.fSize.y;
+        tTransform.fSizeRatio.x = tSpriteInfo.fSizeRatio.x;
+        tTransform.fSizeRatio.y = tSpriteInfo.fSizeRatio.y;
+
+        CTransform* pObjectTransCom = pObject->Get_TransformCom();
+        if (nullptr == pObjectTransCom)
+        {
+            MSG_BOX("CMyImGui - Save_Object_Excel() - FAILED");
+            continue;
+        }
+        _vector vPosition = pObjectTransCom->Get_State(CTransform::STATE_POSITION);
+        tTransform.fPosition = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+        tTransform.fRotation = _float2(0.f, 0.f);
+
+
+        if (FAILED(pFileLoader->Write_ObjectTransform_Excel(pFilePath, tTransform, bIsReset)))
+        {
+            MSG_BOX("CMyImGui - Save_Object_Excel() - FAILED");
+            continue;
+        }
+
+        unordered_map<const _tchar*, CComponent*>* pComponents = pObject->Get_Components();
+        if (nullptr == pComponents)
+        {
+            MSG_BOX("CMyImGui - Save_Object_Excel - NULL");
+            continue;
+        }
+
+        //@refactoring - 컴포넌트 하나당 매번 Sheet를 여는 건 매우 비효율적... 한번에 담아서 보내는 게 나을듯!
+        for (auto iter : *pComponents)
+        {
+            CComponent* pComponent = iter.second;
+            if (nullptr == pComponent)
+            {
+                MSG_BOX("CMyImGui - Save_Object_Excel - NULL");
+                continue;
+            }
+
+            COMPONENT_INFO tComponentInfo;
+            ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+            if (FAILED(pComponent->Get_ComponentInfo(tComponentInfo)))
+            {
+                continue;
+            }
+            tComponentInfo.iInstanceID = iInstanceID;
+            tComponentInfo.pComponentTag = iter.first;
+            tComponentInfo.iOrder = pObject->Get_Order();
+            tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
+
+            if (FAILED(pFileLoader->Write_ComponentInfo_Excel(pFilePath, tComponentInfo, bIsReset)))
+            {
+                MSG_BOX("Save FAILED");
+            }
+        }
+
+        bIsReset = false;
+        ++iInstanceID;
+    }
+
+    MSG_BOX("SAVE SUCCESS");
+    Safe_Release(pFileLoader);
     return S_OK;
 }
+
+HRESULT CMyImGui::Load_Object_Excel()
+{
+    CFileLoader* pFileLoader = CFileLoader::GetInstance();
+    if (nullptr == pFileLoader)
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - FileLoader is NULL");
+        return E_FAIL;
+    }
+    Safe_AddRef(pFileLoader);
+
+    if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
+        return E_FAIL;
+    }
+
+    if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
+        return E_FAIL;
+    }
+
+    if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_TOOL, m_CreateObjectVec)))
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
+        return E_FAIL;
+    }
+
+    Safe_Release(pFileLoader);
+    return S_OK;
+}
+
+//HRESULT CMyImGui::Load_PreviousData()
+//{
+//    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+//    Safe_AddRef(pGameInstance);
+//
+//    /* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
+//    if (ImGui::Button("Load"))
+//    {
+//        OPENFILENAME OFN;
+//        TCHAR filePathName[128] = L"";
+//        TCHAR lpstrFile[256] = L".data";
+//        static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+//
+//        ZeroMemory(&OFN, sizeof(OPENFILENAME));
+//        OFN.lStructSize = sizeof(OPENFILENAME);
+//        OFN.hwndOwner = g_hWnd;
+//        OFN.lpstrFilter = filter;
+//        OFN.lpstrFile = lpstrFile;
+//        OFN.nMaxFile = 256;
+//        OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+//
+//        if (GetOpenFileName(&OFN) != 0)
+//        {
+//            const TCHAR* pGetPath = OFN.lpstrFile;
+//
+//            HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+//
+//            if (INVALID_HANDLE_VALUE == hFile)
+//                return E_FAIL;
+//
+//            DWORD   dwByte = 0;
+//            _bool      bRes = { false };
+//
+//#pragma region LOAD
+//            // Load : 현재 모델이 가지고 있는 이펙트 사이즈
+//            _uint iVecSize = { 0 };
+//            bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
+//
+//            _uint	iTagIndex = { 0 };
+//            for (_uint i = 0; i < iVecSize; ++i)
+//            {
+//                PREVIOUS_SPRITE_INFO tPreviousSpriteInfo;
+//                bRes = ReadFile(hFile, &tPreviousSpriteInfo, sizeof(PREVIOUS_SPRITE_INFO), &dwByte, nullptr);
+//
+//                _uint iLength = { 0 };
+//                bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+//                _tchar* pTag = new _tchar[iLength]{};
+//                if (-1 != iLength)
+//                {
+//                    bRes = ReadFile(hFile, pTag, iLength, &dwByte, nullptr);
+//                    tPreviousSpriteInfo.pTextureComTag = pTag;
+//                }
+//
+//                tSpriteInfo tSpriteInfo;
+//                tSpriteInfo.fPosition = tPreviousSpriteInfo.fPosition;
+//                tSpriteInfo.fSize = tPreviousSpriteInfo.fSize;
+//                tSpriteInfo.fSizeRatio = tPreviousSpriteInfo.fSizeRatio;
+//                tSpriteInfo.iOrder = tPreviousSpriteInfo.iOrder;
+//                tSpriteInfo.iTextureIndex = tPreviousSpriteInfo.iTextureIndex;
+//                tSpriteInfo.pTextureComTag = tPreviousSpriteInfo.pTextureComTag;
+//                tSpriteInfo.pPrototypeTag = nullptr;
+//                tSpriteInfo.vColor = tPreviousSpriteInfo.vColor;
+//
+//                if (FAILED(Install_GameObject(tSpriteInfo)))
+//                {
+//                    MSG_BOX("CMyImGui - Load_Object() - FAILED");
+//                    CloseHandle(hFile);
+//                    Safe_Release(pGameInstance);
+//                    return E_FAIL;
+//                }
+//            }
+//            CloseHandle(hFile);
+//        }
+//    }
+//
+//    Safe_Release(pGameInstance);
+//
+//    return S_OK;
+//}
 
 inline HRESULT CMyImGui::ShowDemoWindow()
 {
@@ -448,16 +595,35 @@ HRESULT CMyImGui::ShowInstalledWindow()
         ImGui::EndListBox();
     }
 
-    if (FAILED(Save_Object()))
+    if (ImGui::Button("Save"))
     {
-        MSG_BOX("CMyImGui - ShowInspectorWindow - FAILED");
+ /*       if (FAILED(Save_Object()))
+        {
+            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+        }*/
+
+        if (FAILED(Save_Object_Excel()))
+        {
+            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+        }
     }
+
     ImGui::SameLine();
 
-    if (FAILED(Load_Object()))
+    if (ImGui::Button("Load"))
     {
-        MSG_BOX("CMyImGui - Load_Object - FAILED");
+        //if (FAILED(Load_Object()))
+        //{
+        //    MSG_BOX("CMyImGui - Load_Object - FAILED");
+        //}
+
+        if (FAILED(Load_Object_Excel()))
+        {
+            MSG_BOX("CMyImGui - ShowInspectorWindow - FAILED");
+        }
     }
+
+
 
  /*   if(FAILED(Load_PreviousData()))
     {
@@ -544,6 +710,8 @@ HRESULT CMyImGui::ShowInspectorWindow()
         return S_OK;
     }
 
+    // 클래스 이름 지정
+    // 레이어 지정
     //char* pTag = new char[strlen(pObject->Get_SpriteTag() + 1)] {};
     static char* pTag = { nullptr };
     //if (bIsSelectionChanged)
@@ -553,10 +721,17 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
     //pObject->Set_SpriteTag(pTag);
 
-    if (FAILED(Inspector_Transform()))
-        return E_FAIL;
+    const _bool bIsSelectionChanged = CheckSelectionChanged();
 
-    if (FAILED(Inspector_SpriteRenderer()))
+    Default_Info(bIsSelectionChanged);
+
+    if (FAILED(Inspector_Transform(bIsSelectionChanged)))
+    {
+        MSG_BOX("CMyImGui - ShowInspectorWindow() - FAILED");
+        return E_FAIL;
+    }
+
+    if (FAILED(Inspector_SpriteRenderer(bIsSelectionChanged)))
         return E_FAIL;
 
     if (FAILED(Inspector_Components()))
@@ -566,53 +741,125 @@ HRESULT CMyImGui::ShowInspectorWindow()
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_Transform()
+HRESULT CMyImGui::Default_Info(const _bool bIsSelectionChanged)
+{
+    if (bIsSelectionChanged)
+    {
+        char* pClassName = { nullptr };
+        WCToC(m_pSelectedObject->Get_ClassName(), pClassName);
+        for (int iIndex = 0; iIndex < m_ClassNameVec.size(); iIndex++)
+        {
+            if (!strcmp(pClassName, m_ClassNameVec[iIndex]))
+            {
+                m_iClassIndex = iIndex;
+                ImGui::SetItemDefaultFocus();
+                break;
+            }
+        }
+        Safe_Delete_Array(pClassName);
+    }
+
+    static ImGuiComboFlags flags = 0;
+    if (ImGui::BeginCombo("GameObject List", m_ClassNameVec[m_iClassIndex], flags))
+    {
+        for (int iIndex = 0; iIndex < m_ClassNameVec.size(); iIndex++)
+        {
+            const bool is_selected = (m_iClassIndex == iIndex);
+            // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+            if (ImGui::Selectable(m_ClassNameVec[iIndex], is_selected))
+            {
+                m_iClassIndex = iIndex; // 선택한 항목의 인덱스를 저장  
+                _tchar* pDest = { nullptr };
+                CToWC(m_ClassNameVec[m_iClassIndex], pDest);
+                const _tchar* pClassName = pDest;
+                m_pSelectedObject->Set_ClassName(pClassName);
+                // 콜라이더명과 각 콜라이더는... 보관하고 있는 게 낫지 않을까?//
+                // 현재 그냥 동일한 컴포넌트 하나만 가져오는 듯함..! 맨 앞에 있는 컴포넌트 .!
+            }
+
+            if (is_selected)
+            {
+                ImGui::SetItemDefaultFocus();
+            }
+
+        }
+        ImGui::EndCombo();
+    }
+
+    return S_OK;
+}
+
+HRESULT CMyImGui::Inspector_Transform(const _bool bIsSelectionChanged)
 {
     if (ImGui::TreeNode("Transform"))
     {
-        static enum eTransform { POSITION, ROTATION, SCALE, TRANS_END };
+        static bool bUsedOnce = { false };
+
+        static enum eTransform { POSITION, ROTATION, SCALE, SCALE_RATIO, TRANS_END };
         static const _float fSpeed[eTransform::TRANS_END] = { 0.5f, 0.5f, 1.f };
-        static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f };
-        static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 10.f };
+        static const _float fMin[eTransform::TRANS_END] = { -10000.f, 0.f, 1.f, 1.f };
+        static const _float fMax[eTransform::TRANS_END] = { 10000.f, 360.f, 1000.f, 20.f };
 
-        CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
-        CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
+        static CTransform* pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
+        static _float fScale[3] = {10.f, 10.f, 1.f};
+        static _float fScaleRatio[3] = {1.f, 1.f, 1.f};
 
-        if (nullptr == pTexture)
+        if (bIsSelectionChanged || !bUsedOnce)
         {
-            ImGui::End();
-            return S_OK;
-        }
+            pSelectedObjectTransform = m_pSelectedObject->Get_TransformCom();
+
+            if (nullptr == pSelectedObjectTransform)
+            {
+                ImGui::End();
+                return S_OK;
+            }
+
+            CTexture* pTexture = dynamic_cast<CTexture*>(m_pSelectedObject->Get_Component(TAG_TEXTURE));
+            if (nullptr == pTexture)
+            {
+                ImGui::End();
+                return S_OK;
+            }
+
+            const int iTextureIndex = m_pSelectedObject->Get_TextureIndex();
+            _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
+
+            _float2 vScaleRatio = m_pSelectedObject->Get_ScaleRatio();
+            fScaleRatio[0] = vScaleRatio.x;
+            fScaleRatio[1] = vScaleRatio.y;
+        };
 
         _vector vPosition = pSelectedObjectTransform->Get_State(CTransform::STATE_POSITION);
-        const int iTextureIndex = m_pSelectedObject->Get_SpriteInfo().iTextureIndex;
-        _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
-        _float2 vScaleRatio = m_pSelectedObject->Get_ScaleRatio();
-
         _float fPosition[3] = { XMVectorGetX(vPosition), XMVectorGetY(vPosition), 0.f };
-        _float fScaleRatio[3] = { vScaleRatio.x, vScaleRatio.y, 1.f };
 
         ImGui::DragFloat3("Position", fPosition
             , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION]);
         //ImGui::DragFloat3("Rotation", vPosition
         //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
-        ImGui::DragFloat3("Scale", fScaleRatio
+        ImGui::DragFloat3("Scale", fScale
             , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE]);
+        ImGui::DragFloat3("ScaleRatio", fScaleRatio
+            , fSpeed[eTransform::SCALE_RATIO], fMin[eTransform::SCALE_RATIO], fMax[eTransform::SCALE_RATIO]);
 
-        pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
+        if(nullptr != pSelectedObjectTransform)
+            pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
         m_pSelectedObject->Set_ScaleRatio(_float2(fScaleRatio[0], fScaleRatio[1]));
+
+        bUsedOnce = { true };
         ImGui::TreePop();
     }
 
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_SpriteRenderer()
+HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
 {
-    const _bool bIsSelectionChanged = CheckSelectionChanged();
 
     if (ImGui::TreeNode("SpriteRenderer"))
     {
+        CComponent* pComponent = m_pSelectedObject->Get_Component(TAG_TEXTURE);
+        CTexture* pTexture = dynamic_cast<CTexture*>(pComponent);
+
         static int iOrder = { 0 };
         if (bIsSelectionChanged)
             iOrder = m_pSelectedObject->Get_Order();
@@ -716,21 +963,46 @@ HRESULT CMyImGui::Inspector_Components()
             MSG_BOX("Part Tag is NULL");
             return S_OK;
         }
-        CCollider::COLLIDER_DESC tColliderDesc;
-        tColliderDesc.pOwner = m_pSelectedObject;
-        _vector vPos = m_pSelectedObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-        tColliderDesc.vPosition = _float3(XMVectorGetX(vPos), XMVectorGetY(vPos), 1.f);
-        tColliderDesc.vScale = m_pSelectedObject->Get_TransformCom()->Get_Scaled();
-        tColliderDesc.vRotation = _float3(1.f, 1.f, 1.f);
+
+        CTransform* pTransformCom = m_pSelectedObject->Get_TransformCom();
+        if (nullptr == pTransformCom)
+        {
+            MSG_BOX("CMyImGui - Inspector_Components() - NULL");
+            return S_OK;
+        }
+
+        COMPONENT_INFO tComponentInfo;
+        ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+        _vector vPos = pTransformCom->Get_State(CTransform::STATE_POSITION);
+        tComponentInfo.fPosition = _float2(XMVectorGetX(vPos), XMVectorGetY(vPos));
+        _float3 vSize = pTransformCom->Get_Scaled();
+        tComponentInfo.fSize = _float2(vSize.x, vSize.y);
+        tComponentInfo.fOffset = _float2(0.f, 0.f);
 
         _tchar* pPrototypeTag = ConvertCWithWC(m_ComponentsVec[iComponentIndex], TEXT("Prototype_Component_"));
         CComponent* pComponent = { nullptr };
         /** @qurious. CGameObject 상속을 받아 함수 오버로딩이 될텐데 .. 왜 CGameObject*의 Add_Components를 인식 못하지? */
-        if (FAILED(m_pSelectedObject->CGameObject::Add_Components(LEVEL_TOOL, pPrototypeTag, L"TAG_HEAD", &pComponent, &tColliderDesc)))
+        if (FAILED(m_pSelectedObject->CGameObject::Add_Components(LEVEL_STATIC, pPrototypeTag, TAG_COLL_AABB, &pComponent, &tComponentInfo)))
         {
             MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
         }
-        Safe_Delete_Array(pPrototypeTag); // 가비지 컬렉터에 넣고 한번에 없애줘야 함. 여기서 없애면 컨테이너에도 사라짐
+        
+        CGameInstance* pGameInstance = CGameInstance::GetInstance();
+        if (nullptr != pGameInstance)
+        {
+            pGameInstance->Add_Garbage(pPrototypeTag);
+        }
+        Safe_Release(pGameInstance);
+        
+        if (nullptr == pComponent)
+        {
+            MSG_BOX("CMyImGui - Inspector_Components() - NULL");
+        }
+        else
+        {
+            pComponent->Set_Owner(m_pSelectedObject);
+            m_ComponentGarbageList.emplace_back(pComponent);
+        }
     }
 #pragma endregion
     unordered_map<const _tchar*, CComponent*>* m_Components = m_pSelectedObject->Get_Components();
@@ -816,25 +1088,16 @@ void CMyImGui::Key_Input(_double TimeDelta)
 
     if (pGameInstance->Get_MouseStay(CDInput_Manager::MOUSEKEYSTATE::DIMK_RB))
     {
-        //_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
-        POINT ptMouse{};
-        GetCursorPos(&ptMouse);
-        ScreenToClient(g_hWnd, &ptMouse);
-
-        _float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
-
-        _vector vMousePos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
-
-        // @qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
-        _float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
-        _float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
-
-        /* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
-        vMousePos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+        _vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
+        Get_MousePos(vMousePos);
 
         /* 직교 투영의 경우, 내부적으로 변화는 일어나지만 월드 좌표와 뷰포트 좌표의 차이가 없기에 뷰포트 좌표를 월드로 셋팅 */
         if (nullptr == m_pSelectedObject)
+        {
+            Safe_Release(pGameInstance);
             return;
+        }
+        
         m_pSelectedObject->Get_TransformCom()->Set_State(CTransform::STATE_POSITION, vMousePos);
     }
     // 설치
@@ -843,7 +1106,6 @@ void CMyImGui::Key_Input(_double TimeDelta)
         SPRITE_INFO tSpriteInfo;
         tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
         // 1. 클래스 이름을 누르면 .second에 있는 Texture, TextureIndex 정보로 생성됨.
-        tSpriteInfo.pPrototypeTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_GameObject_"));
         tSpriteInfo.pTextureComTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_Component_Sprite_"));
         Install_GameObject(tSpriteInfo);
     }
@@ -853,7 +1115,10 @@ void CMyImGui::Key_Input(_double TimeDelta)
     {
         CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(m_pSelectedObject);
         if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
             return;
+        }
 
         CTransform* pTransform = pObject->Get_TransformCom();
         _vector vPosition = pTransform->Get_State(CTransform::STATE_POSITION);
@@ -946,12 +1211,37 @@ void CMyImGui::Key_Input(_double TimeDelta)
     return;
 }
 
+void CMyImGui::Get_MousePos(_vector& vMousePos) const
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    //_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
+    POINT ptMouse{};
+    GetCursorPos(&ptMouse);
+    ScreenToClient(g_hWnd, &ptMouse);
+
+    _float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
+
+    vMousePos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
+
+    // @qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
+    _float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
+    _float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
+
+    /* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
+    vMousePos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+
+    Safe_Release(pGameInstance);
+    return;
+}
+
 HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-    static int iIndex = 0;
+    static int iIndex = m_CreateObjectVec.size();
 
     if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo))))
     {
@@ -978,8 +1268,12 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     strcpy(pTag, m_FolderNameVec[m_iFolderIndex]);
     strcat(pTag, to_string(++iIndex).c_str());
     m_pSelectedObject->Set_SpriteTag(pTag);
-    m_CreateObjectVec.emplace_back(m_pSelectedObject);
 
+    _tchar* pDest = new _tchar[strlen(m_ClassNameVec[0]) + 1];
+    lstrcpy(pDest, TEXT("BackGround"));
+    const _tchar* pClassName = pDest;
+    m_pSelectedObject->Set_ClassName(pClassName);
+    m_CreateObjectVec.emplace_back(m_pSelectedObject);
     //if (nullptr != m_pSelectedObject)
     //{
     //    m_InstalledList.emplace_back(m_pSelectedObject);
@@ -992,6 +1286,16 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 void CMyImGui::Add_SpriteListBox(const char* pFolderName)
 {
     _tchar* pPrototypeTag = ConvertCWithWC(pFolderName, TEXT("Prototype_Component_Sprite_"));
+    if (nullptr == pPrototypeTag)
+    {
+        MSG_BOX("CMyImGui - Add_SpriteListBox() - NULL");
+        return;
+    }
+    if (nullptr == m_pPreviewObject)
+    {
+        MSG_BOX("CMyImGui - Add_SpriteListBox() - NULL");
+        return;
+    }
     m_pPreviewObject->Change_TextureComponent(pPrototypeTag);
     vector<const _tchar*> m_TexturePathVec = *m_pPreviewObject->Get_TexturePathVec();
 
@@ -1036,7 +1340,7 @@ const _bool& CMyImGui::CheckSelectionChanged() const
 void CMyImGui::Free()
 {
     /** @note - const vector<자료형>하면 값을 바꿀 수 없기에 clear도 불가능 */
-    // 폴더명은 상수라 자동 해제, 파일명은 WCToC로 동적할당해서 담은 문자열이므로 직접 해제
+     //폴더명은 상수라 자동 해제, 파일명은 WCToC로 동적할당해서 담은 문자열이므로 직접 해제
     unordered_map<const char*, vector<const char*>>::iterator iter = m_SpritePathMap.begin();
     for (iter; iter != m_SpritePathMap.end(); ++iter)
     {
@@ -1045,6 +1349,12 @@ void CMyImGui::Free()
             Safe_Delete_Array(pFilePath);
         }
         (iter->second).clear();
+    }
+
+    // Add_Component 시 내부에서 Safe_AddRef 하기 때문에 제거해줄 것
+    for (CComponent* pComponent: m_ComponentGarbageList)
+    {
+        Safe_Release(pComponent);
     }
 
     /** @note - string의 c_str() 주의사항 // c_str()은 string으로부터 const 문자열을 얻기 위해 사용
@@ -1058,6 +1368,8 @@ void CMyImGui::Free()
     m_LayerVec.clear();
 
     m_SpritePathMap.clear();
+
+    CFileLoader::GetInstance()->DestroyInstance();
 
     ImGui_ImplDX11_Shutdown();
     ImGui_ImplWin32_Shutdown();
