@@ -102,6 +102,7 @@ HRESULT CMainApp::Render()
 		return E_FAIL;
 
 #ifdef _DEBUG
+	//@ note - 프레임 60(1초) 제한 코드
 	++m_dwNumDraw;
 
 	if (m_TimeAcc >= 1.0)

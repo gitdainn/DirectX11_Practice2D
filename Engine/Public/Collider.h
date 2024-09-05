@@ -30,7 +30,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_fmatrix TransformMatrix = XMMatrixIdentity());
+	virtual void Tick(_double TimeDelta);
 
 public:
 	virtual _bool IsCollision(CColliderAABB2D* pTarget) const = 0;

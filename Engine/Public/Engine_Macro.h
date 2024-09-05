@@ -14,13 +14,6 @@
 #define D3DCOLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 
-#pragma region COLLIDER_LAYER
-#define COLLIDER_DEFAULT	TEXT("Coll_Default");
-#define COLLIDER_UI			TEXT("Coll_UI");
-#define COLLIDER_PLAYER		TEXT("Coll_Player");
-#define COLLIDER_ENEMY		TEXT("Coll_Enemy");
-#pragma endregion
-
 #ifdef	ENGINE_EXPORTS
 #define ENGINE_DLL		_declspec(dllexport)
 #else

@@ -175,6 +175,7 @@
     <ClCompile Include="..\Private\ColliderAABB2D.cpp" />
     <ClCompile Include="..\Private\ColliderOBB2D.cpp" />
     <ClCompile Include="..\Private\ColliderSphere2D.cpp" />
+    <ClCompile Include="..\Private\CollisionManager.cpp" />
     <ClCompile Include="..\private\Component.cpp" />
     <ClCompile Include="..\private\Component_Manager.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
@@ -235,6 +236,7 @@
     <ClInclude Include="..\Public\ColliderAABB2D.h" />
     <ClInclude Include="..\Public\ColliderOBB2D.h" />
     <ClInclude Include="..\Public\ColliderSphere2D.h" />
+    <ClInclude Include="..\Public\CollisionManager.h" />
     <ClInclude Include="..\public\Component.h" />
     <ClInclude Include="..\public\Component_Manager.h" />
     <ClInclude Include="..\public\CustomFont.h" />

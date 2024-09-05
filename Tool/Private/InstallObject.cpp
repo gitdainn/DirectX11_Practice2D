@@ -68,7 +68,14 @@ HRESULT CInstallObject::Initialize(void* pArg)
 _uint CInstallObject::Tick(_double TimeDelta)
 {
     //Play_Animation(m_tSpriteInfo.iTextureIndex, TimeDelta);
-    m_pTextureCom->Get_TexturePathVec();
+    //m_pTextureCom->Get_TexturePathVec();
+
+    if (nullptr != m_pColliderCom)
+    {
+        CGameInstance* pGameInstance = CGameInstance::GetInstance();
+        pGameInstance->Attach_Collider(COLLIDER_LAYER::DEAULT, m_pColliderCom);
+    }
+
     return __super::Tick(TimeDelta);
 }
 
@@ -79,7 +86,8 @@ _uint CInstallObject::LateTick(_double TimeDelta)
 
 HRESULT CInstallObject::Render()
 {
-    return __super::Render();
+    //return __super::Render();
+    return S_OK;
 }
 
 

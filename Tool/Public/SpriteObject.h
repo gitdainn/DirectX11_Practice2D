@@ -155,6 +155,7 @@ public:
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
+	HRESULT Mapping_Component(const _tchar* pComponentTag);
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);

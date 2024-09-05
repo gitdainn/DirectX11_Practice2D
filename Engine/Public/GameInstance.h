@@ -90,6 +90,9 @@ public: /* For.GarbageCollector */
 	void	Add_CurLevelGarbage(_tchar* pTChar);
 	void	Clear_CurLevelGarbage();
 
+public: /* For. Collision_Manager */
+	HRESULT	Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollider);
+
 public:
 	static void Release_Engine();
 
@@ -106,6 +109,8 @@ private:
 	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
 	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
 	class CGarbageCollector*			m_pGarbageCollector = { nullptr };
+	class CCollisionManager*			m_pCollisionManager = { nullptr };
+
 	//class CFile_Handler*				m_pFile_Handler = { nullptr };
 
 public:

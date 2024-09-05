@@ -986,6 +986,7 @@ HRESULT CMyImGui::Inspector_Components()
         {
             MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
         }
+        m_pSelectedObject->Mapping_Component(TAG_COLL_AABB);
         
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
         if (nullptr != pGameInstance)

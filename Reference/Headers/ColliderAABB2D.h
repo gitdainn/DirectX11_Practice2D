@@ -16,7 +16,7 @@ private:
 public:
 	HRESULT Initialize_Prototype();
 	HRESULT Initialize(void* pArg) override;
-	void Tick(_fmatrix TransformMatrix = XMMatrixIdentity()) override;
+	void Tick(_double TimeDelta) override;
 
 public:
 	virtual _bool IsCollision(CColliderAABB2D* pTarget) const override;

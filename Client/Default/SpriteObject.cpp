@@ -110,7 +110,7 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 		return OBJ_DEAD;
 
 	if (nullptr != m_pColliderCom)
-		m_pColliderCom->Tick();
+		m_pColliderCom->Tick(TimeDelta);
 
 	return _uint();
 }

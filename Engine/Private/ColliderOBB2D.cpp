@@ -45,9 +45,9 @@ HRESULT CColliderOBB2D::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CColliderOBB2D::Tick(_fmatrix TransformMatrix)
+void CColliderOBB2D::Tick(_double TimeDelta)
 {
-	__super::Tick(TransformMatrix);
+	__super::Tick(TimeDelta);
 
 	// m_pOBB_Original->Transform(*m_pOBB, TransformMatrix);
 

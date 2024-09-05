@@ -41,9 +41,9 @@ HRESULT CColliderSphere2D::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CColliderSphere2D::Tick(_fmatrix TransformMatrix)
+void CColliderSphere2D::Tick(_double TimeDelta)
 {
-	__super::Tick(TransformMatrix);
+	__super::Tick(TimeDelta);
 
 	//m_pSphere_Original->Transform(*m_pSphere, TransformMatrix);
 

@@ -91,8 +91,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         TimeAcc += pGameInstance->Get_TimeDelta(TEXT("Timer_Default"));
 
-        //if (TimeAcc >= 1.0 / 60.0)
-        if (true)
+        // @JH - 프레임 공부하기
+        if (TimeAcc >= 1.0 / 60.0)
+        //if (true)
         {
             /* 내 게임의 메인클래스(CMainApp)의 반복적인 업데이트와 렌더를 호출한다. */
             if (nullptr == pMainApp)

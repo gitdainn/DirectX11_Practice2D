@@ -171,6 +171,45 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 	return S_OK;
 }
 
+HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
+{
+	if (nullptr == pComponentTag)
+	{
+		return E_FAIL;
+	}
+
+	CComponent* pComponent = { nullptr };
+
+	if(!lstrcmp(pComponentTag, TAG_TEXTURE))
+	{
+		/* For.Com_Texture */
+		pComponent = Find_Component(TAG_TEXTURE);
+		if (nullptr != pComponent)
+		{
+			m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
+			if (nullptr == m_pTextureCom)
+			{
+				MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
+				return E_FAIL;
+			}
+			m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
+
+		}
+	}
+
+	if (!lstrcmp(pComponentTag, TAG_COLL_AABB))
+	{
+		/* For.Com_Collider */
+		pComponent = Find_Component(TAG_COLL_AABB);
+		if (nullptr != pComponent)
+		{
+			m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
+		}
+	}
+
+	return S_OK;
+}
+
 HRESULT CSpriteObject::Add_Components(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -246,26 +285,8 @@ HRESULT CSpriteObject::Load_Components_Excel()
 		pComponent->Set_Owner(this);
 	}
 
-	/* For.Com_Texture */
-	pComponent = Find_Component(TAG_TEXTURE);
-	if (nullptr != pComponent)
-	{
-		m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
-		if (nullptr == m_pTextureCom)
-		{
-			MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
-			return E_FAIL;
-		}
-		m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
-		
-	}
-
-	/* For.Com_Collider */
-	pComponent = Find_Component(TAG_COLL_AABB);
-	if (nullptr != pComponent)
-	{
-		m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
-	}
+	Mapping_Component(TAG_TEXTURE);
+	Mapping_Component(TAG_COLL_AABB);
 
 	Safe_Release(pFileLoader);
 

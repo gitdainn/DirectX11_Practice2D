@@ -19,9 +19,6 @@
     <Filter Include="00.System\00.Timer\Manager">
       <UniqueIdentifier>{5156fc57-601e-4da5-a65c-900906d88707}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\00.GameInstance">
-      <UniqueIdentifier>{6cb939e1-82a6-4d63-92f3-ce362da2ffb1}</UniqueIdentifier>
-    </Filter>
     <Filter Include="00.System\01.Device">
       <UniqueIdentifier>{511971cf-8ca2-4854-8d4e-f840557de19c}</UniqueIdentifier>
     </Filter>
@@ -136,6 +133,18 @@
     <Filter Include="01.Utility\12.FileHandler\libxl">
       <UniqueIdentifier>{52a04e4a-3f69-428e-bfdb-3e28171a3be8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\13.Manager">
+      <UniqueIdentifier>{d774f820-4821-48ce-9599-c33c4e5e52da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13.Manager\GarbageCollector">
+      <UniqueIdentifier>{7b160380-3836-473b-acbd-4edf776f8bab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13.Manager\CollisionManager">
+      <UniqueIdentifier>{96d3faec-ba32-417f-81d1-0160b015c43c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.System\00.GameInstance">
+      <UniqueIdentifier>{6cb939e1-82a6-4d63-92f3-ce362da2ffb1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -148,7 +157,7 @@
       <Filter>00.System\00.Timer\Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\private\GameInstance.cpp">
-      <Filter>01.Utility\00.GameInstance</Filter>
+      <Filter>00.System\00.GameInstance</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\Graphic_Device.cpp">
       <Filter>00.System\01.Device\Graphic</Filter>
@@ -261,7 +270,12 @@
     <ClCompile Include="..\Private\ColliderOBB2D.cpp">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\GarbageCollector.cpp" />
+    <ClCompile Include="..\Private\CollisionManager.cpp">
+      <Filter>01.Utility\13.Manager\CollisionManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\GarbageCollector.cpp">
+      <Filter>01.Utility\13.Manager\GarbageCollector</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Public\Base.h">
@@ -289,7 +303,7 @@
       <Filter>00.System\00.Timer\Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\public\GameInstance.h">
-      <Filter>01.Utility\00.GameInstance</Filter>
+      <Filter>00.System\00.GameInstance</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\Graphic_Device.h">
       <Filter>00.System\01.Device\Graphic</Filter>
@@ -438,6 +452,11 @@
     <ClInclude Include="..\libxl-4.3.0.14\include_cpp\setup.h">
       <Filter>01.Utility\12.FileHandler\libxl</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\GarbageCollector.h" />
+    <ClInclude Include="..\Public\CollisionManager.h">
+      <Filter>01.Utility\13.Manager\CollisionManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\GarbageCollector.h">
+      <Filter>01.Utility\13.Manager\GarbageCollector</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

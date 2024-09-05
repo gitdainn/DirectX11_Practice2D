@@ -7,6 +7,7 @@ using namespace libxl;
 
 IMPLEMENT_SINGLETON(CFileLoader)
 
+
 CFileLoader::CFileLoader()
 	: m_iFirstRow(4), m_iFirstCol(1)
 {

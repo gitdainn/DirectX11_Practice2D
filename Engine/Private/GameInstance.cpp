@@ -12,6 +12,7 @@
 #include "GarbageCollector.h"
 #include "Scroll_Manager.h"
 #include "GarbageCollector.h"
+#include "CollisionManager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -28,6 +29,7 @@ CGameInstance::CGameInstance()
 	, m_pDInput_Manager(CDInput_Manager::GetInstance())
 	, m_pScroll_Manager(CScroll_Manager::GetInstance())
 	, m_pGarbageCollector(CGarbageCollector::GetInstance())
+	, m_pCollisionManager(CCollisionManager::GetInstance())
 	//, m_pFile_Handler(CFile_Handler::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
@@ -42,6 +44,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pDInput_Manager);
 	Safe_AddRef(m_pScroll_Manager);
 	Safe_AddRef(m_pGarbageCollector);
+	Safe_AddRef(m_pCollisionManager);
 	//Safe_AddRef(m_pFile_Handler);
 }
 
@@ -86,11 +89,15 @@ HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 	/* 오브젝트 매니져의 업데이트 */
 	m_pObject_Manager->Tick(TimeDelta);
 
+	m_pCollisionManager->Tick(TimeDelta);
+
 	m_pPipeLine->Update();
 
 	m_pFrustum->Tick();
 
 	m_pObject_Manager->LateTick(TimeDelta);	
+
+	m_pCollisionManager->LateTick(TimeDelta);
 
 	return S_OK;
 }
@@ -433,6 +440,21 @@ void CGameInstance::Add_Garbage(const _tchar* pTChar)
 //	m_pGarbageCollector->Add_CurLevelGarbage(pTChar);
 //}
 
+HRESULT CGameInstance::Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollider)
+{
+	if (nullptr == m_pCollisionManager)
+		return E_FAIL;
+
+	if (nullptr == pCollider)
+	{
+		MSG_BOX("GameInstance - Attach_Collider - NULL");
+		return E_FAIL;
+	}
+
+	m_pCollisionManager->Attach_Collider(eLayer, pCollider);
+	return S_OK;
+}
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();
@@ -462,6 +484,8 @@ void CGameInstance::Release_Engine()
 	CScroll_Manager::GetInstance()->DestroyInstance();
 
 	CGarbageCollector::GetInstance()->DestroyInstance();
+
+	CCollisionManager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
@@ -478,5 +502,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pDInput_Manager);
 	Safe_Release(m_pScroll_Manager);
 	Safe_Release(m_pGarbageCollector);
+	Safe_Release(m_pCollisionManager);
 	//Safe_Release(m_pFile_Handler);
 }
