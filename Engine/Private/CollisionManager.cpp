@@ -29,15 +29,6 @@ _uint CCollisionManager::Tick(_double TimeDelta)
 
 _uint CCollisionManager::LateTick(_double TimeDelta)
 {
-#ifdef _DEBUG
-	Render();
-#endif
-	
-	for (_uint i = 0; i < (_uint)COLLIDER_LAYER::LAYER_END; ++i)
-	{
-		m_ColliderList[i].clear();
-	}
-
 	return _uint();
 }
 
@@ -53,7 +44,7 @@ HRESULT CCollisionManager::Render()
 
 			pCollider->Render();
 		}
-
+		m_ColliderList[i].clear();
 	}
 	return S_OK;
 }

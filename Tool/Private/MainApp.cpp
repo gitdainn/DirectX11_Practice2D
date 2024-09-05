@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "InstallObject.h"
+#include "CollisionManager.h"
 #include "Utility.h"
 
 USING(Tool)
@@ -69,6 +70,8 @@ HRESULT CMainApp::Render()
 	m_pRenderer->Draw_RenderGroup();
 
 #ifdef _DEBUG
+	m_pGameInstance->Render_Collider();
+
 	++m_dwNumDraw;
 
 	if (m_TimeAcc >= 1.0)

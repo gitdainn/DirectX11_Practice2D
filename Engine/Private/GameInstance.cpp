@@ -455,6 +455,17 @@ HRESULT CGameInstance::Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollid
 	return S_OK;
 }
 
+#ifdef _DEBUG
+HRESULT CGameInstance::Render_Collider()
+{
+	if (nullptr == m_pCollisionManager)
+		return E_FAIL;
+
+	m_pCollisionManager->Render();
+	return S_OK;
+}
+#endif // _DEBUG
+
 void CGameInstance::Release_Engine()
 {
 	CGameInstance::GetInstance()->DestroyInstance();

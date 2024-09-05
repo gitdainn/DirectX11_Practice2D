@@ -92,6 +92,11 @@ public: /* For.GarbageCollector */
 
 public: /* For. Collision_Manager */
 	HRESULT	Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollider);
+	
+#ifdef _DEBUG
+	HRESULT Render_Collider();
+#endif // _DEBUG
+
 
 public:
 	static void Release_Engine();

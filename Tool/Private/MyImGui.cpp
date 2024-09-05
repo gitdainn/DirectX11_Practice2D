@@ -989,6 +989,7 @@ HRESULT CMyImGui::Inspector_Components()
         m_pSelectedObject->Mapping_Component(TAG_COLL_AABB);
         
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
+        Safe_AddRef(pGameInstance);
         if (nullptr != pGameInstance)
         {
             pGameInstance->Add_Garbage(pPrototypeTag);
@@ -1021,6 +1022,8 @@ HRESULT CMyImGui::Inspector_Components()
             }
         }
     }
+
+    return S_OK;
 }
 
 HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider)

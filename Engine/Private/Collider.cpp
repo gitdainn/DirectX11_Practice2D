@@ -230,40 +230,40 @@ HRESULT CCollider::Render()
 
 	XMFLOAT4 vColor = m_bIsCollision ? XMFLOAT4(1.f, 0.f, 0.f, 1.f) : XMFLOAT4(0.f, 1.f, 0.f, 1.f);
 
-	//// 사각형의 네 선분 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_LINELIST일 때)
-	//VertexPositionColor vertices[] =
-	//{
-	//	// 상단 선분
-	//	{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
-	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+	// 사각형의 네 선분 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_LINELIST일 때)
+	VertexPositionColor vertices[] =
+	{
+		// 상단 선분
+		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
+		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
 
-	//	// 우측 선분
-	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
-	//	{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+		// 우측 선분
+		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
 
-	//	// 하단 선분
-	//	{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
-	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+		// 하단 선분
+		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor },    // 오른쪽 하단
+		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
 
-	//	// 좌측 선분
-	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
-	//	{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor }     // 왼쪽 상단
-	//};
+		// 좌측 선분
+		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor }     // 왼쪽 상단
+	};
 
 
 	// 사각형의 네 꼭지점 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST일 때)
-	VertexPositionColor vertices[] =
-	{
-		// 첫 번째 삼각형 (왼쪽 위에서 시계 방향으로)
-		{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
-		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
-		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+	//VertexPositionColor vertices[] =
+	//{
+	//	// 첫 번째 삼각형 (왼쪽 위에서 시계 방향으로)
+	//	{ XMFLOAT3(-0.5f, 0.5f, 0.0f), vColor },    // 왼쪽 상단
+	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
 
-		// 두 번째 삼각형 (오른쪽 아래에서 반시계 방향으로)
-		{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
-		{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
-		{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor }     // 오른쪽 하단
-	};
+	//	// 두 번째 삼각형 (오른쪽 아래에서 반시계 방향으로)
+	//	{ XMFLOAT3(-0.5f, -0.5f, 0.0f), vColor },   // 왼쪽 하단
+	//	{ XMFLOAT3(0.5f, 0.5f, 0.0f), vColor },     // 오른쪽 상단
+	//	{ XMFLOAT3(0.5f, -0.5f, 0.0f), vColor }     // 오른쪽 하단
+	//};
 
 	//VertexPositionColor vertices[] =
 	//{
@@ -294,7 +294,7 @@ HRESULT CCollider::Render()
 	}
 
 	// 프리미티브 유형 및 토폴로지 설정 (라인 리스트로 설정)
-	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_LINELIST);
 
 	// 정점 버퍼 설정
 	UINT stride = sizeof(VertexPositionColor);
@@ -302,7 +302,7 @@ HRESULT CCollider::Render()
 	m_pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
 	// 사각형 외곽선 그리기
-	m_pContext->Draw(6, 0); // 4개의 선분을 그리므로 정점 개수는 8입니다.
+	m_pContext->Draw(8, 0); // 4개의 선분을 그리므로 정점 개수는 8입니다.
 
 	// 정점 버퍼 해제
 	Safe_Release(pVertexBuffer);

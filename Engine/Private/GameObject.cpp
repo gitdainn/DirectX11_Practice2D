@@ -74,7 +74,10 @@ HRESULT CGameObject::Render()
 HRESULT CGameObject::Add_Components(_uint iLevelIndex, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppOut, void * pArg)
 {
 	if (nullptr != Find_Component(pComponentTag))
+	{
+		MSG_BOX("CGameObject - Add_Component - Component is already Exist");
 		return E_FAIL;
+	}
 
 	CComponent_Manager*		pComponent_Manager = CComponent_Manager::GetInstance();
 	Safe_AddRef(pComponent_Manager);

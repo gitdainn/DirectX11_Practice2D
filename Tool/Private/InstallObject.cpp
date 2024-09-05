@@ -86,7 +86,7 @@ _uint CInstallObject::LateTick(_double TimeDelta)
 
 HRESULT CInstallObject::Render()
 {
-    //return __super::Render();
+    return __super::Render();
     return S_OK;
 }
 
