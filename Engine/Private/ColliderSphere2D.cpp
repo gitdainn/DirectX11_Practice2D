@@ -1,6 +1,8 @@
 #include "..\Public\Collider.h"
 #include "DebugDraw.h"
 #include "PipeLine.h"
+#include "ColliderAABB2D.h"
+#include "ColliderOBB2D.h"
 #include "ColliderSphere2D.h"
 
 CColliderSphere2D::CColliderSphere2D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -50,20 +52,21 @@ void CColliderSphere2D::Tick(_double TimeDelta)
 	m_bIsCollision = false;
 }
 
-_bool CColliderSphere2D::IsCollision(CColliderAABB2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderAABB2D* pTarget) const
 {
 	return _bool();
 }
 
-_bool CColliderSphere2D::IsCollision(CColliderOBB2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderOBB2D* pTarget) const
 {
 	return _bool();
 }
 
-_bool CColliderSphere2D::IsCollision(CColliderSphere2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderSphere2D* pTarget) const
 {
 	return _bool();
 }
+
 
 CColliderSphere2D* CColliderSphere2D::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

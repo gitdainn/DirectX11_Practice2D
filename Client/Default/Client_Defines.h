@@ -42,10 +42,6 @@ extern HWND g_hWnd;
 
 using namespace Client;
 
-#pragma region LAYER
-#define	PLAYER_LAYER			TEXT("Layer_Player")
-#pragma endregion
-
 #pragma region COMPONENT_TAG
 #define	TAG_TRANSFORM			TEXT("Com_Transform")
 #define	TAG_RENDERER			TEXT("Com_Renderer")

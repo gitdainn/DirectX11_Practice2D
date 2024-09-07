@@ -72,8 +72,12 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;
 
+	if (FAILED(m_pCollisionManager->Initialize()))
+		return E_FAIL;
+
 	if (FAILED(m_pFrustum->Initialize()))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -440,7 +444,7 @@ void CGameInstance::Add_Garbage(const _tchar* pTChar)
 //	m_pGarbageCollector->Add_CurLevelGarbage(pTChar);
 //}
 
-HRESULT CGameInstance::Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollider)
+HRESULT CGameInstance::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
 {
 	if (nullptr == m_pCollisionManager)
 		return E_FAIL;
@@ -451,7 +455,7 @@ HRESULT CGameInstance::Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollid
 		return E_FAIL;
 	}
 
-	m_pCollisionManager->Attach_Collider(eLayer, pCollider);
+	m_pCollisionManager->Attach_Collider(pLayer, pCollider);
 	return S_OK;
 }
 

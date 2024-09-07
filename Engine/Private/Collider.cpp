@@ -5,6 +5,10 @@
 #include "GameInstance.h"
 #include "Transform.h"
 
+#include "ColliderAABB2D.h"
+#include "ColliderOBB2D.h"
+#include "ColliderSphere2D.h"
+
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -93,6 +97,8 @@ void CCollider::Tick(_double TimeDelta)
 		return;
 	}
 
+	m_bIsCollision = false;
+
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -109,6 +115,26 @@ void CCollider::Tick(_double TimeDelta)
 	XMStoreFloat4x4(&m_WorldMatrix, ScaleMatrix * TranslationMatrix);
 
 	Safe_Release(pGameInstance);
+}
+
+_bool CCollider::IsCollision(CCollider* pCollider)
+{
+	if (nullptr == pCollider)
+		return false;
+
+	CColliderAABB2D* pAABB = dynamic_cast<CColliderAABB2D*>(pCollider);
+	if (nullptr != pAABB)
+		m_bIsCollision = Intersects(pAABB);
+
+	CColliderOBB2D* pOBB = dynamic_cast<CColliderOBB2D*>(pCollider);
+	if (nullptr != pOBB)
+		m_bIsCollision = Intersects(pOBB);
+
+	CColliderSphere2D* pSphere = dynamic_cast<CColliderSphere2D*>(pCollider);
+	if (nullptr != pSphere)
+		m_bIsCollision = Intersects(pSphere);
+
+	return m_bIsCollision;
 }
 
 void CCollider::Set_Owner(CGameObject* pOwner)

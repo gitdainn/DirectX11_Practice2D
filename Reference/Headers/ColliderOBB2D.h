@@ -18,10 +18,10 @@ public:
 	HRESULT Initialize(void* pArg) override;
 	void Tick(_double TimeDelta) override;
 
-public:
-	virtual _bool IsCollision(CColliderAABB2D* pTarget) const override;
-	virtual _bool IsCollision(CColliderOBB2D* pTarget) const override;
-	virtual _bool IsCollision(CColliderSphere2D* pTarget) const override;
+protected:
+	virtual _bool Intersects(CColliderAABB2D* pTarget)const override;
+	virtual _bool Intersects(CColliderOBB2D* pTarget) const override;
+	virtual _bool Intersects(CColliderSphere2D* pTarget) const override;
 
 public:
 	static CColliderOBB2D* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

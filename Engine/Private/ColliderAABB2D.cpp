@@ -2,6 +2,8 @@
 #include "DebugDraw.h"
 #include "PipeLine.h"
 #include "ColliderAABB2D.h"
+#include "ColliderOBB2D.h"
+#include "ColliderSphere2D.h"
 
 CColliderAABB2D::CColliderAABB2D(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CCollider(pDevice, pContext)
@@ -49,8 +51,11 @@ void CColliderAABB2D::Tick(_double TimeDelta)
 	m_bIsCollision = false;
 }
 
-_bool CColliderAABB2D::IsCollision(CColliderAABB2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderAABB2D* pTarget) const
 {
+	if (nullptr == pTarget)
+		return false;
+
 	COLLIDER_DESC tTargetDesc = pTarget->Get_ColliderDesc();
 
 	_float2 vRadius = _float2(m_tColliderDesc.vScale.x / 2, m_tColliderDesc.vScale.y / 2);
@@ -59,21 +64,28 @@ _bool CColliderAABB2D::IsCollision(CColliderAABB2D* pTarget) const
 	const _float fSumRadiusX = vRadius.x + vTargetRadius.x;
 	const _float fDistanceX = abs(m_tColliderDesc.vPosition.x - tTargetDesc.vPosition.x);
 
-	if (fSumRadiusX > fDistanceX)
-		return true;
+	if (fSumRadiusX < fDistanceX)
+		return false;
 
-	return false;
+	const _float fSumRadiusY = vRadius.y + vTargetRadius.y;
+	const _float fDistanceY = abs(m_tColliderDesc.vPosition.y - tTargetDesc.vPosition.y);
+
+	if (fSumRadiusY < fDistanceY)
+		return false;
+
+	return true;
 }
 
-_bool CColliderAABB2D::IsCollision(CColliderOBB2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderOBB2D* pTarget) const
 {
 	return _bool();
 }
 
-_bool CColliderAABB2D::IsCollision(CColliderSphere2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderSphere2D* pTarget) const
 {
 	return _bool();
 }
+
 
 CColliderAABB2D* CColliderAABB2D::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {

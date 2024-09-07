@@ -17,7 +17,6 @@ CInstallObject::CInstallObject(const CInstallObject& rhs)
     * 2. 포인터, 문자열의 경우 같은 문자열을 참조하는 문제 발생 (한 객체에서 delete[] 시 모든 객체가 다 삭제된 공간 참조)
     * 3. 복사 생성자를 하나라도 정의했다면 무조건 모든 멤버 변수 1대1 대입 등 직접 명시해서 적어야 함 
     * */
-    m_pLayer = new char[MAX_PATH] {"LAYER_DEFAULT"};
 }
 
 HRESULT CInstallObject::Initialize_Prototype()
@@ -73,7 +72,10 @@ _uint CInstallObject::Tick(_double TimeDelta)
     if (nullptr != m_pColliderCom)
     {
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
-        pGameInstance->Attach_Collider(COLLIDER_LAYER::DEAULT, m_pColliderCom);
+        if (FAILED(pGameInstance->Attach_Collider(m_pLayer, m_pColliderCom)))
+        {
+            MSG_BOX("CInstallObject - Tick() - FAILED");
+        }
     }
 
     return __super::Tick(TimeDelta);

@@ -33,12 +33,19 @@ public:
 	virtual void Tick(_double TimeDelta);
 
 public:
-	virtual _bool IsCollision(CColliderAABB2D* pTarget) const = 0;
-	virtual _bool IsCollision(CColliderOBB2D* pTarget) const = 0;
-	virtual _bool IsCollision(CColliderSphere2D* pTarget) const = 0;
+	_bool IsCollision(CCollider* pCollider);
+
+protected:
+	virtual _bool Intersects(CColliderAABB2D* pTarget)const = 0;
+	virtual _bool Intersects(CColliderOBB2D* pTarget) const = 0;
+	virtual _bool Intersects(CColliderSphere2D* pTarget) const = 0;
 
 public:
 	virtual void Set_Owner(CGameObject* pOwner) override;
+	void		Set_Collision(const _bool bIsCollision)
+	{
+		m_bIsCollision = bIsCollision;
+	}
 
 public:
 	virtual const HRESULT Get_ComponentInfo(COMPONENT_INFO& tComponentInfo) const override

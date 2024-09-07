@@ -86,12 +86,12 @@ public: /* For.GarbageCollector */
 	void	Add_Garbage(char* pChar);
 	void	Add_Garbage(_tchar* pTChar);
 	void	Add_Garbage(const _tchar* pTChar);
-	void	Add_CurLevelGarbage(char* pChar);
-	void	Add_CurLevelGarbage(_tchar* pTChar);
-	void	Clear_CurLevelGarbage();
+	//void	Add_CurLevelGarbage(char* pChar);
+	//void	Add_CurLevelGarbage(_tchar* pTChar);
+	//void	Clear_CurLevelGarbage();
 
 public: /* For. Collision_Manager */
-	HRESULT	Attach_Collider(COLLIDER_LAYER eLayer, CCollider* pCollider);
+	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
 	
 #ifdef _DEBUG
 	HRESULT Render_Collider();

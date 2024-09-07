@@ -644,6 +644,20 @@ HRESULT CMyImGui::ShowSpriteWindow()
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
+    static int iSelectIndex = { 0 };
+    static const char* items[] =
+    {
+        "Layer_Default",
+        "Layer_NonInteractiveObjects",
+        "Layer_InteractiveBackground",
+        "Layer_Collectibles",
+        "Layer_Enemy",
+        "Layer_Player",
+        "Layer_Camera"
+    };
+    ImGui::Combo("Layer", &iSelectIndex, items, IM_ARRAYSIZE(items));
+    m_pLayerC = items[iSelectIndex];
+
     /** @note - Tree는 열어야 내부 코드 실행됨 */
     for (_uint iFolderIndex = 0; iFolderIndex < m_FolderNameVec.size(); ++iFolderIndex)
     {
@@ -893,35 +907,35 @@ HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
         static _uint iLayerIndex = { 0 };
         //static unique_ptr<char> pLayer = make_unique<char>(MAX_PATH);
 
-        if (bIsSelectionChanged)
-        {
-            for (_uint i = 0; i < m_LayerVec.size(); ++i)
-            {
-                if (!strcmp(m_LayerVec[i], m_pSelectedObject->Get_Layer()))
-                {
-                    iLayerIndex = i;
-                    break;
-                }
-            }
-        }
+        //if (bIsSelectionChanged)
+        //{
+        //    for (_uint i = 0; i < m_LayerVec.size(); ++i)
+        //    {
+        //        if (!strcmp(m_LayerVec[i], m_pSelectedObject->Get_Layer()))
+        //        {
+        //            iLayerIndex = i;
+        //            break;
+        //        }
+        //    }
+        //}
 
-        if (ImGui::BeginCombo("Layer", m_LayerVec[iLayerIndex], flags))
-        {
-            for (int iListIndex = 0; iListIndex < m_LayerVec.size(); iListIndex++)
-            {
-                const bool is_selected = (iLayerIndex == iListIndex);
-                // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
-                if (ImGui::Selectable(m_LayerVec[iListIndex], is_selected))
-                {
-                    iLayerIndex = iListIndex; // 선택한 항목의 인덱스를 저장
-                    m_pSelectedObject->Set_Layer(m_LayerVec[iLayerIndex]);
-                }
+        //if (ImGui::BeginCombo("Layer", m_LayerVec[iLayerIndex], flags))
+        //{
+        //    for (int iListIndex = 0; iListIndex < m_LayerVec.size(); iListIndex++)
+        //    {
+        //        const bool is_selected = (iLayerIndex == iListIndex);
+        //        // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+        //        if (ImGui::Selectable(m_LayerVec[iListIndex], is_selected))
+        //        {
+        //            iLayerIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+        //            m_pSelectedObject->Set_Layer(m_LayerVec[iLayerIndex]);
+        //        }
 
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
+        //        if (is_selected)
+        //            ImGui::SetItemDefaultFocus();
+        //    }
+        //    ImGui::EndCombo();
+        //}
 
         ImGui::TreePop();
     }
@@ -1247,14 +1261,16 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 
     static int iIndex = m_CreateObjectVec.size();
 
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, LAYER_DEFAULT, tSpriteInfo))))
+    _tchar* pLayerWC;
+    CToWC(m_pLayerC, pLayerWC);
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, pLayerWC, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
         Safe_Release(pGameInstance);
         return E_FAIL;
     }
     // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, pLayerWC);
     if (nullptr == pObjectList)
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
@@ -1272,6 +1288,7 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     strcpy(pTag, m_FolderNameVec[m_iFolderIndex]);
     strcat(pTag, to_string(++iIndex).c_str());
     m_pSelectedObject->Set_SpriteTag(pTag);
+    m_pSelectedObject->Set_Layer(pLayerWC);
 
     _tchar* pDest = new _tchar[strlen(m_ClassNameVec[0]) + 1];
     lstrcpy(pDest, TEXT("BackGround"));
@@ -1283,6 +1300,7 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     //    m_InstalledList.emplace_back(m_pSelectedObject);
     //}
 
+    pGameInstance->Add_Garbage(pLayerWC);
     Safe_Release(pGameInstance);
     return S_OK;
 }

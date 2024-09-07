@@ -100,11 +100,11 @@ public:
 		m_bIsScroll = bIsScroll;
 	};
 
-	void Set_Layer(const char* pLayer)
+	void Set_Layer(const _tchar* pLayer)
 	{
 		Safe_Delete_Array(m_pLayer);
-		char* Layer = new char[strlen(pLayer) + 1];
-		strcpy(Layer, pLayer);
+		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
+		lstrcpy(Layer, pLayer);
 		m_pLayer = Layer;
 	}
 
@@ -146,7 +146,7 @@ public:
 		return m_eRenderGroup;
 	}
 
-	const char* Get_Layer() const
+	const _tchar* Get_Layer() const
 	{
 		return m_pLayer;
 	}
@@ -179,8 +179,8 @@ protected:
 	_bool	m_bIsScroll;
 
 	const char*		m_pSpriteTag;
-	const char*		m_pLayer;
-	const _tchar*	m_pTextureComTag;
+	const _tchar*		m_pLayer;
+	const _tchar*		m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	
 	_uint	m_iUVTextureIndex;

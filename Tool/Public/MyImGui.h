@@ -105,6 +105,7 @@ private:
 
 	_uint					m_iFolderIndex;
 	_uint					m_iClassIndex;
+	const char*				m_pLayerC;
 	unordered_map<const _tchar*, ORIGINAL_DATA>		m_OriginalDataMap;
 
 	/** @note - 자료구조 선택 이유
