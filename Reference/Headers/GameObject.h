@@ -25,6 +25,11 @@ public:
 	virtual HRESULT Render();
 
 public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
+
+public:
 	class CComponent* Get_Component(const _tchar* pComponentTag) {
 		return Find_Component(pComponentTag);
 	}
@@ -58,6 +63,11 @@ public:
 		return m_iTextureIndex;
 	}
 
+	const _tchar* Get_Layer() const
+	{
+		return m_pLayer;
+	}
+
 public:
 	void Set_InstanceID(const _uint& iID)
 	{
@@ -88,11 +98,19 @@ public:
 		m_pClassName = pClassName;
 	}
 
+	void Set_Layer(const _tchar* pLayer)
+	{
+		Safe_Delete_Array(m_pLayer);
+		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
+		lstrcpy(Layer, pLayer);
+		m_pLayer = Layer;
+	}
+
 public:
 	HRESULT Add_Components(_uint iLevelIndex, const _tchar* pPrototypeTag,
 		const _tchar* pComponentTag, class CComponent** ppOut, void* pArg = nullptr);
 
-protected:
+public:
 	class CComponent* Find_Component(const _tchar* pComponentTag);
 	HRESULT Change_Component(_uint iLevelIndex, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppOut, void* pArg = nullptr);
 
@@ -122,6 +140,7 @@ protected:
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	const _tchar* m_pClassName = { nullptr };
+	const _tchar* m_pLayer;
 	_uint	m_iShaderPassIndex = { 0 };
 	_uint	m_iTextureIndex = { 0 };
 	_uint	m_iOrder = { 0 };

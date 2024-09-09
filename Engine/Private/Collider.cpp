@@ -137,6 +137,30 @@ _bool CCollider::IsCollision(CCollider* pCollider)
 	return m_bIsCollision;
 }
 
+void CCollider::OnCollisionEnter(CCollider* pTargetCollider)
+{
+	if (nullptr == pTargetCollider || nullptr == m_pOwner)
+		return;
+
+	m_pOwner->OnCollisionEnter(pTargetCollider, pTargetCollider->Get_Owner());
+}
+
+void CCollider::OnCollisionStay(CCollider* pTargetCollider)
+{
+	if (nullptr == pTargetCollider || nullptr == m_pOwner)
+		return;
+
+	m_pOwner->OnCollisionStay(pTargetCollider, pTargetCollider->Get_Owner());
+}
+
+void CCollider::OnCollisionExit(CCollider* pTargetCollider)
+{
+	if (nullptr == pTargetCollider || nullptr == m_pOwner)
+		return;
+
+	m_pOwner->OnCollisionExit(pTargetCollider, pTargetCollider->Get_Owner());
+}
+
 void CCollider::Set_Owner(CGameObject* pOwner)
 {
 	__super::Set_Owner(pOwner);

@@ -61,6 +61,11 @@ protected: // Animation
 	HRESULT Load_Components_Excel();
 
 public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+
+public:
 	void	Set_TextureIndex(const _uint& iIndex)
 	{
 		m_iTextureIndex = iIndex;
@@ -100,14 +105,6 @@ public:
 		m_bIsScroll = bIsScroll;
 	};
 
-	void Set_Layer(const _tchar* pLayer)
-	{
-		Safe_Delete_Array(m_pLayer);
-		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
-		lstrcpy(Layer, pLayer);
-		m_pLayer = Layer;
-	}
-
 public:
 	const bool IsEndSprite()
 	{
@@ -146,11 +143,6 @@ public:
 		return m_eRenderGroup;
 	}
 
-	const _tchar* Get_Layer() const
-	{
-		return m_pLayer;
-	}
-
 public:
 	template<typename T>
 	void Change_Sprite(const T& Sprite);
@@ -179,7 +171,6 @@ protected:
 	_bool	m_bIsScroll;
 
 	const char*		m_pSpriteTag;
-	const _tchar*		m_pLayer;
 	const _tchar*		m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	

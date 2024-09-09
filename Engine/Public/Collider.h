@@ -34,17 +34,32 @@ public:
 
 public:
 	_bool IsCollision(CCollider* pCollider);
+	void OnCollisionEnter(CCollider* pTargetCollider);
+	void OnCollisionStay(CCollider* pTargetCollider);
+	void OnCollisionExit(CCollider* pTargetCollider);
 
 protected:
 	virtual _bool Intersects(CColliderAABB2D* pTarget)const = 0;
 	virtual _bool Intersects(CColliderOBB2D* pTarget) const = 0;
 	virtual _bool Intersects(CColliderSphere2D* pTarget) const = 0;
 
+
 public:
 	virtual void Set_Owner(CGameObject* pOwner) override;
-	void		Set_Collision(const _bool bIsCollision)
+
+	void		Set_IsBlock(const _bool& bIsBlock)
+	{
+		m_bIsBlock = bIsBlock;
+	}
+
+	void		Set_Collision(const _bool& bIsCollision)
 	{
 		m_bIsCollision = bIsCollision;
+	}
+
+	void Set_ColliderDesc(const COLLIDER_DESC& tColliderDesc)
+	{
+		memcpy(&m_tColliderDesc, &tColliderDesc, sizeof(COLLIDER_DESC));
 	}
 
 public:
@@ -66,9 +81,9 @@ public:
 		return m_tColliderDesc;
 	}
 
-	void Set_ColliderDesc(const COLLIDER_DESC& tColliderDesc)
+	const _bool& Get_IsBlock() const
 	{
-		memcpy(&m_tColliderDesc, &tColliderDesc, sizeof(COLLIDER_DESC));
+		return m_bIsBlock;
 	}
 
 protected:
@@ -90,6 +105,7 @@ protected:
 	_float4x4				m_WorldMatrix;
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
+	_bool					m_bIsBlock = { false };
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;

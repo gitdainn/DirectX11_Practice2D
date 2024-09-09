@@ -9,6 +9,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_bIsDead(false), m_bIsRender(true)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_iInstanceID(0)
+	, m_pLayer(nullptr)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

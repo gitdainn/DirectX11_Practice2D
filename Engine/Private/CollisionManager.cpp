@@ -152,6 +152,8 @@ void CCollisionManager::Update_Collision(list<CCollider*> pSourList, list<CColli
 			{
 				pDestCol->Set_Collision(true);
 
+				pSourCol->OnCollisionStay(pDestCol);
+				pDestCol->OnCollisionStay(pSourCol);
 			}
 		}
 	}

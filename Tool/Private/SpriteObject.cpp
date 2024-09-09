@@ -13,7 +13,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
 	, m_bIsScroll(true)
-	, m_pLayer(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -291,6 +290,29 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	Safe_Release(pFileLoader);
 
 	return S_OK;
+}
+
+void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+	if (nullptr == pTargetCollider || nullptr == pTarget)
+		return;
+
+	if (pTargetCollider->Get_IsBlock())
+	{
+		// x, y 중 어느 방향이 부딪쳤는지 알아챈다. 
+		// 부딪친 방향으로 겹친 거리만큼 다시 민다. or 블록 객체 위치로 지정한다. (좌우 중 어느 곳에 지정할지 알아야 함)
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		vPosition = XMVectorSet(XMVectorGetX(vPosition) - 100.f, XMVectorGetY(vPosition) - 100.f, 0.f, 1.f);
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+	}
+}
+
+void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
 }
 
 HRESULT CSpriteObject::SetUp_ShaderResources()

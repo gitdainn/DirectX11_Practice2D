@@ -144,6 +144,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				strcat(pTag, to_string(++iIndex).c_str());
 				pAddObject->Set_SpriteTag(pTag);
 				pAddObject->Set_ClassName(pClassName);
+				pAddObject->Set_Layer(pLayer);
 
 				LoadObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
 			}
@@ -347,7 +348,10 @@ HRESULT CFileLoader::Write_ObjectTransform_Excel(const _tchar* pFilePath, const 
 		int iCol = { 0 };
 
 		if (bIsReset)
+		{
+			iRow = m_iFirstRow;
 			pSheet->removeRow(m_iFirstRow, iLastRow);
+		}
 
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tTransform.iInstanceID);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tTransform.pObjectID);
@@ -391,7 +395,10 @@ HRESULT CFileLoader::Write_ComponentInfo_Excel(const _tchar* pFilePath, const CO
 		int iCol = { 0 };
 
 		if (bIsReset)
+		{
+			iRow = m_iFirstRow;
 			pSheet->removeRow(m_iFirstRow, iLastRow);
+		}
 
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iInstanceID);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pObjectID);
@@ -438,7 +445,10 @@ HRESULT CFileLoader::Write_ObjectMetaData_Excel(const _tchar* pFilePath, const O
 		int iCol = { 0 };
 
 		if (bIsReset)
+		{
+			iRow = m_iFirstRow;
 			pSheet->removeRow(m_iFirstRow, iLastRow);
+		}
 		
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iInstanceID);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pObjectID);

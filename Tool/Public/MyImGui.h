@@ -55,15 +55,16 @@ private:
 	HRESULT	ShowInstalledWindow();
 	HRESULT	ShowSpriteWindow();
 	HRESULT	ShowInspectorWindow();
+	HRESULT ShowSettings();
 
 private: // Inspector //
-	HRESULT Default_Info(const _bool bIsSelectionChanged);
-	HRESULT Inspector_Transform(const _bool bIsSelectionChanged);
-	HRESULT Inspector_SpriteRenderer(const _bool bIsSelectionChanged);
-	HRESULT Inspector_Components();
+	HRESULT Default_Info(const _bool& bIsSelectionChanged);
+	HRESULT Inspector_Transform(const _bool& bIsSelectionChanged);
+	HRESULT Inspector_SpriteRenderer(const _bool& bIsSelectionChanged);
+	HRESULT Inspector_Components(const _bool& bIsSelectionChanged);
 
 private:
-	HRESULT Inpsector_Collider(CCollider* pCollider);
+	HRESULT Inpsector_Collider(CCollider* pCollider, const _bool& bIsSelectionChanged);
 
 public:
 	virtual HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -82,6 +83,7 @@ private:
 	void	Key_Input(_double TimeDelta);
 	void	Get_MousePos(_vector& vMousePos) const;
 
+	HRESULT Get_OpenFileName(const TCHAR** pFilePath);
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;

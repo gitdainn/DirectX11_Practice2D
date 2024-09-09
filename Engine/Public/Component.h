@@ -24,6 +24,11 @@ public:
 		return m_pPrototypeTag;
 	}
 
+	CGameObject* Get_Owner() const
+	{	
+		return m_pOwner;
+	}
+
 	void Set_PrototypeTag(const _tchar* pPrototypeTag)
 	{
 		m_pPrototypeTag = pPrototypeTag;

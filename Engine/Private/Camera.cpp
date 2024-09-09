@@ -18,6 +18,18 @@ CCamera::CCamera(const CCamera & rhs)
 
 }
 
+void CCamera::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CCamera::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CCamera::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
 HRESULT CCamera::Initialize_Prototype()
 {
 	if (FAILED(__super::Initialize_Prototype()))

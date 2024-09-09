@@ -1,6 +1,5 @@
 #include "..\Public\MyImGui.h"
 #include "GameObject.h"
-#include "SpriteObject.h"
 #include "GameInstance.h"
 #include "DInput_Manager.h"
 #include "Utility.h"
@@ -56,7 +55,6 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 #pragma endregion
 
 #pragma region 클래스명
-    m_ClassNameVec.emplace_back("BackGround");
     m_ClassNameVec.emplace_back("Environment");
     m_ClassNameVec.emplace_back("Tile");
     m_ClassNameVec.emplace_back("BackGround");
@@ -117,6 +115,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
         Safe_Release(pGameInstance);
     }
     m_pPreviewObject->Set_IsScroll(false);
+    m_pPreviewObject->Set_Order(100);
 
     Safe_Release(pGameInstance);
 
@@ -166,6 +165,12 @@ HRESULT CMyImGui::Render()
     {
         MSG_BOX("CMyImGui - Render - FAILED");
     }
+
+    // @error - 레이어 충돌 행렬은 일단 보류
+    //if (FAILED(ShowSettings()))
+    //{
+    //    MSG_BOX("CMyImGui - Render - FAILED");
+    //}
 
     ImGui::Render();
 
@@ -350,6 +355,10 @@ HRESULT CMyImGui::Save_Object_Excel()
         return S_OK;
     }
 
+    const TCHAR* pFilePath = { nullptr };
+    if (FAILED(Get_OpenFileName(&pFilePath)))
+        return E_FAIL;
+
     CFileLoader* pFileLoader = CFileLoader::GetInstance();
     if (nullptr == pFileLoader)
     {
@@ -358,7 +367,7 @@ HRESULT CMyImGui::Save_Object_Excel()
     }
     Safe_AddRef(pFileLoader);
 
-    const _tchar* pFilePath = TEXT("../Bin/DataFiles/Level_Logo.xlsx");
+    //const _tchar* pFilePath = TEXT("../Bin/DataFiles/Level_Logo.xlsx");
     static int iInstanceID = { 1 };
     bool bIsReset = { true };
     for (CSpriteObject* pObject : m_CreateObjectVec)
@@ -372,7 +381,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         tMetaData.iInstanceID = iInstanceID;
         tMetaData.pObjectID = { nullptr };
         tMetaData.pClassName = pObject->Get_ClassName();
-        tMetaData.pLayer = LAYER_DEFAULT;
+        tMetaData.pLayer = pObject->Get_Layer();
 
         if (FAILED(pFileLoader->Write_ObjectMetaData_Excel(pFilePath, tMetaData, bIsReset)))
         {
@@ -444,6 +453,7 @@ HRESULT CMyImGui::Save_Object_Excel()
 
     MSG_BOX("SAVE SUCCESS");
     Safe_Release(pFileLoader);
+
     return S_OK;
 }
 
@@ -457,19 +467,23 @@ HRESULT CMyImGui::Load_Object_Excel()
     }
     Safe_AddRef(pFileLoader);
 
-    if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+    const TCHAR* pFilePath = { nullptr };
+    if (FAILED(Get_OpenFileName(&pFilePath)))
+        return E_FAIL;
+
+    if (FAILED(pFileLoader->Load_ObjectTransform_Excel(pFilePath)))
     {
         MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
         return E_FAIL;
     }
 
-    if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+    if (FAILED(pFileLoader->Load_ComponentInfo_Excel(pFilePath)))
     {
         MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
         return E_FAIL;
     }
 
-    if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_TOOL, m_CreateObjectVec)))
+    if (FAILED(pFileLoader->Load_Excel(pFilePath, LEVEL::LEVEL_TOOL, m_CreateObjectVec)))
     {
         MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
         return E_FAIL;
@@ -575,8 +589,29 @@ HRESULT CMyImGui::ShowInstalledWindow()
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-    static int iSelectIndex = { 0 };
+    static int iLayerSelectIndex = { 0 };
+    static const char* items[] =
+    {
+        "Layer_Default",
+        "Layer_Player",
+        "Layer_Enemy",
+        "Layer_NonInteractiveObjects",
+        "Layer_InteractiveBackground",
+        "Layer_Collectibles",
+        "Layer_Camera"
+    };
+    ImGui::Combo("Layer", &iLayerSelectIndex, items, IM_ARRAYSIZE(items));
+    m_pLayerC = items[iLayerSelectIndex];
+    if (ImGui::Button("Create"))
+    {
+        SPRITE_INFO tSpriteInfo;
+        tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
+        // 1. 클래스 이름을 누르면 .second에 있는 Texture, TextureIndex 정보로 생성됨.
+        tSpriteInfo.pTextureComTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_Component_Sprite_"));
+        Install_GameObject(tSpriteInfo);
+    }
 
+    static int iSelectIndex = { 0 };
     if (ImGui::BeginListBox("InstalledObject"))
     {
         for (int iListIndex = 0; iListIndex < m_CreateObjectVec.size(); iListIndex++)
@@ -643,20 +678,6 @@ HRESULT CMyImGui::ShowSpriteWindow()
 
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
-
-    static int iSelectIndex = { 0 };
-    static const char* items[] =
-    {
-        "Layer_Default",
-        "Layer_NonInteractiveObjects",
-        "Layer_InteractiveBackground",
-        "Layer_Collectibles",
-        "Layer_Enemy",
-        "Layer_Player",
-        "Layer_Camera"
-    };
-    ImGui::Combo("Layer", &iSelectIndex, items, IM_ARRAYSIZE(items));
-    m_pLayerC = items[iSelectIndex];
 
     /** @note - Tree는 열어야 내부 코드 실행됨 */
     for (_uint iFolderIndex = 0; iFolderIndex < m_FolderNameVec.size(); ++iFolderIndex)
@@ -735,7 +756,7 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
     //pObject->Set_SpriteTag(pTag);
 
-    const _bool bIsSelectionChanged = CheckSelectionChanged();
+    const _bool& bIsSelectionChanged = CheckSelectionChanged();
 
     Default_Info(bIsSelectionChanged);
 
@@ -748,14 +769,44 @@ HRESULT CMyImGui::ShowInspectorWindow()
     if (FAILED(Inspector_SpriteRenderer(bIsSelectionChanged)))
         return E_FAIL;
 
-    if (FAILED(Inspector_Components()))
+    if (FAILED(Inspector_Components(bIsSelectionChanged)))
         return E_FAIL;
 
     ImGui::End();
     return S_OK;
 }
 
-HRESULT CMyImGui::Default_Info(const _bool bIsSelectionChanged)
+HRESULT CMyImGui::ShowSettings()
+{
+    static bool bIsShow = true;
+    ImGui::Begin("Settings", &bIsShow);
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    static _bool m_bIsIgnoreLayer[5][5];
+    for (_uint i = 0; i < m_LayerVec.size(); ++i)
+    {
+        ImGui::Text(" ");
+        ImGui::Text(m_LayerVec[i]);
+        for (_uint j = 0; j < m_LayerVec.size(); ++j)
+        {
+            // 체크박스 이름 다 달라야 해...
+            if (ImGui::Checkbox(/*m_LayerVec[j]*/" ", &m_bIsIgnoreLayer[i][j]))
+            {
+                int i = 0;
+            }
+            ImGui::SameLine();
+        }
+    }
+
+    Safe_Release(pGameInstance);
+
+    ImGui::End();
+    return S_OK;
+}
+
+HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
 {
     if (bIsSelectionChanged)
     {
@@ -803,7 +854,7 @@ HRESULT CMyImGui::Default_Info(const _bool bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_Transform(const _bool bIsSelectionChanged)
+HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
 {
     if (ImGui::TreeNode("Transform"))
     {
@@ -866,7 +917,7 @@ HRESULT CMyImGui::Inspector_Transform(const _bool bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
+HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool& bIsSelectionChanged)
 {
 
     if (ImGui::TreeNode("SpriteRenderer"))
@@ -878,6 +929,18 @@ HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
         if (bIsSelectionChanged)
             iOrder = m_pSelectedObject->Get_Order();
         ImGui::InputInt("Order in Layer", &iOrder);
+
+        CGameInstance* pGameInstance = CGameInstance::GetInstance();
+        Safe_AddRef(pGameInstance);
+        if (pGameInstance->Get_KeyDown(DIK_UP))
+        {
+            ++iOrder;
+        }
+        else if (pGameInstance->Get_KeyDown(DIK_DOWN))
+        {
+            --iOrder;
+        }
+        Safe_Release(pGameInstance);
         m_pSelectedObject->Set_Order(iOrder);
 
         static ImGuiComboFlags flags = 0;
@@ -943,7 +1006,7 @@ HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_Components()
+HRESULT CMyImGui::Inspector_Components(const _bool& bIsSelectionChanged)
 {
 #pragma region 컴포넌트 추가
     static ImGuiComboFlags flags = 0;
@@ -1032,7 +1095,7 @@ HRESULT CMyImGui::Inspector_Components()
             CCollider* pCollider = dynamic_cast<CCollider*>(iter->second);
             if (nullptr != pCollider)
             {
-                Inpsector_Collider(pCollider);
+                Inpsector_Collider(pCollider, bIsSelectionChanged);
             }
         }
     }
@@ -1040,7 +1103,7 @@ HRESULT CMyImGui::Inspector_Components()
     return S_OK;
 }
 
-HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider)
+HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider, const _bool& bIsSelectionChanged)
 {
     if (nullptr == pCollider)
     {
@@ -1056,9 +1119,44 @@ HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider)
         //ImGui::InputTextWithHint("Component Tag", "Write Part Name", ComponentTag, IM_ARRAYSIZE(ComponentTag));
         //CToWC(ComponentTag, pComponentTag);
 
+        static _bool bIsBlock = { false };
+        if (bIsSelectionChanged)
+        {
+            CComponent* pComponent = m_pSelectedObject->Find_Component(TAG_COLL_AABB);
+            if (nullptr != pCollider)
+            {
+                CCollider* pCollider = dynamic_cast<CCollider*>(pComponent);
+                if (nullptr != pCollider)
+                {
+                    bIsBlock = pCollider->Get_IsBlock();
+                }
+            }
+        }
+        if (ImGui::Checkbox("IsBlock", &bIsBlock))
+        {
+            CComponent* pComponent = m_pSelectedObject->Find_Component(TAG_COLL_AABB);
+            if (nullptr != pCollider)
+            {
+                CCollider* pCollider = dynamic_cast<CCollider*>(pComponent);
+                if (nullptr != pCollider)
+                {
+                    pCollider->Set_IsBlock(bIsBlock);
+                }
+            }
+        }
+
         static CCollider::COLLIDER_DESC tColliderDesc = pCollider->Get_ColliderDesc();
         static _float fOffset[2] = { tColliderDesc.vOffset.x, tColliderDesc.vOffset.y};
         static _float fScale[2] = { tColliderDesc.vScale.x, tColliderDesc.vScale.y};
+
+        if (bIsSelectionChanged)
+        {
+            tColliderDesc = pCollider->Get_ColliderDesc();
+            fOffset[0] = tColliderDesc.vOffset.x;
+            fOffset[1] = tColliderDesc.vOffset.y;
+            fScale[0] = tColliderDesc.vScale.x;
+            fScale[1] = tColliderDesc.vScale.y;
+        }
 
         enum INFO { OFFSET, SIZE, INS_END };
         const float fSpeed[INS_END] = { 1.f, 1.f };
@@ -1193,7 +1291,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         }
 
 
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_Layer());
         if (nullptr == pObjectList)
         {
             Safe_Release(pGameInstance);
@@ -1254,6 +1352,36 @@ void CMyImGui::Get_MousePos(_vector& vMousePos) const
     return;
 }
 
+HRESULT CMyImGui::Get_OpenFileName(const TCHAR** pFilePath)
+{
+    OPENFILENAME OFN;
+    TCHAR filePathName[128] = L"";
+    TCHAR* lpstrFile = new TCHAR[256]{ L".data" };
+    static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+
+    ZeroMemory(&OFN, sizeof(OPENFILENAME));
+    OFN.lStructSize = sizeof(OPENFILENAME);
+    OFN.hwndOwner = g_hWnd;
+    OFN.lpstrFilter = filter;
+    OFN.lpstrFile = lpstrFile;
+    OFN.nMaxFile = 256;
+    OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+
+    if (GetOpenFileName(&OFN) == 0)
+        return E_FAIL;
+
+    // @note - 포인터 TCHAR lpstrFile[MAX_PATH] 지역변수면 함수 나가면 사라짐
+    // 내가 알기로 리터럴 상수만 참조하는 곳이 없을 때까지 존재하는 것으로 앎.
+    *pFilePath = (OFN.lpstrFile);
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+    pGameInstance->Add_Garbage(OFN.lpstrFile);
+    Safe_Release(pGameInstance);
+
+    return S_OK;
+}
+
 HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -1291,7 +1419,7 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     m_pSelectedObject->Set_Layer(pLayerWC);
 
     _tchar* pDest = new _tchar[strlen(m_ClassNameVec[0]) + 1];
-    lstrcpy(pDest, TEXT("BackGround"));
+    lstrcpy(pDest, TEXT("Environment"));
     const _tchar* pClassName = pDest;
     m_pSelectedObject->Set_ClassName(pClassName);
     m_CreateObjectVec.emplace_back(m_pSelectedObject);

@@ -15,7 +15,7 @@ CInstallObject::CInstallObject(const CInstallObject& rhs)
     /** @note - 디폴트 복사생성자
     * 1. 복사 생성자 미정의 시 단순 1대1 대입하는 기본 복사생성자 실행됨
     * 2. 포인터, 문자열의 경우 같은 문자열을 참조하는 문제 발생 (한 객체에서 delete[] 시 모든 객체가 다 삭제된 공간 참조)
-    * 3. 복사 생성자를 하나라도 정의했다면 무조건 모든 멤버 변수 1대1 대입 등 직접 명시해서 적어야 함 
+    * 3. 복사 생성자를 하나라도 정의했다면 무조건 모든 멤버 변수 1대1 대입 등 직접 명시해서 적어야 함
     * */
 }
 
@@ -35,17 +35,17 @@ HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
+    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
 
-    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
     _float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
     fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
     fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
     m_tSpriteInfo.fSize = fOriginalSize;
-    m_pTransformCom->Set_Scaled(_float3(fOriginalSize.x, fOriginalSize.y, 1.f));
+    m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x, m_tSpriteInfo.fSize.y, 1.f));
 
     return S_OK;
 }
@@ -77,6 +77,22 @@ _uint CInstallObject::Tick(_double TimeDelta)
             MSG_BOX("CInstallObject - Tick() - FAILED");
         }
     }
+
+#pragma region 임시 코드
+    if (!lstrcmp(TEXT("BackGround"), m_pClassName))
+    {
+        m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+        m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 0.f));
+        m_bIsScroll = false;
+    }
+    else
+    {
+        m_eRenderGroup = CRenderer::RENDER_NONBLEND;
+    }
+
+
+
+#pragma endregion
 
     return __super::Tick(TimeDelta);
 }

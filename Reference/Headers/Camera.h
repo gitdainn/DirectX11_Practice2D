@@ -25,6 +25,11 @@ protected:
 	virtual ~CCamera() = default;
 
 public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+
+public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(void* pArg) override;
 	virtual _uint Tick(_double TimeDelta) override;
