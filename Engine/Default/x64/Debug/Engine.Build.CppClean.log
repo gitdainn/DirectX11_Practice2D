@@ -12,7 +12,7 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\debugdraw.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\customfont.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\component_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\component.obj
-d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\collisionmanager.obj
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\collision_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\collidersphere2d.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\colliderobb2d.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\collideraabb2d.obj
@@ -20,7 +20,6 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\collider.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\camera.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\blendobject.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\base.obj
-d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vibuffer_cube.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vibuffer_cell.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vibuffer.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\utility.obj
@@ -35,6 +34,7 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\rendertarget.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\renderer.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\pipeline.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\object_manager.obj
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\line_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\light_manager.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\light.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\level_manager.obj
@@ -42,6 +42,7 @@ d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\level.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\layer.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\engine_struct.obj
 d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vibuffer_rect.obj
+d:\1. gameproject\directx11_practice2d\engine\default\x64\debug\vibuffer_cube.obj
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.dll
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.pdb
 d:\1. gameproject\directx11_practice2d\engine\bin\engine.lib

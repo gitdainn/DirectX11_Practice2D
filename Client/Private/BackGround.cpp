@@ -87,6 +87,18 @@ void CBackGround::Add_Animation()
 	return;
 }
 
+void CBackGround::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CBackGround::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CBackGround::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
 CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CBackGround* pInstance = new CBackGround(pDevice, pContext);

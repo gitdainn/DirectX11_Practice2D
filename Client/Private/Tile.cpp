@@ -87,6 +87,18 @@ void CTile::Add_Animation()
 	return;
 }
 
+void CTile::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CTile::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CTile::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
 CTile* CTile::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CTile* pInstance = new CTile(pDevice, pContext);

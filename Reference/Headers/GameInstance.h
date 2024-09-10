@@ -114,7 +114,7 @@ private:
 	class CDInput_Manager*				m_pDInput_Manager = { nullptr };
 	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
 	class CGarbageCollector*			m_pGarbageCollector = { nullptr };
-	class CCollisionManager*			m_pCollisionManager = { nullptr };
+	class CCollision_Manager*			m_pCollision_Manager = { nullptr };
 
 	//class CFile_Handler*				m_pFile_Handler = { nullptr };
 

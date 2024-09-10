@@ -33,6 +33,11 @@ private:
 	virtual void Add_Animation() override;
 
 public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+
+public:
 	/* Prototype */
 	/* 원형 객체를 생성한다. */
 	static CTile* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -145,6 +145,12 @@
     <Filter Include="00.System\00.GameInstance">
       <UniqueIdentifier>{6cb939e1-82a6-4d63-92f3-ce362da2ffb1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\13.Manager\LineManager">
+      <UniqueIdentifier>{11599492-5a26-4daf-bde9-c610058124a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\13.Manager\LineManager\Line">
+      <UniqueIdentifier>{e1a97459-a404-49bf-9bb4-d53f5045fe89}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -270,11 +276,17 @@
     <ClCompile Include="..\Private\ColliderOBB2D.cpp">
       <Filter>01.Utility\03.Component\Collider\ColliderBox2D</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\CollisionManager.cpp">
+    <ClCompile Include="..\Private\Collision_Manager.cpp">
       <Filter>01.Utility\13.Manager\CollisionManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\GarbageCollector.cpp">
       <Filter>01.Utility\13.Manager\GarbageCollector</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Line_Manager.cpp">
+      <Filter>01.Utility\13.Manager\LineManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Line.cpp">
+      <Filter>01.Utility\13.Manager\LineManager\Line</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -452,11 +464,17 @@
     <ClInclude Include="..\libxl-4.3.0.14\include_cpp\setup.h">
       <Filter>01.Utility\12.FileHandler\libxl</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\CollisionManager.h">
+    <ClInclude Include="..\Public\Collision_Manager.h">
       <Filter>01.Utility\13.Manager\CollisionManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\GarbageCollector.h">
       <Filter>01.Utility\13.Manager\GarbageCollector</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Line_Manager.h">
+      <Filter>01.Utility\13.Manager\LineManager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Line.h">
+      <Filter>01.Utility\13.Manager\LineManager\Line</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

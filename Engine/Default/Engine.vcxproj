@@ -175,7 +175,7 @@
     <ClCompile Include="..\Private\ColliderAABB2D.cpp" />
     <ClCompile Include="..\Private\ColliderOBB2D.cpp" />
     <ClCompile Include="..\Private\ColliderSphere2D.cpp" />
-    <ClCompile Include="..\Private\CollisionManager.cpp" />
+    <ClCompile Include="..\Private\Collision_Manager.cpp" />
     <ClCompile Include="..\private\Component.cpp" />
     <ClCompile Include="..\private\Component_Manager.cpp" />
     <ClCompile Include="..\private\CustomFont.cpp" />
@@ -197,6 +197,10 @@
     <ClCompile Include="..\private\Level_Manager.cpp" />
     <ClCompile Include="..\private\Light.cpp" />
     <ClCompile Include="..\private\Light_Manager.cpp" />
+    <ClCompile Include="..\Private\Line.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\Line_Manager.cpp" />
     <ClCompile Include="..\private\Object_Manager.cpp" />
     <ClCompile Include="..\private\PipeLine.cpp" />
     <ClCompile Include="..\private\Renderer.cpp" />
@@ -236,7 +240,7 @@
     <ClInclude Include="..\Public\ColliderAABB2D.h" />
     <ClInclude Include="..\Public\ColliderOBB2D.h" />
     <ClInclude Include="..\Public\ColliderSphere2D.h" />
-    <ClInclude Include="..\Public\CollisionManager.h" />
+    <ClInclude Include="..\Public\Collision_Manager.h" />
     <ClInclude Include="..\public\Component.h" />
     <ClInclude Include="..\public\Component_Manager.h" />
     <ClInclude Include="..\public\CustomFont.h" />
@@ -263,6 +267,10 @@
     <ClInclude Include="..\public\Level_Manager.h" />
     <ClInclude Include="..\public\Light.h" />
     <ClInclude Include="..\public\Light_Manager.h" />
+    <ClInclude Include="..\Public\Line.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\Line_Manager.h" />
     <ClInclude Include="..\public\Object_Manager.h" />
     <ClInclude Include="..\public\PipeLine.h" />
     <ClInclude Include="..\public\Renderer.h" />

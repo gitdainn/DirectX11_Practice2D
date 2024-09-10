@@ -1,15 +1,15 @@
-#include "CollisionManager.h"
+#include "Collision_Manager.h"
 #include "ColliderAABB2D.h"
 #include "ColliderOBB2D.h"
 #include "ColliderSphere2D.h"
 
-IMPLEMENT_SINGLETON(CCollisionManager)
+IMPLEMENT_SINGLETON(CCollision_Manager)
 
-CCollisionManager::CCollisionManager()
+CCollision_Manager::CCollision_Manager()
 {
 }
 
-HRESULT CCollisionManager::Initialize(void* pArg)
+HRESULT CCollision_Manager::Initialize(void* pArg)
 {
 	list<CCollider*> ListDefault;
 	m_ColliderMap.emplace(L"Layer_Default", ListDefault);
@@ -18,7 +18,7 @@ HRESULT CCollisionManager::Initialize(void* pArg)
 	return S_OK;
 }
 
-_uint CCollisionManager::Tick(_double TimeDelta)
+_uint CCollision_Manager::Tick(_double TimeDelta)
 {
 	if (m_ColliderMap.empty())
 		return _uint();
@@ -39,7 +39,7 @@ _uint CCollisionManager::Tick(_double TimeDelta)
 	return _uint();
 }
 
-_uint CCollisionManager::LateTick(_double TimeDelta)
+_uint CCollision_Manager::LateTick(_double TimeDelta)
 {
 	if (m_ColliderMap.empty())
 		return _uint();
@@ -73,7 +73,7 @@ _uint CCollisionManager::LateTick(_double TimeDelta)
 }
 
 #ifdef _DEBUG
-HRESULT CCollisionManager::Render()
+HRESULT CCollision_Manager::Render()
 {
 	auto iter = m_ColliderMap.begin();
 	for (iter; iter != m_ColliderMap.end(); ++iter)
@@ -94,11 +94,11 @@ HRESULT CCollisionManager::Render()
 }
 #endif
 
-HRESULT CCollisionManager::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
+HRESULT CCollision_Manager::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
 {
 	if (nullptr == pCollider || nullptr == pLayer)
 	{
-		MSG_BOX("CCollisionManager - Attach_Collider - NULL");
+		MSG_BOX("CCollision_Manager - Attach_Collider - NULL");
 		return S_OK;
 	}
 
@@ -116,11 +116,11 @@ HRESULT CCollisionManager::Attach_Collider(const _tchar* pLayer, CCollider* pCol
 	return S_OK;
 }
 
-void CCollisionManager::Collision_Matrix()
+void CCollision_Manager::Collision_Matrix()
 {
 }
 
-HRESULT CCollisionManager::Add_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB)
+HRESULT CCollision_Manager::Add_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB)
 {
 	if (nullptr == pLayerA || nullptr == pLayerB)
 		return E_FAIL;
@@ -135,7 +135,7 @@ HRESULT CCollisionManager::Add_IgnoreLayer(const _tchar* pLayerA, const _tchar* 
 	return S_OK;
 }
 
-void CCollisionManager::Update_Collision(list<CCollider*> pSourList, list<CCollider*> pDestList) const
+void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CCollider*> pDestList) const
 {
 	for (CCollider* pSourCol : pSourList)
 	{
@@ -159,11 +159,12 @@ void CCollisionManager::Update_Collision(list<CCollider*> pSourList, list<CColli
 	}
 }
 
-bool CCollisionManager::Is_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB) const
+bool CCollision_Manager::Is_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB) const
 {
 	return false;
 }
 
-void CCollisionManager::Free()
+void CCollision_Manager::Free()
 {
+	__super::Free();
 }

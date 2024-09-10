@@ -19,6 +19,11 @@ public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 
 public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+
+public:
 	void	Set_IsEquipped(const bool bIsEquipped)
 	{
 		m_bIsEquipped = bIsEquipped;

@@ -83,6 +83,18 @@ void CEnvironment::Add_Animation()
 	return;
 }
 
+void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CEnvironment::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CEnvironment::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
 CEnvironment* CEnvironment::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
 	CEnvironment* pInstance = new CEnvironment(pDevice, pContext);

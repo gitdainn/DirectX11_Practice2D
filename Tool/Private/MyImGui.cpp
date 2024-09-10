@@ -1216,6 +1216,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         
         m_pSelectedObject->Get_TransformCom()->Set_State(CTransform::STATE_POSITION, vMousePos);
     }
+
     // 설치
     if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
     {

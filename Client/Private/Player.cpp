@@ -74,6 +74,18 @@ HRESULT CPlayer::Render()
 	return __super::Render();
 }
 
+void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CPlayer::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
 void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = m_pState->Input_Handler(this, Input, eDirection);

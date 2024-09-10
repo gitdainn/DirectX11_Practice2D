@@ -5,13 +5,13 @@
 #include <set>
 BEGIN(Engine)
 
-class CCollisionManager : public CBase
+class CCollision_Manager : public CBase
 {
-	DECLARE_SINGLETON(CCollisionManager)
+	DECLARE_SINGLETON(CCollision_Manager)
 
 private:
-	CCollisionManager();
-	virtual ~CCollisionManager() = default;
+	CCollision_Manager();
+	virtual ~CCollision_Manager() = default;
 
 public:
 	virtual HRESULT Initialize(void* pArg = nullptr);

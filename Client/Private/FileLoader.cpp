@@ -177,13 +177,18 @@ HRESULT CFileLoader::Load_ObjectTransform_Excel(const _tchar* pFilePath)
 				continue;
 			}
 
+			_float2 fSizeRatio = { 1.f, 1.f };
 			tTransform.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			fSizeRatio.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			fSizeRatio.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fRotation.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fRotation.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
+			tTransform.fSize.x *= fSizeRatio.x;
+			tTransform.fSize.y *= fSizeRatio.y;
 			m_ObjectTransformMap.emplace(iInstanceID, tTransform);
 		}
 	}
@@ -216,7 +221,11 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
 		{
 			int iCol = { 0 };
-			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tComponentInfo.iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			if (0 == tComponentInfo.iInstanceID)
+			{
+				continue;
+			}
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 
 			tComponentInfo.pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
@@ -231,7 +240,7 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 			tComponentInfo.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
-			auto iter = m_ComponentInfoMap.find(iInstanceID);
+			auto iter = m_ComponentInfoMap.find(tComponentInfo.iInstanceID);
 			if (m_ComponentInfoMap.end() != iter)
 			{
 				(*iter).second.emplace_back(tComponentInfo);
@@ -241,7 +250,7 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 				list<COMPONENT_INFO> ComponentList;
 				ComponentList.emplace_back(tComponentInfo);
 				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
-				m_ComponentInfoMap.emplace(iInstanceID, ComponentList);
+				m_ComponentInfoMap.emplace(tComponentInfo.iInstanceID, ComponentList);
 			}
 		}
 	}

@@ -12,7 +12,7 @@
 #include "GarbageCollector.h"
 #include "Scroll_Manager.h"
 #include "GarbageCollector.h"
-#include "CollisionManager.h"
+#include "Collision_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -29,7 +29,7 @@ CGameInstance::CGameInstance()
 	, m_pDInput_Manager(CDInput_Manager::GetInstance())
 	, m_pScroll_Manager(CScroll_Manager::GetInstance())
 	, m_pGarbageCollector(CGarbageCollector::GetInstance())
-	, m_pCollisionManager(CCollisionManager::GetInstance())
+	, m_pCollision_Manager(CCollision_Manager::GetInstance())
 	//, m_pFile_Handler(CFile_Handler::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
@@ -44,7 +44,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pDInput_Manager);
 	Safe_AddRef(m_pScroll_Manager);
 	Safe_AddRef(m_pGarbageCollector);
-	Safe_AddRef(m_pCollisionManager);
+	Safe_AddRef(m_pCollision_Manager);
 	//Safe_AddRef(m_pFile_Handler);
 }
 
@@ -72,7 +72,7 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;
 
-	if (FAILED(m_pCollisionManager->Initialize()))
+	if (FAILED(m_pCollision_Manager->Initialize()))
 		return E_FAIL;
 
 	if (FAILED(m_pFrustum->Initialize()))
@@ -93,7 +93,7 @@ HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 	/* 오브젝트 매니져의 업데이트 */
 	m_pObject_Manager->Tick(TimeDelta);
 
-	m_pCollisionManager->Tick(TimeDelta);
+	m_pCollision_Manager->Tick(TimeDelta);
 
 	m_pPipeLine->Update();
 
@@ -101,7 +101,7 @@ HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 
 	m_pObject_Manager->LateTick(TimeDelta);	
 
-	m_pCollisionManager->LateTick(TimeDelta);
+	m_pCollision_Manager->LateTick(TimeDelta);
 
 	return S_OK;
 }
@@ -446,7 +446,7 @@ void CGameInstance::Add_Garbage(const _tchar* pTChar)
 
 HRESULT CGameInstance::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
 {
-	if (nullptr == m_pCollisionManager)
+	if (nullptr == m_pCollision_Manager)
 		return E_FAIL;
 
 	if (nullptr == pCollider)
@@ -455,17 +455,17 @@ HRESULT CGameInstance::Attach_Collider(const _tchar* pLayer, CCollider* pCollide
 		return E_FAIL;
 	}
 
-	m_pCollisionManager->Attach_Collider(pLayer, pCollider);
+	m_pCollision_Manager->Attach_Collider(pLayer, pCollider);
 	return S_OK;
 }
 
 #ifdef _DEBUG
 HRESULT CGameInstance::Render_Collider()
 {
-	if (nullptr == m_pCollisionManager)
+	if (nullptr == m_pCollision_Manager)
 		return E_FAIL;
 
-	m_pCollisionManager->Render();
+	m_pCollision_Manager->Render();
 	return S_OK;
 }
 #endif // _DEBUG
@@ -500,7 +500,7 @@ void CGameInstance::Release_Engine()
 
 	CGarbageCollector::GetInstance()->DestroyInstance();
 
-	CCollisionManager::GetInstance()->DestroyInstance();
+	CCollision_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
@@ -517,6 +517,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pDInput_Manager);
 	Safe_Release(m_pScroll_Manager);
 	Safe_Release(m_pGarbageCollector);
-	Safe_Release(m_pCollisionManager);
+	Safe_Release(m_pCollision_Manager);
 	//Safe_Release(m_pFile_Handler);
 }

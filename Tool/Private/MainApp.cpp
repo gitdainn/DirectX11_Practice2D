@@ -6,8 +6,9 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "InstallObject.h"
-#include "CollisionManager.h"
+#include "Collision_Manager.h"
 #include "Utility.h"
+#include "Line_Manager.h"
 
 USING(Tool)
 
@@ -48,6 +49,13 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	m_pImGui->Initialize(m_pDevice, m_pContext);
+	m_pLine_Manager = CLine_Manager::GetInstance(m_pDevice, m_pContext);
+	if (nullptr == m_pLine_Manager)
+	{
+		MSG_BOX("CMyImGui - Initialize() - NULL");
+		return E_FAIL;
+	}
+	m_pLine_Manager->Initialize();
 
 	return S_OK;
 }
@@ -56,6 +64,9 @@ void CMainApp::Tick(_double TimeDelta)
 {
 	m_pImGui->Tick(TimeDelta);
 	m_pGameInstance->Tick_Engine(TimeDelta);
+
+	// 라인 설치
+	Draw_Line();
 
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
@@ -86,9 +97,47 @@ HRESULT CMainApp::Render()
 #endif
 
 	m_pImGui->Render();
+	m_pLine_Manager->Render();
 
 	m_pGameInstance->Present();
 
+	return S_OK;
+}
+
+HRESULT CMainApp::Draw_Line() const
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	// 라인 설치
+	if (pGameInstance->Get_KeyStay(DIK_L) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
+	{
+		_vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
+		
+		//_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
+		POINT ptMouse{};
+		GetCursorPos(&ptMouse);
+		ScreenToClient(g_hWnd, &ptMouse);
+
+		_float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
+
+		vMousePos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
+
+		// @qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
+		_float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
+		_float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
+
+		/* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
+		vMousePos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+
+		_float3 vPosition = _float3(XMVectorGetX(vMousePos), XMVectorGetY(vMousePos), 0.f);
+
+		VertexPositionColor tVertex(vPosition, XMFLOAT4(0.f, 1.f, 0.f, 1.f));
+
+		m_pLine_Manager->Add_Vertex(tVertex);
+	}
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -216,6 +265,8 @@ CMainApp* CMainApp::Create()
 void CMainApp::Free()
 {
 	__super::Free();
+
+	CLine_Manager::GetInstance(m_pDevice, m_pContext)->DestroyInstance();
 
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
