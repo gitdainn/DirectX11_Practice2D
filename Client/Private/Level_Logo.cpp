@@ -17,11 +17,6 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_GameObject()))
 		return E_FAIL;
 
-	//if (FAILED(CFileLoader::Load_FIle(TEXT("d"), LEVEL_LOGO)))
-	//{
-	//	MSG_BOX("CLevel_Logo - Initialize() - Load_File FAILED");
-	//	return E_FAIL;
-	//}
 	CFileLoader* pFileLoader = CFileLoader::GetInstance();
 	if (nullptr == pFileLoader)
 	{
@@ -44,6 +39,12 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		return E_FAIL;
+	}
+
+	if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
 		return E_FAIL;
 	}
 
@@ -79,15 +80,15 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, LAYER_BACKGROUND, tSpriteInfo)))
 	//	return E_FAIL;
 
-	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
-	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
-	//	return E_FAIL;
-	//CPlayerInfo::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+	tSpriteInfo.fSize = _float2{ 300.f, 320.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
+		return E_FAIL;
+	CPlayerInfo::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
-	//tSpriteInfo.fSize = _float2{ 200.f, 150.f };
-	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
-	//	return E_FAIL;
-	//CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+	tSpriteInfo.fSize = _float2{ 200.f, 150.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
+		return E_FAIL;
+	CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 	//	return E_FAIL;

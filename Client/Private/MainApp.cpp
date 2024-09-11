@@ -5,6 +5,7 @@
 #include "InputHandler.h"
 #include "PlayerInfo.h"
 #include "FileLoader.h"
+#include "Line_Manager.h"
 
 USING(Client)
 
@@ -26,6 +27,10 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(m_pGameInstance->Initialize_Engine(LEVEL_END, g_hInst, GraphicDesc, &m_pDevice, &m_pContext)))
 		return E_FAIL;
+
+	m_pLine_Manager = CLine_Manager::GetInstance(m_pDevice, m_pContext);
+	Safe_AddRef(m_pLine_Manager);
+	m_pLine_Manager->Initialize();
 
 	/*
 	MakeSpriteFont "배찌체" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
@@ -83,6 +88,7 @@ void CMainApp::Tick(_double TimeDelta)
 
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
+	m_pLine_Manager->Tick(TimeDelta);
 	m_pGameInstance->Tick_Engine(TimeDelta);
 
 
@@ -114,6 +120,8 @@ HRESULT CMainApp::Render()
 
 	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
+
+	m_pLine_Manager->Render();
 #endif
 
 	m_pGameInstance->Present();
@@ -195,8 +203,10 @@ void CMainApp::Free()
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pLine_Manager);
 
 	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
+	CLine_Manager::GetInstance(m_pDevice, m_pContext)->DestroyInstance();
 	CPlayerInfo::GetInstance()->DestroyInstance();
 	CInputHandler::GetInstance()->DestroyInstance();
 	CFileLoader::GetInstance()->DestroyInstance();

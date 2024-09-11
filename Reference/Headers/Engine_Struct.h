@@ -65,6 +65,12 @@ namespace Engine
 		double			Time;
 	}KEYFRAME;
 
+	typedef struct ENGINE_DLL tLine
+	{
+		VertexPositionColor tLeftVertex;
+		VertexPositionColor tRightVertex;
+	}LINE_INFO;
+
 	/* 메시에게 적용하기위한 머테리얼텍스쳐들(Diffuse, AMbient, Specular, Normal) */
 	typedef struct tagMeshMaterial
 	{	

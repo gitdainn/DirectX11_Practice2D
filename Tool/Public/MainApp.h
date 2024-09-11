@@ -32,7 +32,6 @@ private:
 	CGameInstance* m_pGameInstance = { nullptr };
 	CRenderer* m_pRenderer = { nullptr };
 	CMyImGui* m_pImGui = { nullptr };
-	CLine_Manager* m_pLine_Manager = { nullptr };
 
 #ifdef _DEBUG
 private:
@@ -40,9 +39,6 @@ private:
 	_tchar						m_szFPS[MAX_PATH] = TEXT("");
 	_ulong						m_dwNumDraw = { 0 };
 #endif // _DEBUG
-
-private:
-	HRESULT	Draw_Line() const;
 
 private:
 	HRESULT SetUp_StartLevel(LEVEL eNextLevelID);

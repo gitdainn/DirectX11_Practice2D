@@ -101,17 +101,20 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 		return;
 	} 
 
-	// 만약 땅에 닿았으면 끝.
-	if (IsOnGround(pObject))
+	if (m_bIsFalling)
 	{
-		if (nullptr != pPlayer)
-			pPlayer->Set_IsInAir(false);
+		if (IsOnGround(pObject))
+		{
+			if (nullptr != pPlayer)
+				pPlayer->Set_IsInAir(false);
 
-		pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
-		m_bIsDead = true;
-		return;
+			pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
+			m_bIsDead = true;
+			return;
+		}
 	}
 
+	// 만약 땅에 닿았으면 끝.
 	if (m_bIsPaused)
 		return;
 	
@@ -121,15 +124,18 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
-	const _float fPower = 800.f;
+	const _float fPower = 900.f;
 	// sin(포물선운동 진행각도90) = 1
-	m_UpTime = fPower * m_JumpTimeAcc *TimeDelta;
+	m_UpTime = fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
-	_float fJumpY = fPower * (_float)TimeDelta
-		- (fGravity * (_float)m_JumpTimeAcc * (_float)m_JumpTimeAcc) * 0.5f;
-	
+	_float fJumpY = m_UpTime - m_DownTime;
 	m_JumpTimeAcc += TimeDelta;
+	
+	if (m_UpTime < m_DownTime)
+		m_bIsFalling = true;
+	else
+		m_bIsFalling = false;
 
 	CTransform* pTransform = pObject->Get_TransformCom();
 	_vector vPlayerPos = pTransform->Get_State(CTransform::STATE_POSITION);
@@ -141,10 +147,12 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 
 const bool CPlayerJump::IsOnGround(CSpriteObject* pObject)
 {
-	const _float fGround = 0.0f;
+	const _float fGround = -111.f;
 
 	CTransform* pTransform = pObject->Get_TransformCom();
-	if(fGround > XMVectorGetY(pTransform->Get_State(CTransform::STATE_POSITION)))
+	_float	fPlayerY = XMVectorGetY(pTransform->Get_State(CTransform::STATE_POSITION));
+
+	if(fGround > fPlayerY)
 	{
 		pTransform->Set_State(CTransform::STATE_POSITION
 			, XMVectorSetY(pTransform->Get_State(CTransform::STATE_POSITION), fGround));

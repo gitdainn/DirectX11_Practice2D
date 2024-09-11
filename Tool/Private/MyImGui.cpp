@@ -28,6 +28,12 @@ CMyImGui::CMyImGui()
 
 HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
+    if (nullptr == pDevice || nullptr == pContext)
+    {
+        return E_FAIL;
+    }
+
+
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
@@ -268,6 +274,82 @@ HRESULT CMyImGui::Save_Object()
     return S_OK;
 }
 
+HRESULT CMyImGui::Save_Line()
+{
+    OPENFILENAME OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
+        return E_FAIL;
+     
+    const _tchar* pFileName = OFN.lpstrFile;
+    HANDLE hFile = CreateFile(pFileName, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+    if (INVALID_HANDLE_VALUE == hFile)
+        return E_FAIL;
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    list<Engine::LINE_INFO> LineList;
+    if (FAILED(pGameInstance->Get_LineList(LineList)))
+    {
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+    Safe_Release(pGameInstance);
+
+    if (LineList.empty())
+        return S_OK;
+
+    DWORD dwByte = 0;
+    _uint iListSize = (_uint)LineList.size();
+    WriteFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+
+    for (const LINE_INFO& tLine : LineList) // 현재 선택된 그룹 저장
+    {
+        WriteFile(hFile, &tLine, sizeof(LINE_INFO), &dwByte, nullptr);
+    }
+
+    CloseHandle(hFile);
+    MSG_BOX("Save SUCCESS");
+
+    return S_OK;
+}
+
+HRESULT CMyImGui::Load_Line()
+{
+    OPENFILENAME OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
+        return E_FAIL;
+
+    const TCHAR* pFileName = OFN.lpstrFile;
+
+    HANDLE hFile = CreateFile(pFileName, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+    if (INVALID_HANDLE_VALUE == hFile)
+        return E_FAIL;
+
+    DWORD   dwByte = 0;
+    _bool      bRes = { false };
+
+    _uint iListSize = { 0 };
+    bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    for (_uint i = 0; i < iListSize; ++i)
+    {
+        VertexPositionColor tVertex;
+        bRes = ReadFile(hFile, &tVertex, sizeof(VertexPositionColor), &dwByte, nullptr);
+        pGameInstance->Add_Vertex(tVertex);
+    }
+    Safe_Release(pGameInstance);
+
+    CloseHandle(hFile);
+
+    return S_OK;
+}
+
 HRESULT CMyImGui::Load_Object()
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -355,8 +437,8 @@ HRESULT CMyImGui::Save_Object_Excel()
         return S_OK;
     }
 
-    const TCHAR* pFilePath = { nullptr };
-    if (FAILED(Get_OpenFileName(&pFilePath)))
+    OPENFILENAME OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
         return E_FAIL;
 
     CFileLoader* pFileLoader = CFileLoader::GetInstance();
@@ -367,6 +449,7 @@ HRESULT CMyImGui::Save_Object_Excel()
     }
     Safe_AddRef(pFileLoader);
 
+    const TCHAR* pFilePath = OFN.lpstrFile;
     //const _tchar* pFilePath = TEXT("../Bin/DataFiles/Level_Logo.xlsx");
     static int iInstanceID = { 1 };
     bool bIsReset = { true };
@@ -467,10 +550,11 @@ HRESULT CMyImGui::Load_Object_Excel()
     }
     Safe_AddRef(pFileLoader);
 
-    const TCHAR* pFilePath = { nullptr };
-    if (FAILED(Get_OpenFileName(&pFilePath)))
+    OPENFILENAME    OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
         return E_FAIL;
 
+    const TCHAR* pFilePath = OFN.lpstrFile;
     if (FAILED(pFileLoader->Load_ObjectTransform_Excel(pFilePath)))
     {
         MSG_BOX("CMyImGui - Load_Object_Excel() - Load_Excel FAILED");
@@ -632,17 +716,11 @@ HRESULT CMyImGui::ShowInstalledWindow()
 
     if (ImGui::Button("Save"))
     {
- /*       if (FAILED(Save_Object()))
-        {
-            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
-        }*/
-
         if (FAILED(Save_Object_Excel()))
         {
             MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
         }
     }
-
     ImGui::SameLine();
 
     if (ImGui::Button("Load"))
@@ -658,6 +736,22 @@ HRESULT CMyImGui::ShowInstalledWindow()
         }
     }
 
+    if (ImGui::Button("Save Line"))
+    {
+        if (FAILED(Save_Line()))
+       {
+           MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+       }
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Load Line"))
+    {
+        if (FAILED(Load_Line()))
+        {
+            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+        }
+    }
 
 
  /*   if(FAILED(Load_PreviousData()))
@@ -756,6 +850,11 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
     //pObject->Set_SpriteTag(pTag);
 
+    char* pLayer = nullptr;
+    WCToC(m_pSelectedObject->Get_Layer(), pLayer);
+    ImGui::Text("Layer: "); ImGui::SameLine(); ImGui::Text(pLayer);
+    Safe_Delete_Array(pLayer);
+
     const _bool& bIsSelectionChanged = CheckSelectionChanged();
 
     Default_Info(bIsSelectionChanged);
@@ -769,6 +868,7 @@ HRESULT CMyImGui::ShowInspectorWindow()
     if (FAILED(Inspector_SpriteRenderer(bIsSelectionChanged)))
         return E_FAIL;
 
+    ImGui::Text("-------------------------------------");
     if (FAILED(Inspector_Components(bIsSelectionChanged)))
         return E_FAIL;
 
@@ -825,7 +925,7 @@ HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
     }
 
     static ImGuiComboFlags flags = 0;
-    if (ImGui::BeginCombo("GameObject List", m_ClassNameVec[m_iClassIndex], flags))
+    if (ImGui::BeginCombo("Class", m_ClassNameVec[m_iClassIndex], flags))
     {
         for (int iIndex = 0; iIndex < m_ClassNameVec.size(); iIndex++)
         {
@@ -1217,6 +1317,23 @@ void CMyImGui::Key_Input(_double TimeDelta)
         m_pSelectedObject->Get_TransformCom()->Set_State(CTransform::STATE_POSITION, vMousePos);
     }
 
+
+    if (pGameInstance->Get_KeyStay(DIK_L) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
+    {
+        _vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
+        Get_MousePos(vMousePos);
+        _float3 vPosition = _float3(XMVectorGetX(vMousePos), XMVectorGetY(vMousePos), 0.f);
+        VertexPositionColor tVertex(vPosition, XMFLOAT4(0.f, 1.f, 0.f, 1.f));
+
+        pGameInstance->Add_Vertex(tVertex);
+    }
+
+    if (pGameInstance->Get_KeyStay(DIK_L) && pGameInstance->Get_KeyDown(DIK_DELETE))
+    {
+        pGameInstance->DeleteBack_Line();
+    }
+
+
     // 설치
     if (pGameInstance->Get_KeyStay(DIK_Z) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
     {
@@ -1353,7 +1470,7 @@ void CMyImGui::Get_MousePos(_vector& vMousePos) const
     return;
 }
 
-HRESULT CMyImGui::Get_OpenFileName(const TCHAR** pFilePath)
+HRESULT CMyImGui::Get_OpenFileName(OPENFILENAME& tOpenFileName)
 {
     OPENFILENAME OFN;
     TCHAR filePathName[128] = L"";
@@ -1373,7 +1490,7 @@ HRESULT CMyImGui::Get_OpenFileName(const TCHAR** pFilePath)
 
     // @note - 포인터 TCHAR lpstrFile[MAX_PATH] 지역변수면 함수 나가면 사라짐
     // 내가 알기로 리터럴 상수만 참조하는 곳이 없을 때까지 존재하는 것으로 앎.
-    *pFilePath = (OFN.lpstrFile);
+    memcpy(&tOpenFileName, &OFN, sizeof(OPENFILENAME));
 
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);

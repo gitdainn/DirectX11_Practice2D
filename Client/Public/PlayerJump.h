@@ -21,6 +21,7 @@ private:
 
 private:
     _bool   m_bCanJump;
+    _bool   m_bIsFalling;
     _bool   m_bIsDead;
     _bool   m_bIsPaused;
     _uint   m_iMaxJumpCount;

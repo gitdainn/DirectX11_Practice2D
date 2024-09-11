@@ -2,6 +2,7 @@
 #include "FileLoader.h"
 #include "GameInstance.h"
 #include "GameObject.h"
+#include "Line_Manager.h"
 #include "libxl.h"
 
 using namespace libxl;
@@ -87,6 +88,38 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 	}
 
 	Safe_Release(pGameInstance);
+}
+
+HRESULT CFileLoader::Load_Line(const _tchar* pFilePath, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD   dwByte = 0;
+	_bool      bRes = { false };
+
+	_uint iListSize = { 0 };
+	bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
+	Safe_AddRef(pGameInstance);
+
+	for (_uint i = 0; i < iListSize; ++i)
+	{
+		Engine::LINE_INFO tLine;
+		bRes = ReadFile(hFile, &tLine, sizeof(LINE_INFO), &dwByte, nullptr);
+		pGameInstance->Add_Vertex(tLine.tLeftVertex);
+		pGameInstance->Add_Vertex(tLine.tRightVertex);
+	}
+
+	Safe_Release(pGameInstance);
+	CloseHandle(hFile);
+
+	return S_OK;
 }
 
 HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
@@ -256,6 +289,36 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 	}
 
 	pBook->release();
+
+	return S_OK;
+}
+
+HRESULT CFileLoader::Get_OpenFileName(OPENFILENAME& tOpenFileName)
+{
+	OPENFILENAME OFN;
+	TCHAR filePathName[128] = L"";
+	TCHAR* lpstrFile = new TCHAR[256]{ L".data" };
+	static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
+
+	ZeroMemory(&OFN, sizeof(OPENFILENAME));
+	OFN.lStructSize = sizeof(OPENFILENAME);
+	OFN.hwndOwner = g_hWnd;
+	OFN.lpstrFilter = filter;
+	OFN.lpstrFile = lpstrFile;
+	OFN.nMaxFile = 256;
+	OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+
+	if (GetOpenFileName(&OFN) == 0)
+		return E_FAIL;
+
+	// @note - 포인터 TCHAR lpstrFile[MAX_PATH] 지역변수면 함수 나가면 사라짐
+	// 내가 알기로 리터럴 상수만 참조하는 곳이 없을 때까지 존재하는 것으로 앎.
+	memcpy(&tOpenFileName, &OFN, sizeof(OPENFILENAME));
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+	pGameInstance->Add_Garbage(OFN.lpstrFile);
+	Safe_Release(pGameInstance);
 
 	return S_OK;
 }

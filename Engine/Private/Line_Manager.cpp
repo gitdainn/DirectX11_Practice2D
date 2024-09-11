@@ -1,34 +1,24 @@
 #include "Line_Manager.h"
 #include "PipeLine.h"
+#include <queue>
 
-CLine_Manager* CLine_Manager::m_pInstance = nullptr;
+IMPLEMENT_SINGLETON(CLine_Manager)
 
-unsigned long CLine_Manager::DestroyInstance(void)
+CLine_Manager::CLine_Manager()
 {
-	unsigned long dwRefCnt = 0;
-	if (nullptr != m_pInstance)
-	{
-		dwRefCnt = m_pInstance->Release();
-		if (0 == dwRefCnt)
-			m_pInstance = nullptr;
-	}
-	return dwRefCnt;
 }
 
-CLine_Manager::CLine_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: m_pDevice(pDevice), m_pContext(pContext)
-{
-	Safe_AddRef(m_pInputLayout);
-}
-
-HRESULT CLine_Manager::Initialize(void* pArg)
+HRESULT CLine_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
 {
 #ifdef _DEBUG
-	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(m_pContext);
+	m_pDevice = pDevice;
+	m_pContext = pContext;
+
+	m_pBatch = new PrimitiveBatch<DirectX::VertexPositionColor>(pContext);
 	if (nullptr == m_pBatch)
 		return E_FAIL;
 
-	m_pEffect = new BasicEffect(m_pDevice);
+	m_pEffect = new BasicEffect(pDevice);
 	if (nullptr == m_pEffect)
 		return E_FAIL;
 
@@ -62,9 +52,10 @@ _uint CLine_Manager::LateTick(_double TimeDelta)
 	return _uint();
 }
 
+#ifdef _DEBUG
 HRESULT CLine_Manager::Render()
 {
-	if (m_VertexList.empty())
+	if (m_LineList.empty())
 		return S_OK;
 
 	//m_pEffect->SetWorld(DirectX::XMLoadFloat4x4(&m_WorldMatrix));
@@ -95,20 +86,22 @@ HRESULT CLine_Manager::Render()
 	XMFLOAT4 vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
 
 	// 사각형의 네 선분 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_LINELIST일 때)
-	VertexPositionColor* vertices = new VertexPositionColor[m_VertexList.size()];
+	const _uint iVertexNum = m_LineList.size() * 2;
+	VertexPositionColor* vertices = new VertexPositionColor[iVertexNum];
 
-	auto iter = m_VertexList.begin();
-	_uint i = { 0 };
-	for (iter; iter != m_VertexList.end(); ++iter)
+	list<tLine>::iterator iter = m_LineList.begin();
+	int i = { -1 };
+	for (iter; iter != m_LineList.end(); ++iter)
 	{
-		vertices[i++] = (*iter);
+		vertices[++i] = (*iter).tLeftVertex;
+		vertices[++i] = (*iter).tRightVertex;
 	}
 
 	// 버텍스 버퍼 생성
 	D3D11_BUFFER_DESC vertexBufferDesc;
 	ZeroMemory(&vertexBufferDesc, sizeof(vertexBufferDesc));
 	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	vertexBufferDesc.ByteWidth = sizeof(VertexPositionColor) * m_VertexList.size();
+	vertexBufferDesc.ByteWidth = sizeof(VertexPositionColor) * iVertexNum;
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.CPUAccessFlags = 0;
 
@@ -133,11 +126,48 @@ HRESULT CLine_Manager::Render()
 	m_pContext->IASetVertexBuffers(0, 1, &pVertexBuffer, &stride, &offset);
 
 	// 사각형 외곽선 그리기
-	m_pContext->Draw(m_VertexList.size(), 0); // 4개의 선분을 그리므로 정점 개수는 8입니다.
+	m_pContext->Draw(iVertexNum, 0); // 4개의 선분을 그리므로 정점 개수는 8입니다.
 
 	// 정점 버퍼 해제
 	Safe_Release(pVertexBuffer);
 	Safe_Delete_Array(vertices);
+
+	return S_OK;
+}
+#endif
+
+HRESULT CLine_Manager::Get_LandingPositionY(const _float2& vInObjectPosition, _float& vOutLandingY)
+{
+	if (m_LineList.empty())
+		return E_FAIL;
+
+	// greater: 내림차순 정렬
+	// priority_queue<_float>로 사용 시 기본 정렬인 less로 적용됨
+	priority_queue<_float, vector<_float>, greater<_float>> PossibleLandingQueue;
+	for (const tLine& tLine : m_LineList)
+	{
+		// 객체의 x 범위 안에 있는지 체크
+		if (tLine.tLeftVertex.position.x > vInObjectPosition.x
+			|| tLine.tRightVertex.position.x < vInObjectPosition.x)
+		{
+			continue;
+		}
+
+		// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
+		_float fLandingY = tLine.tLeftVertex.position.y;
+
+		// 객체보다 높이있는 선은 착지 범위에서 제외
+		if (fLandingY > vInObjectPosition.y)
+			continue;
+
+		// @qurious - 왜 emplace보다 insert가 안전한지. 무엇이 더 좋은지 알아볼 것
+		PossibleLandingQueue.emplace(fLandingY);
+	}
+
+	if (PossibleLandingQueue.empty())
+		return E_FAIL;
+	
+	vOutLandingY = PossibleLandingQueue.top();
 
 	return S_OK;
 }
@@ -152,5 +182,7 @@ void CLine_Manager::Free()
 	Safe_Release(m_pInputLayout);
 #endif // _DEBUG
 
-	m_VertexList.clear();
+	Safe_Delete(m_pDestVertex);
+	Safe_Delete(m_pSourVertex);
+	m_LineList.clear();
 }

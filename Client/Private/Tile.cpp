@@ -63,15 +63,12 @@ HRESULT CTile::Render()
 
 HRESULT CTile::Add_Components(void* pArg)
 {
-	if (FAILED(__super::Add_Components(pArg)))
-		return E_FAIL;
-
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
 
-	return S_OK;
+	return __super::Add_Components(pArg);
 }
 
 HRESULT CTile::SetUp_ShaderResources()

@@ -46,7 +46,6 @@ HRESULT CGrimReaper::Initialize(void* pArg)
         return E_FAIL;
     }
 
-
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
@@ -131,10 +130,11 @@ void CGrimReaper::Add_Animation()
 
 HRESULT CGrimReaper::Add_Components(void* pArg)
 {
-    if (FAILED(__super::Add_Components(pArg)))
+    if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+        TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
         return E_FAIL;
 
-    return S_OK;
+    return __super::Add_Components(pArg);
 }
 
 HRESULT CGrimReaper::SetUp_ShaderResources()

@@ -73,8 +73,10 @@ public:
 	virtual HRESULT Render();
 
 private:
-	HRESULT	Save_Object();
-	HRESULT	Load_Object();
+	HRESULT Save_Object();
+	HRESULT Load_Object();
+	HRESULT	Save_Line();
+	HRESULT	Load_Line();
 	HRESULT Save_Object_Excel();
 	HRESULT Load_Object_Excel();
 	HRESULT Load_PreviousData(); // 구조체 수정 전에 저장했떤 파일 불러오기
@@ -83,7 +85,7 @@ private:
 	void	Key_Input(_double TimeDelta);
 	void	Get_MousePos(_vector& vMousePos) const;
 
-	HRESULT Get_OpenFileName(const TCHAR** pFilePath);
+	HRESULT Get_OpenFileName(OPENFILENAME& tOpenFileName);
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;

@@ -2,7 +2,7 @@
 #include "Player.h"
 #include "PlayerIdle.h"
 #include "PlayerJump.h"
-
+#include "Line_Manager.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -55,8 +55,11 @@ _uint CPlayer::Tick(_double TimeDelta)
 
 	m_pState->Update(this, TimeDelta);
 
-	if(m_bIsInAir)
+	if (m_bIsInAir)
 		m_pAirState->Update(this, TimeDelta);
+	// @ error - 공중 상태일 때, 추락하는 시점에 땅이 있으면 자연스럽게 안착해야 함.
+	else
+		Landing_Ground();
 
 	return __super::Tick(TimeDelta);
 }
@@ -106,6 +109,30 @@ void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDire
 		m_pAirState = pAirState;
 		m_pAirState->Enter(this);
 	}
+}
+
+void CPlayer::Landing_Ground()
+{
+	CLine_Manager* pLine_Manager = CLine_Manager::GetInstance(m_pDevice, m_pContext);
+	if (nullptr == pLine_Manager)
+		return;
+	Safe_AddRef(pLine_Manager);
+
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float fLandingY = { 0.f };
+	if (FAILED(pLine_Manager->Get_LandingPositionY(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY)))
+	{
+		// 낙하할 것
+		return;
+	}
+	else
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+	}
+
+	Safe_Release(pLine_Manager);
+	
+	return;
 }
 
 HRESULT CPlayer::Add_Components(void* pArg)

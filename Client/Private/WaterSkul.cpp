@@ -134,10 +134,11 @@ void CWaterSkul::Add_Animation()
 
 HRESULT CWaterSkul::Add_Components(void* pArg)
 {
-    if (FAILED(__super::Add_Components(pArg)))
+    if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
+        TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
         return E_FAIL;
 
-    return S_OK;
+    return __super::Add_Components(pArg);
 }
 
 HRESULT CWaterSkul::SetUp_ShaderResources()

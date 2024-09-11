@@ -13,6 +13,7 @@
 #include "Scroll_Manager.h"
 #include "GarbageCollector.h"
 #include "Collision_Manager.h"
+#include "Line_Manager.h"
 
 IMPLEMENT_SINGLETON(CGameInstance)
 
@@ -30,6 +31,7 @@ CGameInstance::CGameInstance()
 	, m_pScroll_Manager(CScroll_Manager::GetInstance())
 	, m_pGarbageCollector(CGarbageCollector::GetInstance())
 	, m_pCollision_Manager(CCollision_Manager::GetInstance())
+	, m_pLine_Manager(CLine_Manager::GetInstance())
 	//, m_pFile_Handler(CFile_Handler::GetInstance())
 {
 	Safe_AddRef(m_pFrustum);
@@ -45,6 +47,7 @@ CGameInstance::CGameInstance()
 	Safe_AddRef(m_pScroll_Manager);
 	Safe_AddRef(m_pGarbageCollector);
 	Safe_AddRef(m_pCollision_Manager);
+	Safe_AddRef(m_pLine_Manager);
 	//Safe_AddRef(m_pFile_Handler);
 }
 
@@ -76,6 +79,9 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 		return E_FAIL;
 
 	if (FAILED(m_pFrustum->Initialize()))
+		return E_FAIL;
+
+	if (FAILED(m_pLine_Manager->Initialize(*ppDeviceOut, *ppContextOut)))
 		return E_FAIL;
 
 	return S_OK;
@@ -459,6 +465,31 @@ HRESULT CGameInstance::Attach_Collider(const _tchar* pLayer, CCollider* pCollide
 	return S_OK;
 }
 
+void CGameInstance::Add_Vertex(const VertexPositionColor& tVertex)
+{
+	if (nullptr == m_pLine_Manager)
+		return;
+
+	m_pLine_Manager->Add_Vertex(tVertex);
+}
+
+void CGameInstance::DeleteBack_Line()
+{
+	if (nullptr == m_pLine_Manager)
+		return;
+
+	m_pLine_Manager->DeleteBack_Line();
+}
+
+HRESULT CGameInstance::Get_LineList(list<LINE_INFO>& LineList) const
+{
+	if (nullptr == m_pLine_Manager)
+		return E_FAIL;
+
+	LineList = m_pLine_Manager->Get_LineList();
+	return S_OK;
+}
+
 #ifdef _DEBUG
 HRESULT CGameInstance::Render_Collider()
 {
@@ -466,6 +497,14 @@ HRESULT CGameInstance::Render_Collider()
 		return E_FAIL;
 
 	m_pCollision_Manager->Render();
+	return S_OK;
+}
+HRESULT CGameInstance::Render_Line()
+{
+	if (nullptr == m_pLine_Manager)
+		return E_FAIL;
+
+	m_pLine_Manager->Render();
 	return S_OK;
 }
 #endif // _DEBUG
@@ -501,6 +540,8 @@ void CGameInstance::Release_Engine()
 	CGarbageCollector::GetInstance()->DestroyInstance();
 
 	CCollision_Manager::GetInstance()->DestroyInstance();
+
+	CLine_Manager::GetInstance()->DestroyInstance();
 }
 
 void CGameInstance::Free()
@@ -518,5 +559,6 @@ void CGameInstance::Free()
 	Safe_Release(m_pScroll_Manager);
 	Safe_Release(m_pGarbageCollector);
 	Safe_Release(m_pCollision_Manager);
+	Safe_Release(m_pLine_Manager);
 	//Safe_Release(m_pFile_Handler);
 }

@@ -19,7 +19,7 @@ private:
 	virtual void Add_Animation() override;
 
 private:
-	HRESULT Add_Components(void* pArg = nullptr);
+	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
 
 public:

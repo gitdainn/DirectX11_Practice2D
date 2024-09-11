@@ -17,10 +17,14 @@ private:
 
 public:
     HRESULT Load_FIle(const _tchar* pFilePath, LEVEL eLevel);
+    HRESULT	Load_Line(const _tchar* pFilePath, ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
     HRESULT Load_Excel(const _tchar* pFilePath, const LEVEL eLevel);
 
     HRESULT Load_ObjectTransform_Excel(const _tchar* pFilePath);
     HRESULT Load_ComponentInfo_Excel(const _tchar* pFilePath);
+
+public:
+    HRESULT Get_OpenFileName(OPENFILENAME& tOpenFileName);
 
 public:
     /** @qurious - 구조체도 반한 시 실패인지 성공인지 구분 불가라 반환값으로 보내면 안되나? */

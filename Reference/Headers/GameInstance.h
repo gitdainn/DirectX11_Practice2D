@@ -10,6 +10,8 @@
 
 BEGIN(Engine)
 
+class CLine_Manager;
+
 class ENGINE_DLL CGameInstance final : public CBase
 {
 	DECLARE_SINGLETON(CGameInstance)
@@ -93,8 +95,15 @@ public: /* For.GarbageCollector */
 public: /* For. Collision_Manager */
 	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
 	
+public:
+	void	Add_Vertex(const VertexPositionColor& tVertex);
+	void	DeleteBack_Line();
+	HRESULT Get_LineList(list<LINE_INFO>& LineList) const;
+
+
 #ifdef _DEBUG
 	HRESULT Render_Collider();
+	HRESULT Render_Line();
 #endif // _DEBUG
 
 
@@ -115,6 +124,7 @@ private:
 	class CScroll_Manager*				m_pScroll_Manager = { nullptr };
 	class CGarbageCollector*			m_pGarbageCollector = { nullptr };
 	class CCollision_Manager*			m_pCollision_Manager = { nullptr };
+	class CLine_Manager*				m_pLine_Manager = { nullptr };
 
 	//class CFile_Handler*				m_pFile_Handler = { nullptr };
 

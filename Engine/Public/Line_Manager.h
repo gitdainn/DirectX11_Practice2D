@@ -4,31 +4,16 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CLine_Manager : public CBase
+class CLine_Manager final : public CBase
 {
-private:											
-	static CLine_Manager* m_pInstance;
-
-public:												
-	static CLine_Manager* GetInstance(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	{
-		if (nullptr == m_pInstance) 
-		{
-			m_pInstance = new CLine_Manager(pDevice, pContext);
-		}												
-		return m_pInstance;								
-	}
-
-	// @qurious - 여기에 static을 쓸 수 없는 이유가 모지?
-	unsigned long DestroyInstance(void);
+	DECLARE_SINGLETON(CLine_Manager)
 
 private:
-	CLine_Manager(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CLine_Manager(const CLine_Manager& rhs) = delete;
+	CLine_Manager();
 	virtual ~CLine_Manager() = default;
 
 public:
-	virtual HRESULT Initialize(void* pArg = nullptr);
+	virtual HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
 	virtual _uint Tick(_double TimeDelta);
 	virtual _uint LateTick(_double TimeDelta);
 
@@ -38,10 +23,55 @@ public:
 #endif // _DEBUG
 
 public:
-	void	Add_Vertex(const VertexPositionColor& vPosition)
+	void	Add_Vertex(const VertexPositionColor& tVertex)
 	{
-		m_VertexList.emplace_back(vPosition); // 내 기억상.... 컨테이너에 넣을 때 복사본이라.... &원본이여도 괜찮을듯 하지만 일단 지켜보기!
+		if (nullptr == m_pDestVertex)
+		{
+			m_pDestVertex = new VertexPositionColor();
+			memcpy(m_pDestVertex, &tVertex, sizeof(VertexPositionColor));
+			return;
+		}
+
+		else if (nullptr == m_pSourVertex)
+		{
+			m_pSourVertex = new VertexPositionColor();
+			memcpy(m_pSourVertex, &tVertex, sizeof(VertexPositionColor));
+		}
+
+		LINE_INFO Line;
+		if ((*m_pDestVertex).position.x < (*m_pSourVertex).position.x)
+		{
+			memcpy(&(Line.tLeftVertex), m_pDestVertex, sizeof(VertexPositionColor));
+			memcpy(&(Line.tRightVertex), m_pSourVertex, sizeof(VertexPositionColor));
+		}
+		else
+		{
+			memcpy(&(Line.tLeftVertex), m_pSourVertex, sizeof(VertexPositionColor));
+			memcpy(&(Line.tRightVertex), m_pDestVertex, sizeof(VertexPositionColor));
+		}
+
+		m_LineList.emplace_back(Line); // 내 기억상.... 컨테이너에 넣을 때 복사본이라.... &원본이여도 괜찮을듯 하지만 일단 지켜보기!
+
+		Safe_Delete(m_pDestVertex);
+		Safe_Delete(m_pSourVertex);
 	}
+
+	void	DeleteBack_Line()
+	{
+		if (m_LineList.empty())
+			return;
+
+		list<LINE_INFO>::iterator iterLast = m_LineList.end();
+		m_LineList.erase(--iterLast);
+	}
+
+public:
+	const list<LINE_INFO>& Get_LineList() const
+	{
+		return m_LineList;
+	}
+
+	HRESULT Get_LandingPositionY(const _float2& vInObjectPosition, _float& vOutLandingY);
 
 #ifdef _DEBUG
 protected:
@@ -55,7 +85,11 @@ private:
 	ID3D11DeviceContext* m_pContext = { nullptr };
 
 private:
-	list<VertexPositionColor>	m_VertexList;
+	VertexPositionColor*	m_pSourVertex = { nullptr };
+	VertexPositionColor*	m_pDestVertex = { nullptr };
+
+private:
+	list<LINE_INFO>	m_LineList;
 
 public:
 	virtual void Free() override;
