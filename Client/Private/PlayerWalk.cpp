@@ -80,12 +80,13 @@ void CPlayerWalk::Enter(CSpriteObject* pObject)
 
 void CPlayerWalk::Update(CSpriteObject* pObject, _double TimeDelta)
 {
+	const _float fSpeed = { 10.f };
 	if (SPRITE_DIRECTION::LEFT == m_eDirection)
 	{
-		pObject->Get_TransformCom()->Go_Left(TimeDelta);
+		pObject->Get_TransformCom()->Go_Left(fSpeed * TimeDelta);
 	}
 	else if (SPRITE_DIRECTION::RIGHT == m_eDirection)
 	{
-		pObject->Get_TransformCom()->Go_Right(TimeDelta);
+		pObject->Get_TransformCom()->Go_Right(fSpeed * TimeDelta);
 	}
 }

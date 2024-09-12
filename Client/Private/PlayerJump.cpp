@@ -9,6 +9,7 @@ CPlayerJump::CPlayerJump()
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
+	, m_fPower(3000.f)
 {
 }
 
@@ -19,6 +20,7 @@ CPlayerJump::CPlayerJump(const _uint& iJumpCount)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
+	, m_fPower(3000.f)
 {
 }
 
@@ -28,6 +30,7 @@ CPlayerJump::CPlayerJump(const CPlayerJump& rhs)
 	, m_UpTime(rhs.m_UpTime), m_DownTime(rhs.m_DownTime)
 	, m_JumpTimeAcc(rhs.m_JumpTimeAcc)
 	, m_bIsPaused(rhs.m_bIsPaused)
+	, m_fPower(rhs.m_fPower)
 {
 }
 
@@ -82,10 +85,13 @@ CState* CPlayerJump::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 
 void CPlayerJump::Enter(CSpriteObject* pObject)
 {
-
 	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pObject);
 	if (nullptr != pPlayer)
 		pPlayer->Set_IsInAir(true);
+
+	m_UpTime = 0.f;
+	m_DownTime = 0.f;
+	m_JumpTimeAcc = 0.f;
 
 	pObject->Change_Sprite(STATE_TYPE::JUMP);
 	++m_iJumpCount;
@@ -103,30 +109,39 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 
 	if (m_bIsFalling)
 	{
-		if (IsOnGround(pObject))
+		// 플레이어 위치 이동 전 착지 가능한 땅을 먼저 검사한 후, 이동 후, 높이 비교해서 붙여야 함.
+		_float fLandingY = { 0.f };
+		if (HasPassableLine(pObject, fLandingY))
 		{
-			if (nullptr != pPlayer)
-				pPlayer->Set_IsInAir(false);
+			Parabola(pObject, TimeDelta);
 
-			pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
-			m_bIsDead = true;
-			return;
+			// 착지할 땅보다 아래로 떨어지면 착지시키기.
+			if (AttachToLineIfBelow(pObject, fLandingY))
+			{
+				if (nullptr != pPlayer)
+					pPlayer->Set_IsInAir(false);
+
+				pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
+				m_bIsFalling = false;
+				m_bIsDead = true;
+				return;
+			}
+		}
+		else
+		{
+			Parabola(pObject, TimeDelta);
+			// 화면 밖이면 게임 엔드
 		}
 	}
-
-	// 만약 땅에 닿았으면 끝.
-	if (m_bIsPaused)
-		return;
-	
-	Parabola(pObject, TimeDelta);
+	else
+		Parabola(pObject, TimeDelta);
 }
 
 void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
-	const _float fPower = 900.f;
 	// sin(포물선운동 진행각도90) = 1
-	m_UpTime = fPower * m_JumpTimeAcc * (_float)TimeDelta;
+	m_UpTime = m_fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
 	_float fJumpY = m_UpTime - m_DownTime;
@@ -137,26 +152,117 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	else
 		m_bIsFalling = false;
 
-	CTransform* pTransform = pObject->Get_TransformCom();
-	_vector vPlayerPos = pTransform->Get_State(CTransform::STATE_POSITION);
+	CTransform* pTransformCom = pObject->Get_TransformCom();
+	if (nullptr == pTransformCom)
+		return;
+
+	_vector vPlayerPos = pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
-	pTransform->Set_State(CTransform::STATE_POSITION
+	pTransformCom->Set_State(CTransform::STATE_POSITION
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
+}
+
+void CPlayerJump::Fall(CSpriteObject* pObject, const _double TimeDelta)
+{
+	CTransform* pTransformCom = pObject->Get_TransformCom();
+	if (nullptr == pTransformCom)
+		return;
+
+	const _float fGravity = 9.8f;
+	_vector vPlayerPos = pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float fFallingY = m_UpTime - (fGravity* m_JumpTimeAcc* m_JumpTimeAcc) * 0.5f;
+
+	m_JumpTimeAcc += TimeDelta;
+
+	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
+	pTransformCom->Set_State(CTransform::STATE_POSITION
+		, XMVectorSetY(vPlayerPos, fFallingY + XMVectorGetY(vPlayerPos)));
 }
 
 const bool CPlayerJump::IsOnGround(CSpriteObject* pObject)
 {
-	const _float fGround = -111.f;
-
-	CTransform* pTransform = pObject->Get_TransformCom();
-	_float	fPlayerY = XMVectorGetY(pTransform->Get_State(CTransform::STATE_POSITION));
-
-	if(fGround > fPlayerY)
+	if (nullptr == pObject)
 	{
-		pTransform->Set_State(CTransform::STATE_POSITION
-			, XMVectorSetY(pTransform->Get_State(CTransform::STATE_POSITION), fGround));
+		MSG_BOX("CPlayerJump - IsOnGround() - NULL");
+		return false;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return false;
+	Safe_AddRef(pGameInstance);
+
+	CTransform* pTransformCom = pObject->Get_TransformCom();
+	_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float2 vPlayerPos = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+
+	_float fLandingY = { 0.f };
+	if (pGameInstance->HasPassableLine(vPlayerPos, fLandingY))
+	{
+		// 착지할 땅보다 아래로 떨어지면 착지시키기.
+		if (fLandingY > XMVectorGetY(vPosition))
+		{
+			pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+			Safe_Release(pGameInstance);
+			return true;
+		}
+	}
+
+	Safe_Release(pGameInstance);
+
+	return false;
+}
+
+_bool CPlayerJump::HasPassableLine(CSpriteObject* pObject, _float& fLandingY)
+{
+	if (nullptr == pObject)
+	{
+		MSG_BOX("CPlayerJump - IsOnGround() - NULL");
+		return false;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return false;
+	Safe_AddRef(pGameInstance);
+
+	CTransform* pTransformCom = pObject->Get_TransformCom();
+	_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float2 vPlayerPos = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+
+	_bool bHasPassableLine = pGameInstance->HasPassableLine(vPlayerPos, fLandingY);
+
+	Safe_Release(pGameInstance);
+
+	return bHasPassableLine;
+}
+
+_bool CPlayerJump::AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY)
+{
+	if (nullptr == pObject)
+	{
+		MSG_BOX("CPlayerJump - IsOnGround() - NULL");
+		return false;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return false;
+	Safe_AddRef(pGameInstance);
+
+	CTransform* pTransformCom = pObject->Get_TransformCom();
+	_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float2 vPlayerPos = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+
+	if (fLandingY > XMVectorGetY(vPosition))
+	{
+		pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+		Safe_Release(pGameInstance);
 		return true;
 	}
+
+	Safe_Release(pGameInstance);
+
 	return false;
 }

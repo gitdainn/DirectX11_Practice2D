@@ -45,10 +45,12 @@ protected:
 
 protected:
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
-	bool	m_bIsEquipped;
+	_bool	m_bIsEquipped;
 
 	CState* m_pAirState;
-	bool	m_bIsInAir;
+	_bool	m_bIsInAir;
+	_bool   m_bIsFalling;
+
 
 public:
 	/* Prototype */

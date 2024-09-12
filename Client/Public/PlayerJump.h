@@ -15,9 +15,19 @@ public:
     virtual void Enter(CSpriteObject* pObject) override;
     virtual void Update(CSpriteObject* pObject, const _double TimeDelta = 0.0) override;
 
+public:
+    void    Set_IsFalling(const _bool bIsFalling)
+    {
+        m_bIsFalling = bIsFalling;
+        m_fPower = 0.f;
+    }
+
 private:
     void    Parabola(CSpriteObject* pObject, const _double TimeDelta);
+    void    Fall(CSpriteObject* pObject, const _double TimeDelta);
     const bool     IsOnGround(CSpriteObject* pObject);
+    _bool           HasPassableLine(CSpriteObject* pObject, _float& fLandingY);
+    _bool           AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);
 
 private:
     _bool   m_bCanJump;
@@ -29,5 +39,6 @@ private:
     _double m_UpTime;
     _double m_DownTime;
     _double m_JumpTimeAcc;
+    _float m_fPower;
 };
 

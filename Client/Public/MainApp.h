@@ -6,7 +6,6 @@
 BEGIN(Engine)
 class CRenderer;
 class CGameInstance;
-class CLine_Manager;
 END
 
 BEGIN(Client)
@@ -29,7 +28,6 @@ private:
 private:
 	CGameInstance*				m_pGameInstance = { nullptr };
 	CRenderer*					m_pRenderer = { nullptr };
-	CLine_Manager*				m_pLine_Manager = { nullptr };
 
 #ifdef _DEBUG
 private:

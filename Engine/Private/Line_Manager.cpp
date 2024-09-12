@@ -6,6 +6,7 @@ IMPLEMENT_SINGLETON(CLine_Manager)
 
 CLine_Manager::CLine_Manager()
 {
+	ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
 }
 
 HRESULT CLine_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
@@ -136,40 +137,117 @@ HRESULT CLine_Manager::Render()
 }
 #endif
 
-HRESULT CLine_Manager::Get_LandingPositionY(const _float2& vInObjectPosition, _float& vOutLandingY)
+bool CLine_Manager::HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY)
 {
 	if (m_LineList.empty())
-		return E_FAIL;
+		return false;
 
 	// greater: 내림차순 정렬
 	// priority_queue<_float>로 사용 시 기본 정렬인 less로 적용됨
-	priority_queue<_float, vector<_float>, greater<_float>> PossibleLandingQueue;
+	const _float fImpossibleLanding = { -1000.f };
+	_float fClosestLandingLineY = fImpossibleLanding;
 	for (const tLine& tLine : m_LineList)
 	{
 		// 객체의 x 범위 안에 있는지 체크
-		if (tLine.tLeftVertex.position.x > vInObjectPosition.x
-			|| tLine.tRightVertex.position.x < vInObjectPosition.x)
+		_float3 fLeftPos = tLine.tLeftVertex.position;
+		_float3 fRightPos = tLine.tRightVertex.position;
+		if (fLeftPos.x > vInObjectPosition.x
+			|| fRightPos.x < vInObjectPosition.x)
 		{
 			continue;
 		}
 
-		// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
-		_float fLandingY = tLine.tLeftVertex.position.y;
+		// 평면의 방정식으로 두 점(라인) 사이의 점 중 x 좌표에 해당하는 점의 y 구하기
+		_float fLandingY = EquationOfLine(fLeftPos, fRightPos, vInObjectPosition.x);
 
 		// 객체보다 높이있는 선은 착지 범위에서 제외
 		if (fLandingY > vInObjectPosition.y)
 			continue;
 
+		if (fClosestLandingLineY < fLandingY)
+		{
+			fClosestLandingLineY = fLandingY;
+			m_tClosestLandingLine = tLine;
+		}
 		// @qurious - 왜 emplace보다 insert가 안전한지. 무엇이 더 좋은지 알아볼 것
-		PossibleLandingQueue.emplace(fLandingY);
 	}
 
-	if (PossibleLandingQueue.empty())
-		return E_FAIL;
+	// 탈 수 있는 라인이 없다면 종료
+	if (fClosestLandingLineY == fImpossibleLanding)
+		return false;
 	
-	vOutLandingY = PossibleLandingQueue.top();
+	fOutLandingY = fClosestLandingLineY;
 
-	return S_OK;
+	return true;
+}
+
+bool CLine_Manager::IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY)
+{
+	static _bool bIsExcuted = { false };
+	if (!bIsExcuted)
+	{
+		bIsExcuted = true;
+		return HasPassableLine(vObjectPosition, fOutLandingY);
+	}
+
+	if (m_tClosestLandingLine.tLeftVertex.position.x > vObjectPosition.x
+		|| m_tClosestLandingLine.tRightVertex.position.x < vObjectPosition.x)
+	{
+		return false;
+	}
+
+		// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
+		_float3 fA = m_tClosestLandingLine.tLeftVertex.position;
+		_float3 fB = m_tClosestLandingLine.tRightVertex.position;
+
+		fOutLandingY = EquationOfLine(fA, fB, vObjectPosition.x);
+		return true;
+
+	return true;
+}
+
+const _float CLine_Manager::Get_Slope(const _float3 fA, const _float3 fB)
+{
+	/* 기울기 구하는 법
+	* m = (y2 - y1) / (x2 - x1)
+	*/
+	return (fB.y - fA.y) / (fB.x - fA.x);
+}
+
+const _float CLine_Manager::Get_InterceptY(const _float fSlope, const _float3 fB)
+{
+	/* 직선의 방정식
+	* 점 - 기울기 형태
+	y - y1 = m * (x - x1)
+	기울기-절편 형태 (y절편: x가 0일 때 y의 값)
+	y = ax + b (a: 기울기, b는 y절편)
+	*/
+
+	_float fInterceptY;
+	// 기울기 3, 한 점 (4, 6)일 때,
+	// fA.y - 6 = 3 * (fA.x - 4);
+	// fA.y = 3fA.x - 12 + 6;
+	// fA.y는 y 절편이므로 fA.x는 0이기에
+	// y절편 = 0 - 6 = -6
+	fInterceptY = (fSlope * 0) + (fSlope * -1 * fB.x) + fB.y;
+	return fInterceptY;
+}
+
+const _float& CLine_Manager::EquationOfLine(const _float fSlope, const _float fInterceptY, const _float fX)
+{
+	/** 직선의 방정식
+	y = ax + b (a: 기울기, b는 y절편)
+	*/
+
+	return fSlope * fX + fInterceptY;
+}
+
+const _float& CLine_Manager::EquationOfLine(const _float3 fA, const _float3 fB, const _float fObjectX)
+{
+	const _float fSlope = Get_Slope(fA, fB);
+	const _float fInterceptY = Get_InterceptY(fSlope, fB);
+
+	return fSlope * fObjectX + fInterceptY;
 }
 
 void CLine_Manager::Free()

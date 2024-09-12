@@ -55,12 +55,18 @@ _uint CPlayer::Tick(_double TimeDelta)
 
 	m_pState->Update(this, TimeDelta);
 
+	/* false == IsCurrentLineOccupied()이면 playerJump로 변환 + 추락 상태 만들기 */
 	if (m_bIsInAir)
+	{
 		m_pAirState->Update(this, TimeDelta);
+	}
 	// @ error - 공중 상태일 때, 추락하는 시점에 땅이 있으면 자연스럽게 안착해야 함.
 	else
+	{
+		// 안 뛰고 있으면 무조건 Landing_Ground해서 땅에 붙여버리기
 		Landing_Ground();
-
+	}
+	
 	return __super::Tick(TimeDelta);
 }
 
@@ -92,7 +98,7 @@ void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
 void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
-	CState* pAirState = m_pAirState->Input_Handler(this, Input, eDirection);
+ 	CState* pAirState = m_pAirState->Input_Handler(this, Input, eDirection);
 
 	if (nullptr != pState)
 	{
@@ -113,24 +119,29 @@ void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDire
 
 void CPlayer::Landing_Ground()
 {
-	CLine_Manager* pLine_Manager = CLine_Manager::GetInstance(m_pDevice, m_pContext);
-	if (nullptr == pLine_Manager)
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
 		return;
-	Safe_AddRef(pLine_Manager);
+	Safe_AddRef(pGameInstance);
 
 	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 	_float fLandingY = { 0.f };
-	if (FAILED(pLine_Manager->Get_LandingPositionY(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY)))
-	{
-		// 낙하할 것
-		return;
-	}
-	else
+	if (pGameInstance->IsCurrentLineOccupied(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY))
 	{
 		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
 	}
+	else
+	{
+		m_bIsInAir = true;
+		Input_Handler(STATE_TYPE::JUMP);
+		CPlayerJump* pPlayerJump = dynamic_cast<CPlayerJump*>(m_pAirState);
+		if (nullptr != pPlayerJump)
+		{
+			pPlayerJump->Set_IsFalling(true);
+		}
+	}
 
-	Safe_Release(pLine_Manager);
+	Safe_Release(pGameInstance);
 	
 	return;
 }

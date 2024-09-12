@@ -490,6 +490,22 @@ HRESULT CGameInstance::Get_LineList(list<LINE_INFO>& LineList) const
 	return S_OK;
 }
 
+bool CGameInstance::HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY)
+{
+	if (nullptr == m_pLine_Manager)
+		return E_FAIL;
+
+	return m_pLine_Manager->HasPassableLine(vInObjectPosition, fOutLandingY);
+}
+
+bool CGameInstance::IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY)
+{
+	if (nullptr == m_pLine_Manager)
+		return E_FAIL;
+
+	return m_pLine_Manager->IsCurrentLineOccupied(vObjectPosition, fOutLandingY);
+}
+
 #ifdef _DEBUG
 HRESULT CGameInstance::Render_Collider()
 {

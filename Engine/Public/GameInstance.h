@@ -95,11 +95,13 @@ public: /* For.GarbageCollector */
 public: /* For. Collision_Manager */
 	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
 	
-public:
+public: /* For. Line_Manager*/
 	void	Add_Vertex(const VertexPositionColor& tVertex);
 	void	DeleteBack_Line();
 	HRESULT Get_LineList(list<LINE_INFO>& LineList) const;
 
+	bool HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY);
+	bool IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY);
 
 #ifdef _DEBUG
 	HRESULT Render_Collider();
