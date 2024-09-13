@@ -167,18 +167,6 @@ void CCollider::OnCollisionExit(CCollider* pTargetCollider)
 	m_pOwner->OnCollisionExit(pTargetCollider, pTargetCollider->Get_Owner());
 }
 
-_vector CCollider::Get_IntersectVectorX(CCollider* pTargetCollider)
-{
-	COLLIDER_DESC tTargetDesc = pTargetCollider->Get_ColliderDesc();
-	
-	// 도착 위치 - 현재 위치 = 도착 위치를 바라보는 방향벡터
-	_vector vPushVector = XMLoadFloat3(&tTargetDesc.vPosition) - XMLoadFloat3(&m_tColliderDesc.vPosition);
-	_float vPushDistance = (m_tColliderDesc.vScale.x * 0.5f + tTargetDesc.vScale.x * 0.5f) - XMVectorGetX(XMVector3Length(vPushVector));
-
-	// 방향 * 길이
-	return XMVector3Normalize(vPushVector) * vPushDistance;
-}
-
 void CCollider::Set_Owner(CGameObject* pOwner)
 {
 	__super::Set_Owner(pOwner);

@@ -130,7 +130,7 @@ void CGrimReaper::Add_Animation()
 
 HRESULT CGrimReaper::Add_Components(void* pArg)
 {
-    if (FAILED(CGameObject::Add_Components(LEVEL_LOGO, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+    if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
         TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
         return E_FAIL;
 

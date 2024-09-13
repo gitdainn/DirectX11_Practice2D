@@ -93,6 +93,8 @@ void CBackGround::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTar
 
 void CBackGround::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	__super::OnCollisionStay(pTargetCollider, pTarget);
+
 }
 
 void CBackGround::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)

@@ -23,6 +23,14 @@ _uint CCollision_Manager::Tick(_double TimeDelta)
 	if (m_ColliderMap.empty())
 		return _uint();
 
+	return _uint();
+}
+
+_uint CCollision_Manager::LateTick(_double TimeDelta)
+{
+	if (m_ColliderMap.empty())
+		return _uint();
+
 	auto iter = m_ColliderMap.begin();
 	for (iter; iter != m_ColliderMap.end(); ++iter)
 	{
@@ -35,14 +43,6 @@ _uint CCollision_Manager::Tick(_double TimeDelta)
 			pCollider->Tick(TimeDelta);
 		}
 	}
-
-	return _uint();
-}
-
-_uint CCollision_Manager::LateTick(_double TimeDelta)
-{
-	if (m_ColliderMap.empty())
-		return _uint();
 
 	_tchar IgnoreLayer[MAX_PATH];
 	for (auto iterSour = m_ColliderMap.begin(); iterSour != --m_ColliderMap.end(); ++iterSour)

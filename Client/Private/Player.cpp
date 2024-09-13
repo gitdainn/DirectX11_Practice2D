@@ -27,6 +27,7 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
+	m_pLayer = LAYER_PLAYER;
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
 	m_pState = new CPlayerIdle();
@@ -89,6 +90,7 @@ void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 
 void CPlayer::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	__super::OnCollisionStay(pTargetCollider, pTarget);
 }
 
 void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
@@ -155,6 +157,22 @@ HRESULT CPlayer::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
+
+	if (nullptr == m_pColliderCom)
+	{
+		COMPONENT_INFO tComponentInfo;
+		ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+		tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
+		tComponentInfo.fSize = _float2(50.f, 50.f);
+
+		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
+		{
+			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			return E_FAIL;
+		}
+		m_pColliderCom->Set_Owner(this);
+	}
 
 	return S_OK;
 }

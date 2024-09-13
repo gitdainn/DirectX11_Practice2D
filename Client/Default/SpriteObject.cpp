@@ -109,14 +109,22 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 	if (m_bIsDead)
 		return OBJ_DEAD;
 
-	if (nullptr != m_pColliderCom)
-		m_pColliderCom->Tick(TimeDelta);
-
 	return _uint();
 }
 
 _uint CSpriteObject::LateTick(_double TimeDelta)
 {
+	if (nullptr != m_pColliderCom)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		Safe_AddRef(pGameInstance);
+		if (FAILED(pGameInstance->Attach_Collider(m_pLayer, m_pColliderCom)))
+		{
+			MSG_BOX("CSpriteObject - LateTick() - FAILED");
+		}
+		Safe_Release(pGameInstance);
+	}
+
 	if (m_bIsRender)
 	{
 		//@qurious. enum class가 아니라 일반 enum이면 engine의 열거체를 멤버로 선언 시 사용불가임.
@@ -130,9 +138,6 @@ HRESULT CSpriteObject::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
 		return E_FAIL;
-
-	if (nullptr != m_pColliderCom)
-		m_pColliderCom->Render();
 
 	m_pShaderCom->Begin(m_iShaderPassIndex);
 
@@ -245,7 +250,7 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	CComponent* pComponent = { nullptr };
 	for (COMPONENT_INFO tInfo : ComponentList)
 	{
-		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_LOGO, tInfo.pPrototypeTag,
+		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, tInfo.pPrototypeTag,
 			tInfo.pComponentTag, &pComponent, &tInfo)))
 		{
 			MSG_BOX("CSpriteObject - Add_Components - FAILED");
@@ -254,29 +259,75 @@ HRESULT CSpriteObject::Load_Components_Excel()
 		pComponent->Set_Owner(this);
 	}
 
-	/* For.Com_Texture */
-	pComponent = Find_Component(TAG_TEXTURE);
-	if (nullptr != pComponent)
-	{
-		m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
-		if (nullptr == m_pTextureCom)
-		{
-			MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
-			return E_FAIL;
-		}
-		m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
-	}
+	Mapping_Component(TAG_TEXTURE);
+	Mapping_Component(TAG_COLL_AABB);
 
-	/* For.Com_Collider */
-	pComponent = Find_Component(TAG_COLL_AABB);
-	if (nullptr != pComponent)
-	{
-		m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
-	}
 
 	Safe_Release(pFileLoader);
 
 	return S_OK;
+}
+
+HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
+{
+	if (nullptr == pComponentTag)
+	{
+		return E_FAIL;
+	}
+
+	CComponent* pComponent = { nullptr };
+
+	if (!lstrcmp(pComponentTag, TAG_TEXTURE))
+	{
+		/* For.Com_Texture */
+		pComponent = Find_Component(TAG_TEXTURE);
+		if (nullptr != pComponent)
+		{
+			m_pTextureCom = dynamic_cast<CTexture*>(pComponent);
+			if (nullptr == m_pTextureCom)
+			{
+				MSG_BOX("CSpriteObject - Add_Component - TextureCom is NULL");
+				return E_FAIL;
+			}
+			m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
+
+		}
+	}
+
+	if (!lstrcmp(pComponentTag, TAG_COLL_AABB))
+	{
+		/* For.Com_Collider */
+		pComponent = Find_Component(TAG_COLL_AABB);
+		if (nullptr != pComponent)
+		{
+			m_pColliderCom = dynamic_cast<Engine::CCollider*>(pComponent);
+		}
+	}
+
+	return S_OK;
+}
+
+void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+}
+
+void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+	if (nullptr == pTargetCollider || nullptr == pTarget)
+		return;
+
+	if (pTargetCollider->Get_IsBlock())
+	{
+		_vector vPushVector = m_pColliderCom->Get_IntersectVectorX(pTargetCollider);
+		//// x, y 중 어느 방향이 부딪쳤는지 알아챈다. 
+		//// 부딪친 방향으로 겹친 거리만큼 다시 민다. or 블록 객체 위치로 지정한다. (좌우 중 어느 곳에 지정할지 알아야 함)
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition + vPushVector, XMVectorGetY(vPosition)));
+	}
+}
+
+void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+{
 }
 
 void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)

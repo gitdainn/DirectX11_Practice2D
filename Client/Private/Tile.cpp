@@ -90,6 +90,8 @@ void CTile::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 
 void CTile::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	__super::OnCollisionStay(pTargetCollider, pTarget);
+
 }
 
 void CTile::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)

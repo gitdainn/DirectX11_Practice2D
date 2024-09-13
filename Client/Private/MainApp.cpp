@@ -6,6 +6,8 @@
 #include "PlayerInfo.h"
 #include "FileLoader.h"
 #include "Line_Manager.h"
+#include "ColliderAABB2D.h"
+#include "Utility.h"
 
 USING(Client)
 
@@ -105,6 +107,8 @@ HRESULT CMainApp::Render()
 #ifdef _DEBUG
 	//@ note - 프레임 60(1초) 제한 코드
 	m_pGameInstance->Render_Line();
+	m_pGameInstance->Render_Collider();
+
 	++m_dwNumDraw;
 
 	if (m_TimeAcc >= 1.0)
@@ -151,7 +155,75 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+#pragma region COLLIDER
+	/* For.Prototype_Component_Sprite_Background */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		CColliderAABB2D::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
 
+#pragma region TEXTURES	
+	///* For.Prototype_Component_Texture_Logo */
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Background"),
+	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
+	//{
+	//	Safe_Release(m_pGameInstance);
+	//	return E_FAIL;
+	//};
+
+	/* For.Prototype_Component_Sprite_LittleBorn */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_LittleBorn"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_WaterSkul */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/WaterSkul/WaterSkulUV_%d.png")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Test"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/Bat.png")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region TextureFolder
+	/* For.Prototype_Component_Sprite_ForestTile */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Tiles/ForestTile/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_ForestEnvironment */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Environment/Forest/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_Background */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Background/")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
 
 	// CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/no_0.dds"));
 	/* For.Prototype_Component_Shader_VtxNorTex*/

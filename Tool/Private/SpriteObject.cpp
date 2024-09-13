@@ -303,7 +303,7 @@ void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTa
 
 	if (pTargetCollider->Get_IsBlock())
 	{
-		_vector vPushVector = m_pColliderCom->Get_IntersectVector(pTargetCollider);
+		_vector vPushVector = m_pColliderCom->Get_IntersectVectorX(pTargetCollider);
 		//// x, y 중 어느 방향이 부딪쳤는지 알아챈다. 
 		//// 부딪친 방향으로 겹친 거리만큼 다시 민다. or 블록 객체 위치로 지정한다. (좌우 중 어느 곳에 지정할지 알아야 함)
 		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);

@@ -43,6 +43,11 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+
 protected: // Animation
 	struct ANIM_INFO
 	{
@@ -111,6 +116,9 @@ protected:
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 	HRESULT Load_Components_Excel();
+
+private:
+	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };

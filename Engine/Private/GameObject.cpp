@@ -9,7 +9,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_bIsDead(false), m_bIsRender(true)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_iInstanceID(0)
-	, m_pLayer(nullptr)
+	, m_pLayer(TEXT("Layer_Default"))
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -26,13 +26,14 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 * 이때, Add_Components에서 Add_Ref를 해주고, Free()에서 m_Components에 담긴 모든 것들 Relese 해주기 때문에 delete 정상 다 됨!
 */
 
-CGameObject::CGameObject(const CGameObject & rhs)
+CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pDevice(rhs.m_pDevice)
 	, m_pContext(rhs.m_pContext)
 	, m_bIsDead(rhs.m_bIsDead), m_bIsRender(rhs.m_bIsRender)
 	, m_eRenderGroup(rhs.m_eRenderGroup)
 	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
 	, m_iInstanceID(rhs.m_iInstanceID)
+	, m_pLayer(rhs.m_pLayer)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

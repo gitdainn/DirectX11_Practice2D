@@ -34,8 +34,7 @@ public:
 	virtual void Tick(_double TimeDelta);
 
 public:
-	_vector	Get_IntersectVectorX(CCollider* pTargetCollider);
-	_vector	Get_IntersectVector(CCollider* pTargetCollider)
+	_vector	Get_IntersectVectorX(CCollider* pTargetCollider)
 	{
 		COLLIDER_DESC tTargetDesc = pTargetCollider->Get_ColliderDesc();
 

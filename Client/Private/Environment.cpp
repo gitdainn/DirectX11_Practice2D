@@ -49,6 +49,8 @@ _uint CEnvironment::Tick(_double TimeDelta)
 
 _uint CEnvironment::LateTick(_double TimeDelta)
 {
+	if(nullptr != m_pColliderCom)
+		m_pColliderCom->Set_IsBlock(true);
 	return __super::LateTick(TimeDelta);
 }
 
@@ -86,6 +88,8 @@ void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTa
 
 void CEnvironment::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	__super::OnCollisionStay(pTargetCollider, pTarget);
+
 }
 
 void CEnvironment::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
