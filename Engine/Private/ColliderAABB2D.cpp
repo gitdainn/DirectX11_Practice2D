@@ -51,11 +51,12 @@ void CColliderAABB2D::Tick(_double TimeDelta)
 	m_bIsCollision = false;
 }
 
-_bool CColliderAABB2D::Intersects(CColliderAABB2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const
 {
 	if (nullptr == pTarget)
 		return false;
 
+	_bool bIsIntersect = { true };
 	COLLIDER_DESC tTargetDesc = pTarget->Get_ColliderDesc();
 
 	_float2 vRadius = _float2(m_tColliderDesc.vScale.x / 2, m_tColliderDesc.vScale.y / 2);
@@ -64,24 +65,28 @@ _bool CColliderAABB2D::Intersects(CColliderAABB2D* pTarget) const
 	const _float fSumRadiusX = vRadius.x + vTargetRadius.x;
 	const _float fDistanceX = abs(m_tColliderDesc.vPosition.x - tTargetDesc.vPosition.x);
 
-	if (fSumRadiusX < fDistanceX)
-		return false;
+	if (fSumRadiusX <= fDistanceX)
+		bIsIntersect = false;
+	else
+		vIntersectionDistance.x = fSumRadiusX - fDistanceX;
 
 	const _float fSumRadiusY = vRadius.y + vTargetRadius.y;
 	const _float fDistanceY = abs(m_tColliderDesc.vPosition.y - tTargetDesc.vPosition.y);
 
-	if (fSumRadiusY < fDistanceY)
-		return false;
+	if (fSumRadiusY <= fDistanceY)
+		bIsIntersect = false;
+	else
+		vIntersectionDistance.y = fSumRadiusY - fDistanceY;
 
-	return true;
+	return bIsIntersect;
 }
 
-_bool CColliderAABB2D::Intersects(CColliderOBB2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderOBB2D* pTarget)
 {
 	return _bool();
 }
 
-_bool CColliderAABB2D::Intersects(CColliderSphere2D* pTarget) const
+_bool CColliderAABB2D::Intersects(CColliderSphere2D* pTarget)
 {
 	return _bool();
 }

@@ -52,17 +52,17 @@ void CColliderSphere2D::Tick(_double TimeDelta)
 	m_bIsCollision = false;
 }
 
-_bool CColliderSphere2D::Intersects(CColliderAABB2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const
 {
 	return _bool();
 }
 
-_bool CColliderSphere2D::Intersects(CColliderOBB2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderOBB2D* pTarget)
 {
 	return _bool();
 }
 
-_bool CColliderSphere2D::Intersects(CColliderSphere2D* pTarget) const
+_bool CColliderSphere2D::Intersects(CColliderSphere2D* pTarget)
 {
 	return _bool();
 }

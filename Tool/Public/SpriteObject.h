@@ -163,7 +163,7 @@ protected:
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
-	Engine::CCollider* m_pColliderCom = { nullptr };
+	CCollider* m_pColliderCom = { nullptr };
 
 protected:
 	_bool	m_bIsAnimUV;

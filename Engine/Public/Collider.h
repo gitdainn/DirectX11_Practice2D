@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Component.h"
+#include "Engine_Defines.h"
 /* CCollider 객체 하나는 하나의 충돌체를 의미한다. */
 
 BEGIN(Engine)
@@ -33,16 +34,38 @@ public:
 	virtual void Tick(_double TimeDelta);
 
 public:
-	_bool IsCollision(CCollider* pCollider);
+	_vector	Get_IntersectVectorX(CCollider* pTargetCollider);
+	_vector	Get_IntersectVector(CCollider* pTargetCollider)
+	{
+		COLLIDER_DESC tTargetDesc = pTargetCollider->Get_ColliderDesc();
+
+		// 도착 위치 - 현재 위치 = 도착 위치를 바라보는 방향벡터
+		//_vector vPushDirection = XMLoadFloat3(&tTargetDesc.vPosition) - XMLoadFloat3(&m_tColliderDesc.vPosition) * -1;
+		_vector vPushDirection = XMLoadFloat3(&m_tColliderDesc.vPosition) - XMLoadFloat3(&tTargetDesc.vPosition);
+		_float vPushDistance = (m_tColliderDesc.vScale.x * 0.5f + tTargetDesc.vScale.x * 0.5f) - XMVectorGetX(XMVector3Length(vPushDirection));
+
+		// 방향 * 길이
+		return XMVector3Normalize(vPushDirection) * vPushDistance;
+	}
+	_float2	Get_IntersectionDistance() const
+	{
+		return m_vIntersectionDistance;
+	}
+	void	Set_IntersectionDistance(const _float2 vIntersectionDistance)
+	{
+		m_vIntersectionDistance = vIntersectionDistance;
+	}
+
+public:
+	_bool IsCollision(CCollider* pTargetCollider);
 	void OnCollisionEnter(CCollider* pTargetCollider);
 	void OnCollisionStay(CCollider* pTargetCollider);
 	void OnCollisionExit(CCollider* pTargetCollider);
 
 protected:
-	virtual _bool Intersects(CColliderAABB2D* pTarget)const = 0;
-	virtual _bool Intersects(CColliderOBB2D* pTarget) const = 0;
-	virtual _bool Intersects(CColliderSphere2D* pTarget) const = 0;
-
+	virtual _bool Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const = 0;
+	virtual _bool Intersects(CColliderOBB2D* pTarget) = 0;
+	virtual _bool Intersects(CColliderSphere2D* pTarget) = 0;
 
 public:
 	virtual void Set_Owner(CGameObject* pOwner) override;
@@ -106,6 +129,7 @@ protected:
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
 	_bool					m_bIsBlock = { false };
+	_float2					m_vIntersectionDistance;
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;

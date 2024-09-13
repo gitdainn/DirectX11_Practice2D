@@ -19,9 +19,9 @@ public:
 	void Tick(_double TimeDelta) override;
 
 protected:
-	virtual _bool Intersects(CColliderAABB2D* pTarget)const override;
-	virtual _bool Intersects(CColliderOBB2D* pTarget) const override;
-	virtual _bool Intersects(CColliderSphere2D* pTarget) const override;
+	virtual _bool Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const override;
+	virtual _bool Intersects(CColliderOBB2D* pTarget) override;
+	virtual _bool Intersects(CColliderSphere2D* pTarget) override;
 
 public:
 	static CColliderAABB2D* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
