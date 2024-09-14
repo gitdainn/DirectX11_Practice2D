@@ -91,11 +91,12 @@ PS_OUT PS_FlipUV_ANIM(PS_IN In)
     PS_OUT Out = (PS_OUT) 0;
 	
 	// UV를 좌우반전하여 순서도 반전됐으므로 조정 (만약 가로 5인데 3까지 있으면 0, 1, 2가 아니라 4, 3, 2로 접근해야함)
-    float fX = saturate(g_iUVTexNumX - g_iUVIndexX - 1) * 0.1 - (In.vTexUV.x + (g_iUVTexNumX - g_iUVIndexX)) / g_iUVTexNumX;
+	// TexNumX가 10이 아니면 중점 0.5 0.5가 아니라서 좌우 반전 시 텍스처의 위치가 멀리 떨어져 보임
+    float fX = saturate(g_iUVTexNumX - g_iUVIndexX) * 0.1 - (In.vTexUV.x + (g_iUVTexNumX - g_iUVIndexX)) / g_iUVTexNumX;
     float fY = (In.vTexUV.y + g_iUVIndexY) / g_iUVTexNumY;
     float2 NewUV = float2(fX, fY);
 	
-	/* @note - LinearSampler는 hpp에서 정의한 밉맵 방식
+	/* @note - LinearSampler는 Sahder_Defines.hpp에서 우리가 정의한 밉맵 방식
 	우리는 현재 wrap 방식으로 1을 초과하면 반복되도록 사용 중
 	g_Texture라는 텍스처를 0~1 범위의 UV 좌표로 변경
 	*/

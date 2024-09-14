@@ -138,7 +138,9 @@ protected:
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	_uint	m_iUVTextureIndex;
+	// UV용 텍스처의 가로 텍스처 개수
 	_uint	m_iUVTexNumX;
+	// UV용 텍스처의 세로 텍스처 개수
 	_uint	m_iUVTexNumY;
 
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */

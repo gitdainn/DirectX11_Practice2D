@@ -76,22 +76,25 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	Safe_AddRef(pGameInstance);
 
 	SPRITE_INFO tSpriteInfo;
+	tSpriteInfo.fSize = _float2{ 300.f, 300.f };
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, LAYER_BACKGROUND, tSpriteInfo)))
 	//	return E_FAIL;
 
-	tSpriteInfo.fSize = _float2{ 300.f, 320.f };
+	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
 	CPlayerInfo::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
-	tSpriteInfo.fSize = _float2{ 200.f, 150.f };
+	//tSpriteInfo.fSize = _float2{ 200.f, 150.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
 	CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 	//	return E_FAIL;
+	//CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+
 
 	Safe_Release(pGameInstance);
 	return S_OK;

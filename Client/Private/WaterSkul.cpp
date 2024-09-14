@@ -14,6 +14,9 @@ HRESULT CWaterSkul::Initialize_Prototype()
 
 HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 9;
+
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
         return E_FAIL;
@@ -27,8 +30,7 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
 
-    m_iUVTexNumX = 8;
-    m_iUVTexNumY = 9;
+
     m_bIsAnimUV = true;
 
     Add_Animation();
@@ -147,7 +149,7 @@ HRESULT CWaterSkul::SetUp_ShaderResources()
         return E_FAIL;
 
     _uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
-    /** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 큰 수처럼 이상수 나옴) */
+    /** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
     _uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
 
     // 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)

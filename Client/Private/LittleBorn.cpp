@@ -15,6 +15,9 @@ HRESULT CLittleBorn::Initialize_Prototype()
 
 HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 15;
+
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
         return E_FAIL;
@@ -31,6 +34,7 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
+
     return S_OK;
 }
 
@@ -40,7 +44,6 @@ HRESULT CLittleBorn::Initialize(void* pArg)
     {
         return E_FAIL;
     }
-
 
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;

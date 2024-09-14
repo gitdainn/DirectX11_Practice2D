@@ -9,7 +9,7 @@ CPlayerJump::CPlayerJump()
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
-	, m_fPower(1500.f)
+	, m_fPower(400.f)
 {
 }
 
@@ -20,7 +20,7 @@ CPlayerJump::CPlayerJump(const _uint& iJumpCount)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
-	, m_fPower(1500.f)
+	, m_fPower(400.f)
 {
 }
 
@@ -141,8 +141,7 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
 	// sin(포물선운동 진행각도90) = 1
-	_float fPower = 400.f;
-	m_UpTime = fPower * m_JumpTimeAcc * (_float)TimeDelta;
+	m_UpTime = m_fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
 	_float fJumpY = m_UpTime - m_DownTime;

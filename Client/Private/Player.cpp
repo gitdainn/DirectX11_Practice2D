@@ -163,7 +163,9 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		COMPONENT_INFO tComponentInfo;
 		ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 		tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-		tComponentInfo.fSize = _float2(50.f, 50.f);
+		tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
+		//tComponentInfo.fSize = _float2(60.f, 60.f);
+		tComponentInfo.fOffset = _float2(0.f, 0.f);
 
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
