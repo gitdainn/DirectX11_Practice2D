@@ -10,6 +10,8 @@ CLittleBorn::CLittleBorn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CLittleBorn::Initialize_Prototype()
 {
+    m_pObjectID = TEXT("P001");
+    m_pNameTag = TEXT("리틀본");
     return __super::Initialize_Prototype();
 }
 
@@ -34,12 +36,15 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
-
     return S_OK;
 }
 
 HRESULT CLittleBorn::Initialize(void* pArg)
 {
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 15;
+    m_bIsAnimUV = true;
+
     if (FAILED(__super::Initialize(pArg)))
     {
         return E_FAIL;
@@ -52,10 +57,6 @@ HRESULT CLittleBorn::Initialize(void* pArg)
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
-
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 15;
-    m_bIsAnimUV = true;
 
     Add_Animation();
 

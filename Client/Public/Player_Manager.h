@@ -3,13 +3,13 @@
 #include "Player.h"
 
 /** @qurious - 싱글톤에 final 붙이면 안된다? */
-class CPlayerInfo : public CBase
+class CPlayer_Manager : public CBase
 {
-    DECLARE_SINGLETON(CPlayerInfo)
+    DECLARE_SINGLETON(CPlayer_Manager)
 
 public:
-    explicit CPlayerInfo();
-    ~CPlayerInfo();
+    explicit CPlayer_Manager();
+    ~CPlayer_Manager();
 
 public:
     void Rotation_Skul()
@@ -48,6 +48,20 @@ public: // Getter //
 private:
     CPlayer* m_pEquippedSkul;
     CPlayer* m_pHoldingSkul;
+
+private:
+    _int m_iHp;
+    _int m_iMagicAttack;
+    _int m_iPhysicalAttack;
+    _int m_iMagicDefense;
+    _int m_iPhysicalDefense;
+    _float m_fMovementSpeed;
+    _double m_InvulnerabilityDuration;
+
+    _int iMagicAttackIncrease;
+    _int iPhysicalAttackIncrease;
+    _int iMagicDefenseIncrease;
+    _int iPhysicalDefenseIncrease;
 
 public:
     void Free() override;

@@ -3,6 +3,8 @@
 #include "PlayerIdle.h"
 #include "PlayerJump.h"
 #include "Line_Manager.h"
+#include "FileLoader.h"
+#include "Skill.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -27,6 +29,7 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
+	// pFileLoader->Get_Data(pObjectID); 로 모든 정보 가져와서 맵핑 ... 해야되는데 ...
 	m_pLayer = LAYER_PLAYER;
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
@@ -117,6 +120,79 @@ void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDire
 		m_pAirState = pAirState;
 		m_pAirState->Enter(this);
 	}
+}
+
+void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
+{
+	if (nullptr == pObjectID)
+		return;
+
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+		return;
+	Safe_AddRef(pFileLoader);
+
+	LOAD_SKUL_INFO tSkulInfo;
+	pFileLoader->Get_SkulData(pObjectID, tSkulInfo);
+
+	m_iMagicAttackIncrease = tSkulInfo.iMagicAttackIncrease;
+	m_iPhysicalAttackIncrease = tSkulInfo.iPhysicalAttackIncrease;
+	m_iMagicDefenseIncrease = tSkulInfo.iMagicDefenseIncrease;
+	m_iPhysicalDefenseIncrease = tSkulInfo.iPhysicalDefenseIncrease;
+
+	m_eSkulRank = tSkulInfo.eRank;
+	m_eSkulType = tSkulInfo.eType;
+
+	if (SKUL_TYPE::BALANCE == m_eSkulType)
+	{
+		m_iMaxJumpCount = 2;
+	}
+	else if (SKUL_TYPE::POWER == m_eSkulType)
+	{
+		m_iMaxJumpCount = 3;
+	}
+	else
+		m_iMaxJumpCount = 1;
+
+	for (_uint i = 0; i < iSkillNum; ++i)
+	{
+		m_pSkill[i] = Mapping_Skill(tSkulInfo.pSkill1);
+	}
+
+	Safe_Release(pFileLoader);
+}
+
+CSkill* CPlayer::Mapping_Skill(const _tchar* pObjectID)
+{
+	// 이름에 알맞은 클래스를 추가하기. (해당 번호에 있는.... 클래스를 어케 갖고옴?
+	// 1. Prototype을 조합한다. (기획자가 클래스명을 미리 안다고.....?)
+	// 2. 미리 해당 프로토타입을 각 스컬에서 넣어둔다. (이러면 맵핑의 의미가없음... 알아야해..)
+	// 3. 모든 스킬 만들어두고 .... 이것도 결국 클래스명 지정해줘야 하는데?
+	// 흠.. 뭐가 되든 프로로타입은 알고있어야 함..
+	// pair<스킬 이름, 프로토타입명>으로 각 객체마다 미리 해두는 게 좋을 듯.... 
+	// 그러면 미리 모든 스킬 이름과 프로토타입명을 어디선가 관리해둬야 함... (Add_PrototypeName으로 ,, )
+
+	if (nullptr == pObjectID)
+		return nullptr;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return;
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Add_GameObject(/*Get_PrototypeName(pObjectID)*/TEXT("~~"), LEVEL_STATIC, LAYER_SKILL)))
+		return nullptr;
+
+	list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER_SKILL);
+	if (nullptr == pObjectList)
+		return nullptr;
+
+	if (pObjectList->empty())
+		return nullptr;
+
+	Safe_Release(pGameInstance);
+
+	return dynamic_cast<CSkill*>(pObjectList->back());
 }
 
 void CPlayer::Landing_Ground()

@@ -35,6 +35,36 @@ namespace Client
 		FALL, SKILL1, SKILL2, MOTION_END
 	};
 
+	enum class SKUL_RANK
+	{
+		NORMAL, RARE, UNIQUE, LEGENDARY
+	};
+
+	enum class SKUL_TYPE
+	{
+		BALANCE, POWER, SPEED
+	};
+
+	struct LOAD_SKUL_INFO
+	{
+		const wchar_t* pName;
+		const wchar_t* pSkill1;
+		const wchar_t* pSkill2;
+		const wchar_t* pSkill3;
+		const wchar_t* pSkill4;
+
+		SKUL_RANK eRank;
+		SKUL_TYPE eType;
+
+		int	iMagicAttackIncrease;
+		int iPhysicalAttackIncrease;
+		int iMagicDefenseIncrease;
+		int iPhysicalDefenseIncrease;
+
+		int iBone;
+
+		const wchar_t* pExplanation;
+	};
 }
 
 extern HINSTANCE g_hInst;
@@ -67,6 +97,7 @@ using namespace Client;
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_PLAYER			TEXT("Layer_Player")
 #define LAYER_UI				TEXT("Layer_UI")
+#define LAYER_SKILL				TEXT("Layer_Skill")
 #pragma endregion
 
 #pragma region DINPUT

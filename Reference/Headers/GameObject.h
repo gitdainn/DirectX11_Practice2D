@@ -140,6 +140,7 @@ protected:
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	const _tchar* m_pClassName = { nullptr };
+	const _tchar* m_pNameTag = { nullptr };
 	const _tchar* m_pLayer;
 	_uint	m_iShaderPassIndex = { 0 };
 	_uint	m_iTextureIndex = { 0 };

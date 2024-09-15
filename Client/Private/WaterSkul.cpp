@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "WaterSkul.h"
-#include "PlayerInfo.h"
+#include "Player_Manager.h"
 
 CWaterSkul::CWaterSkul(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     : CPlayer(pDevice, pContext)
@@ -9,6 +9,8 @@ CWaterSkul::CWaterSkul(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CWaterSkul::Initialize_Prototype()
 {
+    m_pObjectID = TEXT("P003");
+    m_pNameTag = TEXT("워터스컬");
     return __super::Initialize_Prototype();
 }
 
@@ -58,7 +60,7 @@ HRESULT CWaterSkul::Initialize(void* pArg)
     m_bIsAnimUV = true;
 
     // @error - 장착한 플레이어만 뜨는데 이거 일단 고정으로 장착하게 해뒀으니 추후 수정해야함! //
-    CPlayerInfo::GetInstance()->Set_EquippedSkul(this);
+    CPlayer_Manager::GetInstance()->Set_EquippedSkul(this);
     Add_Animation();
 
     return S_OK;

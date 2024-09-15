@@ -97,6 +97,9 @@
     <Filter Include="02.GameObject\Environment">
       <UniqueIdentifier>{f761d0a0-5b8e-49e7-8189-7d66ebaffa70}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Skill">
+      <UniqueIdentifier>{4a3855a6-a9ad-48f0-91f0-b6080bf1bb44}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -169,7 +172,7 @@
     <ClInclude Include="..\Public\PlayerIdle.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\PlayerInfo.h">
+    <ClInclude Include="..\Public\Player_Manager.h">
       <Filter>05.Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerDash.h">
@@ -195,6 +198,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Environment.h">
       <Filter>02.GameObject\Environment</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Skill.h">
+      <Filter>02.GameObject\Skill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -262,7 +268,7 @@
     <ClCompile Include="..\Private\PlayerIdle.cpp">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\PlayerInfo.cpp">
+    <ClCompile Include="..\Private\Player_Manager.cpp">
       <Filter>05.Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerDash.cpp">
@@ -282,6 +288,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Environment.cpp">
       <Filter>02.GameObject\Environment</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Skill.cpp">
+      <Filter>02.GameObject\Skill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

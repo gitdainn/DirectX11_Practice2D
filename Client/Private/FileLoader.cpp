@@ -4,6 +4,7 @@
 #include "GameObject.h"
 #include "Line_Manager.h"
 #include "libxl.h"
+#include <functional>
 
 using namespace libxl;
 
@@ -293,6 +294,67 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 	return S_OK;
 }
 
+HRESULT CFileLoader::Load_SkulData_Excel(const _tchar* pFilePath)
+{
+	Book* pBook = xlCreateXMLBookW();
+	if (nullptr == pBook)
+	{
+		pBook->release();
+		return E_FAIL;
+	}
+
+	COMPONENT_INFO tComponentInfo;
+	if (pBook->load(pFilePath))
+	{
+		const int iSkulSheet = { 0 };
+		Sheet* pSheet = pBook->getSheet(iSkulSheet);
+		if (nullptr == pSheet)
+		{
+			pBook->release();
+			return E_FAIL;
+		}
+		const int iLastRow = pSheet->lastRow() - 1;
+		const int iLastCol = pSheet->lastCol();
+		const int iFirstRow = { 4 };
+		const int iFirstCol = { 1 };
+		for (_uint iRow = iFirstRow; iRow <= iLastRow; ++iRow)
+		{
+			LOAD_SKUL_INFO tSkulInfo;
+			ZeroMemory(&tSkulInfo, sizeof(LOAD_SKUL_INFO));
+
+			int iCol = { 0 };
+			const _tchar* pID = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.pName = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.eRank = Translate_Rank(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.eType = Translate_Type(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.pSkill1 = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.pSkill2 = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.pSkill3 = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.pSkill4 = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+
+			tSkulInfo.iMagicAttackIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkulInfo.iPhysicalAttackIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkulInfo.iMagicDefenseIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkulInfo.iPhysicalDefenseIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
+
+			tSkulInfo.iBone = pSheet->readNum(iRow, iFirstCol + iCol++);
+
+			tSkulInfo.pExplanation = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+
+			auto iter = m_SkulDataMap.find(tSkulInfo.pName);
+			if (m_SkulDataMap.end() == iter)
+			{
+				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
+				m_SkulDataMap.emplace(tSkulInfo.pName, tSkulInfo);
+			}
+		}
+	}
+
+	pBook->release();
+
+	return S_OK;
+}
+
 HRESULT CFileLoader::Get_OpenFileName(OPENFILENAME& tOpenFileName)
 {
 	OPENFILENAME OFN;
@@ -342,6 +404,43 @@ _tchar* CFileLoader::Copy_WChar(const _tchar* pWChar)
 	return pChar;
 }
 
+SKUL_RANK CFileLoader::Translate_Rank(const _tchar* pRank) const
+{
+	unordered_map<const _tchar*, SKUL_RANK> RankMap;
+	RankMap.emplace(L"일반", SKUL_RANK::NORMAL);
+	RankMap.emplace(L"레어", SKUL_RANK::RARE);
+	RankMap.emplace(L"유니크", SKUL_RANK::UNIQUE);
+	RankMap.emplace(L"레전더리", SKUL_RANK::LEGENDARY);
+
+	// @note - 문자열은 find로 찾으면 주소가 달라서 못 찾음. find_if 문으로 함수 객체 넣어서 lstrcpy로 비교할 것
+	// @note - map의 멤버함수 find, find_if는 멤버 함수 X
+	auto iter = find_if(RankMap.begin(), RankMap.end(), CTag_Finder(pRank));
+	if (iter == RankMap.end())
+	{
+		MSG_BOX("CFileLoader - Translate_Rank() - FAILED");
+		return SKUL_RANK();
+	}
+
+	return iter->second;
+}
+
+SKUL_TYPE CFileLoader::Translate_Type(const _tchar* pType) const
+{
+	unordered_map<const _tchar*, SKUL_TYPE> TypeMap;
+	TypeMap.emplace(TEXT("밸런스"), SKUL_TYPE::BALANCE);
+	TypeMap.emplace(TEXT("파워"), SKUL_TYPE::POWER);
+	TypeMap.emplace(TEXT("스피드"), SKUL_TYPE::SPEED);
+
+	auto iter = find_if(TypeMap.begin(), TypeMap.end(), CTag_Finder(pType));
+	if (iter == TypeMap.end())
+	{
+		MSG_BOX("CFileLoader - Translate_Rank() - FAILED");
+		return SKUL_TYPE();
+	}
+
+	return iter->second;
+}
+
 inline void CFileLoader::Free(void)
 {
 	__super::Free();
@@ -363,4 +462,17 @@ inline void CFileLoader::Free(void)
 		}
 	}
 	m_ComponentInfoMap.clear();
+
+	for (pair<const _tchar*, PLAYER_INFO> Pair : m_SkulDataMap)
+	{
+		Safe_Delete_Array(Pair.first);
+		PLAYER_INFO tPlayerInfo = Pair.second;
+		Safe_Delete_Array(tPlayerInfo.pName);
+		Safe_Delete_Array(tPlayerInfo.pSkill1);
+		Safe_Delete_Array(tPlayerInfo.pSkill2);
+		Safe_Delete_Array(tPlayerInfo.pSkill3);
+		Safe_Delete_Array(tPlayerInfo.pSkill4);
+		Safe_Delete_Array(tPlayerInfo.pExplanation);
+	}
+	m_SkulDataMap.clear();
 }

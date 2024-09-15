@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "GrimReaper.h"
-#include "PlayerInfo.h"
+#include "Player_Manager.h"
 
 /* @note - 생성자에 부모 생성자도 초기화해야 하는 이유
 * */
@@ -11,6 +11,8 @@ CGrimReaper::CGrimReaper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CGrimReaper::Initialize_Prototype()
 {
+    m_pObjectID = TEXT("P002");
+    m_pNameTag = TEXT("그림리퍼");
     return __super::Initialize_Prototype();
 }
 

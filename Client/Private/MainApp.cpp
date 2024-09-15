@@ -36,6 +36,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_DefaultData_Excel()))
+		return E_FAIL;
+
 	if (FAILED(Ready_Prototype_Component_For_Static()))
 		return E_FAIL;
 
@@ -131,6 +134,23 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 {		
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));	
+}
+
+HRESULT CMainApp::Ready_DefaultData_Excel()
+{
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+		return E_FAIL;
+	Safe_AddRef(pFileLoader);
+
+	if (FAILED(pFileLoader->Load_SkulData_Excel(TEXT("../../Data.xlsx"))))
+	{
+		MSG_BOX("CMainApp - Ready_DefaultData_Excel() - FAILED");
+		return E_FAIL;
+	}
+
+	Safe_Release(pFileLoader);
+	return S_OK;
 }
 
 HRESULT CMainApp::Ready_Prototype_Component_For_Static()

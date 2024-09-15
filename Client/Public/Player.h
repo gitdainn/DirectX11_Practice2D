@@ -1,6 +1,10 @@
 #pragma once
 #include "SpriteObject.h"
 
+const int iSkillNum = { 2 };
+
+class CSkill;
+
 class CPlayer : public CSpriteObject
 {
 public:
@@ -34,6 +38,8 @@ public:
 	}
 
 protected:
+	void	Mapping_SkulData(const _tchar* pObjectID);
+	CSkill*	Mapping_Skill(const _tchar* pObjectID);
 	virtual void Add_Animation() = 0;
 
 private:
@@ -44,6 +50,7 @@ protected:
 	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
 
 protected:
+	CSkill* m_pSkill[iSkillNum];
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_bool	m_bIsEquipped;
 
@@ -51,6 +58,26 @@ protected:
 	_bool	m_bIsInAir;
 	_bool   m_bIsFalling;
 
+protected:
+	SKUL_RANK	m_eSkulRank;
+	SKUL_TYPE	m_eSkulType;
+
+	_int m_iHp = { 100 };
+	_int m_iMagicAttack = { 10 };
+	_int m_iPhysicalAttack = { 10 };
+	_int m_iMagicDefense = { 10 };
+	_int m_iPhysicalDefense = { 10 };
+
+	_int m_iMaxJumpCount = { 2 };
+
+	_float m_fMovementSpeed = { 10 };
+
+	_int m_iMagicAttackIncrease = { 0 };
+	_int m_iPhysicalAttackIncrease = { 0 };
+	_int m_iMagicDefenseIncrease = { 0 };
+	_int m_iPhysicalDefenseIncrease = { 0 };
+
+	_double m_InvulnerabilityDuration = { 0.0 };
 
 public:
 	/* Prototype */
