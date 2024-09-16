@@ -94,7 +94,8 @@ public: /* For.GarbageCollector */
 
 public: /* For. Collision_Manager */
 	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
-	
+	void	Clear_Collider();
+
 public: /* For. Line_Manager*/
 	void	Add_Vertex(const VertexPositionColor& tVertex);
 	void	DeleteBack_Line();

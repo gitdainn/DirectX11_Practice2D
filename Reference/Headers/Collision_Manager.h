@@ -24,6 +24,7 @@ public:
 #endif // _DEBUG
 
 public:
+	void	Clear_Collider();
 	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
 	void	Collision_Matrix();
 	HRESULT	Add_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB);

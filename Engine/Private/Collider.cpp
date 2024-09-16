@@ -11,7 +11,6 @@
 
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
-	, m_vIntersectionDistance(0.f, 0.f)
 {
 	XMStoreFloat4x4(&m_WorldMatrix, XMMatrixIdentity());
 	ZeroMemory(&m_tColliderDesc, sizeof(COLLIDER_DESC));
@@ -21,7 +20,6 @@ CCollider::CCollider(const CCollider & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 	, m_tColliderDesc(rhs.m_tColliderDesc)
-	, m_vIntersectionDistance(rhs.m_vIntersectionDistance)
 #ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)
@@ -124,23 +122,21 @@ _bool CCollider::IsCollision(CCollider* pTargetCollider)
 	if (nullptr == pTargetCollider)
 		return false;
 
-	m_vIntersectionDistance = _float2(0.f, 0.f);
-
+	_bool bIsCollision = { false };
 	CColliderAABB2D* pAABB = dynamic_cast<CColliderAABB2D*>(pTargetCollider);
 	if (nullptr != pAABB)
-		m_bIsCollision = Intersects(pAABB, m_vIntersectionDistance);
+		bIsCollision = Intersects(pAABB);
 
 	CColliderOBB2D* pOBB = dynamic_cast<CColliderOBB2D*>(pTargetCollider);
 	if (nullptr != pOBB)
-		m_bIsCollision = Intersects(pOBB);
+		bIsCollision = Intersects(pOBB);
 
 	CColliderSphere2D* pSphere = dynamic_cast<CColliderSphere2D*>(pTargetCollider);
 	if (nullptr != pSphere)
-		m_bIsCollision = Intersects(pSphere);
+		bIsCollision = Intersects(pSphere);
 
-	pTargetCollider->Set_IntersectionDistance(m_vIntersectionDistance);
 
-	return m_bIsCollision;
+	return bIsCollision;
 }
 
 void CCollider::OnCollisionEnter(CCollider* pTargetCollider)

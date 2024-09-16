@@ -373,10 +373,10 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
 		fDelayTime = iter->second;
 
-	m_fTimeAcc += (_float)TimeDelta;
-	if (fPerAnimTime + fDelayTime <= m_fTimeAcc)
+	m_AnimAcc += (_float)TimeDelta;
+	if (fPerAnimTime + fDelayTime <= m_AnimAcc)
 	{
-		m_fTimeAcc = 0.f;
+		m_AnimAcc = 0.f;
 		++iSpriteIndex;
 
 		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)

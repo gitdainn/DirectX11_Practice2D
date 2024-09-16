@@ -9,7 +9,7 @@ CPlayerJump::CPlayerJump()
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
-	, m_fPower(400.f)
+	, m_fPower(500.f)
 {
 }
 
@@ -20,7 +20,7 @@ CPlayerJump::CPlayerJump(const _uint& iJumpCount)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
-	, m_fPower(400.f)
+	, m_fPower(500.f)
 {
 }
 
@@ -140,12 +140,14 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
+	const _float fJumpSpeed = 3.f;
 	// sin(포물선운동 진행각도90) = 1
 	m_UpTime = m_fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
 	_float fJumpY = m_UpTime - m_DownTime;
-	m_JumpTimeAcc += TimeDelta;
+	// @note - 전체적인 곡선 모양은 동일한데 속도만 빨리하고 싶다면 그래프상 시간을 빠르게 흐르게 하면 된다! (즉 시간만 속도 올려주기)
+	m_JumpTimeAcc += TimeDelta * fJumpSpeed;
 	
 	if (m_UpTime < m_DownTime)
 		m_bIsFalling = true;
@@ -161,23 +163,6 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
 	pTransformCom->Set_State(CTransform::STATE_POSITION
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
-}
-
-void CPlayerJump::Fall(CSpriteObject* pObject, const _double TimeDelta)
-{
-	CTransform* pTransformCom = pObject->Get_TransformCom();
-	if (nullptr == pTransformCom)
-		return;
-
-	const _float fGravity = 9.8f;
-	_vector vPlayerPos = pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float fFallingY = m_UpTime - (fGravity* m_JumpTimeAcc* m_JumpTimeAcc) * 0.5f;
-
-	m_JumpTimeAcc += TimeDelta;
-
-	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
-	pTransformCom->Set_State(CTransform::STATE_POSITION
-		, XMVectorSetY(vPlayerPos, fFallingY + XMVectorGetY(vPlayerPos)));
 }
 
 const bool CPlayerJump::IsOnGround(CSpriteObject* pObject)

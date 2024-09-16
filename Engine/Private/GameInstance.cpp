@@ -465,6 +465,15 @@ HRESULT CGameInstance::Attach_Collider(const _tchar* pLayer, CCollider* pCollide
 	return S_OK;
 }
 
+void CGameInstance::Clear_Collider()
+{
+	if (nullptr == m_pCollision_Manager)
+		return;
+
+	m_pCollision_Manager->Clear_Collider();
+	return;
+}
+
 void CGameInstance::Add_Vertex(const VertexPositionColor& tVertex)
 {
 	if (nullptr == m_pLine_Manager)

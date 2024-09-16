@@ -1,10 +1,10 @@
 #include "stdafx.h"
 #include "RotationCmd.h"
-#include "PlayerInfo.h"
+#include "Player_Manager.h"
 
 void CRotationCmd::Execute(CGameObject* pObject)
 {
-    CPlayerInfo* pPlayerInfo = CPlayerInfo::GetInstance();
+    CPlayer_Manager* pPlayerInfo = CPlayer_Manager::GetInstance();
     Safe_AddRef(pPlayerInfo);
 
     pPlayerInfo->Rotation_Skul();

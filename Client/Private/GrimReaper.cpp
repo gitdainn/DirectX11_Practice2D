@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "GrimReaper.h"
 #include "Player_Manager.h"
+#include "Skill.h"
 
 /* @note - 생성자에 부모 생성자도 초기화해야 하는 이유
 * */
@@ -70,6 +71,16 @@ HRESULT CGrimReaper::Initialize(void* pArg)
 _uint CGrimReaper::Tick(_double TimeDelta)
 {
     Play_Animation(m_iUVTextureIndex, TimeDelta);
+
+    if (50 <= m_iSoulNum && 1 == m_iLevel)
+        Awaken();
+    else if (150 <= m_iSoulNum && 2 == m_iLevel)
+        Awaken();
+
+    // 소울 1개당 마법공격력 1% 증가
+    int iMagicAttack;
+    iMagicAttack = m_iMagicAttack + m_iMagicAttack * m_iSoulNum * 0.1f;
+
     return CPlayer::Tick(TimeDelta);
 }
 

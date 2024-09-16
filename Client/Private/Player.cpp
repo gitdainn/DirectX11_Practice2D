@@ -29,6 +29,8 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
+	Mapping_SkulData(m_pNameTag);
+
 	// pFileLoader->Get_Data(pObjectID); 로 모든 정보 가져와서 맵핑 ... 해야되는데 ...
 	m_pLayer = LAYER_PLAYER;
 	m_eRenderGroup = CRenderer::RENDER_UI;
@@ -44,6 +46,8 @@ HRESULT CPlayer::Initialize(void* pArg)
 	{
 		return E_FAIL;
 	}
+
+	Mapping_SkulData(m_pNameTag);
 
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
@@ -71,6 +75,8 @@ _uint CPlayer::Tick(_double TimeDelta)
 		Landing_Ground();
 	}
 	
+	SkillTick(TimeDelta);
+
 	return __super::Tick(TimeDelta);
 }
 
@@ -79,12 +85,72 @@ _uint CPlayer::LateTick(_double TimeDelta)
 	if (!m_bIsEquipped)
 		return _uint();
 
+	SkillLateTick(TimeDelta);
+
 	return __super::LateTick(TimeDelta);
 }
 
 HRESULT CPlayer::Render()
 {
+	SkillRender();
 	return __super::Render();
+}
+
+void CPlayer::SkillTick(_double TimeDelta)
+{
+	if (m_SkillAvailableList.empty())
+		return;
+
+	for (CSkill* pSkill : m_SkillAvailableList)
+	{
+		if (nullptr == pSkill)
+			continue;
+
+		pSkill->Tick(TimeDelta);
+	}
+}
+
+void CPlayer::SkillLateTick(_double TimeDelta)
+{
+	if (m_SkillAvailableList.empty())
+		return;
+
+	// @note - 컨테이너를 돌리는 중에 remove 등 컨테이너 개수를 변동해버리면 문제 발생!
+	list<CSkill*> RemoveList;
+	for (CSkill* pSkill : m_SkillAvailableList)
+	{
+		if (nullptr == pSkill)
+			continue;
+
+		if (pSkill->Get_IsSkillAvailable())
+		{
+			RemoveList.emplace_back(pSkill);
+			// @note - list의 remove는 erase와 remove 결합한 형태로 제공 (algorithm의 remove는 erase와 결합 사용 추천)
+		}
+		else
+		{
+			pSkill->LateTick(TimeDelta);
+		}
+	}
+
+	for (CSkill* pSkill : RemoveList)
+	{
+		m_SkillAvailableList.remove(pSkill);
+	}
+}
+
+void CPlayer::SkillRender()
+{
+	if (m_SkillAvailableList.empty())
+		return;
+
+	for (CSkill* pSkill : m_SkillAvailableList)
+	{
+		if (nullptr == pSkill)
+			continue;
+
+		pSkill->Render();
+	}
 }
 
 void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
@@ -122,6 +188,24 @@ void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDire
 	}
 }
 
+void CPlayer::Execute_Skill(_uint iSkillIndex)
+{
+	if (iSkillNum <= iSkillIndex)
+		return;
+
+	if (nullptr == m_pSkill[iSkillIndex])
+		return;
+
+	if (m_pSkill[iSkillIndex]->Get_IsSkillAvailable())
+	{
+		m_pSkill[iSkillIndex]->Enter(this);
+		m_SkillAvailableList.emplace_back(m_pSkill[iSkillIndex]);
+	}
+		// 해당 스킬 Available 상태이면 SkillManager에 넣어버려서 그곳에서 한번에 돌려버리기!
+		// 들어오자마자 Available = false 되고, 스킬 다 하다가 CoolDown되면 초기화와 함께 다시 Available
+		// Available 되면 매니저는 삭제 시킴.
+}
+
 void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
 {
 	if (nullptr == pObjectID)
@@ -133,30 +217,24 @@ void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
 	Safe_AddRef(pFileLoader);
 
 	LOAD_SKUL_INFO tSkulInfo;
-	pFileLoader->Get_SkulData(pObjectID, tSkulInfo);
+	if (FAILED(pFileLoader->Get_SkulData(pObjectID, tSkulInfo)))
+	{
+		Safe_Release(pFileLoader);
+		return;
+	}
 
 	m_iMagicAttackIncrease = tSkulInfo.iMagicAttackIncrease;
 	m_iPhysicalAttackIncrease = tSkulInfo.iPhysicalAttackIncrease;
-	m_iMagicDefenseIncrease = tSkulInfo.iMagicDefenseIncrease;
-	m_iPhysicalDefenseIncrease = tSkulInfo.iPhysicalDefenseIncrease;
+	m_iDefense = tSkulInfo.iDefense;
 
 	m_eSkulRank = tSkulInfo.eRank;
 	m_eSkulType = tSkulInfo.eType;
+	Mapping_Type(m_eSkulType);
 
-	if (SKUL_TYPE::BALANCE == m_eSkulType)
-	{
-		m_iMaxJumpCount = 2;
-	}
-	else if (SKUL_TYPE::POWER == m_eSkulType)
-	{
-		m_iMaxJumpCount = 3;
-	}
-	else
-		m_iMaxJumpCount = 1;
 
 	for (_uint i = 0; i < iSkillNum; ++i)
 	{
-		m_pSkill[i] = Mapping_Skill(tSkulInfo.pSkill1);
+		m_pSkill[i] = Mapping_Skill(tSkulInfo.pSkill[i]);
 	}
 
 	Safe_Release(pFileLoader);
@@ -176,23 +254,64 @@ CSkill* CPlayer::Mapping_Skill(const _tchar* pObjectID)
 		return nullptr;
 
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return;
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pGameInstance || nullptr == pFileLoader)
+	{
+		return nullptr;
+	}
 	Safe_AddRef(pGameInstance);
+	Safe_AddRef(pFileLoader);
 
-	if (FAILED(pGameInstance->Add_GameObject(/*Get_PrototypeName(pObjectID)*/TEXT("~~"), LEVEL_STATIC, LAYER_SKILL)))
+	SPRITE_INFO tSpriteInfo;
+	ZeroMemory(&tSpriteInfo, sizeof(SPRITE_INFO));
+	tSpriteInfo.fSize = _float2(200.f, 200.f);
+	CGameObject* pObject = pGameInstance->Clone_GameObject(pFileLoader->Get_PrototypeName(pObjectID), tSpriteInfo);
+	if (nullptr == pObject)
+	{
+		Safe_Release(pGameInstance);
+		Safe_Release(pFileLoader);
 		return nullptr;
-
-	list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER_SKILL);
-	if (nullptr == pObjectList)
-		return nullptr;
-
-	if (pObjectList->empty())
-		return nullptr;
+	}
 
 	Safe_Release(pGameInstance);
+	Safe_Release(pFileLoader);
 
-	return dynamic_cast<CSkill*>(pObjectList->back());
+	CSkill* pSkill = dynamic_cast<CSkill*>(pObject);
+	return pSkill;
+}
+
+void CPlayer::Awaken()
+{
+	++m_iLevel;
+	for (_uint i = 0; i < iSkillNum; ++i)
+	{
+		if (nullptr == m_pSkill[i])
+			continue;
+		m_pSkill[i]->Awaken();
+	}
+}
+
+void CPlayer::Mapping_Type(const SKUL_TYPE& tType)
+{
+	if (SKUL_TYPE::BALANCE == tType)
+	{
+		m_fMovementSpeed += m_fMovementSpeed * 0.2f;
+		m_fAttackSpeed += m_fAttackSpeed * 0.2f;
+		m_iMaxJumpCount = 2;
+	}
+	else if (SKUL_TYPE::POWER == tType)
+	{
+		m_iDefense -= m_iDefense * 0.2f;
+		m_iMaxJumpCount = 1;
+	}
+	else if (SKUL_TYPE::SPEED == tType)
+	{
+		m_fReduceCoolDownSpeed += m_fReduceCoolDownSpeed * 0.6f;
+		m_iMaxJumpCount = 3;
+	}
+	else
+		MSG_BOX("CPlayer - Mapping_Type() - FAILED");
+
 }
 
 void CPlayer::Landing_Ground()
@@ -226,9 +345,6 @@ void CPlayer::Landing_Ground()
 
 HRESULT CPlayer::Add_Components(void* pArg)
 {
-	if (FAILED(__super::Add_Components(pArg)))
-		return E_FAIL;
-
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
@@ -252,7 +368,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		m_pColliderCom->Set_Owner(this);
 	}
 
-	return S_OK;
+	return __super::Add_Components(pArg);
 }
 
 HRESULT CPlayer::SetUp_ShaderResources()
@@ -267,5 +383,11 @@ void CPlayer::Free()
 {
 	__super::Free();
 
+	m_SkillAvailableList.clear();
+
+	for (_uint i = 0; i < iSkillNum; ++i)
+	{
+		Safe_Release(m_pSkill[i]);
+	}
 	Safe_Delete(m_pAirState);
 }

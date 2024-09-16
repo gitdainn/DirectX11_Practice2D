@@ -24,7 +24,6 @@ public:
 
 private:
     void    Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    void    Fall(CSpriteObject* pObject, const _double TimeDelta);
     const bool     IsOnGround(CSpriteObject* pObject);
     _bool           HasPassableLine(CSpriteObject* pObject, _float& fLandingY);
     _bool           AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);

@@ -4,7 +4,7 @@
 #include "FileLoader.h"
 #include "Level_Loading.h"
 #include "GameInstance.h"
-#include "PlayerInfo.h"
+#include "Player_Manager.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -84,16 +84,16 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
-	CPlayerInfo::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+	CPlayer_Manager::GetInstance()->Set_HoldingSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
 	//tSpriteInfo.fSize = _float2{ 200.f, 150.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
-	CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+	CPlayer_Manager::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 	//	return E_FAIL;
-	//CPlayerInfo::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
+	//CPlayer_Manager::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
 
 	Safe_Release(pGameInstance);

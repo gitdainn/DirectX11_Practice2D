@@ -25,11 +25,36 @@ public:
 
 public:
     HRESULT Load_SkulData_Excel(const _tchar* pFilePath);
+    HRESULT Load_SkillData_Excel(const _tchar* pFilePath);
+
+public:
+    HRESULT Add_PrototypeName(const _tchar* pID, const _tchar* pPrototype)
+    {
+        if (nullptr == pID || nullptr == pPrototype)
+            return E_FAIL;
+
+        auto iter = find_if(m_IDPrototypeNameMap.begin(), m_IDPrototypeNameMap.end(), CTag_Finder(pID));
+        if (iter != m_IDPrototypeNameMap.end())
+            return E_FAIL;
+
+        m_IDPrototypeNameMap.insert({ pID, pPrototype });
+    }
 
 public:
     HRESULT Get_OpenFileName(OPENFILENAME& tOpenFileName);
 
 public:
+    const _tchar* Get_PrototypeName(const _tchar* pID)
+    {
+        if (nullptr == pID)
+            return nullptr;
+
+        auto iter = find_if(m_IDPrototypeNameMap.begin(), m_IDPrototypeNameMap.end(), CTag_Finder(pID));
+        if (iter == m_IDPrototypeNameMap.end())
+            return nullptr;
+
+        return iter->second;
+    }
     /** @qurious - 구조체도 반한 시 실패인지 성공인지 구분 불가라 반환값으로 보내면 안되나? */
     HRESULT Get_ObjectTransform(const int& iObjectID, OBJECT_TRANSFORM& tTransform) const
     {
@@ -67,7 +92,7 @@ public:
         if (iter == m_SkulDataMap.end())
             return E_FAIL;
 
-        memcpy(&SkulData, &(*iter), sizeof(LOAD_SKUL_INFO));
+        memcpy(&SkulData, &(iter->second), sizeof(LOAD_SKUL_INFO));
 
         return S_OK;
     }
@@ -93,6 +118,7 @@ private: // Sheet Num //
 
 private: // 기획자에게 넘겨받는 엑셀 //
     unordered_map<const _tchar*, LOAD_SKUL_INFO> m_SkulDataMap;
+    unordered_map<const _tchar*, const _tchar*> m_IDPrototypeNameMap;
 
 protected:
     inline virtual void	Free(void) override;

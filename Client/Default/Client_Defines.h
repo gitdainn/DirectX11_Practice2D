@@ -45,10 +45,32 @@ namespace Client
 		BALANCE, POWER, SPEED
 	};
 
+	enum class SKILL_TYPE
+	{
+		BALANCE, POWER, SPEED
+	};
+
 	struct LOAD_SKUL_INFO
 	{
 		const wchar_t* pName;
-		const wchar_t* pSkill1;
+		const wchar_t* pSkill[4];
+
+		SKUL_RANK eRank;
+		SKUL_TYPE eType;
+
+		int	iMagicAttackIncrease;
+		int iPhysicalAttackIncrease;
+		int iDefense;
+
+		int iBone;
+
+		const wchar_t* pExplanation;
+	};
+
+	struct SKILL_INFO
+	{
+		const wchar_t* pName;
+		const wchar_t* pType;
 		const wchar_t* pSkill2;
 		const wchar_t* pSkill3;
 		const wchar_t* pSkill4;

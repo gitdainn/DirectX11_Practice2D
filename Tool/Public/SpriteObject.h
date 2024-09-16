@@ -54,7 +54,7 @@ protected: // Animation
 	};
 	ANIM_INFO* m_pAnimInfo = { nullptr };
 	_uint m_iCurrentAnim = { 0 };
-	float m_fTimeAcc = { 0.f };
+	_double m_AnimAcc = { 0.f };
 
 	//virtual void Add_Animation();
 	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);

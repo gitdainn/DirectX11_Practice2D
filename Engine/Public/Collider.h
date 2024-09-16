@@ -46,14 +46,6 @@ public:
 		// 방향 * 길이
 		return XMVector3Normalize(vPushDirection) * vPushDistance;
 	}
-	_float2	Get_IntersectionDistance() const
-	{
-		return m_vIntersectionDistance;
-	}
-	void	Set_IntersectionDistance(const _float2 vIntersectionDistance)
-	{
-		m_vIntersectionDistance = vIntersectionDistance;
-	}
 
 public:
 	_bool IsCollision(CCollider* pTargetCollider);
@@ -62,7 +54,7 @@ public:
 	void OnCollisionExit(CCollider* pTargetCollider);
 
 protected:
-	virtual _bool Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const = 0;
+	virtual _bool Intersects(CColliderAABB2D* pTarget) const = 0;
 	virtual _bool Intersects(CColliderOBB2D* pTarget) = 0;
 	virtual _bool Intersects(CColliderSphere2D* pTarget) = 0;
 
@@ -128,7 +120,6 @@ protected:
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
 	_bool					m_bIsBlock = { false };
-	_float2					m_vIntersectionDistance;
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;

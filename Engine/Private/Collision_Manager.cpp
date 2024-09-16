@@ -86,13 +86,30 @@ HRESULT CCollision_Manager::Render()
 
 			pCollider->Render();
 		}
-		ColliderList.clear();
 	}
-	m_ColliderMap.clear();
 
 	return S_OK;
 }
 #endif
+
+void CCollision_Manager::Clear_Collider()
+{
+	auto iter = m_ColliderMap.begin();
+	for (iter; iter != m_ColliderMap.end(); ++iter)
+	{
+		list<CCollider*> ColliderList = iter->second;
+		for (CCollider* pCollider : ColliderList)
+		{
+			if (nullptr == pCollider)
+				continue;
+
+		}
+		ColliderList.clear();
+	}
+	m_ColliderMap.clear();
+
+	return;
+}
 
 HRESULT CCollision_Manager::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
 {
@@ -150,6 +167,7 @@ void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CColl
 			
 			if (pSourCol->IsCollision(pDestCol))
 			{
+				pSourCol->Set_Collision(true);
 				pDestCol->Set_Collision(true);
 
 				pSourCol->OnCollisionStay(pDestCol);

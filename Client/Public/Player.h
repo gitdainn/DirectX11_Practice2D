@@ -19,8 +19,13 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+private:
+	void	SkillTick(_double TimeDelta);
+	void	SkillLateTick(_double TimeDelta);
+	void	SkillRender();
 public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
+	void	Execute_Skill(_uint iSkillIndex);
 
 public:
 	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
@@ -41,8 +46,10 @@ protected:
 	void	Mapping_SkulData(const _tchar* pObjectID);
 	CSkill*	Mapping_Skill(const _tchar* pObjectID);
 	virtual void Add_Animation() = 0;
+	void Awaken();
 
 private:
+	void	Mapping_Type(const SKUL_TYPE& tType);
 	void	Landing_Ground();
 	
 protected:
@@ -50,7 +57,7 @@ protected:
 	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
 
 protected:
-	CSkill* m_pSkill[iSkillNum];
+	CSkill* m_pSkill[iSkillNum] = { nullptr };
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_bool	m_bIsEquipped;
 
@@ -58,24 +65,29 @@ protected:
 	_bool	m_bIsInAir;
 	_bool   m_bIsFalling;
 
+private:
+	list<CSkill*> m_SkillAvailableList;
+
 protected:
 	SKUL_RANK	m_eSkulRank;
 	SKUL_TYPE	m_eSkulType;
 
+	_uint	m_iLevel = { 1 };
+
 	_int m_iHp = { 100 };
 	_int m_iMagicAttack = { 10 };
 	_int m_iPhysicalAttack = { 10 };
-	_int m_iMagicDefense = { 10 };
-	_int m_iPhysicalDefense = { 10 };
-
+	_int m_iDefense = { 10 };
 	_int m_iMaxJumpCount = { 2 };
 
 	_float m_fMovementSpeed = { 10 };
+	_float m_fAttackSpeed = { 10 };
+	_float m_fReduceCoolDownSpeed = { 0 };
+	_float m_fCriticalHit;
 
 	_int m_iMagicAttackIncrease = { 0 };
 	_int m_iPhysicalAttackIncrease = { 0 };
-	_int m_iMagicDefenseIncrease = { 0 };
-	_int m_iPhysicalDefenseIncrease = { 0 };
+	_int m_iDefenseIncrease = { 0 };
 
 	_double m_InvulnerabilityDuration = { 0.0 };
 

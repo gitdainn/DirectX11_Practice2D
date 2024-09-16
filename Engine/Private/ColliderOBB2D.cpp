@@ -56,7 +56,7 @@ void CColliderOBB2D::Tick(_double TimeDelta)
 	m_bIsCollision = false;
 }
 
-_bool CColliderOBB2D::Intersects(CColliderAABB2D* pTarget, _float2& vIntersectionDistance) const
+_bool CColliderOBB2D::Intersects(CColliderAABB2D* pTarget) const
 {
 	return _bool();
 }

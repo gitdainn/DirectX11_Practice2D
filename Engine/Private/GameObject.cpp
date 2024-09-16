@@ -10,6 +10,7 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	, m_eRenderGroup(CRenderer::RENDERGROUP::RENDER_PRIORITY)
 	, m_iInstanceID(0)
 	, m_pLayer(TEXT("Layer_Default"))
+	, m_pNameTag(nullptr)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
@@ -34,6 +35,7 @@ CGameObject::CGameObject(const CGameObject& rhs)
 	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
 	, m_iInstanceID(rhs.m_iInstanceID)
 	, m_pLayer(rhs.m_pLayer)
+	, m_pNameTag(rhs.m_pNameTag)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

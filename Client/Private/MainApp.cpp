@@ -3,11 +3,16 @@
 #include "GameInstance.h"
 #include "Level_Loading.h"
 #include "InputHandler.h"
-#include "PlayerInfo.h"
+#include "Player_Manager.h"
 #include "FileLoader.h"
 #include "Line_Manager.h"
-#include "ColliderAABB2D.h"
 #include "Utility.h"
+
+#pragma region LOAD
+#include "ColliderAABB2D.h"
+#include "SkillGateOfNether.h"
+
+#pragma endregion
 
 USING(Client)
 
@@ -109,7 +114,7 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 	//@ note - 프레임 60(1초) 제한 코드
-	m_pGameInstance->Render_Line();
+	//m_pGameInstance->Render_Line();
 	m_pGameInstance->Render_Collider();
 
 	++m_dwNumDraw;
@@ -126,6 +131,7 @@ HRESULT CMainApp::Render()
 
 #endif
 
+	m_pGameInstance->Clear_Collider();
 	m_pGameInstance->Present();
 
 	return S_OK;
@@ -184,7 +190,7 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	};
 #pragma endregion
 
-#pragma region TEXTURES	
+#pragma region PLAYER_TEXTURE	
 	///* For.Prototype_Component_Texture_Logo */
 	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Background"),
 	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Background/Forest_%d.png")))))
@@ -222,7 +228,23 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	};
 #pragma endregion
 
-#pragma region TextureFolder
+#pragma region EFFECT_TEXTURE	
+	///* For.Prototype_Component_Sprite_Background */
+	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNether"),
+	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Effect/GateOfNether/")))))
+	//{
+	//	return E_FAIL;
+	//};
+
+		/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNetherUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Effect/GateOfNether/GrimReaper_GateOfNetherUV_%d.png"), 2))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region ETC
 	/* For.Prototype_Component_Sprite_ForestTile */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Tiles/ForestTile/")))))
@@ -256,6 +278,23 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 
 HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 {
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+		return E_FAIL;
+	Safe_AddRef(pFileLoader);
+
+	const _tchar* pPrototypeName = TEXT("Prototype_GameObject_Skill_GateOfNether");
+	pFileLoader->Add_PrototypeName(L"명계의균열", pPrototypeName);
+	
+	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName,
+		CSkillGateOfNether::Create(m_pDevice, m_pContext))))
+
+	{
+		return E_FAIL;
+	};
+
+	Safe_Release(pFileLoader);
+
 	return S_OK;
 }
 
@@ -292,7 +331,7 @@ void CMainApp::Free()
 	Safe_Release(m_pGameInstance);	
 
 	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
-	CPlayerInfo::GetInstance()->DestroyInstance();
+	CPlayer_Manager::GetInstance()->DestroyInstance();
 	CInputHandler::GetInstance()->DestroyInstance();
 	CFileLoader::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();

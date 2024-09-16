@@ -223,7 +223,8 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
+	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_vector))))
 		return E_FAIL;
 
 	return S_OK;
@@ -341,10 +342,10 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
 		fDelayTime = iter->second;
 
-	m_fTimeAcc += (_float)TimeDelta;
-	if (fPerAnimTime + fDelayTime <= m_fTimeAcc)
+	m_AnimAcc += (_float)TimeDelta;
+	if (fPerAnimTime + fDelayTime <= m_AnimAcc)
 	{
-		m_fTimeAcc = 0.f;
+		m_AnimAcc = 0.f;
 		++iSpriteIndex;
 
 		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)
@@ -362,17 +363,13 @@ void CSpriteObject::Free()
 	Safe_Delete(m_pState);
 
 	if (nullptr != m_pAnimInfo)
-	{
 		m_pAnimInfo->fDelayTimeMap.clear();
-		Safe_Delete_Array(m_pAnimInfo);
-	}
+	Safe_Delete_Array(m_pAnimInfo);
 
 	/** @note - m_pTextureTag 해제하면 안되는 이유
 	현재 m_pTextureTag는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/
 	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
 	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
-
-	//Safe_Delete_Array(m_pTextureTag);
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
 	// @note - 각 오브젝트의 컴포넌트들은 Add_Component 시 AddRef하기 때문에 m_Component에서 다 Release 해줌

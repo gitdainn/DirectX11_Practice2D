@@ -196,13 +196,11 @@ bool CLine_Manager::IsCurrentLineOccupied(const _float2& vObjectPosition, _float
 		return false;
 	}
 
-		// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
-		_float3 fA = m_tClosestLandingLine.tLeftVertex.position;
-		_float3 fB = m_tClosestLandingLine.tRightVertex.position;
+	// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
+	_float3 fA = m_tClosestLandingLine.tLeftVertex.position;
+	_float3 fB = m_tClosestLandingLine.tRightVertex.position;
 
-		fOutLandingY = EquationOfLine(fA, fB, vObjectPosition.x);
-		return true;
-
+	fOutLandingY = EquationOfLine(fA, fB, vObjectPosition.x);
 	return true;
 }
 

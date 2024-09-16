@@ -100,6 +100,18 @@
     <Filter Include="02.GameObject\Skill">
       <UniqueIdentifier>{4a3855a6-a9ad-48f0-91f0-b6080bf1bb44}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Skill\GrimReaper">
+      <UniqueIdentifier>{1d076c8f-ccd8-4dc9-9685-9a796b830955}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\GrimReaper\DeathByFire">
+      <UniqueIdentifier>{da973e6c-15de-4827-acad-d66297858c9b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\GrimReaper\Harvest">
+      <UniqueIdentifier>{fbcbf42d-ac80-4732-9f36-30a534431dbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\GrimReaper\Guillotine">
+      <UniqueIdentifier>{65205b70-1e2f-4d2f-b3af-a8c1078a2655}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -202,6 +214,9 @@
     <ClInclude Include="..\Public\Skill.h">
       <Filter>02.GameObject\Skill</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SkillGateOfNether.h">
+      <Filter>02.GameObject\Skill\GrimReaper\DeathByFire</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -291,6 +306,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Skill.cpp">
       <Filter>02.GameObject\Skill</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillGateOfNether.cpp">
+      <Filter>02.GameObject\Skill\GrimReaper\DeathByFire</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
