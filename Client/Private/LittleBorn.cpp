@@ -32,7 +32,7 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
@@ -55,7 +55,7 @@ HRESULT CLittleBorn::Initialize(void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
 
     Add_Animation();
@@ -65,7 +65,7 @@ HRESULT CLittleBorn::Initialize(void* pArg)
 
 _uint CLittleBorn::Tick(_double TimeDelta)
 {
-    Play_Animation(m_iTextureIndex, TimeDelta);
+    Play_Animation(TimeDelta, m_iTextureIndex, m_iAnimType);
 
     return __super::Tick(TimeDelta);
 }
@@ -82,7 +82,8 @@ HRESULT CLittleBorn::Render()
 
 void CLittleBorn::Add_Animation()
 {
-    m_pAnimInfo = new ANIM_INFO[(_uint)STATE_TYPE::MOTION_END];
+    m_iAnimTypeNum = (_uint)STATE_TYPE::MOTION_END;
+    m_pAnimInfo = new ANIM_INFO[m_iAnimTypeNum];
 
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iEndIndex = 47;

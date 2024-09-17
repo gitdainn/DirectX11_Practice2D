@@ -127,7 +127,7 @@ HRESULT CLoader::Loaiding_GameObject_Logo()
 
 #pragma region ENVIRONMENT
 	/* For.Prototype_GameObject_BackGround */
-	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Background"),
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_BackGround"),
 		CBackGround::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);

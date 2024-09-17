@@ -17,8 +17,10 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		pState = new CPlayerWalk(eDirection);
 		break;
 
+	case STATE_TYPE::DEFAULT_ATK:
 	case STATE_TYPE::ATK1:
-		pState = new CPlayerAtk();
+	case STATE_TYPE::ATK2:
+		pState = new CPlayerAtk(Input);
 		break;
 
 	case STATE_TYPE::DASH:
@@ -44,7 +46,8 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 void CPlayerIdle::Enter(CSpriteObject* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
-	pObject->Change_Sprite(STATE_TYPE::IDLE);
+	pObject->Set_CurrentState(STATE_TYPE::IDLE);
+	pObject->Change_AnimType((_uint)STATE_TYPE::IDLE);
 }
 
 void CPlayerIdle::Update(CSpriteObject* pObject, _double TimeDelta)

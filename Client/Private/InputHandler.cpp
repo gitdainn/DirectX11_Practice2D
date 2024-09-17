@@ -26,7 +26,11 @@ CCommand* CInputHandler::Key_Input() const
     //unordered_map<CONTROL_KEY, CCommand*>::iterator iter = m_CommandKeyMap.begin();
     auto iter = m_CommandKeyMap.end();
     CSpriteObject* pPlayer = CPlayer_Manager::GetInstance()->Get_EquippedSkul();
-
+    if (nullptr == pPlayer)
+    {
+        Safe_Release(pGameInstance);
+        return nullptr;
+    }
 #pragma region Move
     if (pGameInstance->Get_KeyStay(DIK_LEFT))
     {
@@ -54,7 +58,7 @@ CCommand* CInputHandler::Key_Input() const
 
     if (pGameInstance->Get_KeyDown(DIK_X))
     {
-        pPlayer->Input_Handler(STATE_TYPE::ATK1);
+        pPlayer->Input_Handler(STATE_TYPE::DEFAULT_ATK);
     }
 
     if (pGameInstance->Get_KeyDown(DIK_Z))
@@ -84,14 +88,18 @@ CCommand* CInputHandler::Key_Input() const
     {
         CPlayer* pPPlayer = dynamic_cast<CPlayer*>(pPlayer);
         if (nullptr != pPPlayer)
+        {
             pPPlayer->Execute_Skill(0);
+        }
     }
 
     if (pGameInstance->Get_KeyDown(DIK_S))
     {
         CPlayer* pPPlayer = dynamic_cast<CPlayer*>(pPlayer);
         if (nullptr != pPPlayer)
+        {
             pPPlayer->Execute_Skill(1);
+        }
     }
 #pragma endregion
 

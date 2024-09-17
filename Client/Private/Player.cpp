@@ -10,8 +10,6 @@
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CSpriteObject(pDevice, pContext)
 	, m_bIsEquipped(false)
-	, m_bIsInAir(false)
-	, m_pAirState(nullptr)
 {
 }
 
@@ -85,6 +83,17 @@ _uint CPlayer::LateTick(_double TimeDelta)
 	if (!m_bIsEquipped)
 		return _uint();
 
+	Attach_Collider(m_pLayer, m_pColliderCom);
+
+	if (STATE_TYPE::DEFAULT_ATK == m_eCurrentState)
+	{
+		CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
+		tColliderDesc.vOffset.y = 30.f;
+		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
+		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
+		Attach_Collider(m_pLayer, m_pDefaultAtkColliderCom);
+	}
+
 	SkillLateTick(TimeDelta);
 
 	return __super::LateTick(TimeDelta);
@@ -129,7 +138,8 @@ void CPlayer::SkillLateTick(_double TimeDelta)
 		}
 		else
 		{
-			pSkill->LateTick(TimeDelta);
+			if(pSkill->Get_IsDelayFinished())
+				pSkill->LateTick(TimeDelta);
 		}
 	}
 
@@ -149,7 +159,8 @@ void CPlayer::SkillRender()
 		if (nullptr == pSkill)
 			continue;
 
-		pSkill->Render();
+		if (pSkill->Get_IsDelayFinished())
+			pSkill->Render();
 	}
 }
 
@@ -173,7 +184,6 @@ void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDire
 
 	if (nullptr != pState)
 	{
-		//m_eCurrentState = Input;
 		delete m_pState;
 
 		m_pState = pState;
@@ -198,12 +208,20 @@ void CPlayer::Execute_Skill(_uint iSkillIndex)
 
 	if (m_pSkill[iSkillIndex]->Get_IsSkillAvailable())
 	{
+		STATE_TYPE Input = (0 == iSkillIndex ? STATE_TYPE::ATK1 : STATE_TYPE::ATK2);
+		__super::Input_Handler(Input);
 		m_pSkill[iSkillIndex]->Enter(this);
 		m_SkillAvailableList.emplace_back(m_pSkill[iSkillIndex]);
 	}
 		// 해당 스킬 Available 상태이면 SkillManager에 넣어버려서 그곳에서 한번에 돌려버리기!
 		// 들어오자마자 Available = false 되고, 스킬 다 하다가 CoolDown되면 초기화와 함께 다시 Available
 		// Available 되면 매니저는 삭제 시킴.
+}
+
+void CPlayer::End_Animation(_uint& iSpriteIndex)
+{
+	__super::End_Animation(iSpriteIndex);
+	iSpriteIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
 }
 
 void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
@@ -216,7 +234,7 @@ void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
 		return;
 	Safe_AddRef(pFileLoader);
 
-	LOAD_SKUL_INFO tSkulInfo;
+	SKUL_EXCEL tSkulInfo;
 	if (FAILED(pFileLoader->Get_SkulData(pObjectID, tSkulInfo)))
 	{
 		Safe_Release(pFileLoader);
@@ -234,13 +252,13 @@ void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
 
 	for (_uint i = 0; i < iSkillNum; ++i)
 	{
-		m_pSkill[i] = Mapping_Skill(tSkulInfo.pSkill[i]);
+		m_pSkill[i] = Get_Skill(tSkulInfo.pSkill[i]);
 	}
 
 	Safe_Release(pFileLoader);
 }
 
-CSkill* CPlayer::Mapping_Skill(const _tchar* pObjectID)
+CSkill* CPlayer::Get_Skill(const _tchar* pObjectID)
 {
 	// 이름에 알맞은 클래스를 추가하기. (해당 번호에 있는.... 클래스를 어케 갖고옴?
 	// 1. Prototype을 조합한다. (기획자가 클래스명을 미리 안다고.....?)
@@ -350,6 +368,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
 
+#pragma region COLLIDER
 	if (nullptr == m_pColliderCom)
 	{
 		COMPONENT_INFO tComponentInfo;
@@ -367,6 +386,22 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		}
 		m_pColliderCom->Set_Owner(this);
 	}
+
+	COMPONENT_INFO tComponentInfo;
+	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
+	tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
+	//tComponentInfo.fSize = _float2(60.f, 60.f);
+	tComponentInfo.fOffset = _float2(0.f, 0.f);
+
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		TAG_COLL_DEFAULTATK, (CComponent**)&m_pDefaultAtkColliderCom, &tComponentInfo)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		return E_FAIL;
+	}
+	m_pDefaultAtkColliderCom->Set_Owner(this);
+#pragma endregion
 
 	return __super::Add_Components(pArg);
 }
@@ -390,4 +425,6 @@ void CPlayer::Free()
 		Safe_Release(m_pSkill[i]);
 	}
 	Safe_Delete(m_pAirState);
+
+	Safe_Release(m_pDefaultAtkColliderCom);
 }

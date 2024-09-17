@@ -31,7 +31,7 @@ namespace Client
 	enum class STATE_TYPE
 	{
 		IDLE, WALK,
-		DASH, ATK1, ATK2, JUMP_ATK, JUMP,
+		DASH, DEFAULT_ATK, ATK1, ATK2, JUMP_ATK, JUMP,
 		FALL, SKILL1, SKILL2, MOTION_END
 	};
 
@@ -47,10 +47,10 @@ namespace Client
 
 	enum class SKILL_TYPE
 	{
-		BALANCE, POWER, SPEED
+		MAGIC, PHYISIC, BALANCE
 	};
 
-	struct LOAD_SKUL_INFO
+	struct SKUL_EXCEL
 	{
 		const wchar_t* pName;
 		const wchar_t* pSkill[4];
@@ -67,24 +67,19 @@ namespace Client
 		const wchar_t* pExplanation;
 	};
 
-	struct SKILL_INFO
+	struct SKILL_EXCEL
 	{
 		const wchar_t* pName;
-		const wchar_t* pType;
-		const wchar_t* pSkill2;
-		const wchar_t* pSkill3;
-		const wchar_t* pSkill4;
 
-		SKUL_RANK eRank;
-		SKUL_TYPE eType;
+		SKILL_TYPE eType;
 
-		int	iMagicAttackIncrease;
-		int iPhysicalAttackIncrease;
-		int iMagicDefenseIncrease;
-		int iPhysicalDefenseIncrease;
+		int	iDamage[3];
 
-		int iBone;
+		double CoolDown;
+		double DelayTime;
+		double LifeTime;
 
+		const wchar_t* pStatusChange;
 		const wchar_t* pExplanation;
 	};
 }
@@ -106,6 +101,7 @@ using namespace Client;
 #define	TAG_COLL_OBB			TEXT("Com_OBB")
 #define	TAG_COLL_SPHERE			TEXT("Com_Sphere")
 #define	TAG_COLL_AABB			TEXT("Com_AABB")
+#define	TAG_COLL_DEFAULTATK			TEXT("Com_DefaultAtk")
 #define	TAG_FEATURE				TEXT("Com_Feature")
 #define	TAG_ANIMKEYFRAME		TEXT("Com_AnimKeyframe")
 
@@ -116,6 +112,7 @@ using namespace Client;
 #pragma endregion
 
 #pragma region LAYER_TAG
+#define LAYER_DEFAULT		TEXT("Layer_Default")
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_PLAYER			TEXT("Layer_Player")
 #define LAYER_UI				TEXT("Layer_UI")

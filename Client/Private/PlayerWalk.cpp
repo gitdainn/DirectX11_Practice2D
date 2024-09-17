@@ -28,8 +28,10 @@ CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		pState = new CPlayerIdle();
 		break;
 
+	case STATE_TYPE::DEFAULT_ATK:
 	case STATE_TYPE::ATK1:
-		pState = new CPlayerAtk();
+	case STATE_TYPE::ATK2:
+		pState = new CPlayerAtk(Input);
 		break;
 
 	case STATE_TYPE::DASH:
@@ -55,8 +57,12 @@ CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 void CPlayerWalk::Enter(CSpriteObject* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
-	if(STATE_TYPE::IDLE == pObject->Get_CurrentState())
-		pObject->Change_Sprite(STATE_TYPE::WALK);
+	if (STATE_TYPE::IDLE == pObject->Get_CurrentState())
+	{
+		pObject->Set_CurrentState(STATE_TYPE::WALK);
+		pObject->Change_AnimType((_uint)STATE_TYPE::WALK);
+	}
+		
 	pObject->Set_SpriteDirection(m_eDirection);
 
 	VTXTEX_PASS eShaderPass = VTXTEX_PASS::Default;

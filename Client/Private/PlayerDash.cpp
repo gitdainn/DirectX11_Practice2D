@@ -22,8 +22,10 @@ CState* CPlayerDash::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		pState = new CPlayerIdle();
 		break;
 
+	case STATE_TYPE::DEFAULT_ATK:
 	case STATE_TYPE::ATK1:
-		pState = new CPlayerAtk();
+	case STATE_TYPE::ATK2:
+		pState = new CPlayerAtk(Input);
 		break;
 
 	case STATE_TYPE::DASH:
@@ -39,7 +41,8 @@ CState* CPlayerDash::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 
 void CPlayerDash::Enter(CSpriteObject* pObject)
 {
-	pObject->Change_Sprite(STATE_TYPE::DASH);
+	pObject->Set_CurrentState(STATE_TYPE::DASH);
+	pObject->Change_AnimType((_uint)STATE_TYPE::DASH);
 
 	if (SPRITE_DIRECTION::DIRECTION_END == m_eDirection)
 	{

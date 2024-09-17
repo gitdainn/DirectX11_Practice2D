@@ -53,11 +53,11 @@ protected: // Animation
 		_uint iEndIndex = { 0 };
 	};
 	ANIM_INFO* m_pAnimInfo = { nullptr };
-	_uint m_iCurrentAnim = { 0 };
+	_uint m_iAnimType = { 0 };
 	_double m_AnimAcc = { 0.f };
 
 	//virtual void Add_Animation();
-	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
+	virtual void Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint& iAnimType = 0);
 	HRESULT Load_Components_Excel();
 
 public:
@@ -145,7 +145,7 @@ public:
 
 public:
 	template<typename T>
-	void Change_Sprite(const T& Sprite);
+	void Change_AnimType(const T& Sprite);
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 	HRESULT Mapping_Component(const _tchar* pComponentTag);
 
@@ -187,12 +187,12 @@ public:
 };
 
 template<typename T>
-inline void CSpriteObject::Change_Sprite(const T& Sprite)
+inline void CSpriteObject::Change_AnimType(const T& Sprite)
 {
-	if (m_iCurrentAnim == (_uint)Sprite)
+	if (m_iAnimType == (_uint)Sprite)
 		return;
 
-	m_iCurrentAnim = (_uint)Sprite;
+	m_iAnimType = (_uint)Sprite;
 	if (m_bIsAnimUV)
 	{
 		m_iUVTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;

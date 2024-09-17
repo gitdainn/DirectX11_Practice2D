@@ -51,11 +51,19 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	 list<const _tchar*> ResourceTagList = {};
 	 list<const _tchar*> MemoryList = {}; // 문자열 변환으로 인한 동적할당 해제를 위해서.
 
-	_uint iTexType = 0;
-	_uint iTexNum = 0; 
-
 	vector<TCHAR*> FilePathVec;
 	TCHAR* pFullPath = nullptr;
+
+	//struct Sort
+	//{
+	//	bool operator()(const pair<int, TCHAR*> A, const pair<int, TCHAR*> B)
+	//	{
+	//		return A.first > B.first;
+	//	}
+	//};
+
+	//priority_queue <pair<int, TCHAR*>, vector<pair<int, TCHAR*>>, Sort> TextureSequenceQueue;
+
 	while (iResult != -1)
 	{
 		// ../Sound/"
@@ -83,11 +91,27 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 			continue;
 		}
 
-		// _findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 한 폴더 안에 더이상 찾을 게 없다면 -1을 리턴
 		FilePathVec.emplace_back(pFullPath);
-		++iTexNum;
+
+		//wstring Index(szFileName);
+		//Index = Get_LastPart(Index, TEXT("_"));
+		//int iIndex = stoi(Index);
+		////TextureSequenceQueue.emplace(make_pair(iIndex, pFullPath));
+		// _findnext : <io.h>에서 제공하며 다음 위치의 파일을 찾는 함수, 한 폴더 안에 더이상 찾을 게 없다면 -1을 리턴
 		iResult = _findnext(handle, &fd);
 	}
+
+	//FilePathVec.reserve(TextureSequenceQueue.size());
+	//for (_uint i = 0; i < TextureSequenceQueue.size(); ++i)
+	//{
+	//	if (TextureSequenceQueue.empty())
+	//		break;
+
+	//	pair<int, TCHAR*> Pair =  TextureSequenceQueue.top();
+	//	TCHAR* pPath = Pair.second;
+	//	FilePathVec.emplace_back(pPath);
+	//	TextureSequenceQueue.pop();
+	//}
 
 	CTexture* pTexture = CTexture::Create(pDevice, pContext, FilePathVec);
 
@@ -120,4 +144,19 @@ _vector CUtility::Get_MousePos(HWND hWnd, const _uint& iWinSizeX, const _uint& i
 	/* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
 	vPos = XMVectorSet(fX - (iWinSizeX >> 1), -fY + (iWinSizeY >> 1), 0.f, 1.f);
 	return vPos;
+}
+
+wstring CUtility::Get_LastPart(const wstring& WString, const wstring Delimiter) 
+{
+	size_t start = 0;
+	size_t end = WString.find(Delimiter);
+
+	// 반복하여 마지막 언더스코어 뒤의 부분을 찾습니다.
+	while (end != std::string::npos) {
+		start = end + Delimiter.length();
+		end = WString.find(Delimiter, start);
+	}
+
+	// 마지막 부분 추출
+	return WString.substr(start);
 }

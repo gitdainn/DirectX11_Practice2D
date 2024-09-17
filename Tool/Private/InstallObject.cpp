@@ -37,7 +37,7 @@ HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     m_eRenderGroup = CRenderer::RENDER_PRIORITY;
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 

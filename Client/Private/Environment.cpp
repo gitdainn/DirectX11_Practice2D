@@ -51,6 +51,10 @@ _uint CEnvironment::LateTick(_double TimeDelta)
 {
 	if(nullptr != m_pColliderCom)
 		m_pColliderCom->Set_IsBlock(true);
+
+	if (nullptr != m_pColliderCom)
+		Attach_Collider(m_pLayer, m_pColliderCom);
+
 	return __super::LateTick(TimeDelta);
 }
 

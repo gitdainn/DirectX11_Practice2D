@@ -23,6 +23,7 @@ private:
 	void	SkillTick(_double TimeDelta);
 	void	SkillLateTick(_double TimeDelta);
 	void	SkillRender();
+
 public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 	void	Execute_Skill(_uint iSkillIndex);
@@ -43,8 +44,9 @@ public:
 	}
 
 protected:
+	virtual void End_Animation(_uint& iSpriteIndex) override;
 	void	Mapping_SkulData(const _tchar* pObjectID);
-	CSkill*	Mapping_Skill(const _tchar* pObjectID);
+	CSkill*	Get_Skill(const _tchar* pObjectID);
 	virtual void Add_Animation() = 0;
 	void Awaken();
 
@@ -58,12 +60,9 @@ protected:
 
 protected:
 	CSkill* m_pSkill[iSkillNum] = { nullptr };
+	CCollider* m_pDefaultAtkColliderCom = { nullptr };
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_bool	m_bIsEquipped;
-
-	CState* m_pAirState;
-	_bool	m_bIsInAir;
-	_bool   m_bIsFalling;
 
 private:
 	list<CSkill*> m_SkillAvailableList;

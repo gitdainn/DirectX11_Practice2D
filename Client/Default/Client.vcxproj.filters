@@ -217,6 +217,9 @@
     <ClInclude Include="..\Public\SkillGateOfNether.h">
       <Filter>02.GameObject\Skill\GrimReaper\DeathByFire</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\SkillGuillotine.h">
+      <Filter>02.GameObject\Skill\GrimReaper\Guillotine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -309,6 +312,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\SkillGateOfNether.cpp">
       <Filter>02.GameObject\Skill\GrimReaper\DeathByFire</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillGuillotine.cpp">
+      <Filter>02.GameObject\Skill\GrimReaper\Guillotine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

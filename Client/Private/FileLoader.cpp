@@ -82,7 +82,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 
 			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, LAYER_UI, tSpriteInfo)))
 			{
-				MSG_BOX("CMyImGui - Load_Object() - FAILED");
+				MSG_BOX("CFileLoader - Load_FIle() - FAILED");
 				CloseHandle(hFile);
 				Safe_Release(pGameInstance);
 				return E_FAIL;
@@ -92,41 +92,6 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 	}
 
 	Safe_Release(pGameInstance);
-}
-
-HRESULT CFileLoader::Load_Line(const _tchar* pFilePath, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-{
-	if (nullptr == pFilePath || nullptr == pDevice || nullptr == pContext)
-		return E_FAIL;
-
-	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-	if (INVALID_HANDLE_VALUE == hFile)
-		return E_FAIL;
-
-	DWORD   dwByte = 0;
-	_bool      bRes = { false };
-
-	_uint iListSize = { 0 };
-	bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return E_FAIL;
-	Safe_AddRef(pGameInstance);
-
-	for (_uint i = 0; i < iListSize; ++i)
-	{
-		Engine::LINE_INFO tLine;
-		bRes = ReadFile(hFile, &tLine, sizeof(LINE_INFO), &dwByte, nullptr);
-		pGameInstance->Add_Vertex(tLine.tLeftVertex);
-		pGameInstance->Add_Vertex(tLine.tRightVertex);
-	}
-
-	Safe_Release(pGameInstance);
-	CloseHandle(hFile);
-
-	return S_OK;
 }
 
 HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
@@ -169,7 +134,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			Safe_Delete_Array(pClassName);
 			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &iInstanceID)))
 			{
-				MSG_BOX("CMyImGui - Load_Object() - FAILED");
+				MSG_BOX("CFileLoader - Load_Excel() - FAILED");
 				Safe_Release(pGameInstance);
 				return E_FAIL;
 			}
@@ -184,6 +149,42 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 	}
 
 	pBook->release();
+
+	return S_OK;
+}
+
+
+HRESULT CFileLoader::Load_Line(const _tchar* pFilePath, ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+{
+	if (nullptr == pFilePath || nullptr == pDevice || nullptr == pContext)
+		return E_FAIL;
+
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		return E_FAIL;
+
+	DWORD   dwByte = 0;
+	_bool      bRes = { false };
+
+	_uint iListSize = { 0 };
+	bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
+	Safe_AddRef(pGameInstance);
+
+	for (_uint i = 0; i < iListSize; ++i)
+	{
+		Engine::LINE_INFO tLine;
+		bRes = ReadFile(hFile, &tLine, sizeof(LINE_INFO), &dwByte, nullptr);
+		pGameInstance->Add_Vertex(tLine.tLeftVertex);
+		pGameInstance->Add_Vertex(tLine.tRightVertex);
+	}
+
+	Safe_Release(pGameInstance);
+	CloseHandle(hFile);
 
 	return S_OK;
 }
@@ -324,8 +325,8 @@ HRESULT CFileLoader::Load_SkulData_Excel(const _tchar* pFilePath)
 	COMPONENT_INFO tComponentInfo;
 	if (pBook->load(pFilePath))
 	{
-		const int iSkulSheet = { 0 };
-		Sheet* pSheet = pBook->getSheet(iSkulSheet);
+		const int iSheetIndex = { 0 };
+		Sheet* pSheet = pBook->getSheet(iSheetIndex);
 		if (nullptr == pSheet)
 		{
 			pBook->release();
@@ -337,14 +338,14 @@ HRESULT CFileLoader::Load_SkulData_Excel(const _tchar* pFilePath)
 		const int iFirstCol = { 1 };
 		for (_uint iRow = iFirstRow; iRow <= iLastRow; ++iRow)
 		{
-			LOAD_SKUL_INFO tSkulInfo;
-			ZeroMemory(&tSkulInfo, sizeof(LOAD_SKUL_INFO));
+			SKUL_EXCEL tSkulInfo;
+			ZeroMemory(&tSkulInfo, sizeof(SKUL_EXCEL));
 
 			int iCol = { 0 };
 			const _tchar* pID = pSheet->readStr(iRow, iFirstCol + iCol++);
 			tSkulInfo.pName = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
-			tSkulInfo.eRank = Translate_Rank(pSheet->readStr(iRow, iFirstCol + iCol++));
-			tSkulInfo.eType = Translate_Type(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.eRank = Translate_SkulRank(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkulInfo.eType = Translate_SkulType(pSheet->readStr(iRow, iFirstCol + iCol++));
 			
 			const int iSkillNum = { 4 };
 			for (_uint i = 0; i < iSkillNum; ++i)
@@ -389,8 +390,8 @@ HRESULT CFileLoader::Load_SkillData_Excel(const _tchar* pFilePath)
 	COMPONENT_INFO tComponentInfo;
 	if (pBook->load(pFilePath))
 	{
-		const int iSkulSheet = { 0 };
-		Sheet* pSheet = pBook->getSheet(iSkulSheet);
+		const int iSheetIndex = { 1 };
+		Sheet* pSheet = pBook->getSheet(iSheetIndex);
 		if (nullptr == pSheet)
 		{
 			pBook->release();
@@ -402,28 +403,32 @@ HRESULT CFileLoader::Load_SkillData_Excel(const _tchar* pFilePath)
 		const int iFirstCol = { 1 };
 		for (_uint iRow = iFirstRow; iRow <= iLastRow; ++iRow)
 		{
-			LOAD_SKUL_INFO tSkulInfo;
-			ZeroMemory(&tSkulInfo, sizeof(LOAD_SKUL_INFO));
+			SKILL_EXCEL tSkillInfo;
+			ZeroMemory(&tSkillInfo, sizeof(SKILL_EXCEL));
 
 			int iCol = { 0 };
 			const _tchar* pID = pSheet->readStr(iRow, iFirstCol + iCol++);
-			tSkulInfo.pName = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
-			tSkulInfo.eRank = Translate_Rank(pSheet->readStr(iRow, iFirstCol + iCol++));
-			tSkulInfo.eType = Translate_Type(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkillInfo.pName = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkillInfo.eType = Translate_SkillType(pSheet->readStr(iRow, iFirstCol + iCol++));
 
-			tSkulInfo.iMagicAttackIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
-			tSkulInfo.iPhysicalAttackIncrease = pSheet->readNum(iRow, iFirstCol + iCol++);
-			tSkulInfo.iDefense = pSheet->readNum(iRow, iFirstCol + iCol++);
+			const _uint iDamageLevel = { 3 };
+			for (_uint i = 0; i < iDamageLevel; ++i)
+			{
+				tSkillInfo.iDamage[i] = pSheet->readNum(iRow, iFirstCol + iCol++);
+			}
 
-			tSkulInfo.iBone = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkillInfo.CoolDown = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkillInfo.DelayTime = pSheet->readNum(iRow, iFirstCol + iCol++);
+			tSkillInfo.LifeTime = pSheet->readNum(iRow, iFirstCol + iCol++);
 
-			tSkulInfo.pExplanation = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkillInfo.pStatusChange = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
+			tSkillInfo.pExplanation = Copy_WChar(pSheet->readStr(iRow, iFirstCol + iCol++));
 
-			auto iter = m_SkulDataMap.find(tSkulInfo.pName);
-			if (m_SkulDataMap.end() == iter)
+			auto iter = m_SkillDataMap.find(tSkillInfo.pName);
+			if (m_SkillDataMap.end() == iter)
 			{
 				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
-				m_SkulDataMap.emplace(tSkulInfo.pName, tSkulInfo);
+				m_SkillDataMap.emplace(tSkillInfo.pName, tSkillInfo);
 			}
 		}
 	}
@@ -482,7 +487,29 @@ _tchar* CFileLoader::Copy_WChar(const _tchar* pWChar)
 	return pChar;
 }
 
-SKUL_RANK CFileLoader::Translate_Rank(const _tchar* pRank) const
+SKILL_TYPE CFileLoader::Translate_SkillType(const _tchar* pType) const
+{
+	if (nullptr == pType)
+		return SKILL_TYPE();
+
+	unordered_map<const _tchar*, SKILL_TYPE> TypeMap;
+	TypeMap.emplace(L"마법데미지", SKILL_TYPE::PHYISIC);
+	TypeMap.emplace(L"물리데미지", SKILL_TYPE::MAGIC);
+	TypeMap.emplace(L"복합데미지", SKILL_TYPE::BALANCE);
+
+	// @note - 문자열은 find로 찾으면 주소가 달라서 못 찾음. find_if 문으로 함수 객체 넣어서 lstrcpy로 비교할 것
+	// @note - map의 멤버함수 find, find_if는 멤버 함수 X
+	auto iter = find_if(TypeMap.begin(), TypeMap.end(), CTag_Finder(pType));
+	if (iter == TypeMap.end())
+	{
+		MSG_BOX("CFileLoader - Translate_Rank() - FAILED");
+		return SKILL_TYPE();
+	}
+
+	return iter->second;
+}
+
+SKUL_RANK CFileLoader::Translate_SkulRank(const _tchar* pRank) const
 {
 	if (nullptr == pRank)
 		return SKUL_RANK();
@@ -505,7 +532,7 @@ SKUL_RANK CFileLoader::Translate_Rank(const _tchar* pRank) const
 	return iter->second;
 }
 
-SKUL_TYPE CFileLoader::Translate_Type(const _tchar* pType) const
+SKUL_TYPE CFileLoader::Translate_SkulType(const _tchar* pType) const
 {
 	unordered_map<const _tchar*, SKUL_TYPE> TypeMap;
 	TypeMap.emplace(TEXT("밸런스"), SKUL_TYPE::BALANCE);
@@ -544,10 +571,10 @@ inline void CFileLoader::Free(void)
 	}
 	m_ComponentInfoMap.clear();
 
-	for (pair<const _tchar*, LOAD_SKUL_INFO> Pair : m_SkulDataMap)
+	for (pair<const _tchar*, SKUL_EXCEL> Pair : m_SkulDataMap)
 	{
 		// Safe_Delete_Array(Pair.first); // first가 tPlayerInfo.pName;
-		LOAD_SKUL_INFO tPlayerInfo = Pair.second;
+		SKUL_EXCEL tPlayerInfo = Pair.second;
 		Safe_Delete_Array(tPlayerInfo.pName);
 		for (_uint i = 0; i < 4; ++i)
 		{
@@ -556,6 +583,16 @@ inline void CFileLoader::Free(void)
 		Safe_Delete_Array(tPlayerInfo.pExplanation);
 	}
 	m_SkulDataMap.clear();
+
+	for (pair<const _tchar*, SKILL_EXCEL> Pair : m_SkillDataMap)
+	{
+		// Safe_Delete_Array(Pair.first); // first가 tPlayerInfo.pName;
+		SKILL_EXCEL tSkillInfo = Pair.second;
+		Safe_Delete_Array(tSkillInfo.pName);
+		Safe_Delete_Array(tSkillInfo.pStatusChange);
+		Safe_Delete_Array(tSkillInfo.pExplanation);
+	}
+	m_SkillDataMap.clear();
 
 	m_IDPrototypeNameMap.clear();
 }

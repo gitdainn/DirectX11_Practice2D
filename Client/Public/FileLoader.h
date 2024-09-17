@@ -82,7 +82,7 @@ public:
         return S_OK;
     }
 
-    HRESULT Get_SkulData(const _tchar* pObjectID, LOAD_SKUL_INFO& SkulData) const
+    HRESULT Get_SkulData(const _tchar* pObjectID, SKUL_EXCEL& SkulData) const
     {
         if (nullptr == pObjectID)
             return E_FAIL;
@@ -92,15 +92,32 @@ public:
         if (iter == m_SkulDataMap.end())
             return E_FAIL;
 
-        memcpy(&SkulData, &(iter->second), sizeof(LOAD_SKUL_INFO));
+        memcpy(&SkulData, &(iter->second), sizeof(SKUL_EXCEL));
 
         return S_OK;
     }
+
+    HRESULT Get_SkillData(const _tchar* pObjectID, SKILL_EXCEL& SkillData) const
+    {
+        if (nullptr == pObjectID)
+            return E_FAIL;
+
+        auto iter = find_if(m_SkillDataMap.begin(), m_SkillDataMap.end(), CTag_Finder(pObjectID));
+
+        if (iter == m_SkillDataMap.end())
+            return E_FAIL;
+
+        memcpy(&SkillData, &(iter->second), sizeof(SKILL_EXCEL));
+
+        return S_OK;
+    }
+
 private:
     // @note - readStr로 읽으면 여러 개로 선언한 const _tchar*이 모두 같은 주소를 가리키는 현상 때문에 동적할당
     _tchar* Copy_WChar(const _tchar* pWChar);
-    SKUL_RANK Translate_Rank(const _tchar* pRank) const;
-    SKUL_TYPE Translate_Type(const _tchar* pType) const;
+    SKUL_RANK Translate_SkulRank(const _tchar* pRank) const;
+    SKUL_TYPE Translate_SkulType(const _tchar* pType) const;
+    SKILL_TYPE Translate_SkillType(const _tchar* pType) const;
 
 private:
     const int m_iFirstCol;
@@ -117,7 +134,8 @@ private: // Sheet Num //
     const int m_iComponentInfo = { 2 };
 
 private: // 기획자에게 넘겨받는 엑셀 //
-    unordered_map<const _tchar*, LOAD_SKUL_INFO> m_SkulDataMap;
+    unordered_map<const _tchar*, SKUL_EXCEL> m_SkulDataMap;
+    unordered_map<const _tchar*, SKILL_EXCEL> m_SkillDataMap;
     unordered_map<const _tchar*, const _tchar*> m_IDPrototypeNameMap;
 
 protected:

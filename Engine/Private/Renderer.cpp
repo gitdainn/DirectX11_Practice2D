@@ -209,7 +209,7 @@ void CRenderer::Free()
 }
 
 // CGameObject 전방선언이라, 헤더 내용은 알 수 없어 안의 함수 사용은 선언부에서 불가
-// true면 교체하는 것! -> 뒤에가 더 크면 true로 교체해서 더 큰 숫자가 앞으로 정렬되도롯함.
+// true면 교체 X  -> 앞에가 더 크면 true로 교체해서 더 큰 숫자가 나중에 출력되도록 함.
 bool CRenderer::Sort::operator()(CGameObject* pA, CGameObject* pB)
 {
 	return pA->Get_Order() < pB->Get_Order();

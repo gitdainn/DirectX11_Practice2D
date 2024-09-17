@@ -194,6 +194,7 @@
     <ClInclude Include="..\Public\PlayerWalk.h" />
     <ClInclude Include="..\Public\Skill.h" />
     <ClInclude Include="..\Public\SkillGateOfNether.h" />
+    <ClInclude Include="..\Public\SkillGuillotine.h" />
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\Public\TemplateCmd.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -236,6 +237,7 @@
     <ClCompile Include="..\Private\PlayerWalk.cpp" />
     <ClCompile Include="..\Private\Skill.cpp" />
     <ClCompile Include="..\Private\SkillGateOfNether.cpp" />
+    <ClCompile Include="..\Private\SkillGuillotine.cpp" />
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\Private\TemplateCmd.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

@@ -25,18 +25,24 @@ public:
 		return m_bIsSkillAvailable;
 	}
 
-protected:
-	virtual void Add_Animation() = 0;
-	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta) override;
+	const _bool& Get_IsDelayFinished()
+	{
+		return m_bIsDelayFinished;
+	}
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
+	void	Mapping_SkillData(const _tchar* pObjectID);
+
+protected:
 	void	ResetTime()
 	{
+		m_AnimAcc = 0.0;
 		m_CoolDownAcc = 0.0;
 		m_CycleTimeAcc = 0.0;
 		m_LifeTimeAcc = 0.0;
+		m_DelayTimeAcc = 0.0;
 	}
 
 	HRESULT	Landing_Ground(const _vector& vPosition);
@@ -49,12 +55,17 @@ protected:
 	_double m_CoolDown;
 	_double m_CycleTime;
 	_double m_LifeTime;
+	_double m_DelayTime;
 
 	_double m_CoolDownAcc;
 	_double m_CycleTimeAcc;
 	_double m_LifeTimeAcc;
+	_double m_DelayTimeAcc;
 
 	_bool	m_bIsSkillAvailable = { true };
+	_bool	m_bIsDelayFinished = { false };
+
+	int		m_iDamage[3];
 
 public:
 	/* Prototype */

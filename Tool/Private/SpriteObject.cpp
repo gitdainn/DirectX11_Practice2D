@@ -365,12 +365,12 @@ void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
 void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 {
 	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
-	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+	_float fPerAnimTime = m_pAnimInfo[m_iAnimType].fAnimTime / fabs((_float)m_pAnimInfo[m_iAnimType].iEndIndex - (_float)m_pAnimInfo[m_iAnimType].iStartIndex);
 
 	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_iTextureIndex;
-	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
+	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iAnimType].fDelayTimeMap.find(iCurrentSpriteIndex);
 	_float fDelayTime = { 0.f };
-	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
+	if (iter != m_pAnimInfo[m_iAnimType].fDelayTimeMap.end())
 		fDelayTime = iter->second;
 
 	m_AnimAcc += (_float)TimeDelta;
@@ -379,10 +379,10 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 		m_AnimAcc = 0.f;
 		++iSpriteIndex;
 
-		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)
+		if (m_pAnimInfo[m_iAnimType].iEndIndex < iSpriteIndex)
 		{
 			m_bIsEndSprite = true;
-			iSpriteIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+			iSpriteIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
 		}
 	}
 }

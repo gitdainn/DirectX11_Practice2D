@@ -17,6 +17,7 @@ void CMoveCmd::Execute(CGameObject* pObject)
 
     if (nullptr != pObject)
     {
-        pSpriteObject->Change_Sprite(STATE_TYPE::WALK);
+        pSpriteObject->Set_CurrentState(STATE_TYPE::WALK);
+        pSpriteObject->Change_AnimType((_uint)STATE_TYPE::WALK);
     }
 }

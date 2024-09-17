@@ -93,7 +93,6 @@ void CPlayerJump::Enter(CSpriteObject* pObject)
 	m_DownTime = 0.f;
 	m_JumpTimeAcc = 0.f;
 
-	pObject->Change_Sprite(STATE_TYPE::JUMP);
 	++m_iJumpCount;
 }
 
@@ -121,7 +120,14 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 				if (nullptr != pPlayer)
 					pPlayer->Set_IsInAir(false);
 
-				pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
+				STATE_TYPE eCurrentState = pObject->Get_CurrentState();
+				if (STATE_TYPE::ATK1 != eCurrentState
+					&& STATE_TYPE::ATK2 != eCurrentState
+					&& STATE_TYPE::DEFAULT_ATK != eCurrentState
+					&& STATE_TYPE::JUMP_ATK != eCurrentState)
+				{
+					pObject->Input_Handler(STATE_TYPE::IDLE, pObject->Get_SpriteDirection());
+				}
 				m_bIsFalling = false;
 				m_bIsDead = true;
 				return;

@@ -12,6 +12,8 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_pState(nullptr)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_eCurrentState(STATE_TYPE::IDLE)
+	, m_bIsInAir(false)
+	, m_pAirState(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -21,6 +23,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 HRESULT CSpriteObject::Initialize_Prototype()
 {
+	m_pLayer = LAYER_DEFAULT;
 	return S_OK;
 }
 
@@ -114,17 +117,6 @@ _uint CSpriteObject::Tick(_double TimeDelta)
 
 _uint CSpriteObject::LateTick(_double TimeDelta)
 {
-	if (nullptr != m_pColliderCom)
-	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		Safe_AddRef(pGameInstance);
-		if (FAILED(pGameInstance->Attach_Collider(m_pLayer, m_pColliderCom)))
-		{
-			MSG_BOX("CSpriteObject - LateTick() - FAILED");
-		}
-		Safe_Release(pGameInstance);
-	}
-
 	if (m_bIsRender)
 	{
 		//@qurious. enum class가 아니라 일반 enum이면 engine의 열거체를 멤버로 선언 시 사용불가임.
@@ -152,12 +144,23 @@ void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION
 	
 	if (nullptr != pState)
 	{
-		m_eCurrentState = Input;
 		delete m_pState;
 
 		m_pState = pState;
 		m_pState->Enter(this);
 	}
+
+}
+
+HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
+{
+	if (FAILED(CGameObject::Change_Component(LEVEL_STATIC, pPrototypeTag, TAG_TEXTURE, (CComponent**)&m_pTextureCom)))
+	{
+		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
+		return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 HRESULT CSpriteObject::Add_Components(void* pArg)
@@ -220,12 +223,34 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
-		return E_FAIL;
-
 	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_vector))))
 		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
+		return E_FAIL;
+
+#pragma UV 텍스처 셋팅
+	if (m_bIsAnimUV)
+	{
+		_uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
+		/** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
+		_uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
+
+		// 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexY", &iUVIndexY, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumX", &m_iUVTexNumX, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumY", &m_iUVTexNumY, sizeof(_uint))))
+			return E_FAIL;
+	}
+#pragma endregion
 
 	return S_OK;
 }
@@ -269,6 +294,29 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	return S_OK;
 }
 
+HRESULT CSpriteObject::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
+	Safe_AddRef(pGameInstance);
+
+	if (FAILED(pGameInstance->Attach_Collider(pLayer, pCollider)))
+	{
+		MSG_BOX("CSpriteObject - LateTick() - FAILED");
+		return E_FAIL;
+	}
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+_vector CSpriteObject::Adjust_PositionUp_Radius(const _float& RadiusY)
+{
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	return XMVectorSetY(vPosition, XMVectorGetY(vPosition) + RadiusY * 0.5f);
+}
+
 HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
 {
 	if (nullptr == pComponentTag)
@@ -291,7 +339,7 @@ HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
 				return E_FAIL;
 			}
 			m_iTextureIndex = m_pTextureCom->Get_TextureIndex();
-
+			m_iOrder = m_pTextureCom->Get_Order();
 		}
 	}
 
@@ -331,15 +379,19 @@ void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTa
 {
 }
 
-void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
+void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType)
 {
-	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
-	_float fPerAnimTime = m_pAnimInfo[m_iCurrentAnim].fAnimTime / fabs((_float)m_pAnimInfo[m_iCurrentAnim].iEndIndex - (_float)m_pAnimInfo[m_iCurrentAnim].iStartIndex);
+	m_bIsEndSprite = false;
+
+	ANIM_INFO* pAnimInfo = m_pAnimInfo + iAnimType;
+	if (nullptr == pAnimInfo)
+		return;
+	_float fPerAnimTime = pAnimInfo->fAnimTime / fabs((_float)pAnimInfo->iEndIndex - (_float)pAnimInfo->iStartIndex);
 
 	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_iTextureIndex;
-	unordered_map<_uint, _float>::iterator iter = m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.find(iCurrentSpriteIndex);
+	unordered_map<_uint, _float>::iterator iter = pAnimInfo->fDelayTimeMap.find(iCurrentSpriteIndex);
 	_float fDelayTime = { 0.f };
-	if (iter != m_pAnimInfo[m_iCurrentAnim].fDelayTimeMap.end())
+	if (iter != pAnimInfo->fDelayTimeMap.end())
 		fDelayTime = iter->second;
 
 	m_AnimAcc += (_float)TimeDelta;
@@ -348,12 +400,17 @@ void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
 		m_AnimAcc = 0.f;
 		++iSpriteIndex;
 
-		if (m_pAnimInfo[m_iCurrentAnim].iEndIndex < iSpriteIndex)
+		if (pAnimInfo->iEndIndex < iSpriteIndex)
 		{
-			m_bIsEndSprite = true;
-			iSpriteIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+			End_Animation(iSpriteIndex);
 		}
 	}
+}
+
+void CSpriteObject::End_Animation(_uint& iSpriteIndex)
+{
+	m_bIsEndSprite = true;
+	return;
 }
 
 void CSpriteObject::Free()
@@ -364,7 +421,11 @@ void CSpriteObject::Free()
 
 	if (nullptr != m_pAnimInfo)
 		m_pAnimInfo->fDelayTimeMap.clear();
-	Safe_Delete_Array(m_pAnimInfo);
+
+	if (1 < m_iAnimTypeNum)
+		Safe_Delete_Array(m_pAnimInfo);
+	else
+		Safe_Delete(m_pAnimInfo);
 
 	/** @note - m_pTextureTag 해제하면 안되는 이유
 	현재 m_pTextureTag는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/

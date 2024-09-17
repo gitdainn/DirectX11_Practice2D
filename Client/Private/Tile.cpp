@@ -41,7 +41,6 @@ HRESULT CTile::Initialize(void* pArg)
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
-	m_iOrder += 10;
 
 	return S_OK;
 }

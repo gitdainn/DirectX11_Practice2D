@@ -39,7 +39,7 @@ public:
 	{
 		if (m_iNumTextures <= iTextureIndex || 0 > iTextureIndex)
 		{
-			MSG_BOX("CTexture - Set_TextureSize() - Stack Index is Wrong");
+			MSG_BOX("CTexture - Get_OriginalTextureSize() - Stack Index is Wrong");
 			return _float2(0.f, 0.f);
 		};
 
@@ -49,6 +49,11 @@ public:
 	const vector<const _tchar*>* Get_TexturePathVec() const
 	{
 		return &m_TexturePathVec;
+	}
+
+	const _uint& Get_TextureNum() const
+	{
+		return m_iNumTextures;
 	}
 
 	const _uint& Get_TextureIndex() const

@@ -29,7 +29,7 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
 
 
@@ -52,7 +52,7 @@ HRESULT CWaterSkul::Initialize(void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iCurrentAnim = (_uint)STATE_TYPE::IDLE;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
 
     m_iUVTexNumX = 8;
@@ -68,7 +68,7 @@ HRESULT CWaterSkul::Initialize(void* pArg)
 
 _uint CWaterSkul::Tick(_double TimeDelta)
 {    
-    Play_Animation(m_iUVTextureIndex, TimeDelta);
+    Play_Animation(TimeDelta, m_iUVTextureIndex, m_iAnimType);
     return CPlayer::Tick(TimeDelta);
 }
 
@@ -84,7 +84,8 @@ HRESULT CWaterSkul::Render()
 
 void CWaterSkul::Add_Animation()
 {
-    m_pAnimInfo = new ANIM_INFO[(_uint)STATE_TYPE::MOTION_END];
+    m_iAnimTypeNum = (_uint)STATE_TYPE::MOTION_END;
+    m_pAnimInfo = new ANIM_INFO[m_iAnimTypeNum];
 
     int iRow = { 0 };
     m_pAnimInfo[(_uint)STATE_TYPE::IDLE].iStartIndex = 0;
@@ -133,7 +134,7 @@ void CWaterSkul::Add_Animation()
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].fAnimTime = 0.3f;
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].fDelayTimeMap.emplace( 1, 2.2f );
 
-    m_iUVTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
+    m_iUVTextureIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
 }
 
 HRESULT CWaterSkul::Add_Components(void* pArg)
@@ -148,23 +149,6 @@ HRESULT CWaterSkul::Add_Components(void* pArg)
 HRESULT CWaterSkul::SetUp_ShaderResources()
 {
     if (FAILED(__super::SetUp_ShaderResources()))
-        return E_FAIL;
-
-    _uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
-    /** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
-    _uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
-
-    // 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
-    if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
-        return E_FAIL;
-
-    if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexY", &iUVIndexY, sizeof(_uint))))
-        return E_FAIL;
-
-    if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumX", &m_iUVTexNumX, sizeof(_uint))))
-        return E_FAIL;
-
-    if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumY", &m_iUVTexNumY, sizeof(_uint))))
         return E_FAIL;
 
     return S_OK;

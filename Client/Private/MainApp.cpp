@@ -11,7 +11,7 @@
 #pragma region LOAD
 #include "ColliderAABB2D.h"
 #include "SkillGateOfNether.h"
-
+#include "SkillGuillotine.h"
 #pragma endregion
 
 USING(Client)
@@ -155,6 +155,12 @@ HRESULT CMainApp::Ready_DefaultData_Excel()
 		return E_FAIL;
 	}
 
+	if (FAILED(pFileLoader->Load_SkillData_Excel(TEXT("../../Data.xlsx"))))
+	{
+		MSG_BOX("CMainApp - Ready_DefaultData_Excel() - FAILED");
+		return E_FAIL;
+	}
+
 	Safe_Release(pFileLoader);
 	return S_OK;
 }
@@ -231,14 +237,27 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 #pragma region EFFECT_TEXTURE	
 	///* For.Prototype_Component_Sprite_Background */
 	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNether"),
-	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Effect/GateOfNether/")))))
+	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/GateOfNether/")))))
 	//{
 	//	return E_FAIL;
 	//};
 
-		/* For.Prototype_Component_Sprite_GrimReaper */
+	/* For.Prototype_Component_Sprite_GateOfNetherUV */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNetherUV"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Effect/GateOfNether/GrimReaper_GateOfNetherUV_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/GateOfNether/GrimReaper_GateOfNetherUV_%d.png"), 2))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_Guillotine */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Guillotine"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_%d.png"), 26))))
+	{
+		return E_FAIL;
+	};
+	/* For.Prototype_Component_Sprite_GuillotineSign */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GuillotineSign"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_Sign_%d.png"), 10))))
 	{
 		return E_FAIL;
 	};
@@ -286,12 +305,14 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 	const _tchar* pPrototypeName = TEXT("Prototype_GameObject_Skill_GateOfNether");
 	pFileLoader->Add_PrototypeName(L"명계의균열", pPrototypeName);
 	
-	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName,
-		CSkillGateOfNether::Create(m_pDevice, m_pContext))))
-
-	{
+	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillGateOfNether::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
-	};
+
+	pPrototypeName = TEXT("Prototype_GameObject_Skill_Guillotine");
+	pFileLoader->Add_PrototypeName(L"길로틴", pPrototypeName);
+
+	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillGuillotine::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
 
 	Safe_Release(pFileLoader);
 

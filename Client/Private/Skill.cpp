@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Skill.h"
+#include "FileLoader.h"
 
 CSkill::CSkill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	:CSpriteObject(pDevice, pContext)
@@ -9,6 +10,9 @@ CSkill::CSkill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CSkill::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+
+	m_pLayer = LAYER_SKILL;
+
 	return S_OK;
 }
 
@@ -18,6 +22,8 @@ HRESULT CSkill::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	{
 		return E_FAIL;
 	}
+
+	Mapping_SkillData(m_pNameTag);
 
 	m_bIsRender = false;
 	return S_OK;
@@ -29,22 +35,22 @@ HRESULT CSkill::Initialize(void* pArg)
 	{
 		return E_FAIL;
 	}
+
+	Mapping_SkillData(m_pNameTag);
+
 	m_bIsRender = false;
 	return S_OK;
 }
 
 _uint CSkill::Tick(_double TimeDelta)
 {
-	//if (!m_bIsCoolFinished)
-	//{
-	//	m_bIsCoolFinished = true;
-	//}
 	m_LifeTimeAcc += TimeDelta;
+	m_DelayTimeAcc += TimeDelta;
 
 	if (m_LifeTime <= m_LifeTimeAcc)
 	{
 		m_LifeTimeAcc = 0.0;
-		//m_bIsRender = false;
+		m_bIsSkillAvailable = true;
 	}
 
 	return __super::Tick(TimeDelta);
@@ -63,24 +69,19 @@ HRESULT CSkill::Render()
 
 void CSkill::Enter(CSpriteObject* pOwner)
 {
-	m_iCurrentAnim = 0;
-	m_iTextureIndex = m_pAnimInfo[m_iCurrentAnim].iStartIndex;
-	m_AnimAcc = 0.0;
+	ResetTime();
+
+	const ANIM_INFO* pAnim = m_pAnimInfo + m_iAnimType;
+	m_iTextureIndex = pAnim->iStartIndex;
 	m_bIsSkillAvailable = false;
 	m_bIsEndSprite = false;
-
-	m_iTextureIndex = 0;
-	ResetTime();
+	m_bIsRender = false;
+	m_bIsDelayFinished = false;
 }
 
 HRESULT CSkill::Awaken()
 {
 	return S_OK;
-}
-
-void CSkill::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
-{
-	__super::Play_Animation(iSpriteIndex, TimeDelta);
 }
 
 HRESULT CSkill::Add_Components(void* pArg)
@@ -97,7 +98,8 @@ HRESULT CSkill::Add_Components(void* pArg)
 	COMPONENT_INFO tComponentInfo;
 	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-	tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
+	//tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
+	tComponentInfo.fSize = _float2(320.f, 150.f);
 	tComponentInfo.fOffset = _float2(0.f, 0.f);
 
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
@@ -117,6 +119,38 @@ HRESULT CSkill::SetUp_ShaderResources()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CSkill::Mapping_SkillData(const _tchar* pObjectID)
+{
+	if (nullptr == pObjectID)
+		return;
+
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+		return;
+	Safe_AddRef(pFileLoader);
+
+	SKILL_EXCEL tSkillInfo;
+	ZeroMemory(&tSkillInfo, sizeof(SKILL_EXCEL));
+	if (FAILED(pFileLoader->Get_SkillData(pObjectID, tSkillInfo)))
+	{
+		Safe_Release(pFileLoader);
+		return;
+	}
+
+	m_pNameTag = tSkillInfo.pName;
+	m_CoolDown = tSkillInfo.CoolDown;
+	m_DelayTime = tSkillInfo.DelayTime;
+	m_LifeTime = tSkillInfo.LifeTime;
+
+	for (_uint i = 0; i < 3; ++i)
+	{
+		m_iDamage[i] = tSkillInfo.iDamage[i];
+	}
+	Safe_Release(pFileLoader);
+
+	return;
 }
 
 HRESULT CSkill::Landing_Ground(const _vector& vPosition)

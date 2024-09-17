@@ -60,14 +60,17 @@ protected: // Animation
 	};
 
 	ANIM_INFO* m_pAnimInfo = { nullptr };
-	_uint m_iCurrentAnim = { 0 };
+	_uint m_iAnimTypeNum = { 0 };
+	_uint m_iAnimType = { 0 };
 	_double m_AnimAcc = { 0.f };
 
 	virtual void Add_Animation() = 0;
-	virtual void Play_Animation(_uint& iSpriteIndex, _double TimeDelta);
+	virtual void Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType = 0);
+	virtual void End_Animation(_uint& iSpriteIndex);
 
 public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
+	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 
 public:
 	void Set_ShaderPass(const _uint iPassIndex)
@@ -98,9 +101,19 @@ public:
 		return m_eCurrentState;
 	}
 
+	//CState* Get_CurrentStatePointer() const
+	//{
+	//	return m_pState;
+	//}
+
 	void Set_SpriteInfo(const SPRITE_INFO tSpriteInfo)
 	{
 		m_tSpriteInfo = tSpriteInfo;
+	}
+
+	void Set_CurrentState(const STATE_TYPE tState)
+	{
+		m_eCurrentState = tState;
 	}
 
 	const SPRITE_INFO& Get_SpriteInfo() const
@@ -109,14 +122,30 @@ public:
 	}
 
 public: 
-	template<typename T>
-	void Change_Sprite(const T& Sprite);
+	inline void CSpriteObject::Change_AnimType(_uint iAnimType)
+	{
+		if (m_iAnimTypeNum <= iAnimType)
+			return;
+
+		m_iAnimType = iAnimType;
+		const ANIM_INFO* pAnim = m_pAnimInfo + m_iAnimType;
+		if (m_bIsAnimUV)
+		{
+			m_iUVTextureIndex = pAnim->iStartIndex;
+		}
+		else
+		{
+			m_iTextureIndex = pAnim->iStartIndex;
+		}
+	}
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 	HRESULT Load_Components_Excel();
+	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
+	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
 
 private:
 	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);
@@ -136,6 +165,9 @@ protected:
 	bool	m_bIsEndSprite;
 
 	CState*					m_pState;
+	CState*					m_pAirState;
+	_bool					m_bIsInAir;
+
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	_uint	m_iUVTextureIndex;
@@ -152,22 +184,5 @@ public:
 	virtual void Free() override;
 };
 
-template<typename T>
-inline void CSpriteObject::Change_Sprite(const T& Sprite)
-{
-	if (m_iCurrentAnim == (_uint)Sprite)
-		return;
-	
-	m_eCurrentState = Sprite;
-	m_iCurrentAnim = (_uint)Sprite;
-	if (m_bIsAnimUV)
-	{
-		m_iUVTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
-	}
-	else
-	{
-		m_iTextureIndex = m_pAnimInfo[(_uint)Sprite].iStartIndex;
-	}
-}
 
 END
