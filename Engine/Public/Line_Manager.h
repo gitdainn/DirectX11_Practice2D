@@ -70,6 +70,16 @@ public:
 	{
 		return m_LineList;
 	}
+	
+	HRESULT Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints)
+	{
+		_float fLandingY = { 0.f };
+		if (false == IsCurrentLineOccupied(vObjectPosition, fLandingY))
+			return E_FAIL;
+			
+		EndPoints = make_pair(_float3(m_tClosestLandingLine.tLeftVertex.position), _float3(m_tClosestLandingLine.tRightVertex.position));
+		return S_OK;
+	}
 
 	bool HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY);
 	bool IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY);

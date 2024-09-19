@@ -67,6 +67,17 @@ protected: // Animation
 	virtual void Add_Animation() = 0;
 	virtual void Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType = 0);
 	virtual void End_Animation(_uint& iSpriteIndex);
+	
+	void	Switch_SpriteDirection()
+	{
+		m_eSpriteDirection = (m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? SPRITE_DIRECTION::RIGHT : SPRITE_DIRECTION::LEFT);
+		if (m_bIsAnimUV)
+		{
+			// 적 이미지 디폴트 방향이 오른쪽임 (Flip = 왼쪽 보는 상태)
+			m_iShaderPassIndex = ((m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? (_uint)VTXTEX_PASS::FlipUV_Anim : (_uint)VTXTEX_PASS::UV_Anim));
+		}
+		// AnimUV가 아닐 경우의 Filp 버전은 현재 없음	
+	}
 
 public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);

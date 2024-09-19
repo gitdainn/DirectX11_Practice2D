@@ -166,6 +166,8 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 HRESULT CSpriteObject::Add_Components(void* pArg)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
 	Safe_AddRef(pGameInstance);
 
 	/* For.Com_Transform */

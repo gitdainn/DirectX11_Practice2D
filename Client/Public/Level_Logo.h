@@ -16,6 +16,7 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 
 private: /* 이 레벨이 사용하기위한 사본 객체들을 그룹별로 생성한다. */
+	HRESULT Ready_Layer_Priority();
 	HRESULT Ready_Layer_GameObject();
 
 public:

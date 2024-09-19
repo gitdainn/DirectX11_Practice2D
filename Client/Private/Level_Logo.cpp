@@ -13,40 +13,12 @@ CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 
 HRESULT CLevel_Logo::Initialize()
 {
+	if (FAILED(Ready_Layer_Priority()))
+		return E_FAIL;
+
 	/* 검색시에 어떤 레벨에 있는 특정 태그에 있는 몇번째 녀석. */
 	if (FAILED(Ready_Layer_GameObject()))
 		return E_FAIL;
-
-	CFileLoader* pFileLoader = CFileLoader::GetInstance();
-	if (nullptr == pFileLoader)
-	{
-		MSG_BOX("CLevel_Logo - Intialize() - FileLoader is NULL");
-		return E_FAIL;
-	}
-
-	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
-		return E_FAIL;
-	}
-
-	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
-		return E_FAIL;
-	}
-
-	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
-		return E_FAIL;
-	}
-
-	if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
-		return E_FAIL;
-	}
 
 	return S_OK;
 }
@@ -68,6 +40,44 @@ void CLevel_Logo::Tick(_double TimeDelta)
 #ifdef _DEBUG
 	SetWindowText(g_hWnd, TEXT("Logo Level"));
 #endif
+}
+
+HRESULT CLevel_Logo::Ready_Layer_Priority()
+{
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CLevel_Logo - Intialize() - FileLoader is NULL");
+		return E_FAIL;
+	}
+	Safe_AddRef(pFileLoader);
+
+	if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
+		return E_FAIL;
+	}
+
+	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		return E_FAIL;
+	}
+
+	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		return E_FAIL;
+	}
+
+	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		return E_FAIL;
+	}
+
+	Safe_Release(pFileLoader);
+	return S_OK;
 }
 
 HRESULT CLevel_Logo::Ready_Layer_GameObject()
@@ -95,6 +105,8 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//	return E_FAIL;
 	//CPlayer_Manager::GetInstance()->Set_EquippedSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER)->back()));
 
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER_ENEMY, tSpriteInfo)))
+		return E_FAIL;
 
 	Safe_Release(pGameInstance);
 	return S_OK;

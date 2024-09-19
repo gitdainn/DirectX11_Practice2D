@@ -30,12 +30,12 @@ CGameObject::CGameObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pDevice(rhs.m_pDevice)
 	, m_pContext(rhs.m_pContext)
+	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
+	, m_pLayer(rhs.m_pLayer), m_pNameTag(rhs.m_pNameTag), m_pClassName(rhs.m_pClassName)
 	, m_bIsDead(rhs.m_bIsDead), m_bIsRender(rhs.m_bIsRender)
 	, m_eRenderGroup(rhs.m_eRenderGroup)
-	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
 	, m_iInstanceID(rhs.m_iInstanceID)
-	, m_pLayer(rhs.m_pLayer)
-	, m_pNameTag(rhs.m_pNameTag)
+	, m_iShaderPassIndex(rhs.m_iShaderPassIndex), m_iOrder(rhs.m_iOrder), m_iTextureIndex(rhs.m_iTextureIndex) 
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);

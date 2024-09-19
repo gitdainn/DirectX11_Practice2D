@@ -61,6 +61,20 @@ _uint CPlayer::Tick(_double TimeDelta)
 
 	m_pState->Update(this, TimeDelta);
 
+	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	//static _vector vPastPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	//_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	//if (XMVectorGetX(vPastPosition) != XMVectorGetX(vPosition)
+	//	|| XMVectorGetY(vPastPosition) != XMVectorGetY(vPastPosition))
+	//{
+	//	_vector vDir = vPosition - vPastPosition;
+	//	_float fCameraSpeed = m_fMovementSpeed * 0.7f * TimeDelta;
+	//	vDir = XMVector4Length(vDir);
+	//	pGameInstance->Set_ScrollX(XMVectorGetX(vDir) * fCameraSpeed);
+	//	pGameInstance->Set_ScrollY(XMVectorGetY(vDir) * fCameraSpeed);
+	//	vPastPosition = vPosition;
+	//}
+
 	/* false == IsCurrentLineOccupied()이면 playerJump로 변환 + 추락 상태 만들기 */
 	if (m_bIsInAir)
 	{

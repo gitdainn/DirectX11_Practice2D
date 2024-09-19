@@ -499,6 +499,14 @@ HRESULT CGameInstance::Get_LineList(list<LINE_INFO>& LineList) const
 	return S_OK;
 }
 
+HRESULT CGameInstance::Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints) const
+{
+	if (nullptr == m_pLine_Manager)
+		return E_FAIL;
+
+	return m_pLine_Manager->Get_CurrentLineEndPoint(vObjectPosition, EndPoints);
+}
+
 bool CGameInstance::HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY)
 {
 	if (nullptr == m_pLine_Manager)

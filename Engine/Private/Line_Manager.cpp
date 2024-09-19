@@ -4,6 +4,11 @@
 
 IMPLEMENT_SINGLETON(CLine_Manager)
 
+bool	operator==(XMFLOAT3 A, const XMFLOAT3 B)
+{
+	return A.x == B.x && A.y == B.y && A.z == B.z;
+}
+
 CLine_Manager::CLine_Manager()
 {
 	ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
@@ -183,11 +188,13 @@ bool CLine_Manager::HasPassableLine(const _float2& vInObjectPosition, _float& fO
 
 bool CLine_Manager::IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY)
 {
-	static _bool bIsExcuted = { false };
-	if (!bIsExcuted)
+	// 매번 검사하면 오르막길을 못 오르기 때문에 한 번만 검사하고, 무조건 내가 타고 있는 라인의 y로 고정
+	if (_float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tLeftVertex.position
+		&& _float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tRightVertex.position)
 	{
-		bIsExcuted = true;
-		return HasPassableLine(vObjectPosition, fOutLandingY);
+		_float fLandingY = { 0 };
+		if (FAILED(HasPassableLine(vObjectPosition, fLandingY)))
+			return false;
 	}
 
 	if (m_tClosestLandingLine.tLeftVertex.position.x > vObjectPosition.x

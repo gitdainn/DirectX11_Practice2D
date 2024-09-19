@@ -112,6 +112,12 @@
     <Filter Include="02.GameObject\Skill\GrimReaper\Guillotine">
       <UniqueIdentifier>{65205b70-1e2f-4d2f-b3af-a8c1078a2655}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Enemy">
+      <UniqueIdentifier>{930f0356-e190-4035-ae87-ed757cccf5b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Enemy\Solider">
+      <UniqueIdentifier>{0f3fe7b7-02ae-4f52-9a41-da5e61e66821}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -220,6 +226,12 @@
     <ClInclude Include="..\Public\SkillGuillotine.h">
       <Filter>02.GameObject\Skill\GrimReaper\Guillotine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Enemy.h">
+      <Filter>02.GameObject\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Solider.h">
+      <Filter>02.GameObject\Enemy\Solider</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -315,6 +327,12 @@
     </ClCompile>
     <ClCompile Include="..\Private\SkillGuillotine.cpp">
       <Filter>02.GameObject\Skill\GrimReaper\Guillotine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Enemy.cpp">
+      <Filter>02.GameObject\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Solider.cpp">
+      <Filter>02.GameObject\Enemy\Solider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

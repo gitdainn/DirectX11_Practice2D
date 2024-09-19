@@ -32,7 +32,7 @@ namespace Client
 	{
 		IDLE, WALK,
 		DASH, DEFAULT_ATK, ATK1, ATK2, JUMP_ATK, JUMP,
-		FALL, SKILL1, SKILL2, MOTION_END
+		FALL, SKILL1, SKILL2, DAMAGED, MOTION_END
 	};
 
 	enum class SKUL_RANK
@@ -115,6 +115,7 @@ using namespace Client;
 #define LAYER_DEFAULT		TEXT("Layer_Default")
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_PLAYER			TEXT("Layer_Player")
+#define LAYER_ENEMY				TEXT("Layer_Enemy")
 #define LAYER_UI				TEXT("Layer_UI")
 #define LAYER_SKILL				TEXT("Layer_Skill")
 #pragma endregion

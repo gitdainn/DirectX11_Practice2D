@@ -3,16 +3,27 @@
 #include "GameInstance.h"
 
 #include "Camera_Dynamic.h"
+#include "Utility.h"
+
+#pragma region PLAYER
 #include "GrimReaper.h"
 #include "LittleBorn.h"
 #include "WaterSkul.h"
-#include "Utility.h"
+#pragma endregion
 
+#pragma region ENEMY
+#include "Solider.h"
+#pragma endregion
+
+#pragma region ETC
 #include "BackGround.h"
 #include "Tile.h"
 #include "Environment.h"
+#pragma endregion
 
+#pragma region COMPONENT
 #include "ColliderAABB2D.h"
+#pragma endregion
 
 CLoader::CLoader(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: m_pDevice(pDevice)
@@ -123,6 +134,16 @@ HRESULT CLoader::Loaiding_GameObject_Logo()
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
+#pragma endregion
+
+#pragma region ENEMY
+		/* For.Prototype_GameObject_Solider */
+		if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Solider"),
+			CSolider::Create(m_pDevice, m_pContext))))
+		{
+			Safe_Release(pGameInstance);
+			return E_FAIL;
+		};
 #pragma endregion
 
 #pragma region ENVIRONMENT

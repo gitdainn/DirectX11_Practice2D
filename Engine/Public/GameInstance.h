@@ -100,6 +100,7 @@ public: /* For. Line_Manager*/
 	void	Add_Vertex(const VertexPositionColor& tVertex);
 	void	DeleteBack_Line();
 	HRESULT Get_LineList(list<LINE_INFO>& LineList) const;
+	HRESULT Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints) const;
 
 	bool HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY);
 	bool IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY);
