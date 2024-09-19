@@ -237,7 +237,7 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 #pragma region ENEMY_TEXTURE
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Enemy_Solider"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Enemy/Enemy_Solider.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Enemy/Enemy_Solider_B.png")))))
 	{
 		return E_FAIL;
 	};

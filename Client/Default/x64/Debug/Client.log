@@ -19,7 +19,5 @@ FXC : warning X4717: Effects deprecated for D3DCompiler_47
 FXC : warning X4717: Effects deprecated for D3DCompiler_47
   
   compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_Vtxtex.cso
-  Enemy.cpp
   Solider.cpp
-  코드를 생성하고 있습니다...
   Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

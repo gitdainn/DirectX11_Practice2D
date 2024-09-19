@@ -91,6 +91,11 @@ _uint CEnemy::Tick(_double TimeDelta)
 {
 	m_StateFunc(*this, TimeDelta);
 
+	_float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+	vScale.x /= m_iUVTexNumX;
+	vScale.y /= m_iUVTexNumY;
+	m_pTransformCom->Set_Scaled(_float3(vScale.x * 2.f, vScale.y * 2.f, 0.f));
+
 	return __super::Tick(TimeDelta);
 }
 
@@ -112,7 +117,11 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 
 void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
-	return;
+	if (LAYER_SKILL == pTarget->Get_Layer())
+	{
+		Input_Handler(ENEMY_STATE::DAMAGED);
+	}
+
 	__super::OnCollisionStay(pTargetCollider, pTarget);
 }
 
@@ -123,12 +132,19 @@ void CEnemy::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
 #pragma region ENEMY_STATE
 void CEnemy::Idle(_double TimeDelta)
 {
-	m_iAnimType = (_uint)ENEMY_STATE::IDLE;
 }
 
 void CEnemy::Walk(_double TimeDelta)
 {
-	m_iAnimType = (_uint)ENEMY_STATE::WALK;
+}
+void CEnemy::Attack(_double TimeDelta)
+{
+}
+void CEnemy::Chase(_double TimeDelta)
+{
+}
+void CEnemy::Damaged(_double TimeDelta)
+{
 }
 #pragma endregion
 
@@ -143,6 +159,10 @@ void CEnemy::Input_Handler(const ENEMY_STATE eEnemyState)
 
 	//m_StateFunc = iter->second;
 
+	m_iAnimType = (_uint)eEnemyState;
+	const ANIM_INFO* pAnim = m_pAnimInfo + m_iAnimType;
+	m_iUVTextureIndex = pAnim->iStartIndex;
+
 	switch (eEnemyState)
 	{
 	case ENEMY_STATE::IDLE:
@@ -151,6 +171,18 @@ void CEnemy::Input_Handler(const ENEMY_STATE eEnemyState)
 
 	case ENEMY_STATE::WALK:
 		m_StateFunc = bind(&CEnemy::Walk, this, 0.11f);
+		break;
+
+	case ENEMY_STATE::ATK1:
+		m_StateFunc = bind(&CEnemy::Attack, this, 0.11f);
+		break;
+
+	case ENEMY_STATE::CHASE:
+		m_StateFunc = bind(&CEnemy::Chase, this, 0.11f);
+		break;
+
+	case ENEMY_STATE::DAMAGED:
+		m_StateFunc = bind(&CEnemy::Damaged, this, 0.11f);
 		break;
 
 	default:

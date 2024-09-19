@@ -37,6 +37,9 @@ public:
 protected:
 	virtual void Idle(_double TimeDelta);
 	virtual void Walk(_double TimeDelta);
+	virtual void Attack(_double TimeDelta);
+	virtual void Chase(_double TimeDelta);
+	virtual void Damaged(_double TimeDelta);
 
 protected:
 	virtual void End_Animation(_uint& iSpriteIndex) override;

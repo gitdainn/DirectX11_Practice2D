@@ -16,7 +16,7 @@ HRESULT CSolider::Initialize_Prototype()
     m_eSpriteDirection = SPRITE_DIRECTION::RIGHT;
     m_bIsAnimUV = true;
     m_iUVTexNumX = 10;
-    m_iUVTexNumY = 7;
+    m_iUVTexNumY = 6;
 
     return __super::Initialize_Prototype();
 }
@@ -59,7 +59,7 @@ HRESULT CSolider::Initialize(void* pArg)
     _float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
     vScale.x /= m_iUVTexNumX;
     vScale.y /= m_iUVTexNumY;
-    m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y, 0.f));
+    m_pTransformCom->Set_Scaled(_float3(vScale.x * 2.f, vScale.y * 2.f, 0.f));
 
     Add_Animation();
 
@@ -89,17 +89,25 @@ void CSolider::Add_Animation()
     m_pAnimInfo = new ANIM_INFO[m_iAnimTypeNum];
     m_iAnimType = (_uint)ENEMY_STATE::IDLE;
 
+    _uint iRow = { 0 };
     m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].iStartIndex = 0;
-    m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].iEndIndex = 3;
+    m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].iEndIndex = 4;
     m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].fAnimTime = 2.f;
 
-    m_pAnimInfo[(_uint)ENEMY_STATE::WALK].iStartIndex = 4;
-    m_pAnimInfo[(_uint)ENEMY_STATE::WALK].iEndIndex = 11;
+    ++iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::WALK].iStartIndex = m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::WALK].iEndIndex = m_iUVTexNumX * iRow + 8;
     m_pAnimInfo[(_uint)ENEMY_STATE::WALK].fAnimTime = 2.f;
 
-    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].iStartIndex = 12;
-    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].iEndIndex = 18;
-    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].fAnimTime = 3.f;
+    ++iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].iStartIndex = m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].iEndIndex = m_iUVTexNumX * iRow + 6;
+    m_pAnimInfo[(_uint)ENEMY_STATE::ATK1].fAnimTime = 1.f;
+
+    ++iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::DAMAGED].iStartIndex = m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)ENEMY_STATE::DAMAGED].iEndIndex = m_iUVTexNumX * iRow + 6;
+    m_pAnimInfo[(_uint)ENEMY_STATE::DAMAGED].fAnimTime = 1.f;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
 }
@@ -123,9 +131,7 @@ HRESULT CSolider::SetUp_ShaderResources()
 
 void CSolider::Idle(_double TimeDelta)
 {
-    __super::Idle(TimeDelta);
-
-    _double IdleTime = { 4.f };
+    _double IdleTime = { 2.f };
     
     if (IdleTime <= m_IdleTimeAcc)
     {
@@ -134,7 +140,7 @@ void CSolider::Idle(_double TimeDelta)
     }
     else
     {
-        m_IdleTimeAcc += 0.01f;
+        m_IdleTimeAcc += TimeDelta;
     }
 
     return;
@@ -142,11 +148,10 @@ void CSolider::Idle(_double TimeDelta)
 
 void CSolider::Walk(_double TimeDelta)
 {
-    __super::Walk(TimeDelta);
-
     const _uint iSearchRoundsNum = { 2 };
     const _float fSearchDistance = { 10.f };
     const _float fSwitchDistance = { 3.f };
+    const _float fPlayerAtkDistance = { 5.f };
 
     if (iSearchRoundsNum <= m_iSearchRoundsCount)
     {
@@ -154,24 +159,73 @@ void CSolider::Walk(_double TimeDelta)
         m_iSearchRoundsCount = 0;
     }
 
+    // 이동 //
     if (m_eSpriteDirection == SPRITE_DIRECTION::LEFT)
+    {
         m_pTransformCom->Go_Left(TimeDelta);
+    }
     else if (m_eSpriteDirection == SPRITE_DIRECTION::RIGHT)
+    {
         m_pTransformCom->Go_Right(TimeDelta);
+    }
     else
+    {
         MSG_BOX("CSolider - Walk() - ERROR");
+    }
 
+    // 플레이어와의 거리 측정 //
+    _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+    _float fCurrentPlayerDistance = Get_DistanceX(vPosition, Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION));
+    if (fPlayerAtkDistance >= fCurrentPlayerDistance)
+    {
+        Input_Handler(ENEMY_STATE::ATK1);
+        m_iSearchRoundsCount = 0;
+    }
+
+    // 라인 끝점과의 거리 측정 //
     _float3 vLineEndPoint = (m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? m_LineEndPoints.first : m_LineEndPoints.second);
-    _float fEndLineDistance = Get_DistanceX(m_pTransformCom->Get_State(CTransform::STATE_POSITION), XMLoadFloat3(&vLineEndPoint));
+    _float fCurrentLineDistance = Get_DistanceX(vPosition, XMLoadFloat3(&vLineEndPoint));
 
     // 라인 끝에 부딪쳤거나 iSearchDistance 이상 움직였거나 Block에 부딪쳤으면 Switch
-    if (fSwitchDistance >= fEndLineDistance)
+    if (fSwitchDistance >= fCurrentLineDistance)
     {
         ++m_iSearchRoundsCount;
         Switch_SpriteDirection();
     }
 
     return;
+}
+
+void CSolider::Attack(_double TimeDelta)
+{
+    if (m_bIsEndSprite)
+        Input_Handler(ENEMY_STATE::IDLE);
+
+
+}
+
+void CSolider::Chase(_double TimeDelta)
+{
+}
+
+void CSolider::Damaged(_double TimeDelta)
+{
+    if (m_bIsEndSprite)
+        Input_Handler(ENEMY_STATE::IDLE);
+
+    // 넉백 //
+    if (m_eSpriteDirection == SPRITE_DIRECTION::LEFT)
+    {
+        m_pTransformCom->Go_Right(TimeDelta);
+    }
+    else if (m_eSpriteDirection == SPRITE_DIRECTION::RIGHT)
+    {
+        m_pTransformCom->Go_Left(TimeDelta);
+    }
+    else
+    {
+        MSG_BOX("CSolider - Walk() - ERROR");
+    }
 }
 
 CSolider* CSolider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
