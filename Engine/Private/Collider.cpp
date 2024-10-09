@@ -9,6 +9,8 @@
 #include "ColliderOBB2D.h"
 #include "ColliderSphere2D.h"
 
+_uint CCollider::g_iColliderID = { 0 };
+
 CCollider::CCollider(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CComponent(pDevice, pContext)
 {
@@ -20,6 +22,7 @@ CCollider::CCollider(const CCollider & rhs)
 	: CComponent(rhs)
 	, m_WorldMatrix(rhs.m_WorldMatrix)
 	, m_tColliderDesc(rhs.m_tColliderDesc)
+	, m_iID(++g_iColliderID)
 #ifdef _DEBUG
 	, m_pBatch(rhs.m_pBatch)
 	, m_pEffect(rhs.m_pEffect)

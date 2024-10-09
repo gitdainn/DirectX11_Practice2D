@@ -359,6 +359,8 @@ HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
 
 void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	if (nullptr == pTargetCollider || nullptr == pTarget)
+		return;
 }
 
 void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
@@ -378,6 +380,8 @@ void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTa
 
 void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
 {
+	if (nullptr == pTargetCollider || nullptr == pTarget)
+		return;
 }
 
 void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType)

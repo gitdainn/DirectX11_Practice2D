@@ -218,18 +218,18 @@ void CSolider::Damaged(_double TimeDelta)
         Input_Handler(ENEMY_STATE::IDLE);
 
     // 넉백 //
-    if (m_eSpriteDirection == SPRITE_DIRECTION::LEFT)
-    {
-        m_pTransformCom->Go_Right(TimeDelta);
-    }
-    else if (m_eSpriteDirection == SPRITE_DIRECTION::RIGHT)
-    {
-        m_pTransformCom->Go_Left(TimeDelta);
-    }
-    else
-    {
-        MSG_BOX("CSolider - Walk() - ERROR");
-    }
+    //if (m_eSpriteDirection == SPRITE_DIRECTION::LEFT)
+    //{
+    //    m_pTransformCom->Go_Right(TimeDelta);
+    //}
+    //else if (m_eSpriteDirection == SPRITE_DIRECTION::RIGHT)
+    //{
+    //    m_pTransformCom->Go_Left(TimeDelta);
+    //}
+    //else
+    //{
+    //    MSG_BOX("CSolider - Walk() - ERROR");
+    //}
 }
 
 CSolider* CSolider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -113,10 +113,6 @@ HRESULT CEnemy::Render()
 
 void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 {
-}
-
-void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
-{
 	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
@@ -126,6 +122,15 @@ void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());
 	}
+
+	__super::OnCollisionEnter(pTargetCollider, pTarget);
+}
+
+void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+{
+	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
+	if (nullptr == pObject || nullptr == pTargetCollider)
+		return;
 
 	__super::OnCollisionStay(pTargetCollider, pTarget);
 }

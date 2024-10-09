@@ -47,6 +47,11 @@ public:
 		return XMVector3Normalize(vPushDirection) * vPushDistance;
 	}
 
+	_uint	Get_ID()
+	{
+		return m_iID;
+	}
+
 public:
 	_bool IsCollision(CCollider* pTargetCollider);
 	void OnCollisionEnter(CCollider* pTargetCollider);
@@ -120,6 +125,10 @@ protected:
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
 	_bool					m_bIsBlock = { false };
+	_uint					m_iID = { 0 };
+
+public:
+	static _uint g_iColliderID;
 
 public:
 	virtual CComponent* Clone(void* pArg = nullptr) = 0;

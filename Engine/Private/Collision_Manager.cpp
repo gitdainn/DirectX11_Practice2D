@@ -44,29 +44,29 @@ _uint CCollision_Manager::LateTick(_double TimeDelta)
 		}
 	}
 
-	_tchar IgnoreLayer[MAX_PATH];
+	// 아래 코드에서 같은 레이어끼리는 충돌 검사 안함
+	if (1 >= m_ColliderMap.size())
+		return _uint();
+
 	for (auto iterSour = m_ColliderMap.begin(); iterSour != --m_ColliderMap.end(); ++iterSour)
 	{
-		bool bHasCheck = { false };
 		auto iterDest = iterSour;
-		for (++iterDest ; iterDest != m_ColliderMap.end(); ++iterDest)
+		++iterDest;
+		for (iterDest ; iterDest != m_ColliderMap.end(); ++iterDest)
 		{
-			if (!bHasCheck)
+			_tchar IgnoreLayer[MAX_PATH];
+			lstrcpy(IgnoreLayer, iterSour->first);
+			lstrcat(IgnoreLayer, iterDest->first);
+			auto iter = m_IgnoreLayerMap.find(IgnoreLayer); // 문자열이 순서대로 저장되어 이써양함. 반대면 못 찾으니까
+
+			if (iter != m_IgnoreLayerMap.end())
 			{
-				lstrcpy(IgnoreLayer, iterSour->first);
-				lstrcat(IgnoreLayer, iterDest->first);
-				auto iter = m_IgnoreLayerMap.find(IgnoreLayer); // 흠 근데.. 빨리 찾는 것 외에는 second가 필ㅇ 없음
-
-				if (iter != m_IgnoreLayerMap.end())
-				{
-					break; // 해당for문 벗어나고 다음 레이어 검사하라는 뜻)
-				}
-
-				bHasCheck = true;
+				break;
 			}
 
 			Update_Collision(iterSour->second, iterDest->second);
 		}
+		
 	}
 
 	return _uint();
@@ -152,7 +152,7 @@ HRESULT CCollision_Manager::Add_IgnoreLayer(const _tchar* pLayerA, const _tchar*
 	return S_OK;
 }
 
-void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CCollider*> pDestList) const
+void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CCollider*> pDestList)
 {
 	for (CCollider* pSourCol : pSourList)
 	{
@@ -164,14 +164,51 @@ void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CColl
 			if (nullptr == pDestCol)
 				continue;
 
-			
+			_bool bHasBeenCollision = { false };
+			COLLIDER_ID tID;
+			tID.iSourID = pSourCol->Get_ID();
+			tID.iDestID = pDestCol->Get_ID();
+
+			m_CollisionMap.find(tID.ID);
+
+			map<ULONGLONG, _bool>::iterator HasBeenCollisionIter = m_CollisionMap.find(tID.ID);
+			if (m_CollisionMap.end() == HasBeenCollisionIter)
+			{
+				m_CollisionMap.emplace(tID.ID, bHasBeenCollision);
+				HasBeenCollisionIter = m_CollisionMap.find(tID.ID);
+			}
+
+			// 현재 충돌 여부 검사
+			bHasBeenCollision = HasBeenCollisionIter->second;
 			if (pSourCol->IsCollision(pDestCol))
 			{
 				pSourCol->Set_Collision(true);
 				pDestCol->Set_Collision(true);
 
-				pSourCol->OnCollisionStay(pDestCol);
-				pDestCol->OnCollisionStay(pSourCol);
+				// 처음 부딪친 경우
+				if (!bHasBeenCollision)
+				{
+					pSourCol->OnCollisionEnter(pDestCol);
+					pDestCol->OnCollisionEnter(pSourCol);
+					HasBeenCollisionIter->second = true;
+				}
+				// 부딪친 적이 있는 경우
+				else
+				{
+					pSourCol->OnCollisionStay(pDestCol);
+					pDestCol->OnCollisionStay(pSourCol);
+				}
+			}
+			// 현재 부딪치지 않은 경우
+			else
+			{
+				// 부딪친 적이 있는 경우
+				if (bHasBeenCollision)
+				{
+					pSourCol->OnCollisionExit(pDestCol);
+					pDestCol->OnCollisionExit(pSourCol);
+					HasBeenCollisionIter->second = false;
+				}
 			}
 		}
 	}
