@@ -105,7 +105,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 		tColliderDesc.vOffset.y = 30.f;
 		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
 		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-		Attach_Collider(m_pLayer, m_pDefaultAtkColliderCom);
+		Attach_Collider(LAYER_ATK, m_pDefaultAtkColliderCom);
 	}
 
 	SkillLateTick(TimeDelta);
@@ -388,9 +388,8 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		COMPONENT_INFO tComponentInfo;
 		ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 		tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-		tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
-		//tComponentInfo.fSize = _float2(60.f, 60.f);
-		tComponentInfo.fOffset = _float2(0.f, 0.f);
+		tComponentInfo.fSize = _float2(70.f, 70.f); // 한 이미지 속 캐릭터 크기가 70, 70임
+		tComponentInfo.fOffset = _float2(0.f, tComponentInfo.fSize.y * 0.5f);
 
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
@@ -404,8 +403,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 	COMPONENT_INFO tComponentInfo;
 	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-	tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
-	//tComponentInfo.fSize = _float2(60.f, 60.f);
+	tComponentInfo.fSize = _float2(130.f, 130.f);
 	tComponentInfo.fOffset = _float2(0.f, 0.f);
 
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),

@@ -11,13 +11,20 @@ HRESULT CWaterSkul::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P003");
     m_pNameTag = TEXT("워터스컬");
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
+    m_iTextureIndex = 0;
+
+    m_bIsAnimUV = true;
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 9;
+
     return __super::Initialize_Prototype();
 }
 
 HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 9;
+
 
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -27,13 +34,6 @@ HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-    m_iTextureIndex = 0;
-
-
-    m_bIsAnimUV = true;
 
     Add_Animation();
 
@@ -50,14 +50,6 @@ HRESULT CWaterSkul::Initialize(void* pArg)
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-    m_iTextureIndex = 0;
-
-    m_iUVTexNumX = 8;
-    m_iUVTexNumY = 9;
-    m_bIsAnimUV = true;
 
     // @error - 장착한 플레이어만 뜨는데 이거 일단 고정으로 장착하게 해뒀으니 추후 수정해야함! //
     CPlayer_Manager::GetInstance()->Set_EquippedSkul(this);

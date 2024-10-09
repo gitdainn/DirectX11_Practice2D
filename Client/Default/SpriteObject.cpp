@@ -225,8 +225,7 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	_float4 vColor = { 1.f, 1.f, 1.f, 1.f };
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_vector))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))

@@ -35,7 +35,7 @@ HRESULT CSolider::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     _float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
     vScale.x /= m_iUVTexNumX;
     vScale.y /= m_iUVTexNumY;
-    m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y, 0.f));
+    m_pTransformCom->Set_Scaled(_float3(vScale.x * 1.5f, vScale.y * 1.5f, 0.f));
 
     Add_Animation();
 
@@ -59,7 +59,7 @@ HRESULT CSolider::Initialize(void* pArg)
     _float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
     vScale.x /= m_iUVTexNumX;
     vScale.y /= m_iUVTexNumY;
-    m_pTransformCom->Set_Scaled(_float3(vScale.x * 2.f, vScale.y * 2.f, 0.f));
+    m_pTransformCom->Set_Scaled(_float3(vScale.x * 1.5f, vScale.y * 1.5f, 0.f));
 
     Add_Animation();
 
@@ -151,7 +151,7 @@ void CSolider::Walk(_double TimeDelta)
     const _uint iSearchRoundsNum = { 2 };
     const _float fSearchDistance = { 10.f };
     const _float fSwitchDistance = { 3.f };
-    const _float fPlayerAtkDistance = { 5.f };
+    const _float fPlayerAtkDistance = { 100.f };
 
     if (iSearchRoundsNum <= m_iSearchRoundsCount)
     {
@@ -175,8 +175,8 @@ void CSolider::Walk(_double TimeDelta)
 
     // 플레이어와의 거리 측정 //
     _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-    _float fCurrentPlayerDistance = Get_DistanceX(vPosition, Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION));
-    if (fPlayerAtkDistance >= fCurrentPlayerDistance)
+    _vector fCurrentPlayerDistance = XMVector3Length(vPosition - Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION));
+    if (fPlayerAtkDistance >= XMVectorGetX(fCurrentPlayerDistance))
     {
         Input_Handler(ENEMY_STATE::ATK1);
         m_iSearchRoundsCount = 0;
@@ -201,7 +201,11 @@ void CSolider::Attack(_double TimeDelta)
     if (m_bIsEndSprite)
         Input_Handler(ENEMY_STATE::IDLE);
 
-
+    CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
+    tColliderDesc.vOffset.y = 30.f;
+    tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
+    m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
+    Attach_Collider(m_pLayer, m_pDefaultAtkColliderCom);
 }
 
 void CSolider::Chase(_double TimeDelta)

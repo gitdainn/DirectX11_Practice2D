@@ -14,14 +14,20 @@ HRESULT CGrimReaper::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P002");
     m_pNameTag = TEXT("그림리퍼");
+
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
+    m_iTextureIndex = 0;
+
+    m_bIsAnimUV = true;
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 8;
+
     return __super::Initialize_Prototype();
 }
 
 HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 8;
-
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
         return E_FAIL;
@@ -30,12 +36,6 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-    m_iTextureIndex = 0;
-
-    m_bIsAnimUV = true;
 
     Add_Animation();
 
@@ -52,14 +52,6 @@ HRESULT CGrimReaper::Initialize(void* pArg)
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-    m_iTextureIndex = 0;
-
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 15;
-    m_bIsAnimUV = true;
 
     //CPlayerInfo::GetInstance()->Set_EquippedSkul(this);
 

@@ -77,7 +77,7 @@ HRESULT CCollider::Initialize(void* pArg)
 
 	m_tColliderDesc.vScale.x = tComponentInfo.fSize.x;
 	m_tColliderDesc.vScale.y = tComponentInfo.fSize.y;
-	m_tColliderDesc.vOffset.x = tComponentInfo.fOffset.y;
+	m_tColliderDesc.vOffset.x = tComponentInfo.fOffset.x;
 	m_tColliderDesc.vOffset.y = tComponentInfo.fOffset.y;
 	m_tColliderDesc.vPosition.x = tComponentInfo.fPosition.y;
 	m_tColliderDesc.vPosition.x = tComponentInfo.fPosition.y;

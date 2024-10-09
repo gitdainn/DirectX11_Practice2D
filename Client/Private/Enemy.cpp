@@ -89,12 +89,12 @@ HRESULT CEnemy::Initialize(void* pArg)
 
 _uint CEnemy::Tick(_double TimeDelta)
 {
-	m_StateFunc(*this, TimeDelta);
+	if (0 >= m_iHp)
+	{
+		m_bIsDead = true;
+	}
 
-	_float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
-	vScale.x /= m_iUVTexNumX;
-	vScale.y /= m_iUVTexNumY;
-	m_pTransformCom->Set_Scaled(_float3(vScale.x * 2.f, vScale.y * 2.f, 0.f));
+	m_StateFunc(*this, TimeDelta);
 
 	return __super::Tick(TimeDelta);
 }
@@ -117,9 +117,14 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 
 void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
 {
-	if (LAYER_SKILL == pTarget->Get_Layer())
+	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
+	if (nullptr == pObject || nullptr == pTargetCollider)
+		return;
+
+	if (LAYER_ATK == pTarget->Get_Layer())
 	{
 		Input_Handler(ENEMY_STATE::DAMAGED);
+		Set_Damaged(pObject->Get_Attack());
 	}
 
 	__super::OnCollisionStay(pTargetCollider, pTarget);
@@ -235,9 +240,8 @@ HRESULT CEnemy::Add_Components(void* pArg)
 		COMPONENT_INFO tComponentInfo;
 		ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 		tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-		tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
-		//tComponentInfo.fSize = _float2(60.f, 60.f);
-		tComponentInfo.fOffset = _float2(0.f, 0.f);
+		tComponentInfo.fSize = _float2(70.f, 70.f);
+		tComponentInfo.fOffset = _float2(0.f, tComponentInfo.fSize.y * 0.5f);
 
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
@@ -251,9 +255,8 @@ HRESULT CEnemy::Add_Components(void* pArg)
 	COMPONENT_INFO tComponentInfo;
 	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
 	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-	tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
-	//tComponentInfo.fSize = _float2(60.f, 60.f);
-	tComponentInfo.fOffset = _float2(0.f, 0.f);
+	tComponentInfo.fSize = _float2(70.f, 70.f);
+	tComponentInfo.fOffset = _float2(0.f, tComponentInfo.fSize.y * 0.5f);
 
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TAG_COLL_DEFAULTATK, (CComponent**)&m_pDefaultAtkColliderCom, &tComponentInfo)))

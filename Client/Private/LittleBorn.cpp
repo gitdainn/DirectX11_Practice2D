@@ -12,14 +12,20 @@ HRESULT CLittleBorn::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P001");
     m_pNameTag = TEXT("리틀본");
+
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
+    m_iTextureIndex = 0;
+
+    m_bIsAnimUV = true;
+    m_iUVTexNumX = 10;
+    m_iUVTexNumY = 15;
+
     return __super::Initialize_Prototype();
 }
 
 HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 15;
-
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
         return E_FAIL;
@@ -31,18 +37,11 @@ HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-
     return S_OK;
 }
 
 HRESULT CLittleBorn::Initialize(void* pArg)
 {
-    m_iUVTexNumX = 10;
-    m_iUVTexNumY = 15;
     m_bIsAnimUV = true;
 
     if (FAILED(__super::Initialize(pArg)))
@@ -53,10 +52,6 @@ HRESULT CLittleBorn::Initialize(void* pArg)
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-    m_iTextureIndex = 0;
 
     Add_Animation();
 

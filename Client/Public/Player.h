@@ -67,29 +67,6 @@ protected:
 private:
 	list<CSkill*> m_SkillAvailableList;
 
-protected:
-	SKUL_RANK	m_eSkulRank;
-	SKUL_TYPE	m_eSkulType;
-
-	_uint	m_iLevel = { 1 };
-
-	_int m_iHp = { 100 };
-	_int m_iMagicAttack = { 10 };
-	_int m_iPhysicalAttack = { 10 };
-	_int m_iDefense = { 10 };
-	_int m_iMaxJumpCount = { 2 };
-
-	_float m_fMovementSpeed = { 10 };
-	_float m_fAttackSpeed = { 10 };
-	_float m_fReduceCoolDownSpeed = { 0 };
-	_float m_fCriticalHit;
-
-	_int m_iMagicAttackIncrease = { 0 };
-	_int m_iPhysicalAttackIncrease = { 0 };
-	_int m_iDefenseIncrease = { 0 };
-
-	_double m_InvulnerabilityDuration = { 0.0 };
-
 public:
 	/* Prototype */
 	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;

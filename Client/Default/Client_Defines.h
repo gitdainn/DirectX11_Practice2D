@@ -117,7 +117,7 @@ using namespace Client;
 #define LAYER_PLAYER			TEXT("Layer_Player")
 #define LAYER_ENEMY				TEXT("Layer_Enemy")
 #define LAYER_UI				TEXT("Layer_UI")
-#define LAYER_SKILL				TEXT("Layer_Skill")
+#define LAYER_ATK				TEXT("LAYER_ATK")
 #pragma endregion
 
 #pragma region DINPUT

@@ -84,6 +84,16 @@ public:
 	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
 
 public:
+	const int		Get_Attack()
+	{
+		return m_iMagicAttack;
+	}
+	void			Set_Damaged(const int iAttack)
+	{
+		m_iHp -= (iAttack - m_iDefense);
+	}
+
+public:
 	void Set_ShaderPass(const _uint iPassIndex)
 	{
 		m_iShaderPassIndex = iPassIndex;
@@ -175,6 +185,8 @@ protected:
 	bool	m_bIsAnimUV;
 	bool	m_bIsEndSprite;
 
+	_vector					m_vColor = { 1.f, 1.f, 1.f, 1.f };
+
 	CState*					m_pState;
 	CState*					m_pAirState;
 	_bool					m_bIsInAir;
@@ -188,6 +200,29 @@ protected:
 	_uint	m_iUVTexNumY;
 
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
+
+protected:
+	SKUL_RANK	m_eSkulRank;
+	SKUL_TYPE	m_eSkulType;
+
+	_uint	m_iLevel = { 1 };
+
+	_int m_iHp = { 100 };
+	_int m_iMagicAttack = { 10 };
+	_int m_iPhysicalAttack = { 10 };
+	_int m_iDefense = { 1 };
+	_int m_iMaxJumpCount = { 2 };
+
+	_float m_fMovementSpeed = { 10 };
+	_float m_fAttackSpeed = { 10 };
+	_float m_fReduceCoolDownSpeed = { 0 };
+	_float m_fCriticalHit;
+
+	_int m_iMagicAttackIncrease = { 0 };
+	_int m_iPhysicalAttackIncrease = { 0 };
+	_int m_iDefenseIncrease = { 0 };
+
+	_double m_InvulnerabilityDuration = { 0.0 };
 
 public:
 	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
