@@ -29,6 +29,7 @@
 #include <map>
 #include <unordered_map>
 #include <algorithm>
+#include <bitset>
 
 #include <DirectXMath.h>
 #include <Process.h>

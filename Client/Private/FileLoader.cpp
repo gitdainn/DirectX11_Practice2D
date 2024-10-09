@@ -80,7 +80,8 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 				tSpriteInfo.pTextureComTag = pTextureComTag;
 			}
 
-			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, LAYER_UI, tSpriteInfo)))
+			_uint iLayerBitset = { 0 };
+			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, iLayerBitset, tSpriteInfo)))
 			{
 				MSG_BOX("CFileLoader - Load_FIle() - FAILED");
 				CloseHandle(hFile);
@@ -125,6 +126,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 			const _tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			_uint iLayerBitset = { 0 };
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
@@ -132,7 +134,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			_tchar pPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 			lstrcat(pPrototypeTag, pClassName);
 			Safe_Delete_Array(pClassName);
-			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &iInstanceID)))
+			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, iLayerBitset, &iInstanceID)))
 			{
 				MSG_BOX("CFileLoader - Load_Excel() - FAILED");
 				Safe_Release(pGameInstance);
@@ -571,7 +573,7 @@ inline void CFileLoader::Free(void)
 	}
 	m_ComponentInfoMap.clear();
 
-	for (pair<const _tchar*, SKUL_EXCEL> Pair : m_SkulDataMap)
+	for (const pair<const _tchar*, SKUL_EXCEL>& Pair : m_SkulDataMap)
 	{
 		// Safe_Delete_Array(Pair.first); // first가 tPlayerInfo.pName;
 		SKUL_EXCEL tPlayerInfo = Pair.second;
@@ -584,7 +586,7 @@ inline void CFileLoader::Free(void)
 	}
 	m_SkulDataMap.clear();
 
-	for (pair<const _tchar*, SKILL_EXCEL> Pair : m_SkillDataMap)
+	for (const pair<const _tchar*, SKILL_EXCEL>& Pair : m_SkillDataMap)
 	{
 		// Safe_Delete_Array(Pair.first); // first가 tPlayerInfo.pName;
 		SKILL_EXCEL tSkillInfo = Pair.second;

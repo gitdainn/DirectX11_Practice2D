@@ -76,7 +76,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 				tSpriteInfo.pTextureComTag = pTextureComTag;
 			}
 
-			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, LAYER_DEFAULT, tSpriteInfo)))
+			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, LAYER::DEFAULT, tSpriteInfo)))
 			{
 				MSG_BOX("CMyImGui - Load_Object() - FAILED");
 				CloseHandle(hFile);
@@ -119,18 +119,18 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 			_tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			_uint iLayerBitset = { 0 };
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)eLevel, pLayer, &iInstanceID)))
+			if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)eLevel, iLayerBitset, &iInstanceID)))
 			{
 				MSG_BOX("CMyImGui - Load_Object() - FAILED");
 				Safe_Release(pGameInstance);
 				return E_FAIL;
 			}
-			pGameInstance->Add_Garbage(pLayer);
 
-			list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, pLayer);
+			list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, iLayerBitset);
 			if (nullptr == pObjectList)
 			{
 				MSG_BOX("CFileLoader - Load_Excel() - NULL");
@@ -144,7 +144,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				strcat(pTag, to_string(++iIndex).c_str());
 				pAddObject->Set_SpriteTag(pTag);
 				pAddObject->Set_ClassName(pClassName);
-				pAddObject->Set_Layer(pLayer);
+				pAddObject->Set_Layer(iLayerBitset);
 
 				LoadObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
 			}

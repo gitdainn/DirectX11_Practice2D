@@ -362,7 +362,7 @@ void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
 	Safe_Release(pGameInstance);
 }
 
-void CSpriteObject::Play_Animation(_uint& iSpriteIndex, _double TimeDelta)
+void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint& iAnimType)
 {
 	// 열거체는 객체마다 다르므로 .. 템플릿 가능할까?
 	_float fPerAnimTime = m_pAnimInfo[m_iAnimType].fAnimTime / fabs((_float)m_pAnimInfo[m_iAnimType].iEndIndex - (_float)m_pAnimInfo[m_iAnimType].iStartIndex);
@@ -401,7 +401,6 @@ void CSpriteObject::Free()
 	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
 
 	Safe_Delete_Array(m_pSpriteTag);
-	Safe_Delete_Array(m_pLayer);
 
 	/** @note - _tchar* m_pTextureComTage를 TEXT("상수"); 리터럴 상수로 넣으면 메모리 Code 영역에 저장되어 상수들은 자동으로 해제하기에 해제해주면 안됨 */
 	// Safe_Delete_Array(m_pTextureComTag);

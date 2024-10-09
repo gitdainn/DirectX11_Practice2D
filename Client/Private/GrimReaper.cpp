@@ -71,7 +71,7 @@ _uint CGrimReaper::Tick(_double TimeDelta)
 
     // 소울 1개당 마법공격력 1% 증가
     int iMagicAttack;
-    iMagicAttack = m_iMagicAttack + m_iMagicAttack * m_iSoulNum * 0.1f;
+    iMagicAttack = int(m_iMagicAttack + m_iMagicAttack * m_iSoulNum * 0.1f);
 
     return CPlayer::Tick(TimeDelta);
 }

@@ -41,6 +41,9 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
 		return E_FAIL;
 
+	if (FAILED(Ready_CollisionLayerMatrix()))
+		return E_FAIL;
+
 	if (FAILED(Ready_DefaultData_Excel()))
 		return E_FAIL;
 
@@ -140,6 +143,15 @@ HRESULT CMainApp::Render()
 HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 {		
 	return m_pGameInstance->Open_Level(LEVEL_LOADING, CLevel_Loading::Create(m_pDevice, m_pContext, eNextLevelID));	
+}
+
+HRESULT CMainApp::Ready_CollisionLayerMatrix()
+{
+	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMY | LAYER_BACKGROUND | LAYER_DEFAULT);
+	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYER);
+	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
+
+	return S_OK;
 }
 
 HRESULT CMainApp::Ready_DefaultData_Excel()

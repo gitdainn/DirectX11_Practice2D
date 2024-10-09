@@ -63,9 +63,9 @@ public:
 		return m_iTextureIndex;
 	}
 
-	const _tchar* Get_Layer() const
+	const _uint Get_LayerBitset() const
 	{
-		return m_pLayer;
+		return m_LayerBitset;
 	}
 
 public:
@@ -98,12 +98,17 @@ public:
 		m_pClassName = pClassName;
 	}
 
+	void Set_Layer(const _uint LayerBitset)
+	{
+		m_LayerBitset = LayerBitset;
+	}
+
 	void Set_Layer(const _tchar* pLayer)
 	{
-		Safe_Delete_Array(m_pLayer);
+		Safe_Delete_Array(m_pLayerTag);
 		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
 		lstrcpy(Layer, pLayer);
-		m_pLayer = Layer;
+		m_pLayerTag = Layer;
 	}
 
 public:
@@ -141,7 +146,8 @@ protected:
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	const _tchar* m_pClassName = { nullptr };
 	const _tchar* m_pNameTag = { nullptr };
-	const _tchar* m_pLayer;
+	const _tchar* m_pLayerTag = { nullptr };
+	_uint	  m_LayerBitset = { 0 };
 	_uint	m_iShaderPassIndex = { 0 };
 	_uint	m_iTextureIndex = { 0 };
 	_uint	m_iOrder = { 0 };

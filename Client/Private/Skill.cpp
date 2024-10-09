@@ -11,7 +11,7 @@ HRESULT CSkill::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	m_pLayer = LAYER_ATK;
+	m_LayerBitset = LAYER::ATK;
 
 	return S_OK;
 }

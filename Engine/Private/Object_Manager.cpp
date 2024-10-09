@@ -8,18 +8,18 @@ CObject_Manager::CObject_Manager()
 {
 }
 
-CComponent * CObject_Manager::Get_Component(_uint iLevelIndex, const _tchar * pLayerTag, const _tchar * pComponentTag, _uint iIndex)
+CComponent * CObject_Manager::Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar * pComponentTag, _uint iIndex)
 {
-	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	CLayer*		pLayer = Find_Layer(iLevelIndex, LayerBitset);
 	if (nullptr == pLayer)
 		return nullptr;
 
 	return pLayer->Get_Component(pComponentTag, iIndex);	
 }
 
-list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
+list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset)
 {
-	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	CLayer* pLayer = Find_Layer(iLevelIndex, LayerBitset);
 	if (nullptr == pLayer)
 		return nullptr;
 
@@ -28,10 +28,10 @@ list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _tc
 
 HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
 {
-	if (nullptr != m_pLayers)
+	if (nullptr != m_pLayersMap)
 		return E_FAIL;
 
-	m_pLayers = new LAYERS[iNumLevels];
+	m_pLayersMap = new LAYERS[iNumLevels];
 
 	m_iNumLevels = iNumLevels;
 
@@ -43,9 +43,9 @@ void CObject_Manager::Clear(_uint iLevelIndex)
 	if (iLevelIndex >= m_iNumLevels)
 		return;
 
-	for (auto& Pair : m_pLayers[iLevelIndex])
+	for (auto& Pair : m_pLayersMap[iLevelIndex])
 		Safe_Release(Pair.second);
-	m_pLayers[iLevelIndex].clear();
+	m_pLayersMap[iLevelIndex].clear();
 }
 
 HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
@@ -58,7 +58,7 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg)
+HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
@@ -71,7 +71,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	CLayer* pLayer = Find_Layer(iLevelIndex, LayerBitset);
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
@@ -81,7 +81,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 		if (FAILED(pLayer->Add_GameObject(pGameObject)))
 			return E_FAIL;
 
-		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+		m_pLayersMap[iLevelIndex].emplace(LayerBitset, pLayer);
 	}
 	else
 	{
@@ -93,7 +93,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 }
 
 /* 원형객체를 찾아 복제하여 레이어에 추가한다. */
-HRESULT CObject_Manager::Add_GameObject(const _tchar * pPrototypeTag, _uint iLevelIndex, const _tchar * pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
+HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, const tSpriteInfo& SpriteInfo, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
@@ -106,7 +106,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar * pPrototypeTag, _uint iLev
 	if (nullptr == pGameObject)
 		return E_FAIL;	
 
-	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
+	CLayer*		pLayer = Find_Layer(iLevelIndex, LayerBitset);
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
@@ -116,7 +116,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar * pPrototypeTag, _uint iLev
 		if (FAILED(pLayer->Add_GameObject(pGameObject)))
 			return E_FAIL;	
 
-		m_pLayers[iLevelIndex].emplace(pLayerTag, pLayer);
+		m_pLayersMap[iLevelIndex].emplace(LayerBitset, pLayer);
 	}
 	else
 	{
@@ -162,7 +162,7 @@ void CObject_Manager::Tick(_double TimeDelta)
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pLayersMap[i])
 		{
 			if (nullptr == Pair.second)
 			{
@@ -178,7 +178,7 @@ void CObject_Manager::LateTick(_double TimeDelta)
 {
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
+		for (auto& Pair : m_pLayersMap[i])
 		{
 			Pair.second->LateTick(TimeDelta);
 		}
@@ -195,14 +195,21 @@ CGameObject * CObject_Manager::Find_Prototype(const _tchar * pPrototypeTag)
 	return iter->second;
 }
 
-CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag)
+CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _uint LayerBitset)
 {
 	if (iLevelIndex >= m_iNumLevels)
 		return nullptr;
 
-	auto	iter = find_if(m_pLayers[iLevelIndex].begin(), m_pLayers[iLevelIndex].end(), CTag_Finder(pLayerTag));
+	auto	CompareLambda = [LayerBitset](const pair<const _uint, CLayer*>& Pair)
+		{
+			return LayerBitset == Pair.first;
+		};
 
-	if (iter == m_pLayers[iLevelIndex].end())
+	// @note - find_if문은 람다에 소괄호를 생략하면 자동으로 pair가 소괄호에 들어감
+	unordered_map<const _uint, class CLayer*>::iterator iter 
+		= find_if(m_pLayersMap[iLevelIndex].begin(), m_pLayersMap[iLevelIndex].end(), CompareLambda);
+
+	if (iter == m_pLayersMap[iLevelIndex].end())
 		return nullptr;
 
 	return iter->second;
@@ -210,16 +217,19 @@ CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _tchar * pLayerTag
 
 void CObject_Manager::Free()
 {
+
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])
+		if (nullptr == m_pLayersMap)
+			break;
+
+		for (auto& Pair : m_pLayersMap[i])
 			Safe_Release(Pair.second);
-		m_pLayers[i].clear();
+		m_pLayersMap[i].clear();
 	}
-	Safe_Delete_Array(m_pLayers);
+	Safe_Delete_Array(m_pLayersMap);	
 
 	for (auto& Pair : m_Prototypes)
 		Safe_Release(Pair.second);
 	m_Prototypes.clear();
-
 }

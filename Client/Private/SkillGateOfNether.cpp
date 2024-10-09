@@ -70,7 +70,7 @@ _uint CSkillGateOfNether::LateTick(_double TimeDelta)
 {
 	if (nullptr != m_pColliderCom)
 	{
-		Attach_Collider(m_pLayer, m_pColliderCom);
+		Attach_Collider(m_LayerBitset, m_pColliderCom);
 
 	}
 

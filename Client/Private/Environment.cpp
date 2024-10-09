@@ -18,7 +18,8 @@ CEnvironment::CEnvironment(const CEnvironment& rhs)
 HRESULT CEnvironment::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	
+	m_LayerBitset = LAYER::BACKGROUND;
+
 	return S_OK;
 }
 
@@ -53,7 +54,7 @@ _uint CEnvironment::LateTick(_double TimeDelta)
 		m_pColliderCom->Set_IsBlock(true);
 
 	if (nullptr != m_pColliderCom)
-		Attach_Collider(m_pLayer, m_pColliderCom);
+		Attach_Collider(m_LayerBitset, m_pColliderCom);
 
 	return __super::LateTick(TimeDelta);
 }

@@ -49,11 +49,11 @@ public: /* For.Level_Manager */
 	HRESULT Open_Level(_uint iLevelIndex, class CLevel* pNewLevel);
 
 public: /* For.Object_Manager */
-	class CComponent* Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pComponentTag, _uint iIndex = 0);
-	list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag);
+	class CComponent* Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pComponentTag, _uint iIndex = 0);
+	list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
-	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
+	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	class CGameObject* Clone_GameObject(const _tchar * pPrototypeTag, void* pArg = nullptr);
 	class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& SpriteInfo, void* pArg = nullptr);
 
@@ -93,7 +93,8 @@ public: /* For.GarbageCollector */
 	//void	Clear_CurLevelGarbage();
 
 public: /* For. Collision_Manager */
-	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
+	HRESULT	Attach_Collider(const _uint LayerBitset, CCollider* pCollider);
+	void Set_CollisionLayer(const _uint LayerBitset, const _uint CollisionLayersBitset = (1 << 0));
 	void	Clear_Collider();
 
 public: /* For. Line_Manager*/

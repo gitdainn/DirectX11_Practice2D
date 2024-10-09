@@ -72,7 +72,7 @@ _uint CInstallObject::Tick(_double TimeDelta)
     if (nullptr != m_pColliderCom)
     {
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
-        if (FAILED(pGameInstance->Attach_Collider(m_pLayer, m_pColliderCom)))
+        if (FAILED(pGameInstance->Attach_Collider(m_LayerBitset, m_pColliderCom)))
         {
             MSG_BOX("CInstallObject - Tick() - FAILED");
         }

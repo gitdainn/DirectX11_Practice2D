@@ -35,22 +35,23 @@ namespace Tool
 		FALL, SKILL1, SKILL2, MOTION_END 
 	};
 
+	typedef enum LAYER
+	{
+		DEFAULT = (1 << 0), // 0000 0001
+		BACKGROUND = (1 << 1), // 0000 0010
+		PLAYER = (1 << 2), // 0000 0100
+		ENEMY = (1 << 3), // 0000 1000
+		UI = (1 << 4), // 0001 0000
+		ATK = (1 << 5),
+		CAMERA = (1 << 6),
+		EFFECT = (1 << 7)
+	}LAYER_BITSET;
 }
 
 extern HINSTANCE g_hInst;
 extern HWND g_hWnd;
 
 using namespace Tool;
-
-#pragma region LAYER
-#define	LAYER_DEFAULT			TEXT("Layer_Default")
-#define	LAYER_NONINTERACTIVE	TEXT("Layer_NonInteractiveObjects")
-#define	LAYER_INTERACTIVE		TEXT("Layer_InteractiveBackground")
-#define	LAYER_COLLECT			TEXT("Layer_Collectibles")
-#define	LAYER_ENEMY				TEXT("Layer_Enemy")
-#define	LAYER_PLAYER			TEXT("Layer_Player")
-#define	LAYER_CAMERA			TEXT("Layer_Camera")
-#pragma endregion
 
 #pragma region COMPONENT_TAG
 #define	TAG_TRANSFORM			TEXT("Com_Transform")

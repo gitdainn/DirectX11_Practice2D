@@ -205,7 +205,7 @@ void CSolider::Attack(_double TimeDelta)
     tColliderDesc.vOffset.y = 30.f;
     tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
     m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-    Attach_Collider(m_pLayer, m_pDefaultAtkColliderCom);
+    Attach_Collider(m_LayerBitset, m_pDefaultAtkColliderCom);
 }
 
 void CSolider::Chase(_double TimeDelta)

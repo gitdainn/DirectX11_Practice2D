@@ -30,7 +30,7 @@ HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	Mapping_SkulData(m_pNameTag);
 
 	// pFileLoader->Get_Data(pObjectID); 로 모든 정보 가져와서 맵핑 ... 해야되는데 ...
-	m_pLayer = LAYER_PLAYER;
+	m_LayerBitset = LAYER::PLAYER;
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
 	m_pState = new CPlayerIdle();
@@ -97,7 +97,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 	if (!m_bIsEquipped)
 		return _uint();
 
-	Attach_Collider(m_pLayer, m_pColliderCom);
+	Attach_Collider(m_LayerBitset, m_pColliderCom);
 
 	if (STATE_TYPE::DEFAULT_ATK == m_eCurrentState)
 	{
@@ -105,7 +105,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 		tColliderDesc.vOffset.y = 30.f;
 		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
 		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-		Attach_Collider(LAYER_ATK, m_pDefaultAtkColliderCom);
+		Attach_Collider(LAYER_BITSET::ATK, m_pDefaultAtkColliderCom);
 	}
 
 	SkillLateTick(TimeDelta);

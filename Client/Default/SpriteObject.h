@@ -165,7 +165,7 @@ protected:
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources();
 	HRESULT Load_Components_Excel();
-	HRESULT	Attach_Collider(const _tchar* pLayer, CCollider* pCollider);
+	HRESULT	Attach_Collider(const _uint LayerBitset, CCollider* pCollider);
 	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
 
 private:

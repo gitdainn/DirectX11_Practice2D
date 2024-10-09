@@ -16,13 +16,13 @@ public:
 	virtual void Tick(_double TimeDelta) override;
 
 
-private: /* ÀÌ ·¹º§ÀÌ »ç¿ëÇÏ±âÀ§ÇÑ »çº» °´Ã¼µéÀ» ±×·ìº°·Î »ý¼ºÇÑ´Ù. */
+private: /* ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½çº» ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½×·ìº°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	HRESULT Ready_LightDesc();
-	HRESULT Ready_Layer_Camera(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Camera(const _uint iLayerBitset);
+	HRESULT Ready_Layer_BackGround(const _uint iLayerBitset);
+	HRESULT Ready_Layer_Player(const _uint iLayerBitset);
+	HRESULT Ready_Layer_Monster(const _uint iLayerBitset);
+	HRESULT Ready_Layer_Effect(const _uint iLayerBitset);
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

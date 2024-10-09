@@ -77,7 +77,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 #pragma region 레이어
     const _uint iLayerNum = { 7 };
     m_LayerVec.reserve(iLayerNum);
-    m_LayerVec.emplace_back("Layer_Default");
+    m_LayerVec.emplace_back("LAYER::DEFAULT");
     m_LayerVec.emplace_back("Layer_NonInteractiveObjects");
     m_LayerVec.emplace_back("Layer_InteractiveBackground");
     m_LayerVec.emplace_back("Layer_Collectibles");
@@ -109,12 +109,12 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     _tchar* pTag = new _tchar[MAX_PATH];
     lstrcpy(pTag, TEXT("Prototype_Component_Sprite_ForestTile"));
     tSpriteInfo.pTextureComTag = pTag;
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, LAYER_DEFAULT, tSpriteInfo))))
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, LAYER::DEFAULT, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Tick() - NULL");
     }
 
-    m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER_DEFAULT)->front());
+    m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER::DEFAULT)->front());
     if (nullptr == m_pPreviewObject)
     {
         MSG_BOX("CMyImGui - Initialize - NULL");
@@ -464,7 +464,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         tMetaData.iInstanceID = iInstanceID;
         tMetaData.pObjectID = { nullptr };
         tMetaData.pClassName = pObject->Get_ClassName();
-        tMetaData.pLayer = pObject->Get_Layer();
+        tMetaData.pLayer = L""; // pObject->Get_LayerBitset();
 
         if (FAILED(pFileLoader->Write_ObjectMetaData_Excel(pFilePath, tMetaData, bIsReset)))
         {
@@ -676,7 +676,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     static int iLayerSelectIndex = { 0 };
     static const char* items[] =
     {
-        "Layer_Default",
+        "LAYER::DEFAULT",
         "Layer_Player",
         "Layer_Enemy",
         "Layer_NonInteractiveObjects",
@@ -850,10 +850,10 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::InputText("Tag", pTag, strlen(pTag) + 1);
     //pObject->Set_SpriteTag(pTag);
 
-    char* pLayer = nullptr;
-    WCToC(m_pSelectedObject->Get_Layer(), pLayer);
-    ImGui::Text("Layer: "); ImGui::SameLine(); ImGui::Text(pLayer);
-    Safe_Delete_Array(pLayer);
+    //char* pLayer = nullptr;
+    //WCToC(m_pSelectedObject->Get_Layer(), pLayer);
+    //ImGui::Text("Layer: "); ImGui::SameLine(); ImGui::Text(pLayer);
+    //Safe_Delete_Array(pLayer);
 
     const _bool& bIsSelectionChanged = CheckSelectionChanged();
 
@@ -1379,7 +1379,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         }
 
         // 사실 이러면 실질적인 객체는 삭제가 안된 상태
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER_DEFAULT);
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER::DEFAULT);
         if (nullptr == pObjectList)
         {
             Safe_Release(pGameInstance);
@@ -1409,7 +1409,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         }
 
 
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_Layer());
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_LayerBitset());
         if (nullptr == pObjectList)
         {
             Safe_Release(pGameInstance);
@@ -1506,17 +1506,17 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     Safe_AddRef(pGameInstance);
 
     static int iIndex = m_CreateObjectVec.size();
-
-    _tchar* pLayerWC;
-    CToWC(m_pLayerC, pLayerWC);
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, pLayerWC, tSpriteInfo))))
+    
+    // 고르는 Layer 목록에 따라 알맞은 enum의 Layer를 줘야함 !
+    _uint iLayerBitset = { 0 };
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, iLayerBitset, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
         Safe_Release(pGameInstance);
         return E_FAIL;
     }
     // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, pLayerWC);
+    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, iLayerBitset);
     if (nullptr == pObjectList)
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
@@ -1534,7 +1534,6 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     strcpy(pTag, m_FolderNameVec[m_iFolderIndex]);
     strcat(pTag, to_string(++iIndex).c_str());
     m_pSelectedObject->Set_SpriteTag(pTag);
-    m_pSelectedObject->Set_Layer(pLayerWC);
 
     _tchar* pDest = new _tchar[strlen(m_ClassNameVec[0]) + 1];
     lstrcpy(pDest, TEXT("Environment"));
@@ -1546,7 +1545,6 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     //    m_InstalledList.emplace_back(m_pSelectedObject);
     //}
 
-    pGameInstance->Add_Garbage(pLayerWC);
     Safe_Release(pGameInstance);
     return S_OK;
 }

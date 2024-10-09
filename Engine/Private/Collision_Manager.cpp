@@ -11,10 +11,6 @@ CCollision_Manager::CCollision_Manager()
 
 HRESULT CCollision_Manager::Initialize(void* pArg)
 {
-	list<CCollider*> ListDefault;
-	m_ColliderMap.emplace(L"Layer_Default", ListDefault);
-	list<CCollider*> ListPlayer;
-	m_ColliderMap.emplace(L"Layer_Player", ListPlayer);
 	return S_OK;
 }
 
@@ -50,23 +46,23 @@ _uint CCollision_Manager::LateTick(_double TimeDelta)
 
 	for (auto iterSour = m_ColliderMap.begin(); iterSour != --m_ColliderMap.end(); ++iterSour)
 	{
+		auto CollisionListIter = m_CollisionLayerMap.find(iterSour->first);
+		if (m_CollisionLayerMap.end() == CollisionListIter)
+		{
+			continue;
+		}
+		_uint iCollisionListBitset = CollisionListIter->second;
+
 		auto iterDest = iterSour;
 		++iterDest;
 		for (iterDest ; iterDest != m_ColliderMap.end(); ++iterDest)
 		{
-			_tchar IgnoreLayer[MAX_PATH];
-			lstrcpy(IgnoreLayer, iterSour->first);
-			lstrcat(IgnoreLayer, iterDest->first);
-			auto iter = m_IgnoreLayerMap.find(IgnoreLayer); // 문자열이 순서대로 저장되어 이써양함. 반대면 못 찾으니까
-
-			if (iter != m_IgnoreLayerMap.end())
-			{
-				break;
-			}
+			// 충돌목록 비트셋 & 현재 레이어 비트셋이 일치하지 않으면 충돌 체크X
+			if (!(iCollisionListBitset & iterDest->first))
+				continue;
 
 			Update_Collision(iterSour->second, iterDest->second);
 		}
-		
 	}
 
 	return _uint();
@@ -111,20 +107,20 @@ void CCollision_Manager::Clear_Collider()
 	return;
 }
 
-HRESULT CCollision_Manager::Attach_Collider(const _tchar* pLayer, CCollider* pCollider)
+HRESULT CCollision_Manager::Attach_Collider(const _uint LayerBitset, CCollider* pCollider)
 {
-	if (nullptr == pCollider || nullptr == pLayer)
+	if (nullptr == pCollider)
 	{
 		MSG_BOX("CCollision_Manager - Attach_Collider - NULL");
 		return S_OK;
 	}
 
-	map<const _tchar*, list<CCollider*>>::iterator iter = m_ColliderMap.find(pLayer);
+	map<const _uint, list<CCollider*>>::iterator iter = m_ColliderMap.find(LayerBitset);
 	if (m_ColliderMap.end() == iter)
 	{
 		list<CCollider*> ColliderList;
 		ColliderList.emplace_back(pCollider);
-		m_ColliderMap.emplace(pLayer, ColliderList);
+		m_ColliderMap.emplace(LayerBitset, ColliderList);
 	}
 	else
 	{
@@ -135,21 +131,6 @@ HRESULT CCollision_Manager::Attach_Collider(const _tchar* pLayer, CCollider* pCo
 
 void CCollision_Manager::Collision_Matrix()
 {
-}
-
-HRESULT CCollision_Manager::Add_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB)
-{
-	if (nullptr == pLayerA || nullptr == pLayerB)
-		return E_FAIL;
-
-	// 먼저 레이어 우선순위 비교한 다음에!
-	_tchar* pIgnoreLayer = new _tchar[lstrlen(pLayerA) + lstrlen(pLayerB) + 1];
-	lstrcpy(pIgnoreLayer, pLayerA);
-	lstrcat(pIgnoreLayer, pLayerB);
-
-	m_IgnoreLayerMap.insert(pIgnoreLayer);
-
-	return S_OK;
 }
 
 void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CCollider*> pDestList)
@@ -212,11 +193,6 @@ void CCollision_Manager::Update_Collision(list<CCollider*> pSourList, list<CColl
 			}
 		}
 	}
-}
-
-bool CCollision_Manager::Is_IgnoreLayer(const _tchar* pLayerA, const _tchar* pLayerB) const
-{
-	return false;
 }
 
 void CCollision_Manager::Free()

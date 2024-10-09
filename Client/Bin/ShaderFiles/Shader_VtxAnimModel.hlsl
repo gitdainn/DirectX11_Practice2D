@@ -2,7 +2,7 @@
 #include "Shader_Defines.hpp"
 
 matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
-matrix			g_BoneMatrices[256]; /* ¸Þ½Ã¿¡ ¿µÇâÀ» ÁÖ´Â »ÀµéÀÌ´Ù.  VTF */
+matrix			g_BoneMatrices[256]; /* ï¿½Þ½Ã¿ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ì´ï¿½.  VTF */
 
 texture2D		g_DiffuseTexture;
 
@@ -34,7 +34,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_WorldMatrix, g_ViewMatrix);
 	matWVP = mul(matWV, g_ProjMatrix);
 
-	/* ÇÏµå¿þ¾î ½ºÅ°´×. */
+	/* ï¿½Ïµï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Å°ï¿½ï¿½. */
 	float		fWeightW = 1.f - (In.vBlendWeight.x + In.vBlendWeight.y + In.vBlendWeight.z);
 
 	matrix		BoneMatrix = g_BoneMatrices[In.vBlendIndex.x] * In.vBlendWeight.x +
