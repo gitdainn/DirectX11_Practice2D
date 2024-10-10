@@ -87,6 +87,7 @@ HRESULT CMainApp::Render()
 		return E_FAIL;
 #endif
 
+	m_pGameInstance->Clear_Collider();
 	m_pImGui->Render();
 
 	m_pGameInstance->Present();

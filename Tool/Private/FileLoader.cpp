@@ -146,6 +146,9 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				pAddObject->Set_ClassName(pClassName);
 				pAddObject->Set_Layer(iLayerBitset);
 
+				//pGameInstance->Add_Garbage(pClassName);
+				pGameInstance->Add_Garbage(pLayer);
+
 				LoadObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
 			}
 			Safe_Release(pGameInstance);
@@ -492,12 +495,6 @@ inline void CFileLoader::Free(void)
 {
 	__super::Free();
 
-	// @error - OriginalData도 해제해주기
-
-	//for (auto iter : m_ObjectTransformMap)
-	//{
-	//	Safe_Delete_Array(iter.second.pObjectID);
-	//}
 	m_ObjectTransformMap.clear();
 	m_ComponentInfoMap.clear();
 }

@@ -60,7 +60,8 @@ namespace Client
 		PLAYER_ATK = (1 << 5),
 		ENEMY_ATK = (1 << 6),
 		CAMERA = (1 << 7),
-		EFFECT = (1 << 8)
+		EFFECT = (1 << 8),
+		ITEM = (1 << 9)
 	}LAYER_BITSET;
 
 	struct SKUL_EXCEL
@@ -107,11 +108,11 @@ using namespace Client;
 #define LAYER_BACKGROUND		LAYER::BACKGROUND 
 #define LAYER_PLAYER			LAYER::PLAYER 
 #define LAYER_ENEMY				LAYER::ENEMY 
-#define LAYER_UI				LAYER::UI 
-#define LAYER_PLAYERATK				LAYER::PLAYER_ATK 
-#define LAYER_ENEMYATK				LAYER::ENEMY_ATK 
+#define LAYER_PLAYERATK			LAYER::PLAYER_ATK 
+#define LAYER_ENEMYATK			LAYER::ENEMY_ATK 
 #define LAYER_EFFECT			LAYER::EFFECT
 #define LAYER_CAMERA			LAYER::CAMERA 
+#define LAYER_UI				LAYER::UI 
 #pragma endregion
 
 #pragma region COMPONENT_TAG
