@@ -4,7 +4,7 @@
 class CPlayerAtk : public CState
 {
 public:
-    explicit CPlayerAtk() : m_eAttackType(STATE_TYPE::DEFAULT_ATK) {}
+    explicit CPlayerAtk() : m_eAttackType(STATE_TYPE::DEFAULT_ATK), m_ePastAttackType(STATE_TYPE::DEFAULT_ATK){}
     explicit CPlayerAtk(STATE_TYPE AttackType) : m_eAttackType(AttackType) {}
     ~CPlayerAtk() {}
 
@@ -15,6 +15,8 @@ public:
 
 private:
     STATE_TYPE  m_eAttackType;
+    STATE_TYPE  m_ePastAttackType;
+
     const int   m_iMaxCombo = { 2 };
     _uint       m_iCombo = { 0 };
 };

@@ -318,6 +318,24 @@ _vector CSpriteObject::Adjust_PositionUp_Radius(const _float& RadiusY)
 	return XMVectorSetY(vPosition, XMVectorGetY(vPosition) + RadiusY * 0.5f);
 }
 
+void CSpriteObject::MoveToDirection(const SPRITE_DIRECTION& Direction, _double TimeDelta)
+{
+	if (Direction == SPRITE_DIRECTION::LEFT)
+	{
+		m_pTransformCom->Go_Left(TimeDelta);
+	}
+	else if (Direction == SPRITE_DIRECTION::RIGHT)
+	{
+		m_pTransformCom->Go_Right(TimeDelta);
+	}
+	else
+	{
+		MSG_BOX("CSolider - Walk() - ERROR");
+	}
+
+	return;
+}
+
 HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
 {
 	if (nullptr == pComponentTag)

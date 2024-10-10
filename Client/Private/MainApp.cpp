@@ -147,8 +147,12 @@ HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 
 HRESULT CMainApp::Ready_CollisionLayerMatrix()
 {
-	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMY | LAYER_BACKGROUND | LAYER_DEFAULT);
-	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYER);
+	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT);
+	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYERATK);
+	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYERATK, LAYER_ENEMY);
+	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMYATK, LAYER_PLAYER);
+	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
+	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
 	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
 
 	return S_OK;

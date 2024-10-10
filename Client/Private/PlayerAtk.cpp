@@ -39,7 +39,6 @@ void CPlayerAtk::Enter(CSpriteObject* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
 	STATE_TYPE eAnimType = m_eAttackType;
-	static STATE_TYPE ePastType = eAnimType;
 
 	if (STATE_TYPE::DEFAULT_ATK == eAnimType && 2 <= m_iCombo)
 	{
@@ -53,12 +52,11 @@ void CPlayerAtk::Enter(CSpriteObject* pObject)
 		pObject->Change_AnimType((_uint)eAnimType);
 
 	pObject->Set_CurrentState(m_eAttackType);
-	if (ePastType != eAnimType)
+	if (m_ePastAttackType != eAnimType)
 	{
-		ePastType = eAnimType;
+		m_ePastAttackType = eAnimType;
 		pObject->Change_AnimType((_uint)eAnimType);
 	}
-
 }
 
 void CPlayerAtk::Update(CSpriteObject* pObject, _double TimeDelta)

@@ -24,8 +24,11 @@ HRESULT CEnemy::Initialize_Prototype()
 	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 
 	//m_StateFunctionMap.emplace(ENEMY_STATE::IDLE, bind(&CEnemy::Idle, this, std::placeholders::_1)); // 뒤에 숫자면 되는데 placeholders면 안됨
-	m_StateFunctionMap.emplace(ENEMY_STATE::IDLE, bind(&CEnemy::Walk, this, 1));
-	m_StateFunctionMap.emplace(ENEMY_STATE::WALK, bind(&CEnemy::Walk, this, 1));
+	m_StateFunctionMap.emplace(ENEMY_STATE::IDLE, &CEnemy::Idle);
+	m_StateFunctionMap.emplace(ENEMY_STATE::WALK, &CEnemy::Walk);
+	m_StateFunctionMap.emplace(ENEMY_STATE::ATK1, &CEnemy::Attack);
+	m_StateFunctionMap.emplace(ENEMY_STATE::CHASE, &CEnemy::Chase);
+	m_StateFunctionMap.emplace(ENEMY_STATE::DAMAGED, &CEnemy::Damaged);
 	m_StateFunc = m_StateFunctionMap.find(ENEMY_STATE::IDLE)->second;
 
 	return S_OK;
@@ -117,7 +120,7 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
-	if (LAYER::ATK == pTarget->Get_LayerBitset())
+	if (LAYER::PLAYER_ATK == pTarget->Get_LayerBitset())
 	{
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());
@@ -160,46 +163,31 @@ void CEnemy::Damaged(_double TimeDelta)
 
 void CEnemy::Input_Handler(const ENEMY_STATE eEnemyState)
 {
-	//if (m_StateFunctionMap.empty())
-	//	return;
+	if (m_StateFunctionMap.empty())
+	{
+		MSG_BOX("CEnemy - Input_Handler - Empty");
+		return;
+	}
 
-	//auto iter = m_StateFunctionMap.find(eEnemyState);
-	//if (iter == m_StateFunctionMap.end())
-	//	return;
-
-	//m_StateFunc = iter->second;
+	// 플레이어 위치에 따라서
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_vector vPlayerPosition = vPosition - Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION);
+	_float vDirectionVecX = XMVectorGetX(vPlayerPosition - vPosition);
+	if (SPRITE_DIRECTION::LEFT == m_eSpriteDirection && 0.f > vDirectionVecX
+		|| SPRITE_DIRECTION::RIGHT == m_eSpriteDirection && 0.f < vDirectionVecX)
+	{
+		Switch_SpriteDirection();
+	}
 
 	m_iAnimType = (_uint)eEnemyState;
 	const ANIM_INFO* pAnim = m_pAnimInfo + m_iAnimType;
 	m_iUVTextureIndex = pAnim->iStartIndex;
 
-	switch (eEnemyState)
-	{
-	case ENEMY_STATE::IDLE:
-		m_StateFunc = bind(&CEnemy::Idle, this, 0.1f);
-		break;
+	auto iter = m_StateFunctionMap.find(eEnemyState);
+	if (iter == m_StateFunctionMap.end())
+		return;
 
-	case ENEMY_STATE::WALK:
-		m_StateFunc = bind(&CEnemy::Walk, this, 0.11f);
-		break;
-
-	case ENEMY_STATE::ATK1:
-		m_StateFunc = bind(&CEnemy::Attack, this, 0.11f);
-		break;
-
-	case ENEMY_STATE::CHASE:
-		m_StateFunc = bind(&CEnemy::Chase, this, 0.11f);
-		break;
-
-	case ENEMY_STATE::DAMAGED:
-		m_StateFunc = bind(&CEnemy::Damaged, this, 0.11f);
-		break;
-
-	default:
-		MSG_BOX("CEnemy - Input_Handler() - ERROR");
-		break;
-	}
-
+	m_StateFunc = iter->second;
 	return;
 }
 

@@ -105,7 +105,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 		tColliderDesc.vOffset.y = 30.f;
 		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
 		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-		Attach_Collider(LAYER_BITSET::ATK, m_pDefaultAtkColliderCom);
+		Attach_Collider(LAYER_BITSET::PLAYER_ATK, m_pDefaultAtkColliderCom);
 	}
 
 	SkillLateTick(TimeDelta);

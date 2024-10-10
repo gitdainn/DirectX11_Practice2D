@@ -84,7 +84,8 @@ protected:
 	CCollider* m_pDefaultAtkColliderCom = { nullptr };
 
 protected:
-	// function에 멤버 함수를 담을 땐 어느 객체(클래스)인지 알아야하기에 CEnemy& 붙여주기
+	// 멤버 함수를 담을 땐 첫 번째 인자로 자기자신 넘기기
+	// @note - function<반환타입(매개변수)>
 	unordered_map<ENEMY_STATE, function<void(CEnemy&, _double)>> m_StateFunctionMap;
 	function<void(CEnemy&, _double)> m_StateFunc;
 

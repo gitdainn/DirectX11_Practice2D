@@ -143,7 +143,7 @@ public:
 	}
 
 public: 
-	inline void CSpriteObject::Change_AnimType(_uint iAnimType)
+	inline void CSpriteObject::Change_AnimType(const _uint& iAnimType)
 	{
 		if (m_iAnimTypeNum <= iAnimType)
 			return;
@@ -167,6 +167,7 @@ protected:
 	HRESULT Load_Components_Excel();
 	HRESULT	Attach_Collider(const _uint LayerBitset, CCollider* pCollider);
 	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
+	void	MoveToDirection(const SPRITE_DIRECTION& Direction, _double TimeDelta);
 
 private:
 	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);

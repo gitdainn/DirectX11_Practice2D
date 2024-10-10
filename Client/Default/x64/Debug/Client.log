@@ -1,1 +1,23 @@
-﻿
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxAnimModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxCube.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxInstance.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxNorTex.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxPointInstance.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_Vtxtex.cso
+  Enemy.cpp
+  Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

@@ -29,7 +29,7 @@ HRESULT CSolider::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
     }
 
     CTransform::TRANSFORM_DESC tTransDesc;
-    tTransDesc.SpeedPerSec = 20.f;
+    tTransDesc.SpeedPerSec = 70.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     _float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
@@ -92,7 +92,7 @@ void CSolider::Add_Animation()
     _uint iRow = { 0 };
     m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].iStartIndex = 0;
     m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].iEndIndex = 4;
-    m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].fAnimTime = 2.f;
+    m_pAnimInfo[(_uint)ENEMY_STATE::IDLE].fAnimTime = 1.f;
 
     ++iRow;
     m_pAnimInfo[(_uint)ENEMY_STATE::WALK].iStartIndex = m_iUVTexNumX * iRow;
@@ -159,27 +159,16 @@ void CSolider::Walk(_double TimeDelta)
         m_iSearchRoundsCount = 0;
     }
 
-    // 이동 //
-    if (m_eSpriteDirection == SPRITE_DIRECTION::LEFT)
-    {
-        m_pTransformCom->Go_Left(TimeDelta);
-    }
-    else if (m_eSpriteDirection == SPRITE_DIRECTION::RIGHT)
-    {
-        m_pTransformCom->Go_Right(TimeDelta);
-    }
-    else
-    {
-        MSG_BOX("CSolider - Walk() - ERROR");
-    }
+    MoveToDirection(m_eSpriteDirection, TimeDelta);
 
     // 플레이어와의 거리 측정 //
     _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-    _vector fCurrentPlayerDistance = XMVector3Length(vPosition - Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION));
-    if (fPlayerAtkDistance >= XMVectorGetX(fCurrentPlayerDistance))
+    _vector vPlayerPosition = vPosition - Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION);
+    if (fPlayerAtkDistance >= XMVectorGetX(XMVector3Length(vPlayerPosition)))
     {
         Input_Handler(ENEMY_STATE::ATK1);
         m_iSearchRoundsCount = 0;
+        return;
     }
 
     // 라인 끝점과의 거리 측정 //
@@ -198,14 +187,52 @@ void CSolider::Walk(_double TimeDelta)
 
 void CSolider::Attack(_double TimeDelta)
 {
-    if (m_bIsEndSprite)
+    static _bool bHasOnce = { false };
+    static _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+    static _double TimeAcc = { 0.0 };
+
+    if(m_bIsEndSprite)
+    {
         Input_Handler(ENEMY_STATE::IDLE);
+        bHasOnce = false;
+        TimeAcc = 0.0;
+        return;
+    }
+
+    if (!bHasOnce)
+    {
+        vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+        bHasOnce = true;
+    }
 
     CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
     tColliderDesc.vOffset.y = 30.f;
     tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
     m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-    Attach_Collider(m_LayerBitset, m_pDefaultAtkColliderCom);
+    Attach_Collider(LAYER_ENEMYATK, m_pDefaultAtkColliderCom);
+
+    // 특정 이미지 인덱스부터 돌진함.
+        const _uint iStartRushIndex = m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex + 4;
+    if (iStartRushIndex <= m_iUVTextureIndex)
+    {
+        TimeAcc += TimeDelta;
+
+        int iAnimNum = m_pAnimInfo[ENEMY_STATE::ATK1].iEndIndex - m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex;
+        int iRushAnimNum = m_pAnimInfo[ENEMY_STATE::ATK1].iEndIndex - iStartRushIndex;
+        const _float fAnimTime = m_pAnimInfo[ENEMY_STATE::ATK1].fAnimTime 
+                                   / (_float)iAnimNum * (_float)iRushAnimNum;
+
+        _float fT = TimeAcc / fAnimTime;
+        fT = 1.f < fT ? 1.f : fT; /* 선형보간은 0~1 값이어야하므로 "클램프"*/
+
+        const _float fTotalRushDistance = { 30.f };
+        _float fDir = m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? -1.f : 1.f; 
+        _vector vDirection = XMVectorSetX(vPosition, XMVectorGetX(vPosition) + fTotalRushDistance* fDir);
+        _vector vLerpPosition = XMVectorLerp(vPosition, vDirection, fT);
+
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vLerpPosition);
+    }
+
 }
 
 void CSolider::Chase(_double TimeDelta)
