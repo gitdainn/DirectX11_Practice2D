@@ -33,7 +33,6 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
         return E_FAIL;
     }
 
-
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
@@ -57,6 +56,8 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_FolderNameVec.emplace_back("ForestTile");
     m_FolderNameVec.emplace_back("ForestEnvironment");
     m_FolderNameVec.emplace_back("Background");
+    m_FolderNameVec.emplace_back("UI_Skul");
+    m_FolderNameVec.emplace_back("UI_HealthBar");
     m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
 #pragma endregion
 
@@ -463,6 +464,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         OBJECT_METADATA tMetaData;
         tMetaData.iInstanceID = iInstanceID;
         tMetaData.pObjectID = { nullptr };
+        tMetaData.pNameTag = pObject->Get_NameTag();
         tMetaData.pClassName = pObject->Get_ClassName();
         tMetaData.pLayer = L""; // pObject->Get_LayerBitset();
 
@@ -714,7 +716,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
         ImGui::EndListBox();
     }
 
-    if (ImGui::Button("Save"))
+    if (ImGui::Button("Save Excel"))
     {
         if (FAILED(Save_Object_Excel()))
         {
@@ -723,7 +725,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     }
     ImGui::SameLine();
 
-    if (ImGui::Button("Load"))
+    if (ImGui::Button("Load Excel"))
     {
         //if (FAILED(Load_Object()))
         //{
@@ -746,6 +748,23 @@ HRESULT CMyImGui::ShowInstalledWindow()
     ImGui::SameLine();
 
     if (ImGui::Button("Load Line"))
+    {
+        if (FAILED(Load_Line()))
+        {
+            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+        }
+    }
+
+    if (ImGui::Button("Save UI"))
+    {
+        if (FAILED(Save_Line()))
+        {
+            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+        }
+    }
+    ImGui::SameLine();
+
+    if (ImGui::Button("Load UI"))
     {
         if (FAILED(Load_Line()))
         {
@@ -807,7 +826,18 @@ HRESULT CMyImGui::ShowSpriteWindow()
                         {
                             m_pSpriteListIndex[iFolderIndex] = iListIndex;
                             m_pPreviewObject->Set_TextureIndex(iListIndex);
+
+                            // 만약 선택한 폴더가 이전과 다르다면
+                            if (m_iFolderIndex != iFolderIndex)
+                            {
+                                _tchar* pPrototypeTag = ConvertCWithWC(m_FolderNameVec[iFolderIndex], TEXT("Prototype_Component_Sprite_"));
+                                if (nullptr == pPrototypeTag)
+                                    break;
+
+                                m_pPreviewObject->Change_TextureComponent(pPrototypeTag);
+                            }
                             m_iFolderIndex = iFolderIndex;
+
                         }
 
                         // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -908,6 +938,8 @@ HRESULT CMyImGui::ShowSettings()
 
 HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
 {
+    static char szName[MAX_PATH] = { "" };
+
     if (bIsSelectionChanged)
     {
         char* pClassName = { nullptr };
@@ -922,7 +954,28 @@ HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
             }
         }
         Safe_Delete_Array(pClassName);
+
+        char* pName = { nullptr };
+        const _tchar* pNameTag = m_pSelectedObject->Get_NameTag();
+        if (nullptr == pNameTag)
+        {
+            strcpy(szName, "");
+        }
+        else
+        {
+            WCToC(pNameTag, pName);
+            strcpy(szName, pName);
+            Safe_Delete_Array(pName);
+        }
     }
+
+    /* Layer 고르기 */
+    /* NameTag 지정하기 */
+    ImGui::InputText("NameTag", szName, IM_ARRAYSIZE(szName));
+    _tchar* pName = { nullptr };
+    CToWC(szName, pName);
+    m_pSelectedObject->Set_NameTag(pName);
+
 
     static ImGuiComboFlags flags = 0;
     if (ImGui::BeginCombo("Class", m_ClassNameVec[m_iClassIndex], flags))

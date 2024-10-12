@@ -63,6 +63,7 @@ protected:
 	CCollider* m_pDefaultAtkColliderCom = { nullptr };
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_bool	m_bIsEquipped;
+	_bool	m_bIsSwap;
 
 private:
 	list<CSkill*> m_SkillAvailableList;

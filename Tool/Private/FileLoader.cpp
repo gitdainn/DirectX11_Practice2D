@@ -117,6 +117,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 			int iCol = { 0 };
 			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
+			_tchar* pNameTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_uint iLayerBitset = { 0 };
@@ -143,11 +144,13 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				strcpy(pTag, "pObjectID");
 				strcat(pTag, to_string(++iIndex).c_str());
 				pAddObject->Set_SpriteTag(pTag);
+				pAddObject->Set_NameTag(pNameTag);
 				pAddObject->Set_ClassName(pClassName);
 				pAddObject->Set_Layer(iLayerBitset);
 
 				//pGameInstance->Add_Garbage(pClassName);
 				pGameInstance->Add_Garbage(pLayer);
+				pGameInstance->Add_Garbage(pNameTag);
 
 				LoadObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
 			}
@@ -455,6 +458,7 @@ HRESULT CFileLoader::Write_ObjectMetaData_Excel(const _tchar* pFilePath, const O
 		
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iInstanceID);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pObjectID);
+		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pNameTag);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pClassName);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pLayer);
 		++iRow;

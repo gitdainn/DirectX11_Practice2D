@@ -26,6 +26,25 @@ list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _ui
 	return pLayer->Get_ObjectList();
 }
 
+CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName, _uint iIndex)
+{
+	if (nullptr == pObjName)
+		return nullptr;
+
+	list<CGameObject*>* pObjectList = Get_ObjectList(iLevelIndex, LayerBitset);
+	if (nullptr == pObjectList)
+		return nullptr;
+
+	for (CGameObject* pObject : *pObjectList)
+	{
+		if (!lstrcmp(pObject->Get_NameTag(), pObjName))
+		{
+			return pObject;
+		}
+	}
+	return nullptr;
+}
+
 HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
 {
 	if (nullptr != m_pLayersMap)

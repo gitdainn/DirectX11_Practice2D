@@ -10,7 +10,8 @@ CWaterSkul::CWaterSkul(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CWaterSkul::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P003");
-    m_pNameTag = TEXT("워터스컬");
+    m_pNameTag = new _tchar[MAX_PATH]{ TEXT("워터스컬") };
+
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iAnimType = (_uint)STATE_TYPE::IDLE;
     m_iTextureIndex = 0;
@@ -52,7 +53,7 @@ HRESULT CWaterSkul::Initialize(void* pArg)
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
     // @error - 장착한 플레이어만 뜨는데 이거 일단 고정으로 장착하게 해뒀으니 추후 수정해야함! //
-    CPlayer_Manager::GetInstance()->Set_EquippedSkul(this);
+    CPlayer_Manager::GetInstance()->Set_MainSkul(this);
     Add_Animation();
 
     return S_OK;

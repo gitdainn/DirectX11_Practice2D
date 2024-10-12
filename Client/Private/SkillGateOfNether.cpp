@@ -9,7 +9,7 @@ CSkillGateOfNether::CSkillGateOfNether(ID3D11Device* pDevice, ID3D11DeviceContex
 
 HRESULT CSkillGateOfNether::Initialize_Prototype()
 {
-	m_pNameTag = TEXT("명계의균열");
+	m_pNameTag = new _tchar[MAX_PATH]{ TEXT("명계의균열") };
 
 	__super::Initialize_Prototype();
 	return S_OK;

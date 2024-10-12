@@ -16,6 +16,7 @@ private:
 
 public:
 	HRESULT Set_ShaderResource(class CShader* pShader, const char* pConstantName, _uint iTextureIndex = 0);
+	HRESULT Set_ShaderResource(class CShader* pShader, const char* pConstantName, const _tchar* pFileName);
 	HRESULT Set_ShaderResourceArray(class CShader* pShader, const char* pConstantName);
 public:
 	/** 폴더 경로 받으면 폴더 안 이미지 경로 모두 보관 */
@@ -77,7 +78,8 @@ private:
 
 private:
 	vector<ID3D11ShaderResourceView*>			m_SRVs;
-	vector<const _tchar*>								m_TexturePathVec;
+	unordered_map<const _tchar*, ID3D11ShaderResourceView*>			m_SRVMap;
+	vector<const _tchar*>						m_TexturePathVec;
 	vector<_float2>								m_TextureSizeVec;
 	_uint										m_iNumTextures = { 0 };
 	_uint										m_iTextureIndex = { 0 };

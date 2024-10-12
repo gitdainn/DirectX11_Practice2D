@@ -56,7 +56,7 @@ protected:
 			return nullptr;
 		Safe_AddRef(pPlayer_Manager);
 
-		CPlayer* pPlayer = pPlayer_Manager->Get_EquippedSkul();
+		CPlayer* pPlayer = pPlayer_Manager->Get_MainSkul();
 		if (nullptr == pPlayer)
 		{
 			Safe_Release(pPlayer_Manager);

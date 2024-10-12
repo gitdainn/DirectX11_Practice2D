@@ -25,7 +25,7 @@ CCommand* CInputHandler::Key_Input() const
     /** @qurious - 이거 안되는 이유 진짜 모르겠음.. 하 . */
     //unordered_map<CONTROL_KEY, CCommand*>::iterator iter = m_CommandKeyMap.begin();
     auto iter = m_CommandKeyMap.end();
-    CSpriteObject* pPlayer = CPlayer_Manager::GetInstance()->Get_EquippedSkul();
+    CSpriteObject* pPlayer = CPlayer_Manager::GetInstance()->Get_MainSkul();
     if (nullptr == pPlayer)
     {
         Safe_Release(pGameInstance);

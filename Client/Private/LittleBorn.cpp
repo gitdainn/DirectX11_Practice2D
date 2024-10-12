@@ -11,7 +11,7 @@ CLittleBorn::CLittleBorn(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CLittleBorn::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P001");
-    m_pNameTag = TEXT("리틀본");
+    m_pNameTag = new _tchar[MAX_PATH]{ TEXT("리틀본") };
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
     m_iAnimType = (_uint)STATE_TYPE::IDLE;

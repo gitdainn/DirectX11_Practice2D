@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
     <ClInclude Include="..\public\BackGround.h" />
+    <ClInclude Include="..\Public\BasicUI.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Command.h" />
     <ClInclude Include="..\Public\Enemy.h" />
@@ -196,6 +197,7 @@
     <ClInclude Include="..\Public\Skill.h" />
     <ClInclude Include="..\Public\SkillGateOfNether.h" />
     <ClInclude Include="..\Public\SkillGuillotine.h" />
+    <ClInclude Include="..\Public\SkillUI.h" />
     <ClInclude Include="..\Public\Solider.h" />
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\Public\TemplateCmd.h">
@@ -207,6 +209,8 @@
     <ClInclude Include="..\Public\RotationCmd.h" />
     <ClInclude Include="..\Public\FileLoader.h" />
     <ClInclude Include="..\Public\Tile.h" />
+    <ClInclude Include="..\Public\UI.h" />
+    <ClInclude Include="..\Public\UI_Handler.h" />
     <ClInclude Include="..\Public\WaterSkul.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Client_Defines.h" />
@@ -217,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
+    <ClCompile Include="..\Private\BasicUI.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Command.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
@@ -241,6 +246,7 @@
     <ClCompile Include="..\Private\Skill.cpp" />
     <ClCompile Include="..\Private\SkillGateOfNether.cpp" />
     <ClCompile Include="..\Private\SkillGuillotine.cpp" />
+    <ClCompile Include="..\Private\SkillUI.cpp" />
     <ClCompile Include="..\Private\Solider.cpp" />
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\Private\TemplateCmd.cpp">
@@ -252,6 +258,8 @@
     <ClCompile Include="..\Private\RotationCmd.cpp" />
     <ClCompile Include="..\Private\FileLoader.cpp" />
     <ClCompile Include="..\Private\Tile.cpp" />
+    <ClCompile Include="..\Private\UI.cpp" />
+    <ClCompile Include="..\Private\UI_Handler.cpp" />
     <ClCompile Include="..\Private\WaterSkul.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SpriteObject.cpp" />

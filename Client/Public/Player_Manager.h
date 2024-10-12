@@ -14,40 +14,58 @@ public:
 public:
     void Rotation_Skul()
     {
-        if (nullptr == m_pHoldingSkul)
+        if (nullptr == m_pSubSkul)
             return;
-        CPlayer* pTemp = m_pEquippedSkul;
-        m_pEquippedSkul = m_pHoldingSkul;
-        m_pHoldingSkul = pTemp;
+        CPlayer* pTemp = m_pMainSkul;
+        m_pMainSkul = m_pSubSkul;
+        m_pSubSkul = pTemp;
 
-        m_pEquippedSkul->Get_TransformCom()->Set_State(CTransform::STATE_POSITION,
-            m_pHoldingSkul->Get_TransformCom()->Get_State(CTransform::STATE_POSITION));
+        m_pMainSkul->Get_TransformCom()->Set_State(CTransform::STATE_POSITION,
+            m_pSubSkul->Get_TransformCom()->Get_State(CTransform::STATE_POSITION));
 
-        m_pEquippedSkul->Set_IsEquipped(true);
-        m_pHoldingSkul->Set_IsEquipped(false);
+        m_pMainSkul->Set_IsEquipped(true);
+        m_pSubSkul->Set_IsEquipped(false);
     };
 
+    void    Acquire_Skul(CPlayer* pPlayer);
+    void    Drop_Skul();
+    void    Swap_Skul();
+
 public: // Setter //
-    void Set_EquippedSkul(CPlayer* Skul)
+    void Set_MainSkul(CPlayer* Skul)
     {
-        m_pEquippedSkul = Skul;
-        m_pEquippedSkul->Set_IsEquipped(true);
+        m_pMainSkul = Skul;
+        m_pMainSkul->Set_IsEquipped(true);
     }
 
-    void Set_HoldingSkul(CPlayer* Skul)
+    void Set_SubSkul(CPlayer* Skul)
     {
-        m_pHoldingSkul = Skul;
+        m_bIsMaxSkulEquipped = true;
+        m_pSubSkul = Skul;
     }
 
 public: // Getter //
-    CPlayer* Get_EquippedSkul()
+    CPlayer* Get_MainSkul()
     {
-        return m_pEquippedSkul;
+        return m_pMainSkul;
+    }
+    CPlayer* Get_SubSkul()
+    {
+        return m_pSubSkul;
+    }
+
+    _bool   Get_IsMaxSkulEqquipedl()
+    {
+        return m_bIsMaxSkulEquipped;
     }
 
 private:
-    CPlayer* m_pEquippedSkul;
-    CPlayer* m_pHoldingSkul;
+    CPlayer* m_pMainSkul;
+    CPlayer* m_pSubSkul;
+
+private:
+    _bool   m_bIsAcquireSkul;
+    _bool   m_bIsMaxSkulEquipped;
 
 private:
     _int m_iHp;

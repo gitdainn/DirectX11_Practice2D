@@ -124,6 +124,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			int iCol = { 0 };
 			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
+			const _tchar* pNameTag = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 			const _tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_uint iLayerBitset = { 0 };
@@ -139,6 +140,13 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 				MSG_BOX("CFileLoader - Load_Excel() - FAILED");
 				Safe_Release(pGameInstance);
 				return E_FAIL;
+			}
+
+			if (nullptr != pNameTag)
+			{
+				CGameObject* pObject = pGameInstance->Get_ObjectList((_uint)eLevel, iLayerBitset)->back();
+				if (nullptr != pObject)
+					pObject->Set_NameTag(pNameTag);
 			}
 			pGameInstance->Add_Garbage(pLayer);
 			Safe_Release(pGameInstance);

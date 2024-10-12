@@ -11,7 +11,7 @@ CSolider::CSolider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CSolider::Initialize_Prototype()
 {
-    m_pNameTag = TEXT("병사");
+    m_pNameTag = new _tchar[MAX_PATH]{ TEXT("병사") };
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_eSpriteDirection = SPRITE_DIRECTION::RIGHT;
     m_bIsAnimUV = true;

@@ -176,7 +176,7 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 
 	/* For.Prototype_Component_Sprite_Tile */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tiles/ForestTile/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Tiles/ForestTile/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
@@ -184,7 +184,7 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 
 	/* For.Prototype_Component_Sprite_ForestEnvironment */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Environment/Forest/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Environment/Forest/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
@@ -192,11 +192,27 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 
 	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Background/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Background/")))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;
 	};
+
+#pragma region UI
+	/* For.Prototype_Component_Sprite_SkulUI */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Skul"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Skul/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_ForestTile */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_HealthBar"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/HealthBar/")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
 
 	Safe_Release(pGameInstance);
 

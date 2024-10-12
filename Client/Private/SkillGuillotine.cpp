@@ -9,7 +9,7 @@ CSkillGuillotine::CSkillGuillotine(ID3D11Device* pDevice, ID3D11DeviceContext* p
 
 HRESULT CSkillGuillotine::Initialize_Prototype()
 {
-	m_pNameTag = TEXT("길로틴");
+	m_pNameTag = new _tchar[MAX_PATH]{ TEXT("길로틴") };
 
 	__super::Initialize_Prototype();
 	return S_OK;

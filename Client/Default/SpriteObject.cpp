@@ -154,6 +154,9 @@ void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION
 
 HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 {
+	if (nullptr == pPrototypeTag)
+		return E_FAIL;
+
 	if (FAILED(CGameObject::Change_Component(LEVEL_STATIC, pPrototypeTag, TAG_TEXTURE, (CComponent**)&m_pTextureCom)))
 	{
 		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");

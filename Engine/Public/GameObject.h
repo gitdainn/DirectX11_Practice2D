@@ -39,6 +39,11 @@ public:
 		return m_pClassName;
 	}
 
+	const _tchar* Get_NameTag() const
+	{
+		return m_pNameTag;
+	}
+
 	CTransform* Get_TransformCom() const {
 		return m_pTransformCom;
 	};
@@ -89,6 +94,15 @@ public:
 		m_eRenderGroup = eRenderGroup;
 	}
 
+	void Set_NameTag(const _tchar* pNameTag)
+	{
+		if (nullptr == pNameTag)
+			return;
+
+		Safe_Delete_Array(m_pNameTag);
+		m_pNameTag = pNameTag;
+	}
+
 	void Set_ClassName(const _tchar* pClassName)
 	{
 		if (nullptr == pClassName)
@@ -109,6 +123,11 @@ public:
 		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
 		lstrcpy(Layer, pLayer);
 		m_pLayerTag = Layer;
+	}
+
+	void	OnOffRender(const _bool bIsRender)
+	{
+		m_bIsRender = bIsRender;
 	}
 
 public:

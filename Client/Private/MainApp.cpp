@@ -223,28 +223,28 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 
 	/* For.Prototype_Component_Sprite_LittleBorn */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_LittleBorn"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/LittleBorn/Wait_%d.png"), 48))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/GrimReaper/GrimReaperUV_%d.png")))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_WaterSkul */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_WaterSkulUV"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/WaterSkul/WaterSkulUV_%d.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/WaterSkul/WaterSkulUV_%d.png")))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Test"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/Bat.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/Bat.png")))))
 	{
 		return E_FAIL;
 	};
@@ -253,7 +253,23 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 #pragma region ENEMY_TEXTURE
 	/* For.Prototype_Component_Sprite_GrimReaper */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Enemy_Solider"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Enemy/Enemy_Solider_B.png")))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Enemy/Enemy_Solider_B.png")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region UI
+	/* For.Prototype_Component_Sprite_SkulUI */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Skul"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Skul/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_ForestTile */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_HealthBar"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/HealthBar/")))))
 	{
 		return E_FAIL;
 	};
@@ -269,20 +285,20 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 
 	/* For.Prototype_Component_Sprite_GateOfNetherUV */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNetherUV"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/GateOfNether/GrimReaper_GateOfNetherUV_%d.png"), 2))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/GrimReaper_Skill/GateOfNether/GrimReaper_GateOfNetherUV_%d.png"), 2))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_Guillotine */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Guillotine"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_%d.png"), 26))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_%d.png"), 26))))
 	{
 		return E_FAIL;
 	};
 	/* For.Prototype_Component_Sprite_GuillotineSign */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GuillotineSign"),
-		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_Sign_%d.png"), 10))))
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/GrimReaper_Skill/Guillotine/GrimReaper_Guillotine_Sign_%d.png"), 10))))
 	{
 		return E_FAIL;
 	};
@@ -291,21 +307,21 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 #pragma region ETC
 	/* For.Prototype_Component_Sprite_ForestTile */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Tiles/ForestTile/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Tiles/ForestTile/")))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_ForestEnvironment */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestEnvironment"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Environment/Forest/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Environment/Forest/")))))
 	{
 		return E_FAIL;
 	};
 
 	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Tool/Background/")))))
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Background/")))))
 	{
 		return E_FAIL;
 	};

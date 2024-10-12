@@ -20,6 +20,7 @@ namespace Engine
 	{
 		_uint iInstanceID;
 		const _tchar* pObjectID;
+		const _tchar* pNameTag;
 		const _tchar* pClassName;
 		const _tchar* pLayer;
 	}OBJECT_METADATA;

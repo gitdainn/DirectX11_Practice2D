@@ -115,6 +115,8 @@ using namespace Client;
 #define LAYER_UI				LAYER::UI 
 #pragma endregion
 
+
+
 #pragma region COMPONENT_TAG
 #define	TAG_TRANSFORM			TEXT("Com_Transform")
 #define	TAG_RENDERER			TEXT("Com_Renderer")
@@ -135,6 +137,13 @@ using namespace Client;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
+#pragma endregion
+
+#pragma region UI
+#define UI_MAINSKILL			TEXT("UI_MainSkill")
+#define UI_SUBSKILL				TEXT("UI_SubSkill")
+#define UI_MAINPROFILE			TEXT("UI_MainProfile")
+#define UI_SUBPROFILE				TEXT("UI_SubProfile")
 #pragma endregion
 
 #pragma region DINPUT

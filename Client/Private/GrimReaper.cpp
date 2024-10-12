@@ -13,7 +13,7 @@ CGrimReaper::CGrimReaper(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 HRESULT CGrimReaper::Initialize_Prototype()
 {
     m_pObjectID = TEXT("P002");
-    m_pNameTag = TEXT("그림리퍼");
+    m_pNameTag = new _tchar[MAX_PATH]{ TEXT("그림리퍼") };
 
     m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
     m_iAnimType = (_uint)STATE_TYPE::IDLE;
@@ -53,7 +53,7 @@ HRESULT CGrimReaper::Initialize(void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    //CPlayerInfo::GetInstance()->Set_EquippedSkul(this);
+    //CPlayerInfo::GetInstance()->Set_MainSkul(this);
 
     Add_Animation();
 

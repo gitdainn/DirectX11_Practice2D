@@ -118,6 +118,18 @@
     <Filter Include="02.GameObject\Enemy\Solider">
       <UniqueIdentifier>{0f3fe7b7-02ae-4f52-9a41-da5e61e66821}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI">
+      <UniqueIdentifier>{24cf88c8-c691-4cf1-9732-2e1be57896e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\BasicUI">
+      <UniqueIdentifier>{217a2fca-14bf-4767-8236-a5d42fcac6b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\SkillUI">
+      <UniqueIdentifier>{c94ba54f-a9c0-4613-a338-3de9d062da46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04. Handler\UI_Handler">
+      <UniqueIdentifier>{597491cb-f2d8-406e-a643-ba9c32bbfb98}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -232,6 +244,18 @@
     <ClInclude Include="..\Public\Solider.h">
       <Filter>02.GameObject\Enemy\Solider</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI.h">
+      <Filter>02.GameObject\UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\BasicUI.h">
+      <Filter>02.GameObject\UI\BasicUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillUI.h">
+      <Filter>02.GameObject\UI\SkillUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Handler.h">
+      <Filter>04. Handler\UI_Handler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -333,6 +357,18 @@
     </ClCompile>
     <ClCompile Include="..\Private\Solider.cpp">
       <Filter>02.GameObject\Enemy\Solider</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI.cpp">
+      <Filter>02.GameObject\UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\BasicUI.cpp">
+      <Filter>02.GameObject\UI\BasicUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillUI.cpp">
+      <Filter>02.GameObject\UI\SkillUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Handler.cpp">
+      <Filter>04. Handler\UI_Handler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

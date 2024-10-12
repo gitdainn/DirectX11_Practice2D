@@ -1,4 +1,7 @@
-//// ¸í·É¾î			// ¿É¼Ç		// ¿øº» ÆÄÀÏÀÌ ÀÖ´Â À§Ä¡			// »çº» ÆÄÀÏÀ» ÀúÀåÇÒ À§Ä¡
+////   É¾ 			//  É¼ 		//              Ö´    Ä¡			//  çº»                 Ä¡
+
+xcopy			/y			.\0.Skul_Resource\*.*				.\Tool\Bin\Resources\Sprite\	
+xcopy			/y			.\0.Skul_Resource\*.*				.\Client\Bin\Resources\Sprite\	
 
 xcopy			/y			.\Engine\Bin\Engine.dll			.\Client\Bin\	
 xcopy			/y			.\Engine\Bin\Engine.dll			.\Tool\Bin\	

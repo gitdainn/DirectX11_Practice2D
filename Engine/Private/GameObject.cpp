@@ -148,6 +148,7 @@ HRESULT CGameObject::Change_Component(_uint iLevelIndex, const _tchar* pPrototyp
 
 void CGameObject::Free()
 {
+	Safe_Delete_Array(m_pNameTag);
 	Safe_Delete_Array(m_pClassName);
 
 	for (auto& Pair : m_Components)
