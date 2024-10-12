@@ -1,1 +1,194 @@
-﻿
+﻿FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxAnimModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxCube.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxInstance.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxModel.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxNorTex.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_VtxPointInstance.cso
+FXC : warning X4717: Effects deprecated for D3DCompiler_47
+  
+  compilation object save succeeded; see D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Shader_Vtxtex.cso
+  BasicUI.cpp
+  Command.cpp
+  Enemy.cpp
+  Environment.cpp
+  FileLoader.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(122,39): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(125,20): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(130,23): warning C4244: '초기화 중': 'double'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(131,17): warning C4244: '초기화 중': 'double'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(110,19): warning C4101: 'tObjectTransform' :참조되지 않은 지역 변수입니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(232,39): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(235,43): warning C4244: '초기화 중': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(235,26): warning C4244: '초기화 중': 'double'에서 'const int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(245,40): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(246,40): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(247,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(248,34): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(249,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(250,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(251,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(252,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(288,39): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(291,48): warning C4244: '=': 'double'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(301,50): warning C4244: '=': 'double'에서 'Engine::_uint'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(302,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(303,44): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(304,46): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(305,46): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(306,48): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(307,48): warning C4244: '=': 'double'에서 'float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(355,37): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(372,52): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(373,55): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(374,40): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(376,37): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(341,17): warning C4101: 'tComponentInfo' :참조되지 않은 지역 변수입니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(429,37): warning C4018: '<=': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(442,44): warning C4244: '=': 'double'에서 'int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(415,17): warning C4101: 'tComponentInfo' :참조되지 않은 지역 변수입니다.
+  (소스 파일 '/Private/FileLoader.cpp'을(를) 컴파일하는 중)
+  
+  GrimReaper.cpp
+  InputHandler.cpp
+  Level_GamePlay.cpp
+  LittleBorn.cpp
+  MainApp.cpp
+D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\ColliderAABB2D.h(9,49): warning C4275: DLL 인터페이스가 아닌 class 'Engine::CCollider'이(가) DLL 인터페이스 class 'Engine::CColliderAABB2D'의 기본으로 사용되었습니다.
+  (소스 파일 '/Private/MainApp.cpp'을(를) 컴파일하는 중)
+      D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\Collider.h(14,7):
+      'Engine::CCollider' 선언을 참조하십시오.
+      D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\ColliderAABB2D.h(9,18):
+      'Engine::CColliderAABB2D' 선언을 참조하십시오.
+  
+  Player.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Player.cpp(336,28): warning C4244: '-=': 'float'에서 'Engine::_int'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/Player.cpp'을(를) 컴파일하는 중)
+  
+  PlayerAtk.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\PlayerAtk.cpp(19,26): warning C4018: '<': signed 또는 unsigned가 일치하지 않습니다.
+  (소스 파일 '/Private/PlayerAtk.cpp'을(를) 컴파일하는 중)
+  
+  PlayerDash.cpp
+  PlayerIdle.cpp
+  PlayerJump.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\PlayerJump.cpp(154,16): warning C4244: '초기화 중': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/PlayerJump.cpp'을(를) 컴파일하는 중)
+  
+  PlayerWalk.cpp
+  Player_Manager.cpp
+  RotationCmd.cpp
+  Skill.cpp
+  SkillGateOfNether.cpp
+  코드를 생성하고 있습니다...
+D:\1. GameProject\DirectX11_Practice2D\Client\Public\FileLoader.h(41,1): warning C4715: 'Client::CFileLoader::Add_PrototypeName': 모든 제어 경로에서 값을 반환하지는 않습니다.
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\FileLoader.cpp(96,1): warning C4715: 'Client::CFileLoader::Load_FIle': 모든 제어 경로에서 값을 반환하지는 않습니다.
+  컴파일하고 있습니다...
+  SkillGuillotine.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\SkillGuillotine.cpp(124,27): warning C4244: '=': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/SkillGuillotine.cpp'을(를) 컴파일하는 중)
+  
+  SkillUI.cpp
+  Solider.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Private\Solider.cpp(225,19): warning C4244: '초기화 중': 'Engine::_double'에서 'Engine::_float'(으)로 변환하면서 데이터가 손실될 수 있습니다.
+  (소스 파일 '/Private/Solider.cpp'을(를) 컴파일하는 중)
+  
+  State.cpp
+  Tile.cpp
+  UI.cpp
+  UI_Handler.cpp
+  WaterSkul.cpp
+  BackGround.cpp
+  Camera_Dynamic.cpp
+  Level_Logo.cpp
+  Loader.cpp
+D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\ColliderAABB2D.h(9,49): warning C4275: DLL 인터페이스가 아닌 class 'Engine::CCollider'이(가) DLL 인터페이스 class 'Engine::CColliderAABB2D'의 기본으로 사용되었습니다.
+  (소스 파일 '/private/Loader.cpp'을(를) 컴파일하는 중)
+      D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\Collider.h(14,7):
+      'Engine::CCollider' 선언을 참조하십시오.
+      D:\1. GameProject\DirectX11_Practice2D\Reference\Headers\ColliderAABB2D.h(9,18):
+      'Engine::CColliderAABB2D' 선언을 참조하십시오.
+  
+  SpriteObject.cpp
+D:\1. GameProject\DirectX11_Practice2D\Client\Default\SpriteObject.cpp(237,9): warning C4068: 알 수 없는 pragma 'UV'
+  (소스 파일 '/SpriteObject.cpp'을(를) 컴파일하는 중)
+  
+  코드를 생성하고 있습니다...
+  Client.vcxproj -> D:\1. GameProject\DirectX11_Practice2D\Client\Bin\Client.exe

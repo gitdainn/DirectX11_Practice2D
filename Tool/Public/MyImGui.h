@@ -100,7 +100,7 @@ private:
 	vector<const char*>		m_FolderNameVec;
 	vector<const char*>		m_ClassNameVec;
 	vector<const char*>		m_RenderGroupVec;
-	vector<const char*>		m_LayerVec;
+	vector<pair<const char*, LAYER>>		m_LayerVec;
 	vector<const char*>		m_ComponentsVec;
 	vector<const char*>		m_ColliderLayer;
 	vector<CSpriteObject*>	m_CreateObjectVec;
@@ -110,6 +110,7 @@ private:
 	_uint					m_iFolderIndex;
 	_uint					m_iClassIndex;
 	const char*				m_pLayerC;
+	_uint				m_iLayerBitset;
 	unordered_map<const _tchar*, ORIGINAL_DATA>		m_OriginalDataMap;
 
 	/** @note - 자료구조 선택 이유

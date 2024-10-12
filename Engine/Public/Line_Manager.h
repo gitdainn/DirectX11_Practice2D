@@ -90,8 +90,8 @@ private:
 	// 기울기와 직선을 지나는 한 점의 좌표를 알 때 절편 구하기 (return: y절편)
 	const _float Get_InterceptY(const _float fSlope, const _float3 fB);
 	// 기울기, 절편을 알 때 좌표 x를 지나는 직선 위의 점 y 구하기
-	const _float& EquationOfLine(const _float fSlope, const _float fInterceptY, const _float fX);
-	const _float& EquationOfLine(const _float3 fA, const _float3 fB, const _float fObjectX);
+	const _float EquationOfLine(const _float fSlope, const _float fInterceptY, const _float fX);
+	const _float EquationOfLine(const _float3 fA, const _float3 fB, const _float fObjectX);
 
 #ifdef _DEBUG
 protected:

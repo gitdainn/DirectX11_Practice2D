@@ -68,6 +68,11 @@ public:
 		return m_iTextureIndex;
 	}
 
+	const _tchar* Get_Layer() const
+	{
+		return m_pLayerTag;
+	}
+
 	const _uint Get_LayerBitset() const
 	{
 		return m_LayerBitset;
@@ -99,8 +104,11 @@ public:
 		if (nullptr == pNameTag)
 			return;
 
+		_tchar* pName = new _tchar[lstrlen(pNameTag) + 1];
+		lstrcpy(pName, pNameTag);
+		
 		Safe_Delete_Array(m_pNameTag);
-		m_pNameTag = pNameTag;
+		m_pNameTag = pName;
 	}
 
 	void Set_ClassName(const _tchar* pClassName)
@@ -108,8 +116,11 @@ public:
 		if (nullptr == pClassName)
 			return;
 
+		_tchar* pName = new _tchar[lstrlen(pClassName) + 1];
+		lstrcpy(pName, pClassName);
+
 		Safe_Delete_Array(m_pClassName);
-		m_pClassName = pClassName;
+		m_pClassName = pName;
 	}
 
 	void Set_Layer(const _uint LayerBitset)
@@ -119,10 +130,11 @@ public:
 
 	void Set_Layer(const _tchar* pLayer)
 	{
+		if (nullptr == pLayer)
+			return;
+
 		Safe_Delete_Array(m_pLayerTag);
-		_tchar* Layer = new _tchar[lstrlen(pLayer) + 1];
-		lstrcpy(Layer, pLayer);
-		m_pLayerTag = Layer;
+		m_pLayerTag = pLayer;
 	}
 
 	void	OnOffRender(const _bool bIsRender)

@@ -31,8 +31,8 @@ CGameObject::CGameObject(const CGameObject& rhs)
 	: m_pDevice(rhs.m_pDevice)
 	, m_pContext(rhs.m_pContext)
 	, m_ViewMatrix(rhs.m_ViewMatrix), m_ProjMatrix(rhs.m_ProjMatrix)
-	, m_pLayerTag(rhs.m_pLayerTag), m_pNameTag(rhs.m_pNameTag), m_pClassName(rhs.m_pClassName)
 	, m_LayerBitset(rhs.m_LayerBitset)
+	//, m_pClassName(rhs.m_pClassName), m_pLayerTag(rhs.m_pLayerTag), m_pNameTag(rhs.m_pNameTag)
 	, m_bIsDead(rhs.m_bIsDead), m_bIsRender(rhs.m_bIsRender)
 	, m_eRenderGroup(rhs.m_eRenderGroup)
 	, m_iInstanceID(rhs.m_iInstanceID)
@@ -40,6 +40,27 @@ CGameObject::CGameObject(const CGameObject& rhs)
 {
 	Safe_AddRef(m_pDevice);
 	Safe_AddRef(m_pContext);
+
+	if (nullptr != rhs.m_pLayerTag)
+	{
+		_tchar* pLayer = new _tchar[lstrlen(rhs.m_pLayerTag) + 1];
+		lstrcpy(pLayer, rhs.m_pLayerTag);
+		m_pLayerTag = pLayer;
+	}
+
+	if (nullptr != rhs.m_pNameTag)
+	{
+		_tchar* pNameTag = new _tchar[lstrlen(rhs.m_pNameTag) + 1];
+		lstrcpy(pNameTag, rhs.m_pNameTag);
+		m_pNameTag = pNameTag;
+	}
+
+	if (nullptr != rhs.m_pClassName)
+	{
+		_tchar* pClassName = new _tchar[lstrlen(rhs.m_pClassName) + 1];
+		lstrcpy(pClassName, rhs.m_pClassName);
+		m_pClassName = pClassName;
+	}
 }
 
 HRESULT CGameObject::Initialize_Prototype()
@@ -150,6 +171,7 @@ void CGameObject::Free()
 {
 	Safe_Delete_Array(m_pNameTag);
 	Safe_Delete_Array(m_pClassName);
+	Safe_Delete_Array(m_pLayerTag);
 
 	for (auto& Pair : m_Components)
 	{

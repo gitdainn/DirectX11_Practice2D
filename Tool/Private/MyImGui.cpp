@@ -58,6 +58,8 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_FolderNameVec.emplace_back("Background");
     m_FolderNameVec.emplace_back("UI_Skul");
     m_FolderNameVec.emplace_back("UI_HealthBar");
+    m_FolderNameVec.emplace_back("UI_Frame");
+    m_FolderNameVec.emplace_back("UI_Key");
     m_pSpriteListIndex = make_unique<_uint[]>(m_FolderNameVec.size());
 #pragma endregion
 
@@ -78,13 +80,13 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 #pragma region 레이어
     const _uint iLayerNum = { 7 };
     m_LayerVec.reserve(iLayerNum);
-    m_LayerVec.emplace_back("LAYER::DEFAULT");
-    m_LayerVec.emplace_back("Layer_NonInteractiveObjects");
-    m_LayerVec.emplace_back("Layer_InteractiveBackground");
-    m_LayerVec.emplace_back("Layer_Collectibles");
-    m_LayerVec.emplace_back("Layer_Enemy");
-    m_LayerVec.emplace_back("Layer_Player");
-    m_LayerVec.emplace_back("Layer_Camera");
+    m_LayerVec.emplace_back(make_pair("Layer_Default", LAYER::DEFAULT));
+    m_LayerVec.emplace_back(make_pair("Layer_Background", LAYER::BACKGROUND));
+    m_LayerVec.emplace_back(make_pair("Layer_Effect", LAYER::EFFECT));
+    m_LayerVec.emplace_back(make_pair("Layer_Item", LAYER::ITEM));
+    m_LayerVec.emplace_back(make_pair("Layer_UI", LAYER::UI));
+    m_LayerVec.emplace_back(make_pair("Layer_UI_MainSkul_State", LAYER::UI_MAINSKUL_STATE));
+    m_LayerVec.emplace_back(make_pair("Layer_UI_SubSkul_State", LAYER::UI_SUBSKUL_STATE));
 #pragma endregion
 
 #pragma region 충돌
@@ -466,7 +468,9 @@ HRESULT CMyImGui::Save_Object_Excel()
         tMetaData.pObjectID = { nullptr };
         tMetaData.pNameTag = pObject->Get_NameTag();
         tMetaData.pClassName = pObject->Get_ClassName();
-        tMetaData.pLayer = L""; // pObject->Get_LayerBitset();
+        tMetaData.pLayer = pObject->Get_Layer();
+        tMetaData.iLayerBitset = pObject->Get_LayerBitset();
+        tMetaData.iOrder = pObject->Get_Order();
 
         if (FAILED(pFileLoader->Write_ObjectMetaData_Excel(pFilePath, tMetaData, bIsReset)))
         {
@@ -523,7 +527,6 @@ HRESULT CMyImGui::Save_Object_Excel()
             }
             tComponentInfo.iInstanceID = iInstanceID;
             tComponentInfo.pComponentTag = iter.first;
-            tComponentInfo.iOrder = pObject->Get_Order();
             tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
 
             if (FAILED(pFileLoader->Write_ComponentInfo_Excel(pFilePath, tComponentInfo, bIsReset)))
@@ -676,18 +679,21 @@ HRESULT CMyImGui::ShowInstalledWindow()
     Safe_AddRef(pGameInstance);
 
     static int iLayerSelectIndex = { 0 };
-    static const char* items[] =
+    static const char* Layers[] =
     {
-        "LAYER::DEFAULT",
-        "Layer_Player",
-        "Layer_Enemy",
-        "Layer_NonInteractiveObjects",
-        "Layer_InteractiveBackground",
-        "Layer_Collectibles",
-        "Layer_Camera"
+        m_LayerVec[0].first,
+        m_LayerVec[1].first,
+        m_LayerVec[2].first,
+        m_LayerVec[3].first,
+        m_LayerVec[4].first,
+        m_LayerVec[5].first,
+        m_LayerVec[6].first,
     };
-    ImGui::Combo("Layer", &iLayerSelectIndex, items, IM_ARRAYSIZE(items));
-    m_pLayerC = items[iLayerSelectIndex];
+
+    ImGui::Combo("Layer", &iLayerSelectIndex, Layers, IM_ARRAYSIZE(Layers));
+    m_pLayerC = m_LayerVec[iLayerSelectIndex].first;
+    m_iLayerBitset = m_LayerVec[iLayerSelectIndex].second;
+
     if (ImGui::Button("Create"))
     {
         SPRITE_INFO tSpriteInfo;
@@ -720,7 +726,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     {
         if (FAILED(Save_Object_Excel()))
         {
-            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+            MSG_BOX("CMyImGui - Save_Object_Excel - FAILED");
         }
     }
     ImGui::SameLine();
@@ -742,7 +748,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     {
         if (FAILED(Save_Line()))
        {
-           MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+           MSG_BOX("CMyImGui - Save_Line - FAILED");
        }
     }
     ImGui::SameLine();
@@ -751,7 +757,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     {
         if (FAILED(Load_Line()))
         {
-            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+            MSG_BOX("CMyImGui - Load_Line - FAILED");
         }
     }
 
@@ -759,7 +765,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     {
         if (FAILED(Save_Line()))
         {
-            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+            MSG_BOX("CMyImGui - Save_Line - FAILED");
         }
     }
     ImGui::SameLine();
@@ -768,7 +774,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     {
         if (FAILED(Load_Line()))
         {
-            MSG_BOX("CMyImGui - ShowInstalledWindow - FAILED");
+            MSG_BOX("CMyImGui - Load_Line - FAILED");
         }
     }
 
@@ -918,7 +924,7 @@ HRESULT CMyImGui::ShowSettings()
     for (_uint i = 0; i < m_LayerVec.size(); ++i)
     {
         ImGui::Text(" ");
-        ImGui::Text(m_LayerVec[i]);
+        ImGui::Text(m_LayerVec[i].first);
         for (_uint j = 0; j < m_LayerVec.size(); ++j)
         {
             // 체크박스 이름 다 달라야 해...
@@ -1051,13 +1057,13 @@ HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
         _float fPosition[3] = { XMVectorGetX(vPosition), XMVectorGetY(vPosition), 0.f };
 
         ImGui::DragFloat3("Position", fPosition
-            , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION]);
+            , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION], "%.1f");
         //ImGui::DragFloat3("Rotation", vPosition
         //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
         ImGui::DragFloat3("Scale", fScale
-            , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE]);
+            , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE], "%.1f");
         ImGui::DragFloat3("ScaleRatio", fScaleRatio
-            , fSpeed[eTransform::SCALE_RATIO], fMin[eTransform::SCALE_RATIO], fMax[eTransform::SCALE_RATIO]);
+            , fSpeed[eTransform::SCALE_RATIO], fMin[eTransform::SCALE_RATIO], fMax[eTransform::SCALE_RATIO], "%.1f");
 
         if(nullptr != pSelectedObjectTransform)
             pSelectedObjectTransform->Set_State(CTransform::STATE_POSITION, XMVectorSet(fPosition[0], fPosition[1], fPosition[2], 1.f));
@@ -1461,7 +1467,6 @@ void CMyImGui::Key_Input(_double TimeDelta)
             return;
         }
 
-
         list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_LayerBitset());
         if (nullptr == pObjectList)
         {
@@ -1561,15 +1566,14 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     static int iIndex = m_CreateObjectVec.size();
     
     // 고르는 Layer 목록에 따라 알맞은 enum의 Layer를 줘야함 !
-    _uint iLayerBitset = { 0 };
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, iLayerBitset, tSpriteInfo))))
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, m_iLayerBitset, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
         Safe_Release(pGameInstance);
         return E_FAIL;
     }
     // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, iLayerBitset);
+    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_iLayerBitset);
     if (nullptr == pObjectList)
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
@@ -1592,6 +1596,11 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     lstrcpy(pDest, TEXT("Environment"));
     const _tchar* pClassName = pDest;
     m_pSelectedObject->Set_ClassName(pClassName);
+    m_pSelectedObject->Set_Layer(m_iLayerBitset);
+
+    _tchar* pLayer = { nullptr };
+    CToWC(m_pLayerC, pLayer);
+    m_pSelectedObject->Set_Layer(pLayer);
     m_CreateObjectVec.emplace_back(m_pSelectedObject);
     //if (nullptr != m_pSelectedObject)
     //{

@@ -85,6 +85,7 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	
 	SPRITE_INFO tSpriteInfo;
 	tSpriteInfo.fSize = _float2{ 300.f, 300.f };
 
@@ -107,6 +108,7 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER::ENEMY, tSpriteInfo)))
 		return E_FAIL;
+		
 
 	Safe_Release(pGameInstance);
 	return S_OK;

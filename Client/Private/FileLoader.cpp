@@ -124,10 +124,11 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			int iCol = { 0 };
 			int iInstanceID = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			const _tchar* pNameTag = pSheet->readStr(iRow, m_iFirstCol + iCol++);
+			const _tchar* pNameTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			const _tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			_uint iLayerBitset = { 0 };
+			_uint iLayerBitset = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			_uint iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
@@ -135,6 +136,8 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			_tchar pPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 			lstrcat(pPrototypeTag, pClassName);
 			Safe_Delete_Array(pClassName);
+			Safe_Delete_Array(pLayer);
+
 			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, iLayerBitset, &iInstanceID)))
 			{
 				MSG_BOX("CFileLoader - Load_Excel() - FAILED");
@@ -146,9 +149,13 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			{
 				CGameObject* pObject = pGameInstance->Get_ObjectList((_uint)eLevel, iLayerBitset)->back();
 				if (nullptr != pObject)
+				{
 					pObject->Set_NameTag(pNameTag);
+					Safe_Delete_Array(pNameTag);
+					pObject->Set_Order(iOrder);
+				}
 			}
-			pGameInstance->Add_Garbage(pLayer);
+
 			Safe_Release(pGameInstance);
 
 			//Sheet* pTransformSheet = pBook->getSheet(1); // Transform
@@ -291,7 +298,6 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 			tComponentInfo.pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pComponentTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pSortingLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			tComponentInfo.iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.iTextureIndex = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
@@ -377,6 +383,15 @@ HRESULT CFileLoader::Load_SkulData_Excel(const _tchar* pFilePath)
 				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
 				m_SkulDataMap.emplace(tSkulInfo.pName, tSkulInfo);
 			}
+			else
+			{
+				Safe_Delete_Array(tSkulInfo.pName);
+				Safe_Delete_Array(tSkulInfo.pExplanation);
+				for (_uint i = 0; i < iSkillNum; ++i)
+				{
+					Safe_Delete_Array(tSkulInfo.pSkill[i]);
+				}
+			}
 		}
 	}
 
@@ -439,6 +454,12 @@ HRESULT CFileLoader::Load_SkillData_Excel(const _tchar* pFilePath)
 			{
 				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
 				m_SkillDataMap.emplace(tSkillInfo.pName, tSkillInfo);
+			}
+			else
+			{
+				Safe_Delete_Array(tSkillInfo.pName);
+				Safe_Delete_Array(tSkillInfo.pStatusChange);
+				Safe_Delete_Array(tSkillInfo.pExplanation);
 			}
 		}
 	}

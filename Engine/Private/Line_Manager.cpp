@@ -92,7 +92,7 @@ HRESULT CLine_Manager::Render()
 	XMFLOAT4 vColor = XMFLOAT4(0.f, 1.f, 0.f, 1.f);
 
 	// 사각형의 네 선분 정의 (토폴로지 D3D11_PRIMITIVE_TOPOLOGY_LINELIST일 때)
-	const _uint iVertexNum = m_LineList.size() * 2;
+	const _uint iVertexNum = (_uint)m_LineList.size() * 2;
 	VertexPositionColor* vertices = new VertexPositionColor[iVertexNum];
 
 	list<tLine>::iterator iter = m_LineList.begin();
@@ -238,7 +238,7 @@ const _float CLine_Manager::Get_InterceptY(const _float fSlope, const _float3 fB
 	return fInterceptY;
 }
 
-const _float& CLine_Manager::EquationOfLine(const _float fSlope, const _float fInterceptY, const _float fX)
+const _float CLine_Manager::EquationOfLine(const _float fSlope, const _float fInterceptY, const _float fX)
 {
 	/** 직선의 방정식
 	y = ax + b (a: 기울기, b는 y절편)
@@ -247,7 +247,7 @@ const _float& CLine_Manager::EquationOfLine(const _float fSlope, const _float fI
 	return fSlope * fX + fInterceptY;
 }
 
-const _float& CLine_Manager::EquationOfLine(const _float3 fA, const _float3 fB, const _float fObjectX)
+const _float CLine_Manager::EquationOfLine(const _float3 fA, const _float3 fB, const _float fObjectX)
 {
 	const _float fSlope = Get_Slope(fA, fB);
 	const _float fInterceptY = Get_InterceptY(fSlope, fB);

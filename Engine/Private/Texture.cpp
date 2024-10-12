@@ -175,7 +175,6 @@ HRESULT CTexture::Initialize(void* pArg)
 		memcpy(&tComponentInfo, pArg, sizeof(COMPONENT_INFO));
 		m_pPrototypeTag = tComponentInfo.pPrototypeTag;
 		m_iTextureIndex = tComponentInfo.iTextureIndex;
-		m_iOrder = tComponentInfo.iOrder;
 	}
 	return S_OK;
 }

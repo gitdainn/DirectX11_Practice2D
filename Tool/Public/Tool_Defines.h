@@ -41,12 +41,14 @@ namespace Tool
 		BACKGROUND = (1 << 1), // 0000 0010
 		PLAYER = (1 << 2), // 0000 0100
 		ENEMY = (1 << 3), // 0000 1000
-		UI = (1 << 4), // 0001 0000
-		PLAYER_ATK = (1 << 5),
-		ENEMY_ATK = (1 << 6),
-		CAMERA = (1 << 7),
-		EFFECT = (1 << 8),
-		ITEM = (1 << 9)
+		PLAYER_ATK = (1 << 4),
+		ENEMY_ATK = (1 << 5),
+		CAMERA = (1 << 6),
+		EFFECT = (1 << 7),
+		ITEM = (1 << 8),
+		UI = (1 << 9), // 0001 0000
+		UI_MAINSKUL_STATE = (1 << 10), // 0001 0000
+		UI_SUBSKUL_STATE = (1 << 11), // 0001 0000
 	}LAYER_BITSET;
 }
 
@@ -54,18 +56,6 @@ extern HINSTANCE g_hInst;
 extern HWND g_hWnd;
 
 using namespace Tool;
-
-#pragma region LAYER
-#define LAYER_DEFAULT			LAYER::DEFAULT	
-#define LAYER_BACKGROUND		LAYER::BACKGROUND 
-#define LAYER_PLAYER			LAYER::PLAYER 
-#define LAYER_ENEMY				LAYER::ENEMY 
-#define LAYER_PLAYERATK			LAYER::PLAYER_ATK 
-#define LAYER_ENEMYATK			LAYER::ENEMY_ATK 
-#define LAYER_EFFECT			LAYER::EFFECT
-#define LAYER_CAMERA			LAYER::CAMERA 
-#define LAYER_UI				LAYER::UI 
-#pragma endregion
 
 #pragma region COMPONENT_TAG
 #define	TAG_TRANSFORM			TEXT("Com_Transform")

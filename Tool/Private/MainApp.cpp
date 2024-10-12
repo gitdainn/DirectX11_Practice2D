@@ -206,9 +206,23 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 		return E_FAIL;
 	};
 
-	/* For.Prototype_Component_Sprite_ForestTile */
+	/* For.Prototype_Component_Sprite_UI_HealthBar */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_HealthBar"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/HealthBar/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_UI_Frame */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Frame"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Frame/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_UI_Key */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Key"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Key/")))))
 	{
 		return E_FAIL;
 	};

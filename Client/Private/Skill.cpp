@@ -136,8 +136,8 @@ void CSkill::Mapping_SkillData(const _tchar* pObjectID)
 		Safe_Release(pFileLoader);
 		return;
 	}
-
-	m_pNameTag = tSkillInfo.pName;
+	
+	Set_NameTag(tSkillInfo.pName); //  tSkillInfo.pName은 FileLoader에서 map으로 보관되어 할당 해제를 하므로, m_pNameTag에 단순 대입하면 안됨.
 	m_CoolDown = tSkillInfo.CoolDown;
 	m_DelayTime = tSkillInfo.DelayTime;
 	m_LifeTime = tSkillInfo.LifeTime;

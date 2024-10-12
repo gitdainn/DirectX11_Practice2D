@@ -19,6 +19,8 @@ namespace Engine
 	typedef struct ENGINE_DLL tObjectMetaData
 	{
 		_uint iInstanceID;
+		_uint iLayerBitset;
+		_uint iOrder;
 		const _tchar* pObjectID;
 		const _tchar* pNameTag;
 		const _tchar* pClassName;
@@ -42,7 +44,6 @@ namespace Engine
 		const _tchar* pPrototypeTag;
 		const _tchar* pComponentTag;
 		const _tchar* pSortingLayer;
-		_uint iOrder;
 		_uint iTextureIndex;
 		_float2 fSize;
 		_float2 fOffset;

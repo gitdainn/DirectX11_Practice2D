@@ -120,7 +120,8 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 			_tchar* pNameTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			_uint iLayerBitset = { 0 };
+			_uint	iLayerBitset = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			_uint	iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
@@ -146,11 +147,13 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				pAddObject->Set_SpriteTag(pTag);
 				pAddObject->Set_NameTag(pNameTag);
 				pAddObject->Set_ClassName(pClassName);
+				pAddObject->Set_Layer(pLayer);
 				pAddObject->Set_Layer(iLayerBitset);
+				pAddObject->Set_Order(iOrder);
 
 				//pGameInstance->Add_Garbage(pClassName);
-				pGameInstance->Add_Garbage(pLayer);
-				pGameInstance->Add_Garbage(pNameTag);
+				//pGameInstance->Add_Garbage(pLayer);
+				//pGameInstance->Add_Garbage(pNameTag);
 
 				LoadObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
 			}
@@ -169,6 +172,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 	return S_OK;
 }
 
+// 현재 안 쓰는 함수임
 HRESULT CFileLoader::Load_OriginalData_Excel(const _tchar* pFilePath, LEVEL eLevel)
 {
 	Book* pBook = xlCreateXMLBookW();
@@ -295,7 +299,6 @@ HRESULT CFileLoader::Load_ComponentInfo_Excel(const _tchar* pFilePath)
 			tComponentInfo.pPrototypeTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pComponentTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			tComponentInfo.pSortingLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			tComponentInfo.iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.iTextureIndex = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tComponentInfo.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
@@ -411,7 +414,6 @@ HRESULT CFileLoader::Write_ComponentInfo_Excel(const _tchar* pFilePath, const CO
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pPrototypeTag);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pComponentTag);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pSortingLayer);
-		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iOrder);
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iTextureIndex);
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.fSize.x);
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.fSize.y);
@@ -461,6 +463,8 @@ HRESULT CFileLoader::Write_ObjectMetaData_Excel(const _tchar* pFilePath, const O
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pNameTag);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pClassName);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pLayer);
+		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iLayerBitset);
+		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iOrder);
 		++iRow;
 	}
 
