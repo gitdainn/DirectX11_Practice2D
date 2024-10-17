@@ -6,6 +6,7 @@
 #include "Player_Manager.h"
 #include "FileLoader.h"
 #include "Line_Manager.h"
+#include "UI_Handler.h"
 #include "Utility.h"
 
 #pragma region LOAD
@@ -48,7 +49,10 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Component_For_Static()))
+	{
+		MSG_BOX("CMainApp - Initialize() - Ready_Prototype_Component_For_Static() - FAILED");
 		return E_FAIL;
+	}
 
 	if (FAILED(Ready_Prototype_GameObject_For_Static()))
 		return E_FAIL;
@@ -58,6 +62,11 @@ HRESULT CMainApp::Initialize()
 
 	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
 		return E_FAIL;
+
+	CUI_Handler* pUIHandler = CUI_Handler::GetInstance();
+	if (nullptr == pUIHandler)
+		return E_FAIL;
+	pUIHandler->Initialize();
 
 	return S_OK;
 }
@@ -147,13 +156,13 @@ HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 
 HRESULT CMainApp::Ready_CollisionLayerMatrix()
 {
-	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT);
+	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT | LAYER::ITEM);
 	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYERATK);
 	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYERATK, LAYER_ENEMY);
 	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMYATK, LAYER_PLAYER);
 	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
 	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
-	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
+	m_pGameInstance->Set_CollisionLayer(LAYER::ITEM, LAYER_PLAYER);
 
 	return S_OK;
 }
@@ -259,22 +268,6 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	};
 #pragma endregion
 
-#pragma region UI
-	/* For.Prototype_Component_Sprite_SkulUI */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Skul"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Skul/")))))
-	{
-		return E_FAIL;
-	};
-
-	/* For.Prototype_Component_Sprite_ForestTile */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_HealthBar"),
-		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/HealthBar/")))))
-	{
-		return E_FAIL;
-	};
-#pragma endregion
-
 #pragma region EFFECT_TEXTURE	
 	///* For.Prototype_Component_Sprite_Background */
 	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GateOfNether"),
@@ -322,6 +315,36 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Background/")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region UI
+	/* For.Prototype_Component_Sprite_SkulUI */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Skul"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Skul/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_UI_HealthBar */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_HealthBar"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/HealthBar/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_UI_Frame */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Frame"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Frame/")))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_Sprite_UI_Key */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_UI_Key"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/UI/Key/")))))
 	{
 		return E_FAIL;
 	};
@@ -396,6 +419,7 @@ void CMainApp::Free()
 	CPlayer_Manager::GetInstance()->DestroyInstance();
 	CInputHandler::GetInstance()->DestroyInstance();
 	CFileLoader::GetInstance()->DestroyInstance();
+	CUI_Handler::GetInstance()->DestroyInstance();
 	CGameInstance::Release_Engine();
 
 	//해제안된 COM객체 추적

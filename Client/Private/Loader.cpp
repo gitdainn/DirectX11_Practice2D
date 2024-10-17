@@ -19,6 +19,8 @@
 #include "BackGround.h"
 #include "Tile.h"
 #include "Environment.h"
+#include "DisplayUI.h"
+#include "SkulItem.h"
 #pragma endregion
 
 #pragma region COMPONENT
@@ -166,6 +168,26 @@ HRESULT CLoader::Loaiding_GameObject_Logo()
 	/* For.Prototype_GameObject_Environment */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Environment"),
 		CEnvironment::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region UI
+	/* For.Prototype_GameObject_DisplayUI */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DisplayUI"),
+		CDisplayUI::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region ITEM
+	/* For.Prototype_GameObject_SkulItem */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_SkulItem"),
+		CSkulItem::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

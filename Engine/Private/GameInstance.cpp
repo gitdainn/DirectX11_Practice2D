@@ -249,6 +249,14 @@ list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const
 	return m_pObject_Manager->Get_ObjectList(iLevelIndex, LayerBitset);
 }
 
+CGameObject* CGameInstance::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_GameObjectByName(iLevelIndex, LayerBitset, pObjName);
+}
+
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == m_pObject_Manager)

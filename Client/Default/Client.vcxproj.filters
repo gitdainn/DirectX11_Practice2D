@@ -121,14 +121,20 @@
     <Filter Include="02.GameObject\UI">
       <UniqueIdentifier>{24cf88c8-c691-4cf1-9732-2e1be57896e0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\UI\BasicUI">
-      <UniqueIdentifier>{217a2fca-14bf-4767-8236-a5d42fcac6b2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\UI\SkillUI">
       <UniqueIdentifier>{c94ba54f-a9c0-4613-a338-3de9d062da46}</UniqueIdentifier>
     </Filter>
     <Filter Include="04. Handler\UI_Handler">
       <UniqueIdentifier>{597491cb-f2d8-406e-a643-ba9c32bbfb98}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\UI\DisplayUI">
+      <UniqueIdentifier>{217a2fca-14bf-4767-8236-a5d42fcac6b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item">
+      <UniqueIdentifier>{2ba9d237-41a8-405d-a002-81a37bbcae61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Item\SkulItem">
+      <UniqueIdentifier>{409f4280-b4ee-432d-8cc5-55694abad02f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -247,14 +253,20 @@
     <ClInclude Include="..\Public\UI.h">
       <Filter>02.GameObject\UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\BasicUI.h">
-      <Filter>02.GameObject\UI\BasicUI</Filter>
+    <ClInclude Include="..\Public\DisplayUI.h">
+      <Filter>02.GameObject\UI\DisplayUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\SkillUI.h">
       <Filter>02.GameObject\UI\SkillUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\UI_Handler.h">
       <Filter>04. Handler\UI_Handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Item.h">
+      <Filter>02.GameObject\Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkulItem.h">
+      <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -361,14 +373,20 @@
     <ClCompile Include="..\Private\UI.cpp">
       <Filter>02.GameObject\UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\BasicUI.cpp">
-      <Filter>02.GameObject\UI\BasicUI</Filter>
+    <ClCompile Include="..\Private\DisplayUI.cpp">
+      <Filter>02.GameObject\UI\DisplayUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\SkillUI.cpp">
       <Filter>02.GameObject\UI\SkillUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\UI_Handler.cpp">
       <Filter>04. Handler\UI_Handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Item.cpp">
+      <Filter>02.GameObject\Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkulItem.cpp">
+      <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

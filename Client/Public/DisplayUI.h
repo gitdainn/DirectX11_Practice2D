@@ -5,12 +5,12 @@
 
 BEGIN(Client)
 
-class CBasicUI : public CUI
+class CDisplayUI : public CUI
 {
 private:
-	CBasicUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	CBasicUI(const CBasicUI& rhs);
-	virtual ~CBasicUI() = default;
+	CDisplayUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	CDisplayUI(const CDisplayUI& rhs);
+	virtual ~CDisplayUI() = default;
 
 public:
 	virtual HRESULT Initialize_Prototype() override; /* 원형객체의 초기화작업 */
@@ -31,11 +31,11 @@ public:
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override {};
 
 private:
-	CBasicUI* pOwner = { nullptr };
+	CDisplayUI* pOwner = { nullptr };
 
 public:
 	/* 사본 객체를 생성한다. */
-	static  CBasicUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	static  CDisplayUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const;
 	virtual CSpriteObject* Clone(void* pArg = nullptr) const;
 	virtual void Free() override;

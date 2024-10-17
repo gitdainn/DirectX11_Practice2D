@@ -58,23 +58,45 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+#pragma region LEVEL_LOGO 데이터
+	//if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+	//{
+	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+	//	return E_FAIL;
+	//}
+
+	//if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+	//{
+	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+	//	return E_FAIL;
+	//}
+
+	//if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
+	//{
+	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+	//	return E_FAIL;
+	//}
+#pragma endregion 
+
+#pragma region UI 데이터
+	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/UI.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"))))
+	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/UI.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/Level_Logo.xlsx"), LEVEL::LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/UI.xlsx"), LEVEL::LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
 		return E_FAIL;
 	}
+#pragma endregion
 
 	Safe_Release(pFileLoader);
 	return S_OK;
@@ -89,26 +111,23 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	SPRITE_INFO tSpriteInfo;
 	tSpriteInfo.fSize = _float2{ 300.f, 300.f };
 
+	
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, LAYER_BACKGROUND, tSpriteInfo)))
 	//	return E_FAIL;
 
 	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
 		return E_FAIL;
-	CPlayer_Manager::GetInstance()->Set_SubSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER::PLAYER)->back()));
-
-	//tSpriteInfo.fSize = _float2{ 200.f, 150.f };
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
-		return E_FAIL;
-	CPlayer_Manager::GetInstance()->Set_MainSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER::PLAYER)->back()));
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
 	//	return E_FAIL;
-	//CPlayer_Manager::GetInstance()->Set_MainSkul(dynamic_cast<CPlayer*>(pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER::PLAYER)->back()));
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER::ENEMY, tSpriteInfo)))
-		return E_FAIL;
-		
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER::ENEMY, tSpriteInfo)))
+	//	return E_FAIL;
+
+	tSpriteInfo.fSize = _float2{ 30, 30.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER::ITEM, tSpriteInfo)))
+		return E_FAIL;		
 
 	Safe_Release(pGameInstance);
 	return S_OK;

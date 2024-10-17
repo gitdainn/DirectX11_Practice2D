@@ -95,14 +95,14 @@ HRESULT CUI::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
 		return E_FAIL;
 
-	if (nullptr == m_pTextureTag)
+	if (nullptr == m_pSpriteFileName)
 	{
 		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 			return E_FAIL;
 	}
 	else
 	{
-		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pTextureTag)))
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
 			return E_FAIL;
 	}
 

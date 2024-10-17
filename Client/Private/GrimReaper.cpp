@@ -39,6 +39,8 @@ HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 
     Add_Animation();
 
+    CPlayer_Manager::GetInstance()->Acquire_Skul(this);
+
     return S_OK;
 }
 
@@ -56,6 +58,8 @@ HRESULT CGrimReaper::Initialize(void* pArg)
     //CPlayerInfo::GetInstance()->Set_MainSkul(this);
 
     Add_Animation();
+
+    CPlayer_Manager::GetInstance()->Acquire_Skul(this);
 
     return S_OK;
 }

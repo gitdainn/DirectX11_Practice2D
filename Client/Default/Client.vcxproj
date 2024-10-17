@@ -172,13 +172,14 @@
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
     <ClInclude Include="..\public\BackGround.h" />
-    <ClInclude Include="..\Public\BasicUI.h" />
+    <ClInclude Include="..\Public\DisplayUI.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Command.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\Public\Environment.h" />
     <ClInclude Include="..\Public\GrimReaper.h" />
     <ClInclude Include="..\Public\InputHandler.h" />
+    <ClInclude Include="..\Public\Item.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
     <ClInclude Include="..\Public\Level_Loading.h" />
     <ClInclude Include="..\public\Level_Logo.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="..\Public\SkillGateOfNether.h" />
     <ClInclude Include="..\Public\SkillGuillotine.h" />
     <ClInclude Include="..\Public\SkillUI.h" />
+    <ClInclude Include="..\Public\SkulItem.h" />
     <ClInclude Include="..\Public\Solider.h" />
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\Public\TemplateCmd.h">
@@ -221,13 +223,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\private\BackGround.cpp" />
-    <ClCompile Include="..\Private\BasicUI.cpp" />
+    <ClCompile Include="..\Private\DisplayUI.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Command.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\Private\Environment.cpp" />
     <ClCompile Include="..\Private\GrimReaper.cpp" />
     <ClCompile Include="..\Private\InputHandler.cpp" />
+    <ClCompile Include="..\Private\Item.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
     <ClCompile Include="..\Private\Level_Loading.cpp" />
     <ClCompile Include="..\private\Level_Logo.cpp" />
@@ -247,6 +250,7 @@
     <ClCompile Include="..\Private\SkillGateOfNether.cpp" />
     <ClCompile Include="..\Private\SkillGuillotine.cpp" />
     <ClCompile Include="..\Private\SkillUI.cpp" />
+    <ClCompile Include="..\Private\SkulItem.cpp" />
     <ClCompile Include="..\Private\Solider.cpp" />
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\Private\TemplateCmd.cpp">

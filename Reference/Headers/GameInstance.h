@@ -51,6 +51,7 @@ public: /* For.Level_Manager */
 public: /* For.Object_Manager */
 	class CComponent* Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pComponentTag, _uint iIndex = 0);
 	list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset);
+	CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName);
 	HRESULT Add_Prototype(const _tchar* pPrototypeTag, class CGameObject* pPrototype);
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, const tSpriteInfo& ObjectInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */

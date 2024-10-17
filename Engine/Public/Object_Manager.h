@@ -20,8 +20,7 @@ public:
 	class CComponent* Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pComponentTag, _uint iIndex);
 	/** @qurious - 벡터(또는 리스트)를 &로 반환하면 안되는 이유는 예외처리가 불가하니까? return nullptr 못함 */
 	list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset);
-	CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName, _uint iIndex);
-
+	CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName);
 
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);

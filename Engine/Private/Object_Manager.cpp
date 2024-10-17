@@ -26,7 +26,7 @@ list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _ui
 	return pLayer->Get_ObjectList();
 }
 
-CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName, _uint iIndex)
+CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName)
 {
 	if (nullptr == pObjName)
 		return nullptr;

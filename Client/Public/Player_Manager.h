@@ -60,12 +60,12 @@ public: // Getter //
     }
 
 private:
-    CPlayer* m_pMainSkul;
-    CPlayer* m_pSubSkul;
+    CPlayer* m_pMainSkul = { nullptr };
+    CPlayer* m_pSubSkul = { nullptr };
 
 private:
-    _bool   m_bIsAcquireSkul;
-    _bool   m_bIsMaxSkulEquipped;
+    _bool   m_bIsAcquireSkul = { false };
+    _bool   m_bIsMaxSkulEquipped = { false };
 
 private:
     _int m_iHp;

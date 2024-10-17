@@ -171,7 +171,11 @@ void CEnemy::Input_Handler(const ENEMY_STATE eEnemyState)
 
 	// 플레이어 위치에 따라서
 	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_vector vPlayerPosition = vPosition - Get_PlayerTransformCom()->Get_State(CTransform::STATE_POSITION);
+	CTransform* pPlayerTransform = Get_PlayerTransformCom();
+	if (nullptr == pPlayerTransform)
+		return;
+
+	_vector vPlayerPosition = vPosition - pPlayerTransform->Get_State(CTransform::STATE_POSITION);
 	_float vDirectionVecX = XMVectorGetX(vPlayerPosition - vPosition);
 	if (SPRITE_DIRECTION::LEFT == m_eSpriteDirection && 0.f > vDirectionVecX
 		|| SPRITE_DIRECTION::RIGHT == m_eSpriteDirection && 0.f < vDirectionVecX)

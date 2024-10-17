@@ -19,6 +19,15 @@ CTexture::CTexture(const CTexture& rhs)
 	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
 
+	for (auto& Pair : rhs.m_SRVMap)
+	{
+		_tchar* pKey = new _tchar[lstrlen(Pair.first) + 1]{};
+		lstrcpy(pKey, Pair.first);
+		ID3D11ShaderResourceView* pSRV = Pair.second;
+		//Safe_AddRef(pSRV);
+		m_SRVMap.emplace(pKey, pSRV);
+	}
+
 	_uint iIndex = 0;
 	m_TexturePathVec.resize(rhs.m_TexturePathVec.size());
 	for (const _tchar* pFilePath : rhs.m_TexturePathVec)
@@ -43,7 +52,11 @@ HRESULT CTexture::Set_ShaderResource(CShader* pShader, const char* pConstantName
 	if (nullptr == pFileName)
 		return E_FAIL;
 
-	unordered_map<const _tchar*, ID3D11ShaderResourceView*>::iterator Iter = m_SRVMap.find(pFileName);
+	auto CompareLamda = [=](const pair<const _tchar*, ID3D11ShaderResourceView*>& Pair)->bool
+		{
+			return !lstrcmp(Pair.first, pFileName);
+		};
+	const auto& Iter = find_if(m_SRVMap.begin(), m_SRVMap.end(), CompareLamda);
 	if (m_SRVMap.end() == Iter)
 		return E_FAIL;
 
@@ -258,8 +271,9 @@ void CTexture::Free()
 	for (pair<const _tchar*, ID3D11ShaderResourceView*> Pair : m_SRVMap)
 	{
 		Safe_Delete_Array(Pair.first);
+		//Safe_Release(Pair.second);
 	}
-	m_SRVMap.clear(); // m_SRVs의 pSRV를 참조하기에 할당 해제 안해도 됨!
+	m_SRVMap.clear();
 
 	for (const _tchar* pPath : m_TexturePathVec)
 	{

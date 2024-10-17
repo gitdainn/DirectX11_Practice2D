@@ -231,8 +231,16 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
-		return E_FAIL;
+	if (nullptr == m_pSpriteFileName)
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
+			return E_FAIL;
+	}
 
 #pragma UV 텍스처 셋팅
 	if (m_bIsAnimUV)
@@ -453,8 +461,8 @@ void CSpriteObject::Free()
 	else
 		Safe_Delete(m_pAnimInfo);
 
-	/** @note - m_pTextureTag 해제하면 안되는 이유
-	현재 m_pTextureTag는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/
+	/** @note - m_pSpriteFileName 해제하면 안되는 이유
+	현재 m_pSpriteFileName는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/
 	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
 	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
 

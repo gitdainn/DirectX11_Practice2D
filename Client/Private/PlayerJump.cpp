@@ -151,7 +151,7 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	m_UpTime = m_fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
-	_float fJumpY = m_UpTime - m_DownTime;
+	_float fJumpY = (_float)(m_UpTime - m_DownTime);
 	// @note - 전체적인 곡선 모양은 동일한데 속도만 빨리하고 싶다면 그래프상 시간을 빠르게 흐르게 하면 된다! (즉 시간만 속도 올려주기)
 	m_JumpTimeAcc += TimeDelta * fJumpSpeed;
 	

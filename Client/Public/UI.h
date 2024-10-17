@@ -27,16 +27,6 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
-public:
-	void	Set_TextureTag(const _tchar* pTextureTag)
-	{
-		if (nullptr == pTextureTag)
-			return;
-
-		Safe_Delete_Array(m_pTextureTag);
-		m_pTextureTag = pTextureTag;
-	}
-
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	virtual HRESULT SetUp_ShaderResources() override; /* 셰이더 전역변수에 값을 던진다. */
@@ -46,9 +36,6 @@ public:
 	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override {};
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override {};
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override {};
-
-private:
-	const		_tchar* m_pTextureTag = { nullptr };
 
 public:
 	virtual void Free() override;

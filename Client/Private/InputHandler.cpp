@@ -93,13 +93,9 @@ CCommand* CInputHandler::Key_Input() const
         }
     }
 
-    if (pGameInstance->Get_KeyDown(DIK_S))
+    if (pGameInstance->Get_KeyDown(DIK_SPACE))
     {
-        CPlayer* pPPlayer = dynamic_cast<CPlayer*>(pPlayer);
-        if (nullptr != pPPlayer)
-        {
-            pPPlayer->Execute_Skill(1);
-        }
+        CPlayer_Manager::GetInstance()->Swap_Skul();
     }
 #pragma endregion
 

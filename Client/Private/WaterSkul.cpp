@@ -25,8 +25,6 @@ HRESULT CWaterSkul::Initialize_Prototype()
 
 HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
-
-
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
         return E_FAIL;
@@ -52,9 +50,9 @@ HRESULT CWaterSkul::Initialize(void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    // @error - 장착한 플레이어만 뜨는데 이거 일단 고정으로 장착하게 해뒀으니 추후 수정해야함! //
-    CPlayer_Manager::GetInstance()->Set_MainSkul(this);
     Add_Animation();
+
+    //CPlayer_Manager::GetInstance()->Acquire_Skul(this);
 
     return S_OK;
 }

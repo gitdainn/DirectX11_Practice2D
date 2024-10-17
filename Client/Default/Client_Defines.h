@@ -56,12 +56,14 @@ namespace Client
 		BACKGROUND = (1 << 1), // 0000 0010
 		PLAYER = (1 << 2), // 0000 0100
 		ENEMY = (1 << 3), // 0000 1000
-		UI = (1 << 4), // 0001 0000
-		PLAYER_ATK = (1 << 5),
-		ENEMY_ATK = (1 << 6),
-		CAMERA = (1 << 7),
-		EFFECT = (1 << 8),
-		ITEM = (1 << 9)
+		PLAYER_ATK = (1 << 4),
+		ENEMY_ATK = (1 << 5),
+		CAMERA = (1 << 6),
+		EFFECT = (1 << 7),
+		ITEM = (1 << 8),
+		UI = (1 << 9), // 0001 0000
+		UI_MAINSKUL_STATE = (1 << 10), // 0001 0000
+		UI_SUBSKUL_STATE = (1 << 11), // 0001 0000
 	}LAYER_BITSET;
 
 	struct SKUL_EXCEL
@@ -137,13 +139,6 @@ using namespace Client;
 #define TAG_COLLBODY			TEXT("Com_CollBody")
 #define TAG_COLLFOOT			TEXT("Com_CollFoot")
 #define TAG_COLLHEAD			TEXT("Com_CollHead")
-#pragma endregion
-
-#pragma region UI
-#define UI_MAINSKILL			TEXT("UI_MainSkill")
-#define UI_SUBSKILL				TEXT("UI_SubSkill")
-#define UI_MAINPROFILE			TEXT("UI_MainProfile")
-#define UI_SUBPROFILE				TEXT("UI_SubProfile")
 #pragma endregion
 
 #pragma region DINPUT

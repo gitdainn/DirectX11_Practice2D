@@ -1,21 +1,21 @@
 #include "stdafx.h"
-#include "..\Public\SkillUI.h"
+#include "..\Public\DisplayUI.h"
 
 #include "GameInstance.h"
 
-CSkillUI::CSkillUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDisplayUI::CDisplayUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CUI(pDevice, pContext)
 {
 
 }
 
-CSkillUI::CSkillUI(const CSkillUI& rhs)
+CDisplayUI::CDisplayUI(const CDisplayUI& rhs)
 	: CUI(rhs)
 {
 
 }
 
-HRESULT CSkillUI::Initialize_Prototype()
+HRESULT CDisplayUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	m_LayerBitset = LAYER::UI;
@@ -23,7 +23,7 @@ HRESULT CSkillUI::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkillUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CDisplayUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -33,7 +33,7 @@ HRESULT CSkillUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	return S_OK;
 }
 
-HRESULT CSkillUI::Initialize(void* pArg)
+HRESULT CDisplayUI::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
@@ -43,27 +43,27 @@ HRESULT CSkillUI::Initialize(void* pArg)
 	return S_OK;
 }
 
-_uint CSkillUI::Tick(_double TimeDelta)
+_uint CDisplayUI::Tick(_double TimeDelta)
 {
 	return __super::Tick(TimeDelta);
 }
 
-_uint CSkillUI::LateTick(_double TimeDelta)
+_uint CDisplayUI::LateTick(_double TimeDelta)
 {
 	return __super::LateTick(TimeDelta);
 }
 
-HRESULT CSkillUI::Render()
+HRESULT CDisplayUI::Render()
 {
 	return __super::Render();
 }
 
-HRESULT CSkillUI::Add_Components(void* pArg)
+HRESULT CDisplayUI::Add_Components(void* pArg)
 {
 	return __super::Add_Components(pArg);
 }
 
-HRESULT CSkillUI::SetUp_ShaderResources()
+HRESULT CDisplayUI::SetUp_ShaderResources()
 {
 	if (FAILED(__super::SetUp_ShaderResources()))
 		return E_FAIL;
@@ -71,14 +71,14 @@ HRESULT CSkillUI::SetUp_ShaderResources()
 	return S_OK;
 }
 
-CSkillUI* CSkillUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
+CDisplayUI* CDisplayUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 {
-	CSkillUI* pInstance = new CSkillUI(pDevice, pContext);
+	CDisplayUI* pInstance = new CDisplayUI(pDevice, pContext);
 	if (pInstance)
 	{
 		if (FAILED(pInstance->Initialize_Prototype()))
 		{
-			MSG_BOX("CSkillUI - Create() - FAILED");
+			MSG_BOX("CDisplayUI - Create() - FAILED");
 			Safe_Release(pInstance);
 		}
 	}
@@ -86,33 +86,33 @@ CSkillUI* CSkillUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CSpriteObject* CSkillUI::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CDisplayUI::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
 {
-	CSkillUI* pInstance = new CSkillUI(*this);
+	CDisplayUI* pInstance = new CDisplayUI(*this);
 
 	if (FAILED(pInstance->Initialize(InSpriteInfo, pArg)))
 	{
-		MSG_BOX("Failed to Cloned CSkillUI");
+		MSG_BOX("Failed to Cloned CDisplayUI");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CSpriteObject* CSkillUI::Clone(void* pArg) const
+CSpriteObject* CDisplayUI::Clone(void* pArg) const
 {
-	CSkillUI* pInstance = new CSkillUI(*this);
+	CDisplayUI* pInstance = new CDisplayUI(*this);
 
 	if (FAILED(pInstance->Initialize(pArg)))
 	{
-		MSG_BOX("Failed to Cloned CSkillUI");
+		MSG_BOX("Failed to Cloned CDisplayUI");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CSkillUI::Free()
+void CDisplayUI::Free()
 {
 	__super::Free();
 }

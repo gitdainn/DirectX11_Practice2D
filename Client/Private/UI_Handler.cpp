@@ -14,138 +14,53 @@ CUI_Handler::~CUI_Handler()
 HRESULT CUI_Handler::Initialize()
 {
     Ready_PrototypeTag();
-    Ready_UI();
 
     return S_OK;
-}
-
-void CUI_Handler::Change_SkillSprite(const _tchar* pUITag, CPlayer* pPlayer)
-{
-    unordered_map<const _tchar*, list<CUI*>>::iterator SkillIter = m_UIMap.find(pUITag);
-
-    if (m_UIMap.end() == SkillIter)
-    {
-        MSG_BOX("UI_Handler - SwapSkull() - END");
-        return;
-    }
-
-    list<CUI*> SkillList = SkillIter->second;
-    if (SkillList.empty())
-        return;
-
-    int iIndex = { 0 };
-    for (CUI* pUI : SkillList)
-    {
-        ++iIndex;
-        //if (iIndex <= pChangeTarget->GetSkillNum())
-        //    pUI->Set_Render(false);
-
-        auto ProtoTagIter = m_UIPrototypeMap.find(pPlayer->Get_NameTag());
-        if (m_UIPrototypeMap.end() == ProtoTagIter)
-        {
-            MSG_BOX("UI_Handler - SwapSkul() - 해당 스컬에 대한 UI 정보가 없습니다.");
-            return;
-        }
-
-        PROTOTAG_TYPE tProtoTag = ProtoTagIter->second;
-        if (iIndex >= tProtoTag.SkillTagVec.size() - 1)
-        {
-            MSG_BOX("UI_Handler - SwapSkul() - Vector OverStackFlow");
-            return;
-        }
-        //pUI->Change_TextureComponent(tProtoTag.SkillTagVec[iIndex]);
-        pUI->Set_TextureTag(tProtoTag.SkillTagVec[iIndex]);
-    }
-}
-
-void CUI_Handler::Change_ProfileSprite(const _tchar* pUITag, CPlayer* pPlayer)
-{
-    unordered_map<const _tchar*, list<CUI*>>::iterator SkillIter = m_UIMap.find(pUITag);
-
-    if (m_UIMap.end() == SkillIter)
-    {
-        MSG_BOX("UI_Handler - SwapSkull() - END");
-        return;
-    }
-
-    // Add_GameObject는 미리 MaxSkillNum인 3개까지 만들어두기.!
-    list<CUI*> SkillList = SkillIter->second;
-    if (SkillList.empty())
-        return;
-
-    int iIndex = { 0 };
-    for (CUI* pUI : SkillList)
-    {
-        ++iIndex;
-        //if (iIndex <= pChangeTarget->GetSkillNum())
-        //    pUI->Set_Render(false);
-
-        auto ProtoTagIter = m_UIPrototypeMap.find(pPlayer->Get_NameTag());
-        if (m_UIPrototypeMap.end() == ProtoTagIter)
-        {
-            MSG_BOX("UI_Handler - SwapSkul() - 해당 스컬에 대한 UI 정보가 없습니다.");
-            return;
-        }
-
-        PROTOTAG_TYPE tProtoTag = ProtoTagIter->second;
-        pUI->Set_TextureTag(tProtoTag.pProfileTag);
-        //pUI->Change_TextureComponent(tProtoTag.pProfileTag);
-    }
 }
 
 void CUI_Handler::Ready_PrototypeTag()
 {
     PROTOTAG_TYPE   tPrototype;
-    ZeroMemory(&tPrototype, sizeof(PROTOTAG_TYPE));
+    //ZeroMemory(&tPrototype, sizeof(PROTOTAG_TYPE)); // 구조체 안에 컨테이너(vector)가 있기에 ZeroMemory 금물!
 
     /* 리틀본 */
-    tPrototype.SkillTagVec.emplace_back(TEXT("../../ㅇㄹㄴㄹㅇ"));
-    tPrototype.SkillTagVec.emplace_back(TEXT("../../ㅇㄹㄴㄹㅇ"));
-    tPrototype.pProfileTag = TEXT("djfsl");
-    m_UIPrototypeMap.emplace(TEXT("리틀본"), tPrototype);
+    //tPrototype.SkillTagVec.emplace_back(TEXT("../../ㅇㄹㄴㄹㅇ"));
+    //tPrototype.SkillTagVec.emplace_back(TEXT("../../ㅇㄹㄴㄹㅇ"));
+    //tPrototype.pProfileTag = TEXT("djfsl");
+    //m_UIPrototypeMap.emplace(TEXT("리틀본"), tPrototype);
 
     /* 그림리퍼 */
     tPrototype.SkillTagVec.emplace_back(TEXT("GrimReaper_Harvest"));
     tPrototype.SkillTagVec.emplace_back(TEXT("GrimReaper_Passive"));
     tPrototype.pProfileTag = TEXT("GrimReaper");
     m_UIPrototypeMap.emplace(TEXT("그림리퍼"), tPrototype);
-    ZeroMemory(&tPrototype, sizeof(PROTOTAG_TYPE));
+    tPrototype.SkillTagVec.clear();
 
     /* 워터스컬 */
     tPrototype.SkillTagVec.emplace_back(TEXT("AquaSkull_3_Passive"));
     tPrototype.SkillTagVec.emplace_back(TEXT("AquaSkull_3_SpiritsLake"));
     tPrototype.pProfileTag = TEXT("AquaSkull");
     m_UIPrototypeMap.emplace(TEXT("워터스컬"), tPrototype);
+    tPrototype.SkillTagVec.clear();
 
     return;
-}
-
-void CUI_Handler::Ready_UI()
-{
-    //// 스킬 UI 생성되면 얘네는 addChild로 자식을 생성하고, 자식들에게 명령 내리는 구조
-    //CUI* pUI = new CSkillUI();
-    //list<CUI*>  UIList;
-    //UIList.emplace_back(pUI);
-
-    //m_UIMap.emplace(UI_MAINSKILL, UIList);
-    //
-    //UIList.clear();
-    //UIList.emplace_back(pUI);
-    //pUI = new CSkillUI();
-    //m_UIMap.emplace(UI_SUBSKILL, pUI);
-
-    //pUI = new CBasicUI();
-    //m_UIMap.emplace(UI_MAINPROFILE, pUI);
-
-    //pUI = new CBasicUI();
-    //m_UIMap.emplace(UI_SUBPROFILE, pUI);
 }
 
 void CUI_Handler::Free()
 {
     __super::Free();
-
-    m_UIMap.clear();
+    
+    /* @note - Pair 원본 참조(&)시 오류 뜨는 이유
+    *  for(pair<const _tchar*, PROTOTAG_TYPE>& Pair : m_UIPrototypeMap) 오류!
+    1. &원본 참조를 하지 않으면 복사본에 대한 clear()가 수행되므로 실제 원본에는 clear가 적용되지 않음.
+    2. 아래 pair을 & 참조 시 오류가 뜸 
+    -> key값인 const _tchar*은 상수라 수정X가 원칙인데 Pair에 대해 비참조 연산자 & 사용 시 전체 pair 객체의 모든 멤버에 대한 참조가 생김
+    -> auto&를 이용하면 타입 추론을 통해 정확한 타입을 가져와 수정이 필요한 PROTOTAG_TYPE에만 참조를 적용시킴 
+    */
+    for(auto& Pair : m_UIPrototypeMap)
+    {
+       Pair.second.SkillTagVec.clear();
+    }
     m_UIPrototypeMap.clear();
 
     return;

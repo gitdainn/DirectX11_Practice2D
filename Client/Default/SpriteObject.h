@@ -142,6 +142,15 @@ public:
 		return m_tSpriteInfo;
 	}
 
+	void	Set_SpriteFileName(const _tchar* pTextureTag)
+	{
+		if (nullptr == pTextureTag)
+			return;
+
+		//Safe_Delete_Array(m_pSpriteFileName);
+		m_pSpriteFileName = pTextureTag;
+	}
+
 public: 
 	inline void CSpriteObject::Change_AnimType(const _uint& iAnimType)
 	{
@@ -200,6 +209,7 @@ protected:
 	// UV용 텍스처의 세로 텍스처 개수
 	_uint	m_iUVTexNumY;
 
+	const		_tchar* m_pSpriteFileName = { nullptr };
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 protected:
