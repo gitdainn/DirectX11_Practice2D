@@ -18,11 +18,11 @@ public:
 
 private: /* �� ������ ����ϱ����� �纻 ��ü���� �׷캰�� �����Ѵ�. */
 	HRESULT Ready_LightDesc();
-	HRESULT Ready_Layer_Camera(const _uint iLayerBitset);
-	HRESULT Ready_Layer_BackGround(const _uint iLayerBitset);
-	HRESULT Ready_Layer_Player(const _uint iLayerBitset);
-	HRESULT Ready_Layer_Monster(const _uint iLayerBitset);
-	HRESULT Ready_Layer_Effect(const _uint iLayerBitset);
+	HRESULT Ready_Layer_Camera(const _tchar* pLayer);
+	HRESULT Ready_Layer_BackGround(const _tchar* pLayer);
+	HRESULT Ready_Layer_Player(const _tchar* pLayer);
+	HRESULT Ready_Layer_Monster(const _tchar* pLayer);
+	HRESULT Ready_Layer_Effect(const _tchar* pLayer);
 
 public:
 	static CLevel_GamePlay* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

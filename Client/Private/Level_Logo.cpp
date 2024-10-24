@@ -53,15 +53,15 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 	Safe_AddRef(pFileLoader);
 
 #pragma region 라인 데이터
-	if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
-		return E_FAIL;
-	}
+	//if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
+	//{
+	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
+	//	return E_FAIL;
+	//}
 #pragma endregion
 
 #pragma region 오브젝트 데이터
-	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/Map.data"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/NewMap.data"), LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_FIle FAILED");
 		return E_FAIL;
@@ -106,17 +106,17 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//	return E_FAIL;
 
 	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 		return E_FAIL;
 
-	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 	//	return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER::ENEMY, tSpriteInfo)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER_ENEMY, tSpriteInfo)))
 		return E_FAIL;
 
 	tSpriteInfo.fSize = _float2{ 30, 30.f };
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER::ITEM, tSpriteInfo)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
 		return E_FAIL;		
 
 	Safe_Release(pGameInstance);

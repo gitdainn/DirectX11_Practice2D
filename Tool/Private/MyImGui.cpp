@@ -80,13 +80,13 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 #pragma region 레이어
     const _uint iLayerNum = { 7 };
     m_LayerVec.reserve(iLayerNum);
-    m_LayerVec.emplace_back(make_pair("Layer_Default", LAYER::DEFAULT));
-    m_LayerVec.emplace_back(make_pair("Layer_Background", LAYER::BACKGROUND));
-    m_LayerVec.emplace_back(make_pair("Layer_Effect", LAYER::EFFECT));
-    m_LayerVec.emplace_back(make_pair("Layer_Item", LAYER::ITEM));
-    m_LayerVec.emplace_back(make_pair("Layer_UI", LAYER::UI));
-    m_LayerVec.emplace_back(make_pair("Layer_UI_MainSkul_State", LAYER::UI_MAINSKUL_STATE));
-    m_LayerVec.emplace_back(make_pair("Layer_UI_SubSkul_State", LAYER::UI_SUBSKUL_STATE));
+    m_LayerVec.emplace_back(make_pair("Layer_Default", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_Background", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_Effect", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_Item", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_UI", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_UI_MainSkul_State", 0));
+    m_LayerVec.emplace_back(make_pair("LAYER_SUBSKUL_UI", 0));
 #pragma endregion
 
 #pragma region 충돌
@@ -112,12 +112,12 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     _tchar* pTag = new _tchar[MAX_PATH];
     lstrcpy(pTag, TEXT("Prototype_Component_Sprite_ForestTile"));
     tSpriteInfo.pTextureComTag = pTag;
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, LAYER::DEFAULT, tSpriteInfo))))
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, TEXT("Layer_Default"), tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Tick() - NULL");
     }
 
-    m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, LAYER::DEFAULT)->front());
+    m_pPreviewObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_ObjectList(LEVEL_STATIC, TEXT("Layer_Default"))->front());
     if (nullptr == m_pPreviewObject)
     {
         MSG_BOX("CMyImGui - Initialize - NULL");
@@ -304,8 +304,7 @@ HRESULT CMyImGui::Save_Object()
          tMetaData.pObjectID = { nullptr };
          tMetaData.pNameTag = pObject->Get_NameTag();
          tMetaData.pClassName = pObject->Get_ClassName();
-         tMetaData.pLayer = pObject->Get_Layer();
-         tMetaData.iLayerBitset = pObject->Get_LayerBitset();
+         tMetaData.pLayerTag = pObject->Get_Layer();
          tMetaData.iOrder = pObject->Get_Order();
          WriteFile(hFile, &tMetaData, sizeof(OBJECT_METADATA), &dwByte, nullptr); // 구조체 저장
 
@@ -324,9 +323,9 @@ HRESULT CMyImGui::Save_Object()
          lstrcpy(szBuffer, tMetaData.pClassName);
          WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
 
-         iLength = (lstrlen(tMetaData.pLayer) + 1) * sizeof(_tchar);
+         lstrcpy(szBuffer, tMetaData.pLayerTag);
+         iLength = (lstrlen(szBuffer) + 1) * sizeof(_tchar);
          WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-         lstrcpy(szBuffer, tMetaData.pLayer);
          WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
 #pragma endregion
 
@@ -447,8 +446,6 @@ HRESULT CMyImGui::Load_Object()
     _uint iListSize = { 0 };
     bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
 
-
-
     CFileLoader* pFileLoader = CFileLoader::GetInstance();
     if (nullptr == pFileLoader)
     {
@@ -548,7 +545,7 @@ HRESULT CMyImGui::Load_Object()
 #pragma endregion
 
 #pragma region 오브젝트 생성
-        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, tMetaData.iLayerBitset, &tMetaData.iInstanceID)))
+        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, szLayer, &tMetaData.iInstanceID)))
         {
             MSG_BOX("CMyImGui - Load_Object() - FAILED");
             CloseHandle(hFile);
@@ -557,7 +554,7 @@ HRESULT CMyImGui::Load_Object()
             return E_FAIL;
         }
 
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, tMetaData.iLayerBitset);
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, szLayer);
         if (nullptr == pObjectList)
         {
             MSG_BOX("CFileLoader - Load_Excel() - NULL");
@@ -576,7 +573,6 @@ HRESULT CMyImGui::Load_Object()
             _tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
             lstrcpy(pLayer, szLayer);
             pAddObject->Set_Layer(pLayer, true);
-            pAddObject->Set_Layer(tMetaData.iLayerBitset);
             pAddObject->Set_Order(tMetaData.iOrder);
 
             m_CreateObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
@@ -629,8 +625,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         tMetaData.pObjectID = { nullptr };
         tMetaData.pNameTag = pObject->Get_NameTag();
         tMetaData.pClassName = pObject->Get_ClassName();
-        tMetaData.pLayer = pObject->Get_Layer();
-        tMetaData.iLayerBitset = pObject->Get_LayerBitset();
+        tMetaData.pLayerTag = pObject->Get_Layer();
         tMetaData.iOrder = pObject->Get_Order();
 
         if (FAILED(pFileLoader->Write_ObjectMetaData_Excel(pFilePath, tMetaData, bIsReset)))
@@ -852,7 +847,6 @@ HRESULT CMyImGui::ShowInstalledWindow()
 
     ImGui::Combo("Layer", &iLayerSelectIndex, Layers, IM_ARRAYSIZE(Layers));
     m_pLayerC = m_LayerVec[iLayerSelectIndex].first;
-    m_iLayerBitset = m_LayerVec[iLayerSelectIndex].second;
 
     if (ImGui::Button("Create"))
     {
@@ -923,7 +917,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
 
     if (ImGui::Button("Save UI"))
     {
-        if (FAILED(Save_Line()))
+        if (FAILED(Save_Object_Excel()))
         {
             MSG_BOX("CMyImGui - Save_Line - FAILED");
         }
@@ -932,7 +926,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
 
     if (ImGui::Button("Load UI"))
     {
-        if (FAILED(Load_Line()))
+        if (FAILED(Load_Object_Excel()))
         {
             MSG_BOX("CMyImGui - Load_Line - FAILED");
         }
@@ -1599,7 +1593,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         }
 
         // 사실 이러면 실질적인 객체는 삭제가 안된 상태
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, LAYER::DEFAULT);
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, TEXT("Layer_Default"));
         if (nullptr == pObjectList)
         {
             Safe_Release(pGameInstance);
@@ -1628,7 +1622,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
             return;
         }
 
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_LayerBitset());
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_pSelectedObject->Get_Layer());
         if (nullptr == pObjectList)
         {
             Safe_Release(pGameInstance);
@@ -1726,15 +1720,17 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
 
     static int iIndex = m_CreateObjectVec.size();
     
+    _tchar* pLayer = { nullptr };
+    CToWC(m_pLayerC, pLayer);
     // 고르는 Layer 목록에 따라 알맞은 enum의 Layer를 줘야함 !
-    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, m_iLayerBitset, tSpriteInfo))))
+    if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_TOOL, pLayer, tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
         Safe_Release(pGameInstance);
         return E_FAIL;
     }
     // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..
-    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, m_iLayerBitset);
+    const list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList(LEVEL_TOOL, pLayer);
     if (nullptr == pObjectList)
     {
         MSG_BOX("CMyImGui - Install_GameObject() - NULL");
@@ -1758,10 +1754,7 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     const _tchar* pClassName = pDest;
     m_pSelectedObject->Set_ClassName(pClassName);
     Safe_Delete_Array(pClassName); // 현재 Set_Class 함수 내에서 동적할당 수행함.
-    m_pSelectedObject->Set_Layer(m_iLayerBitset);
 
-    _tchar* pLayer = { nullptr };
-    CToWC(m_pLayerC, pLayer);
     m_pSelectedObject->Set_Layer(pLayer, true);
     m_CreateObjectVec.emplace_back(m_pSelectedObject);
     //if (nullptr != m_pSelectedObject)

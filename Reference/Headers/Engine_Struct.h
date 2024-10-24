@@ -19,13 +19,23 @@ namespace Engine
 	typedef struct ENGINE_DLL tObjectMetaData
 	{
 		_uint iInstanceID;
-		_uint iLayerBitset;
 		_uint iOrder;
 		const _tchar* pObjectID;
 		const _tchar* pNameTag;
 		const _tchar* pClassName;
-		const _tchar* pLayer;
+		const _tchar* pLayerTag;
 	}OBJECT_METADATA;
+
+	struct ENGINE_DLL OBJECT_METADATA_PAST
+	{
+		_uint iInstanceID;
+		_uint pLayer;
+		_uint iOrder;
+		const _tchar* pObjectID;
+		const _tchar* pNameTag;
+		const _tchar* pClassName;
+		const _tchar* pLayerTag;
+	};
 
 	typedef struct ENGINE_DLL tObjectTransform
 	{
@@ -54,7 +64,7 @@ namespace Engine
 	{
 		const _tchar* pObjectID;
 		const _tchar* pClass;
-		const _tchar* pLayer;
+		const _tchar* pLayerTag;
 		const _tchar* pTextureTag;
 		_uint iTextureIndex;
 	}ORIGINAL_DATA;

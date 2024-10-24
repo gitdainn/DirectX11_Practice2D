@@ -42,8 +42,8 @@ void CPlayer_Manager::Acquire_Skul(CPlayer* pPlayer)
 
         m_bIsMaxSkulEquipped = false;
         pUIHandler->ChangeSkul(pPlayer, true);
-        pUIHandler->OnOffRender(LAYER::UI_MAINSKUL_STATE, true);
-        pUIHandler->OnOffRender(LAYER::UI_SUBSKUL_STATE, false);
+        pUIHandler->OnOffRender(LAYER_MAINSKUL_UI, true);
+        pUIHandler->OnOffRender(LAYER_SUBSKUL_UI, false);
 
     }
     else if (nullptr == m_pSubSkul)
@@ -53,7 +53,7 @@ void CPlayer_Manager::Acquire_Skul(CPlayer* pPlayer)
         m_bIsMaxSkulEquipped = true;
         pUIHandler->ChangeSkul(pPlayer, false);
         // 서브 렌더 켜기!
-        pUIHandler->OnOffRender(LAYER::UI_SUBSKUL_STATE, true);
+        pUIHandler->OnOffRender(LAYER_SUBSKUL_UI, true);
     }
     else
         MSG_BOX("CPlayer_Manager - Acquire_Skul - ERROR");
@@ -79,7 +79,7 @@ void CPlayer_Manager::Drop_Skul()
     pUIHandler->ChangeSkul(m_pSubSkul, true);
 
     // 서브 스컬 렌더 아예 끄기!
-    pUIHandler->OnOffRender(LAYER::UI_SUBSKUL_STATE, false);
+    pUIHandler->OnOffRender(LAYER_SUBSKUL_UI, false);
 
     Safe_Release(pUIHandler);
 

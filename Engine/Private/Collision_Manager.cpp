@@ -44,26 +44,25 @@ _uint CCollision_Manager::LateTick(_double TimeDelta)
 	if (1 >= m_ColliderMap.size())
 		return _uint();
 
-	for (auto iterSour = m_ColliderMap.begin(); iterSour != --m_ColliderMap.end(); ++iterSour)
-	{
-		auto CollisionListIter = m_CollisionLayerMap.find(iterSour->first);
-		if (m_CollisionLayerMap.end() == CollisionListIter)
-		{
-			continue;
-		}
-		_uint iCollisionListBitset = CollisionListIter->second;
+	//for (auto iterSour = m_ColliderMap.begin(); iterSour != --m_ColliderMap.end(); ++iterSour)
+	//{
+	//	auto CollisionListIter = m_CollisionLayerMap.find(iterSour->first);
+	//	if (m_CollisionLayerMap.end() == CollisionListIter)
+	//	{
+	//		continue;
+	//	}
+	//	_uint iCollisionListBitset = CollisionListIter->second;
 
-		auto iterDest = iterSour;
-		++iterDest;
-		for (iterDest ; iterDest != m_ColliderMap.end(); ++iterDest)
-		{
-			// 충돌목록 비트셋 & 현재 레이어 비트셋이 일치하지 않으면 충돌 체크X
-			if (!(iCollisionListBitset & iterDest->first))
-				continue;
+	//	auto iterDest = iterSour;
+	//	++iterDest;		for (iterDest ; iterDest != m_ColliderMap.end(); ++iterDest)
+	//	{
+	//		// 충돌목록 비트셋 & 현재 레이어 비트셋이 일치하지 않으면 충돌 체크X
+	//		if (!(iCollisionListBitset & iterDest->first))
+	//			continue;
 
-			Update_Collision(iterSour->second, iterDest->second);
-		}
-	}
+	//		Update_Collision(iterSour->second, iterDest->second);
+	//	}
+	//}
 
 	return _uint();
 }
@@ -107,7 +106,7 @@ void CCollision_Manager::Clear_Collider()
 	return;
 }
 
-HRESULT CCollision_Manager::Attach_Collider(const _uint LayerBitset, CCollider* pCollider)
+HRESULT CCollision_Manager::Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider)
 {
 	if (nullptr == pCollider)
 	{
@@ -115,12 +114,12 @@ HRESULT CCollision_Manager::Attach_Collider(const _uint LayerBitset, CCollider* 
 		return S_OK;
 	}
 
-	map<const _uint, list<CCollider*>>::iterator iter = m_ColliderMap.find(LayerBitset);
+	map<const _tchar*, list<CCollider*>>::iterator iter = m_ColliderMap.find(pLayerTag);
 	if (m_ColliderMap.end() == iter)
 	{
 		list<CCollider*> ColliderList;
 		ColliderList.emplace_back(pCollider);
-		m_ColliderMap.emplace(LayerBitset, ColliderList);
+		m_ColliderMap.emplace(pLayerTag, ColliderList);
 	}
 	else
 	{

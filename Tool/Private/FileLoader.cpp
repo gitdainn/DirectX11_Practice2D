@@ -76,7 +76,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 				tSpriteInfo.pTextureComTag = pTextureComTag;
 			}
 
-			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, LAYER::DEFAULT, tSpriteInfo)))
+			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, TEXT("Layer_Default"), tSpriteInfo)))
 			{
 				MSG_BOX("CMyImGui - Load_Object() - FAILED");
 				CloseHandle(hFile);
@@ -119,20 +119,20 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 			const _tchar* pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
 			_tchar* pNameTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			_uint	iLayerBitset = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			_tchar* pLayerTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
+			_uint	iLayer = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			_uint	iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
 			Safe_AddRef(pGameInstance);
-			if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)eLevel, iLayerBitset, &iInstanceID)))
+			if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)eLevel, pLayerTag, &iInstanceID)))
 			{
 				MSG_BOX("CMyImGui - Load_Object() - FAILED");
 				Safe_Release(pGameInstance);
 				return E_FAIL;
 			}
 
-			list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, iLayerBitset);
+			list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, pLayerTag);
 			if (nullptr == pObjectList)
 			{
 				MSG_BOX("CFileLoader - Load_Excel() - NULL");
@@ -147,8 +147,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				pAddObject->Set_SpriteTag(pTag);
 				pAddObject->Set_NameTag(pNameTag);
 				pAddObject->Set_ClassName(pClassName);
-				pAddObject->Set_Layer(pLayer, true);
-				pAddObject->Set_Layer(iLayerBitset);
+				pAddObject->Set_Layer(pLayerTag, true);
 				pAddObject->Set_Order(iOrder);
 
 				//pGameInstance->Add_Garbage(pClassName);
@@ -168,54 +167,6 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 
 	pBook->release();
 	Clear_LoadInfo();
-
-	return S_OK;
-}
-
-// 현재 안 쓰는 함수임
-HRESULT CFileLoader::Load_OriginalData_Excel(const _tchar* pFilePath, LEVEL eLevel)
-{
-	Book* pBook = xlCreateXMLBookW();
-	if (nullptr == pBook)
-	{
-		pBook->release();
-		return E_FAIL;
-	}
-
-	SPRITE_INFO tSpriteInfo;
-	if (pBook->load(pFilePath))
-	{
-		Sheet* pSheet = pBook->getSheet(m_iOriginalData);
-		if (nullptr == pSheet)
-		{
-			pBook->release();
-			return E_FAIL;
-		}
-		const int iLastRow = pSheet->lastRow() - 1;
-		const int iLastCol = { 5 };
-		ORIGINAL_DATA tOriginalData;
-		for (_uint iRow = m_iFirstRow; iRow <= iLastRow; ++iRow)
-		{
-			int iCol = { 0 };
-			tOriginalData.pObjectID = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			tOriginalData.pClass = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			tOriginalData.pLayer = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			tOriginalData.pTextureTag = pSheet->readStr(iRow, m_iFirstCol + iCol++);
-			tOriginalData.iTextureIndex = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-
-			//if (m_OriginalDataMap.end() != m_OriginalDataMap.find(tOriginalData.pClass))
-			//{
-			//	MSG_BOX("CFileLoader - Load_OriginalData_Excel() - FAIL");
-			//	pBook->release();
-			//	continue;
-			//}
-
-			//@qurious - 지역변수구조체를 컨테이너에 넣으면 소멸이 안되고 복제돼서 들어가는지!
-			m_OriginalDataMap.emplace(tOriginalData.pClass, tOriginalData);
-		}
-	}
-
-	pBook->release();
 
 	return S_OK;
 }
@@ -462,8 +413,7 @@ HRESULT CFileLoader::Write_ObjectMetaData_Excel(const _tchar* pFilePath, const O
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pObjectID);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pNameTag);
 		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pClassName);
-		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pLayer);
-		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iLayerBitset);
+		pSheet->writeStr(iRow, m_iFirstCol + iCol++, tMetaData.pLayerTag);
 		pSheet->writeNum(iRow, m_iFirstCol + iCol++, tMetaData.iOrder);
 		++iRow;
 	}

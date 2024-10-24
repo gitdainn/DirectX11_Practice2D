@@ -18,7 +18,7 @@ HRESULT CItem::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	m_LayerBitset = LAYER::ITEM;
+	m_pLayerTag = LAYER_ITEM;
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
 	return S_OK;
@@ -56,7 +56,7 @@ _uint CItem::Tick(_double TimeDelta)
 
 _uint CItem::LateTick(_double TimeDelta)
 {
-	Attach_Collider(m_LayerBitset, m_pColliderCom);
+	Attach_Collider(m_pLayerTag, m_pColliderCom);
 
 	return __super::LateTick(TimeDelta);
 }

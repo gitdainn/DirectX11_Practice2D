@@ -18,7 +18,7 @@ CUI::CUI(const CUI& rhs)
 HRESULT CUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	m_LayerBitset = LAYER::UI;
+	m_pLayerTag = LAYER_UI;
 
 	return S_OK;
 }

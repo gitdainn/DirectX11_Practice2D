@@ -156,13 +156,13 @@ HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 
 HRESULT CMainApp::Ready_CollisionLayerMatrix()
 {
-	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT | LAYER::ITEM);
-	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYERATK);
-	m_pGameInstance->Set_CollisionLayer(LAYER_PLAYERATK, LAYER_ENEMY);
-	m_pGameInstance->Set_CollisionLayer(LAYER_ENEMYATK, LAYER_PLAYER);
-	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
-	m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
-	m_pGameInstance->Set_CollisionLayer(LAYER::ITEM, LAYER_PLAYER);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT | LAYER_ITEM);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYERATK);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_PLAYERATK, LAYER_ENEMY);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_ENEMYATK, LAYER_PLAYER);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
+	//m_pGameInstance->Set_CollisionLayer(LAYER_ITEM, LAYER_PLAYER);
 
 	return S_OK;
 }

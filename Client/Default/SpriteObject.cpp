@@ -23,7 +23,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 HRESULT CSpriteObject::Initialize_Prototype()
 {
-	m_LayerBitset = LAYER::DEFAULT;
+	m_pLayerTag = LAYER_DEFAULT;
 	return S_OK;
 }
 
@@ -306,14 +306,14 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	return S_OK;
 }
 
-HRESULT CSpriteObject::Attach_Collider(const _uint LayerBitset, CCollider* pCollider)
+HRESULT CSpriteObject::Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider)
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	if (nullptr == pGameInstance)
 		return E_FAIL;
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Attach_Collider(LayerBitset, pCollider)))
+	if (FAILED(pGameInstance->Attach_Collider(pLayerTag, pCollider)))
 	{
 		MSG_BOX("CSpriteObject - LateTick() - FAILED");
 		return E_FAIL;

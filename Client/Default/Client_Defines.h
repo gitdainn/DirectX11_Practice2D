@@ -50,22 +50,6 @@ namespace Client
 		MAGIC, PHYISIC, BALANCE
 	};
 
-	typedef enum LAYER
-	{
-		DEFAULT = (1 << 0), // 0000 0001
-		BACKGROUND = (1 << 1), // 0000 0010
-		PLAYER = (1 << 2), // 0000 0100
-		ENEMY = (1 << 3), // 0000 1000
-		PLAYER_ATK = (1 << 4),
-		ENEMY_ATK = (1 << 5),
-		CAMERA = (1 << 6),
-		EFFECT = (1 << 7),
-		ITEM = (1 << 8),
-		UI = (1 << 9), // 0001 0000
-		UI_MAINSKUL_STATE = (1 << 10), // 0001 0000
-		UI_SUBSKUL_STATE = (1 << 11), // 0001 0000
-	}LAYER_BITSET;
-
 	struct SKUL_EXCEL
 	{
 		const wchar_t* pName;
@@ -106,15 +90,19 @@ extern HWND g_hWnd;
 using namespace Client;
 
 #pragma region LAYER
-#define LAYER_DEFAULT			LAYER::DEFAULT	
-#define LAYER_BACKGROUND		LAYER::BACKGROUND 
-#define LAYER_PLAYER			LAYER::PLAYER 
-#define LAYER_ENEMY				LAYER::ENEMY 
-#define LAYER_PLAYERATK			LAYER::PLAYER_ATK 
-#define LAYER_ENEMYATK			LAYER::ENEMY_ATK 
-#define LAYER_EFFECT			LAYER::EFFECT
-#define LAYER_CAMERA			LAYER::CAMERA 
-#define LAYER_UI				LAYER::UI 
+#define LAYER_DEFAULT			TEXT("Layer_Default")	
+#define LAYER_BACKGROUND		TEXT("Layer_Background")
+#define LAYER_ENVIRONMENT		TEXT("Layer_Environment")
+#define LAYER_PLAYER			TEXT("Layer_Player") 
+#define LAYER_ENEMY				TEXT("Layer_Enemy")
+#define LAYER_PLAYERATK			TEXT("Layer_PlayerAtk") 
+#define LAYER_ENEMYATK			TEXT("Layer_EnemyAtk") 
+#define LAYER_EFFECT			TEXT("Layer_Effect")
+#define LAYER_ITEM				TEXT("Layer_Item")
+#define LAYER_CAMERA			TEXT("Layer_Camera") 
+#define LAYER_UI				TEXT("Layer_UI") 
+#define LAYER_MAINSKUL_UI		TEXT("Layer_MainSkul_UI") 
+#define LAYER_SUBSKUL_UI		TEXT("Layer_SubSkul_UI") 
 #pragma endregion
 
 

@@ -18,7 +18,7 @@ HRESULT CSkulItem::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	m_LayerBitset = LAYER::ITEM;
+	m_pLayerTag = LAYER_ITEM;
 	m_eRenderGroup = CRenderer::RENDER_UI;
 
 	return S_OK;
@@ -84,9 +84,9 @@ void CSkulItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget
 	{
 		SPRITE_INFO tSpriteInfo;
 		tSpriteInfo.fSize = _float2{ 200.f, 150.f };
-		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER::PLAYER, tSpriteInfo)))
+		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 			return;
-		list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER::PLAYER);
+		list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER);
 		if (nullptr == pObjList)
 			return;
 		CGameObject* pObject = pObjList->back();

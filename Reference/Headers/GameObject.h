@@ -80,11 +80,6 @@ public:
 		return m_pLayerTag;
 	}
 
-	const _uint Get_LayerBitset() const
-	{
-		return m_LayerBitset;
-	}
-
 public:
 	void Set_InstanceID(const _uint& iID)
 	{
@@ -130,25 +125,20 @@ public:
 		m_pClassName = pName;
 	}
 
-	void Set_Layer(const _uint LayerBitset)
+	void Set_Layer(const _tchar* pLayerTag, _bool bIsAllocated)
 	{
-		m_LayerBitset = LayerBitset;
-	}
-
-	void Set_Layer(const _tchar* pLayer, _bool bIsAllocated)
-	{
-		if (nullptr == pLayer)
+		if (nullptr == pLayerTag)
 			return;
 
 		// 기존에 동적할당된 문자열이었다면
 		if (m_IsAllocatedCStringFlag & CSTRING_ALLOCATION::Layer)
 		{
 			Safe_Delete_Array(m_pLayerTag);
-			m_pLayerTag = pLayer;
+			m_pLayerTag = pLayerTag;
 		}
 		else
 		{
-			m_pLayerTag = pLayer;
+			m_pLayerTag = pLayerTag;
 		}
 
 		m_IsAllocatedCStringFlag = bIsAllocated ? (m_IsAllocatedCStringFlag | CSTRING_ALLOCATION::Layer) : (m_IsAllocatedCStringFlag & (~CSTRING_ALLOCATION::Layer));
@@ -195,7 +185,6 @@ protected:
 	const _tchar* m_pClassName = { nullptr };
 	const _tchar* m_pNameTag = { nullptr };
 	const _tchar* m_pLayerTag = { nullptr };
-	_uint	  m_LayerBitset = { 0 };
 	_uint	m_iShaderPassIndex = { 0 };
 	_uint	m_iTextureIndex = { 0 };
 	_uint	m_iOrder = { 0 };

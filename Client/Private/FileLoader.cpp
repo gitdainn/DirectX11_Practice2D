@@ -135,7 +135,10 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 #pragma region 오브젝트 생성
 		_tchar* pPrototypeTag = new _tchar[MAX_PATH]{ TEXT("Prototype_GameObject_") };
 		lstrcat(pPrototypeTag, szClassName);
-		if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, tMetaData.iLayerBitset, &tMetaData.iInstanceID)))
+
+		_tchar* pLayer = new _tchar[lstrlen(szLayer) + 1];
+		lstrcpy(pLayer, szLayer);
+		if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &tMetaData.iInstanceID)))
 		{
 			MSG_BOX("CMyImGui - Load_Object() - FAILED");
 			CloseHandle(hFile);
@@ -145,7 +148,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 		}
 		Safe_Delete_Array(pPrototypeTag);
 
-		list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, tMetaData.iLayerBitset);
+		list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, pLayer);
 		if (nullptr == pObjectList)
 		{
 			MSG_BOX("CFileLoader - Load_Excel() - NULL");
@@ -157,12 +160,10 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 			pAddObject->Set_NameTag(szNameTag);
 			pAddObject->Set_ClassName(szClassName);
 
-			_tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
-			lstrcpy(pLayer, szLayer);
-			pAddObject->Set_Layer(pLayer, true);
-			pAddObject->Set_Layer(tMetaData.iLayerBitset);
+			pAddObject->Set_Layer(pLayer, false);
 			pAddObject->Set_Order(tMetaData.iOrder);
 		}
+		pGameInstance->Add_Garbage(pLayer);
 #pragma endregion
 	}
 	CloseHandle(hFile);
@@ -204,7 +205,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			const _tchar* pNameTag = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			const _tchar* pClassName = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
 			_tchar* pLayer = Copy_WChar(pSheet->readStr(iRow, m_iFirstCol + iCol++));
-			_uint iLayerBitset = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			_uint iLayer = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			_uint iOrder = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
 			CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -215,7 +216,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			Safe_Delete_Array(pClassName);
 			Safe_Delete_Array(pLayer);
 
-			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, iLayerBitset, &iInstanceID)))
+			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &iInstanceID)))
 			{
 				MSG_BOX("CFileLoader - Load_Excel() - FAILED");
 				Safe_Release(pGameInstance);
@@ -224,7 +225,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 
 			if (nullptr != pNameTag)
 			{
-				CGameObject* pObject = pGameInstance->Get_ObjectList((_uint)eLevel, iLayerBitset)->back();
+				CGameObject* pObject = pGameInstance->Get_ObjectList((_uint)eLevel, pLayer)->back();
 				if (nullptr != pObject)
 				{
 					pObject->Set_NameTag(pNameTag);

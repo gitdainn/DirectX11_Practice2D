@@ -20,7 +20,7 @@ HRESULT CEnemy::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 
-	m_LayerBitset = LAYER::ENEMY;
+	Set_Layer(LAYER_ENEMY, false);
 	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 
 	//m_StateFunctionMap.emplace(ENEMY_STATE::IDLE, bind(&CEnemy::Idle, this, std::placeholders::_1)); // 뒤에 숫자면 되는데 placeholders면 안됨
@@ -104,7 +104,7 @@ _uint CEnemy::Tick(_double TimeDelta)
 
 _uint CEnemy::LateTick(_double TimeDelta)
 {
-	Attach_Collider(m_LayerBitset, m_pColliderCom);
+	Attach_Collider(m_pLayerTag, m_pColliderCom);
 
 	return __super::LateTick(TimeDelta);
 }
@@ -120,7 +120,7 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
-	if (LAYER::PLAYER_ATK & pTarget->Get_LayerBitset())
+	if (!lstrcmp(LAYER_PLAYERATK, pTarget->Get_Layer()))
 	{
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());

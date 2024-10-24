@@ -45,7 +45,7 @@ public:
         // true이면 main 스컬을 교체
         if (bChangeMainSkul)
         {
-            CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_MAINSKUL_STATE, TEXT("MainProfile"));
+            CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainProfile"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -72,7 +72,7 @@ public:
             }
             pUI->Set_SpriteFileName(ChangePlayerIter->second.pProfileTag);
 
-            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_MAINSKUL_STATE, TEXT("MainSkill1"));
+            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainSkill1"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -86,7 +86,7 @@ public:
             }
             pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[0]);
 
-            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_MAINSKUL_STATE, TEXT("MainSkill2"));
+            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainSkill2"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -103,7 +103,7 @@ public:
         }
         else
         {
-            CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_SUBSKUL_STATE, TEXT("SubProfile"));
+            CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubProfile"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -129,7 +129,7 @@ public:
             }
             pUI->Set_SpriteFileName(ChangePlayerIter->second.pProfileTag);
 
-            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_SUBSKUL_STATE, TEXT("SubSkill1"));
+            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubSkill1"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -143,7 +143,7 @@ public:
             }
             pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[0]);
 
-            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER::UI_SUBSKUL_STATE, TEXT("SubSkill2"));
+            pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubSkill2"));
             if (nullptr == pObject)
             {
                 Safe_Release(pGameInstance);
@@ -163,7 +163,7 @@ public:
         return;
     }
 
-    void    OnOffRender(const _uint iLayerBitset, const _bool bIsRender)
+    void    OnOffRender(const _tchar* pLayer, const _bool bIsRender)
     {
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
         if (nullptr == pGameInstance)
@@ -173,7 +173,7 @@ public:
         }
         Safe_AddRef(pGameInstance);
 
-        list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList((_uint)LEVEL_LOGO, iLayerBitset);
+        list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList((_uint)LEVEL_LOGO, pLayer);
         if (nullptr == pObjList)
         {
             Safe_Release(pGameInstance);

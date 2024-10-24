@@ -16,19 +16,19 @@ HRESULT CLevel_GamePlay::Initialize()
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Camera(LAYER::CAMERA)))
+	if (FAILED(Ready_Layer_Camera(LAYER_CAMERA)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Player(LAYER::PLAYER)))
+	if (FAILED(Ready_Layer_Player(LAYER_PLAYER)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(LAYER::ENEMY)))
+	if (FAILED(Ready_Layer_Monster(LAYER_ENEMY)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(LAYER::BACKGROUND)))
+	if (FAILED(Ready_Layer_BackGround(LAYER_BACKGROUND)))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(LAYER::EFFECT)))
+	if (FAILED(Ready_Layer_Effect(LAYER_EFFECT)))
 		return E_FAIL;
 
 	return S_OK;
@@ -85,7 +85,7 @@ HRESULT CLevel_GamePlay::Ready_LightDesc()
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _uint iLayerBitset)
+HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _tchar* pLayer)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
@@ -105,37 +105,37 @@ HRESULT CLevel_GamePlay::Ready_Layer_Camera(const _uint iLayerBitset)
 	CameraDynamicDesc.CameraDesc.tTransformDesc.SpeedPerSec = 20.f;
 	CameraDynamicDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_GAMEPLAY, iLayerBitset, &CameraDynamicDesc)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_GAMEPLAY, pLayer, &CameraDynamicDesc)))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _uint iLayerBitset)
+HRESULT CLevel_GamePlay::Ready_Layer_BackGround(const _tchar* pLayer)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Terrain"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Terrain"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Sky"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Sky"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_ForkLift"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_ForkLift"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;
 
 	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Player(const _uint iLayerBitset)
+HRESULT CLevel_GamePlay::Ready_Layer_Player(const _tchar* pLayer)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Player"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Player"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;	
 
 	Safe_Release(pGameInstance);
@@ -143,13 +143,13 @@ HRESULT CLevel_GamePlay::Ready_Layer_Player(const _uint iLayerBitset)
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _uint iLayerBitset)
+HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _tchar* pLayer)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	for (_uint i = 0; i < 20; ++i)
-		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Monster"), LEVEL_GAMEPLAY, iLayerBitset)))
+		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Monster"), LEVEL_GAMEPLAY, pLayer)))
 			return E_FAIL;
 
 	Safe_Release(pGameInstance);
@@ -157,20 +157,20 @@ HRESULT CLevel_GamePlay::Ready_Layer_Monster(const _uint iLayerBitset)
 	return S_OK;
 }
 
-HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _uint iLayerBitset)
+HRESULT CLevel_GamePlay::Ready_Layer_Effect(const _tchar* pLayer)
 {
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 	
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Effect_Blue"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Effect_Blue"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Effect_Red"), LEVEL_GAMEPLAY, iLayerBitset)))
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Effect_Red"), LEVEL_GAMEPLAY, pLayer)))
 		return E_FAIL;
 
 	for (_uint i = 0; i < 30; ++i)
 	{
-		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Explosion"), LEVEL_GAMEPLAY, iLayerBitset)))
+		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Explosion"), LEVEL_GAMEPLAY, pLayer)))
 			return E_FAIL;
 	}
 

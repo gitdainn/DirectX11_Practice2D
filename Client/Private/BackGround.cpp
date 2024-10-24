@@ -18,6 +18,7 @@ CBackGround::CBackGround(const CBackGround & rhs)
 HRESULT CBackGround::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
+	Set_Layer(LAYER_BACKGROUND, false);
 
 	return S_OK;	
 }

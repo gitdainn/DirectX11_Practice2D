@@ -8,30 +8,30 @@ CObject_Manager::CObject_Manager()
 {
 }
 
-CComponent * CObject_Manager::Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar * pComponentTag, _uint iIndex)
+CComponent * CObject_Manager::Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar * pComponentTag, _uint iIndex)
 {
-	CLayer*		pLayer = Find_Layer(iLevelIndex, LayerBitset);
+	CLayer*		pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
 		return nullptr;
 
 	return pLayer->Get_Component(pComponentTag, iIndex);	
 }
 
-list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset)
+list<CGameObject*>* CObject_Manager::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
 {
-	CLayer* pLayer = Find_Layer(iLevelIndex, LayerBitset);
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
 		return nullptr;
 
 	return pLayer->Get_ObjectList();
 }
 
-CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName)
+CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pObjName)
 {
 	if (nullptr == pObjName)
 		return nullptr;
 
-	list<CGameObject*>* pObjectList = Get_ObjectList(iLevelIndex, LayerBitset);
+	list<CGameObject*>* pObjectList = Get_ObjectList(iLevelIndex, pLayerTag);
 	if (nullptr == pObjectList)
 		return nullptr;
 
@@ -77,7 +77,7 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	return S_OK;
 }
 
-HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, void* pArg)
+HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
@@ -90,7 +90,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	if (nullptr == pGameObject)
 		return E_FAIL;
 
-	CLayer* pLayer = Find_Layer(iLevelIndex, LayerBitset);
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
@@ -100,7 +100,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 		if (FAILED(pLayer->Add_GameObject(pGameObject)))
 			return E_FAIL;
 
-		m_pLayersMap[iLevelIndex].emplace(LayerBitset, pLayer);
+		m_pLayersMap[iLevelIndex].emplace(pLayerTag, pLayer);
 	}
 	else
 	{
@@ -112,7 +112,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 }
 
 /* 원형객체를 찾아 복제하여 레이어에 추가한다. */
-HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, const tSpriteInfo& SpriteInfo, void* pArg)
+HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
@@ -125,7 +125,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	if (nullptr == pGameObject)
 		return E_FAIL;	
 
-	CLayer*		pLayer = Find_Layer(iLevelIndex, LayerBitset);
+	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
 	{
 		pLayer = CLayer::Create();
@@ -135,7 +135,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 		if (FAILED(pLayer->Add_GameObject(pGameObject)))
 			return E_FAIL;	
 
-		m_pLayersMap[iLevelIndex].emplace(LayerBitset, pLayer);
+		m_pLayersMap[iLevelIndex].emplace(pLayerTag, pLayer);
 	}
 	else
 	{
@@ -214,18 +214,18 @@ CGameObject * CObject_Manager::Find_Prototype(const _tchar * pPrototypeTag)
 	return iter->second;
 }
 
-CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _uint LayerBitset)
+CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	if (iLevelIndex >= m_iNumLevels)
 		return nullptr;
 
-	auto	CompareLambda = [LayerBitset](const pair<const _uint, CLayer*>& Pair)
+	auto	CompareLambda = [pLayerTag](const pair<const _tchar*, CLayer*>& Pair)
 		{
-			return LayerBitset == Pair.first;
+			return !lstrcmp(pLayerTag, Pair.first);
 		};
 
 	// @note - find_if문은 람다에 소괄호를 생략하면 자동으로 pair가 소괄호에 들어감
-	unordered_map<const _uint, class CLayer*>::iterator iter 
+	unordered_map<const _tchar*, class CLayer*>::iterator iter 
 		= find_if(m_pLayersMap[iLevelIndex].begin(), m_pLayersMap[iLevelIndex].end(), CompareLambda);
 
 	if (iter == m_pLayersMap[iLevelIndex].end())

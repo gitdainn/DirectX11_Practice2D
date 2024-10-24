@@ -52,7 +52,7 @@ HRESULT CLevel_Tool::Ready_Layer_Camera()
 
 	tCameraDesc.CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
 
-	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_TOOL, LAYER::CAMERA, &tCameraDesc))))
+	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_TOOL, TEXT("Layer_Camera"), &tCameraDesc))))
 	{
 		MSG_BOX("CLevel_Tool - Ready_Layer_Camera() - NULL");
 	}

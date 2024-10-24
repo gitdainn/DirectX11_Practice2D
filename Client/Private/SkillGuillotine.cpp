@@ -68,7 +68,7 @@ _uint CSkillGuillotine::LateTick(_double TimeDelta)
 {
 	if (nullptr != m_pColliderCom)
 	{
-		Attach_Collider(m_LayerBitset, m_pColliderCom);
+		Attach_Collider(m_pLayerTag, m_pColliderCom);
 
 	}
 

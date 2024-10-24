@@ -233,28 +233,28 @@ HRESULT CGameInstance::Open_Level(_uint iLevelIndex, CLevel * pNewLevel)
 	return m_pLevel_Manager->Open_Level(iLevelIndex, pNewLevel);
 }
 
-CComponent * CGameInstance::Get_Component(_uint iLevelIndex, const _uint LayerBitset, const _tchar * pComponentTag, _uint iIndex)
+CComponent * CGameInstance::Get_Component(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar * pComponentTag, _uint iIndex)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
-	return m_pObject_Manager->Get_Component(iLevelIndex, LayerBitset, pComponentTag, iIndex);	
+	return m_pObject_Manager->Get_Component(iLevelIndex, pLayerTag, pComponentTag, iIndex);
 }
 
-list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset)
+list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const _tchar* pLayerTag)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
-	return m_pObject_Manager->Get_ObjectList(iLevelIndex, LayerBitset);
+	return m_pObject_Manager->Get_ObjectList(iLevelIndex, pLayerTag);
 }
 
-CGameObject* CGameInstance::Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName)
+CGameObject* CGameInstance::Get_GameObjectByName(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pObjName)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
-	return m_pObject_Manager->Get_GameObjectByName(iLevelIndex, LayerBitset, pObjName);
+	return m_pObject_Manager->Get_GameObjectByName(iLevelIndex, pLayerTag, pObjName);
 }
 
 HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
@@ -265,20 +265,20 @@ HRESULT CGameInstance::Add_Prototype(const _tchar * pPrototypeTag, CGameObject *
 	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
 }
 
-HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, void * pArg)
+HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, void * pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, LayerBitset, pArg);
+	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, pArg);
 }
 
-HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _uint LayerBitset, const tSpriteInfo& SpriteInfo, void* pArg)
+HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, LayerBitset, SpriteInfo, pArg);
+	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, SpriteInfo, pArg);
 }
 
 CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* pArg)
@@ -458,7 +458,7 @@ void CGameInstance::Add_Garbage(const _tchar* pTChar)
 //	m_pGarbageCollector->Add_CurLevelGarbage(pTChar);
 //}
 
-HRESULT CGameInstance::Attach_Collider(const _uint LayerBitset, CCollider* pCollider)
+HRESULT CGameInstance::Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider)
 {
 	if (nullptr == m_pCollision_Manager)
 		return E_FAIL;
@@ -469,16 +469,8 @@ HRESULT CGameInstance::Attach_Collider(const _uint LayerBitset, CCollider* pColl
 		return E_FAIL;
 	}
 
-	m_pCollision_Manager->Attach_Collider(LayerBitset, pCollider);
+	m_pCollision_Manager->Attach_Collider(pLayerTag, pCollider);
 	return S_OK;
-}
-
-void CGameInstance::Set_CollisionLayer(const _uint LayerBitset, const _uint CollisionLayersBitset)
-{
-	if (nullptr == m_pCollision_Manager)
-		return;
-
-	return m_pCollision_Manager->Set_CollisionLayer(LayerBitset, CollisionLayersBitset);
 }
 
 void CGameInstance::Clear_Collider()
