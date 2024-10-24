@@ -13,7 +13,7 @@ private:
     ~CFileLoader();
 
 private:
-    enum SHEET { OBJECT_METADATA, OBJECT_INFO, COMPONENT };
+    enum SHEET { SH_OBJECT_METADATA, SH_OBJECT_INFO, SH_COMPONENT };
 
 public:
     HRESULT Load_FIle(const _tchar* pFilePath, LEVEL eLevel);

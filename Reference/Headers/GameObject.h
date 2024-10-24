@@ -29,6 +29,13 @@ public:
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
 
+	enum CSTRING_ALLOCATION
+	{
+		ClassName = (1 << 0),
+		NameTag = (1 << 1),
+		Layer = (1 <<  2)
+	};
+
 public:
 	class CComponent* Get_Component(const _tchar* pComponentTag) {
 		return Find_Component(pComponentTag);
@@ -128,13 +135,23 @@ public:
 		m_LayerBitset = LayerBitset;
 	}
 
-	void Set_Layer(const _tchar* pLayer)
+	void Set_Layer(const _tchar* pLayer, _bool bIsAllocated)
 	{
 		if (nullptr == pLayer)
 			return;
 
-		Safe_Delete_Array(m_pLayerTag);
-		m_pLayerTag = pLayer;
+		// 기존에 동적할당된 문자열이었다면
+		if (m_IsAllocatedCStringFlag & CSTRING_ALLOCATION::Layer)
+		{
+			Safe_Delete_Array(m_pLayerTag);
+			m_pLayerTag = pLayer;
+		}
+		else
+		{
+			m_pLayerTag = pLayer;
+		}
+
+		m_IsAllocatedCStringFlag = bIsAllocated ? (m_IsAllocatedCStringFlag | CSTRING_ALLOCATION::Layer) : (m_IsAllocatedCStringFlag & (~CSTRING_ALLOCATION::Layer));
 	}
 
 	void	OnOffRender(const _bool bIsRender)
@@ -185,6 +202,8 @@ protected:
 	// m_WorldMatrix는 CTransform에서 사용 중이기에 따로 사용하면 안된다.
 	_float4x4	m_ViewMatrix; 
 	_float4x4	m_ProjMatrix;
+
+	_uint	m_IsAllocatedCStringFlag;
 
 public:			
 	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const = 0;

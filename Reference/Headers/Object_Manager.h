@@ -22,7 +22,6 @@ public:
 	list<class CGameObject*>* Get_ObjectList(_uint iLevelIndex, const _uint LayerBitset);
 	CGameObject* Get_GameObjectByName(_uint iLevelIndex, const _uint LayerBitset, const _tchar* pObjName);
 
-
 public:
 	HRESULT Reserve_Manager(_uint iNumLevels);
 	void Clear(_uint iLevelIndex);

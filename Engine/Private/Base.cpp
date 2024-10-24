@@ -21,7 +21,7 @@ unsigned long CBase::Release(void)
 	{
 		Free();
 
-		/*»èÁ¦ÇÑ´Ù. */
+		/*ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 		delete this;
 
 		return 0;

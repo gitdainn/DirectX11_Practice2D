@@ -5,6 +5,7 @@
 #include "Line_Manager.h"
 #include "libxl.h"
 #include <functional>
+#include "SpriteObject.h"
 
 using namespace libxl;
 
@@ -21,78 +22,154 @@ CFileLoader::~CFileLoader()
 
 HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 {
-	if (nullptr == pFilePath)
-		return E_FAIL;
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	/* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
-	OPENFILENAME OFN;
-	TCHAR filePathName[128] = L"";
-	TCHAR lpstrFile[256] = L".data";
-	static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.data";
 
-	ZeroMemory(&OFN, sizeof(OPENFILENAME));
-	OFN.lStructSize = sizeof(OPENFILENAME);
-	OFN.hwndOwner = g_hWnd;
-	OFN.lpstrFilter = filter;
-	OFN.lpstrFile = lpstrFile;
-	OFN.nMaxFile = 256;
-	OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
+	/* 로드 순서 (저장 순서와 동일): 메타 데이터 - 트랜스폼 - 컴포넌트 순 */
+	HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
 
-	if (GetOpenFileName(&OFN) != 0)
+	if (INVALID_HANDLE_VALUE == hFile)
 	{
-		const TCHAR* pGetPath = OFN.lpstrFile;
-
-		HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-		if (INVALID_HANDLE_VALUE == hFile)
-			return E_FAIL;
-
-		DWORD   dwByte = 0;
-		_bool      bRes = { false };
-
-#pragma region LOAD
-		_uint iVecSize = { 0 };
-		bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
-
-		_uint	iTagIndex = { 0 };
-		for (_uint i = 0; i < iVecSize; ++i)
-		{
-			SPRITE_INFO tSpriteInfo;
-			bRes = ReadFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
-
-			_uint iLength = { 0 };
-			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-			_tchar* pPrototypeTag = new _tchar[iLength]{};
-			if (-1 != iLength)
-			{
-				bRes = ReadFile(hFile, pPrototypeTag, iLength, &dwByte, nullptr);
-				tSpriteInfo.pPrototypeTag = pPrototypeTag;
-			}
-
-			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-			_tchar* pTextureComTag = new _tchar[iLength]{};
-			if (-1 != iLength)
-			{
-				bRes = ReadFile(hFile, pTextureComTag, iLength, &dwByte, nullptr);
-				tSpriteInfo.pTextureComTag = pTextureComTag;
-			}
-
-			_uint iLayerBitset = { 0 };
-			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, iLayerBitset, tSpriteInfo)))
-			{
-				MSG_BOX("CFileLoader - Load_FIle() - FAILED");
-				CloseHandle(hFile);
-				Safe_Release(pGameInstance);
-				return E_FAIL;
-			}
-		}
 		CloseHandle(hFile);
+		Safe_Release(pGameInstance);
+		return E_FAIL;
 	}
 
+	DWORD   dwByte = 0;
+	_bool   bRes = { false };
+
+	_uint iListSize = { 0 };
+	bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+	CFileLoader* pFileLoader = CFileLoader::GetInstance();
+	if (nullptr == pFileLoader)
+	{
+		MSG_BOX("CMyImGui - Load_Object_Excel() - FileLoader is NULL");
+		CloseHandle(hFile);
+		Safe_Release(pGameInstance);
+		Safe_Release(pFileLoader);
+		return E_FAIL;
+	}
+	Safe_AddRef(pFileLoader);
+
+	_uint iLength = { 0 };
+	for (_uint i = 0; i < iListSize; ++i)
+	{
+		_tchar szObjectID[MAX_PATH]{};
+		_tchar szNameTag[MAX_PATH]{};
+		_tchar szClassName[MAX_PATH]{};
+		_tchar szLayer[MAX_PATH]{};
+
+		_tchar szComponentInfo[MAX_PATH]{};
+
+#pragma region 메타 데이터 로드
+		OBJECT_METADATA tMetaData;
+		bRes = ReadFile(hFile, &tMetaData, sizeof(OBJECT_METADATA), &dwByte, nullptr);
+
+		bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+		bRes = ReadFile(hFile, szObjectID, iLength, &dwByte, nullptr);
+
+		bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+		bRes = ReadFile(hFile, szNameTag, iLength, &dwByte, nullptr);
+
+		bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+		bRes = ReadFile(hFile, szClassName, iLength, &dwByte, nullptr);
+
+		bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+		bRes = ReadFile(hFile, szLayer, iLength, &dwByte, nullptr);
+#pragma endregion
+
+#pragma region 트랜스폼 로드
+		OBJECT_TRANSFORM tTransform;
+		bRes = ReadFile(hFile, &tTransform, sizeof(OBJECT_TRANSFORM), &dwByte, nullptr);
+
+		bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+		bRes = ReadFile(hFile, &tTransform.pObjectID, iLength, &dwByte, nullptr);
+
+		m_ObjectTransformMap.emplace(tTransform.iInstanceID, tTransform);
+#pragma endregion
+
+#pragma region 컴포넌트 로드
+		_uint iComponentNum = { 0 };
+		bRes = ReadFile(hFile, &iComponentNum, sizeof(_uint), &dwByte, nullptr);
+
+		COMPONENT_INFO tComponentInfo;
+		for (_uint i = 0; i < iComponentNum; ++i)
+		{
+			bRes = ReadFile(hFile, &tComponentInfo, sizeof(COMPONENT_INFO), &dwByte, nullptr);
+
+			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+			bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+			_tchar* pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+			lstrcpy(pComponent, szComponentInfo);
+			tComponentInfo.pComponentTag = pComponent;
+
+			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+			bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+			pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+			lstrcpy(pComponent, szComponentInfo);
+			tComponentInfo.pPrototypeTag = pComponent;
+
+			bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+			bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+			pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+			lstrcpy(pComponent, szComponentInfo);
+			tComponentInfo.pSortingLayer = pComponent;
+
+			auto iter = m_ComponentInfoMap.find(tComponentInfo.iInstanceID);
+			if (m_ComponentInfoMap.end() != iter)
+			{
+				(*iter).second.emplace_back(tComponentInfo);
+			}
+			else
+			{
+				list<COMPONENT_INFO> ComponentList;
+				ComponentList.emplace_back(tComponentInfo);
+				/** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
+				m_ComponentInfoMap.emplace(tComponentInfo.iInstanceID, ComponentList);
+			}
+		}
+#pragma endregion
+
+#pragma region 오브젝트 생성
+		_tchar* pPrototypeTag = new _tchar[MAX_PATH]{ TEXT("Prototype_GameObject_") };
+		lstrcat(pPrototypeTag, szClassName);
+		if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, tMetaData.iLayerBitset, &tMetaData.iInstanceID)))
+		{
+			MSG_BOX("CMyImGui - Load_Object() - FAILED");
+			CloseHandle(hFile);
+			Safe_Release(pGameInstance);
+			Safe_Release(pFileLoader);
+			return E_FAIL;
+		}
+		Safe_Delete_Array(pPrototypeTag);
+
+		list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, tMetaData.iLayerBitset);
+		if (nullptr == pObjectList)
+		{
+			MSG_BOX("CFileLoader - Load_Excel() - NULL");
+		}
+		CSpriteObject* pAddObject = dynamic_cast<CSpriteObject*>(pObjectList->back());
+		if (nullptr != pAddObject)
+		{
+			static int iIndex = { 1 };
+			pAddObject->Set_NameTag(szNameTag);
+			pAddObject->Set_ClassName(szClassName);
+
+			_tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
+			lstrcpy(pLayer, szLayer);
+			pAddObject->Set_Layer(pLayer, true);
+			pAddObject->Set_Layer(tMetaData.iLayerBitset);
+			pAddObject->Set_Order(tMetaData.iOrder);
+		}
+#pragma endregion
+	}
+	CloseHandle(hFile);
 	Safe_Release(pGameInstance);
+	Safe_Release(pFileLoader);
+
+	return S_OK;
 }
 
 HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)

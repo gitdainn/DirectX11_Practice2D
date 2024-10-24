@@ -188,104 +188,14 @@ HRESULT CMyImGui::Render()
     return S_OK;
 }
 
-HRESULT CMyImGui::Save_Object()
-{
-    // 저장은 전체 한번에 저장하면, Dat파일을 나눌 수 없어서 안됨.
-    // 로드는 파일별로 자동으로 들어갈 수 있게 모델 인덱스까지 저장한다.
-    if (m_CreateObjectVec.empty())
-    {
-        MSG_BOX("Save_Object is Empty");
-        return S_OK;
-    }
-
-    // Win Api Save File Dialog
-    OPENFILENAME OFN;
-    TCHAR filePathName[128] = L"";
-    TCHAR lpstrFile[256] = L".data";
-    static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
-
-    ZeroMemory(&OFN, sizeof(OPENFILENAME));
-    OFN.lStructSize = sizeof(OPENFILENAME);
-    OFN.hwndOwner = g_hWnd;
-    OFN.lpstrFilter = filter;
-    OFN.lpstrFile = lpstrFile;
-    OFN.nMaxFile = 256;
-    OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
-
-    if (GetSaveFileName(&OFN) != 0)
-    {
-        const TCHAR* pGetPath = OFN.lpstrFile;
-
-        HANDLE hFile = CreateFile(pGetPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-
-        if (INVALID_HANDLE_VALUE == hFile)
-            return E_FAIL;
-
-        DWORD dwByte = 0;
-
-#pragma region SAVE
-        _uint iVecSize = (_uint)m_CreateObjectVec.size();
-        WriteFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-
-        _uint iCount = { 0 };
-        _uint iLength = { 0 };
-        for (CSpriteObject* pObject : m_CreateObjectVec) // 현재 선택된 그룹 저장
-        {
-            //const char* pLayerC = pObject->Get_Layer();
-            //_tchar* pLayerWC = { nullptr };
-            //CToWC(pLayerC, pLayerWC);
-
-            //iLength = sizeof(_tchar) * lstrlen(pLayerWC) + 1;
-            //WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-            //WriteFile(hFile, pLayerWC, iLength, &dwByte, nullptr); // 길이 저장
-            //Safe_Delete_Array(pLayerWC);
-
-            // 구조체 정보 저장
-            _vector vPos = pObject->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
-            SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
-            tSpriteInfo.fPosition = _float2(XMVectorGetX(vPos), XMVectorGetY(vPos));
-            _float3 vSize = pObject->Get_TransformCom()->Get_Scaled();
-            tSpriteInfo.fSize = _float2(vSize.x, vSize.y);
-
-            WriteFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
-
-/*               if(0 == iCount)
-                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Background");
-            else if(44 >= iCount)
-                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Tile");
-            else
-            {
-                tSpriteInfo.pPrototypeTag = TEXT("Prototype_GameObject_Environment");
-                tSpriteInfo.pTextureComTag = ConvertCWithWC("Environment", TEXT("Prototype_Component_Sprite_"));
-            }
-            ++iCount;*/
-
-            // 문자열 저장
-            // WriteFile은 byte 크기를 넣어야하므로 _tchar(2byte)를 문자열 개수만큼 곱해줘야 함
-            iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pPrototypeTag) + 1;
-            WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-            WriteFile(hFile, tSpriteInfo.pPrototypeTag, iLength, &dwByte, nullptr); // 길이 저장
-
-            iLength = sizeof(_tchar) * lstrlen(tSpriteInfo.pTextureComTag) + 1;
-            WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr); // 길이 저장
-            WriteFile(hFile, tSpriteInfo.pTextureComTag, iLength, &dwByte, nullptr); // 길이 저장
-
-        }
-        CloseHandle(hFile);
-    }
-
-    return S_OK;
-}
-
 HRESULT CMyImGui::Save_Line()
 {
     OPENFILENAME OFN;
     if (FAILED(Get_OpenFileName(OFN)))
         return E_FAIL;
-     
+
     const _tchar* pFileName = OFN.lpstrFile;
     HANDLE hFile = CreateFile(pFileName, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
-
     if (INVALID_HANDLE_VALUE == hFile)
         return E_FAIL;
 
@@ -353,81 +263,332 @@ HRESULT CMyImGui::Load_Line()
     return S_OK;
 }
 
+HRESULT CMyImGui::Save_Object()
+{
+    // 저장은 전체 한번에 저장하면, Dat파일을 나눌 수 없어서 안됨.
+    // 로드는 파일별로 자동으로 들어갈 수 있게 모델 인덱스까지 저장한다.
+    if (m_CreateObjectVec.empty())
+    {
+        MSG_BOX("Save_Object is Empty");
+        return S_OK;
+    }
+
+    OPENFILENAME OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
+        return E_FAIL;
+
+    const _tchar* pFileName = OFN.lpstrFile;
+    HANDLE hFile = CreateFile(pFileName, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+    if (INVALID_HANDLE_VALUE == hFile)
+        return E_FAIL;
+
+     DWORD dwByte = 0;
+
+     const _uint iVecSize = (_uint)m_CreateObjectVec.size();
+     WriteFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr); // 길이 저장
+
+     _uint iLength = { 0 };
+     _tchar szBuffer[MAX_PATH]{};
+
+     m_iInstanceID = 0;
+     for (CSpriteObject* pObject : m_CreateObjectVec)
+     {
+         if (nullptr == pObject)
+             continue;
+
+         ++m_iInstanceID;
+#pragma region 메타 데이터 저장
+         SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
+         OBJECT_METADATA tMetaData;
+         tMetaData.iInstanceID = m_iInstanceID;
+         tMetaData.pObjectID = { nullptr };
+         tMetaData.pNameTag = pObject->Get_NameTag();
+         tMetaData.pClassName = pObject->Get_ClassName();
+         tMetaData.pLayer = pObject->Get_Layer();
+         tMetaData.iLayerBitset = pObject->Get_LayerBitset();
+         tMetaData.iOrder = pObject->Get_Order();
+         WriteFile(hFile, &tMetaData, sizeof(OBJECT_METADATA), &dwByte, nullptr); // 구조체 저장
+
+         iLength = (lstrlen(L" ") + 1) * sizeof(_tchar); // pObjectID
+         WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+         lstrcpy(szBuffer, L" ");
+         WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+         iLength = (lstrlen(tMetaData.pNameTag) + 1) * sizeof(_tchar);
+         WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+         lstrcpy(szBuffer, tMetaData.pNameTag);
+         WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+         iLength = (lstrlen(tMetaData.pClassName) + 1) * sizeof(_tchar);
+         WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+         lstrcpy(szBuffer, tMetaData.pClassName);
+         WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+         iLength = (lstrlen(tMetaData.pLayer) + 1) * sizeof(_tchar);
+         WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+         lstrcpy(szBuffer, tMetaData.pLayer);
+         WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+#pragma endregion
+
+#pragma region 트랜스폼 저장
+         OBJECT_TRANSFORM tTransform;
+         tTransform.iInstanceID = m_iInstanceID;
+         tTransform.pObjectID = { nullptr };
+         tTransform.fSize.x = tSpriteInfo.fSize.x;
+         tTransform.fSize.y = tSpriteInfo.fSize.y;
+         tTransform.fSizeRatio.x = tSpriteInfo.fSizeRatio.x;
+         tTransform.fSizeRatio.y = tSpriteInfo.fSizeRatio.y;
+
+         CTransform* pObjectTransCom = pObject->Get_TransformCom();
+         if (nullptr == pObjectTransCom)
+         {
+             MSG_BOX("CMyImGui - Save_Object_Excel() - FAILED");
+             continue;
+         }
+         _vector vPosition = pObjectTransCom->Get_State(CTransform::STATE_POSITION);
+         tTransform.fPosition = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+         tTransform.fRotation = _float2(0.f, 0.f);
+         
+         WriteFile(hFile, &tTransform, sizeof(OBJECT_TRANSFORM), &dwByte, nullptr); // 구조체 저장
+
+         iLength = (lstrlen(tTransform.pObjectID) + 1) * sizeof(_tchar);
+         WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+         lstrcpy(szBuffer, L" ");
+         WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+#pragma endregion
+
+#pragma region 컴포넌트 저장
+         unordered_map<const _tchar*, CComponent*>* pComponents = pObject->Get_Components();
+         if (nullptr == pComponents)
+         {
+             MSG_BOX("CMyImGui - Save_Object_Excel - NULL");
+             continue;
+         }
+
+         list<CComponent*> SaveComponentList;
+         SaveComponentList.emplace_back(pObject->Get_Component(TAG_COLL_AABB));
+         SaveComponentList.emplace_back(pObject->Get_Component(TAG_TEXTURE));
+         SaveComponentList.remove(nullptr); // List는 remove에 erase + remove 기능 제공
+
+         _uint iComponentNum = SaveComponentList.size();
+         WriteFile(hFile, &iComponentNum, sizeof(_uint), &dwByte, nullptr); // 구조체 저장
+         for (const auto& iter : *pComponents)
+         {
+             CComponent* pComponent = iter.second;
+             if (nullptr == pComponent)
+             {
+                 MSG_BOX("CMyImGui - Save_Object_Excel - NULL");
+                 continue;
+             }
+
+             COMPONENT_INFO tComponentInfo;
+             ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+             if (FAILED(pComponent->Get_ComponentInfo(tComponentInfo)))
+             {
+                 continue;
+             }
+             tComponentInfo.iInstanceID = m_iInstanceID;
+             tComponentInfo.pComponentTag = iter.first;
+             tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
+
+             WriteFile(hFile, &tComponentInfo, sizeof(COMPONENT_INFO), &dwByte, nullptr); // 구조체 저장
+
+             iLength = (lstrlen(tComponentInfo.pComponentTag) + 1) * sizeof(_tchar);
+             WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+             lstrcpy(szBuffer, tComponentInfo.pComponentTag);
+             WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+             iLength = (lstrlen(tComponentInfo.pPrototypeTag) + 1) * sizeof(_tchar);
+             WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+             lstrcpy(szBuffer, tComponentInfo.pPrototypeTag);
+             WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+
+             iLength = lstrlen(L" ") * sizeof(_tchar); // pSortingLayer
+             WriteFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+             lstrcpy(szBuffer, L" ");
+             WriteFile(hFile, szBuffer, iLength, &dwByte, nullptr);
+         }
+#pragma endregion
+     }
+
+     MSG_BOX("SAVE SUCCESS");
+     CloseHandle(hFile);
+
+    return S_OK;
+}
+
 HRESULT CMyImGui::Load_Object()
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-/* 저장순서 : 게임오브젝트명, 벡터원소갯수, 텍스처프로토이름, 텍스처인덱스, UIRECTDESC 구조체, 색상, 선형보간, 액션 타입, 액션 구조체 */
-    OPENFILENAME OFN;
-    TCHAR filePathName[128] = L"";
-    TCHAR lpstrFile[256] = L".data";
-    static TCHAR filter[] = L"모두(*.*)\0*.*\0데이터 파일(*.BattleUIdat)\0*.BattleUIdat";
-
-    ZeroMemory(&OFN, sizeof(OPENFILENAME));
-    OFN.lStructSize = sizeof(OPENFILENAME);
-    OFN.hwndOwner = g_hWnd;
-    OFN.lpstrFilter = filter;
-    OFN.lpstrFile = lpstrFile;
-    OFN.nMaxFile = 256;
-    OFN.lpstrInitialDir = L"..\\Bin\\DataFiles";
-
-    if (GetOpenFileName(&OFN) != 0)
+    OPENFILENAME    OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
     {
-        const TCHAR* pGetPath = OFN.lpstrFile;
-
-        HANDLE hFile = CreateFile(pGetPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
-
-        if (INVALID_HANDLE_VALUE == hFile)
-            return E_FAIL;
-
-        DWORD   dwByte = 0;
-        _bool      bRes = { false };
-
-#pragma region LOAD
-        // Load : 현재 모델이 가지고 있는 이펙트 사이즈
-        _uint iVecSize = { 0 };
-        bRes = ReadFile(hFile, &iVecSize, sizeof(_uint), &dwByte, nullptr);
-
-        _uint	iTagIndex = { 0 };
-        _uint   iLength = { 0 };
-        for (_uint i = 0; i < iVecSize; ++i)
-        {
-            //bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-            //_tchar* pLayer = new _tchar[iLength]{};
-            //bRes = ReadFile(hFile, pLayer, iLength, &dwByte, nullptr);
-
-            SPRITE_INFO tSpriteInfo;
-            bRes = ReadFile(hFile, &tSpriteInfo, sizeof(SPRITE_INFO), &dwByte, nullptr);
-
-            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-            _tchar* pPrototypeTag = new _tchar[iLength]{};
-            if (-1 != iLength)
-            {
-                bRes = ReadFile(hFile, pPrototypeTag, iLength, &dwByte, nullptr);
-                tSpriteInfo.pPrototypeTag = pPrototypeTag;
-            }
-
-            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
-            _tchar* pTextureTag = new _tchar[iLength]{};
-            if (-1 != iLength)
-            {
-                bRes = ReadFile(hFile, pTextureTag, iLength, &dwByte, nullptr);
-                tSpriteInfo.pTextureComTag = pTextureTag;
-            }
-
-            if (FAILED(Install_GameObject(tSpriteInfo)))
-            {
-                MSG_BOX("CMyImGui - Load_Object() - FAILED");
-                CloseHandle(hFile);
-                Safe_Release(pGameInstance);
-                return E_FAIL;
-            }
-        }
-        CloseHandle(hFile);
+        Safe_Release(pGameInstance);
+        return E_FAIL;
     }
 
+    /* 로드 순서 (저장 순서와 동일): 메타 데이터 - 트랜스폼 - 컴포넌트 순 */
+    const TCHAR* pFilePath = OFN.lpstrFile;
+    HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+    if (INVALID_HANDLE_VALUE == hFile)
+    {
+        CloseHandle(hFile);
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+
+    DWORD   dwByte = 0;
+    _bool   bRes = { false };
+
+    _uint iListSize = { 0 };
+    bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+
+
+    CFileLoader* pFileLoader = CFileLoader::GetInstance();
+    if (nullptr == pFileLoader)
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - FileLoader is NULL");
+        CloseHandle(hFile);
+        Safe_Release(pGameInstance);
+        Safe_Release(pFileLoader);
+        return E_FAIL;
+    }
+    Safe_AddRef(pFileLoader);
+
+    _uint iLength = { 0 };
+    unordered_map<int, OBJECT_TRANSFORM> ObjectTransformMap;
+    unordered_map<int, list<COMPONENT_INFO>> ComponentInfoMap;
+
+    for (_uint i = 0; i < iListSize; ++i)
+    {
+        _tchar szObjectID[MAX_PATH]{};
+        _tchar szNameTag[MAX_PATH]{};
+        _tchar szClassName[MAX_PATH]{};
+        _tchar szLayer[MAX_PATH]{};
+
+        _tchar szComponentInfo[MAX_PATH]{};
+
+#pragma region 메타 데이터 로드
+        OBJECT_METADATA tMetaData;
+        bRes = ReadFile(hFile, &tMetaData, sizeof(OBJECT_METADATA), &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szObjectID, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szNameTag, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szClassName, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szLayer, iLength, &dwByte, nullptr);
+#pragma endregion
+
+#pragma region 트랜스폼 로드
+        OBJECT_TRANSFORM tTransform;
+        bRes = ReadFile(hFile, &tTransform, sizeof(OBJECT_TRANSFORM), &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, &tTransform.pObjectID, iLength, &dwByte, nullptr);
+
+        ObjectTransformMap.emplace(tTransform.iInstanceID, tTransform);
+        pFileLoader->Set_ObjectTransformMap(ObjectTransformMap);
+#pragma endregion
+
+#pragma region 컴포넌트 로드
+        _uint iComponentNum = { 0 };
+        bRes = ReadFile(hFile, &iComponentNum, sizeof(_uint), &dwByte, nullptr);
+
+        COMPONENT_INFO tComponentInfo;
+        for (_uint i = 0; i < iComponentNum; ++i)
+        {
+            bRes = ReadFile(hFile, &tComponentInfo, sizeof(COMPONENT_INFO), &dwByte, nullptr);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            _tchar* pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pComponentTag = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pPrototypeTag = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pSortingLayer = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            auto iter = ComponentInfoMap.find(tComponentInfo.iInstanceID);
+            if (ComponentInfoMap.end() != iter)
+            {
+                (*iter).second.emplace_back(tComponentInfo);
+            }
+            else
+            {
+                list<COMPONENT_INFO> ComponentList;
+                ComponentList.emplace_back(tComponentInfo);
+                /** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
+                ComponentInfoMap.emplace(tComponentInfo.iInstanceID, ComponentList);
+            }
+        }
+        pFileLoader->Set_ComponentInfoMap(ComponentInfoMap);
+#pragma endregion
+
+#pragma region 오브젝트 생성
+        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, tMetaData.iLayerBitset, &tMetaData.iInstanceID)))
+        {
+            MSG_BOX("CMyImGui - Load_Object() - FAILED");
+            CloseHandle(hFile);
+            Safe_Release(pGameInstance);
+            Safe_Release(pFileLoader);
+            return E_FAIL;
+        }
+
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, tMetaData.iLayerBitset);
+        if (nullptr == pObjectList)
+        {
+            MSG_BOX("CFileLoader - Load_Excel() - NULL");
+        }
+        CSpriteObject* pAddObject = dynamic_cast<CSpriteObject*>(pObjectList->back());
+        if (nullptr != pAddObject)
+        {
+            static int iIndex = { 1 };
+            char* pTag = new char[MAX_PATH] {};
+            strcpy(pTag, "pObjectID");
+            strcat(pTag, to_string(++iIndex).c_str());
+            pAddObject->Set_SpriteTag(pTag);
+            pAddObject->Set_NameTag(szNameTag);
+            pAddObject->Set_ClassName(szClassName);
+
+            _tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
+            lstrcpy(pLayer, szLayer);
+            pAddObject->Set_Layer(pLayer, true);
+            pAddObject->Set_Layer(tMetaData.iLayerBitset);
+            pAddObject->Set_Order(tMetaData.iOrder);
+
+            m_CreateObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
+        }
+#pragma endregion
+
+        ComponentInfoMap.clear();
+        ObjectTransformMap.clear();
+    }
+    CloseHandle(hFile);
     Safe_Release(pGameInstance);
+    Safe_Release(pFileLoader);
 
     return S_OK;
 }
@@ -452,19 +613,19 @@ HRESULT CMyImGui::Save_Object_Excel()
     }
     Safe_AddRef(pFileLoader);
 
-    const TCHAR* pFilePath = OFN.lpstrFile;
-    //const _tchar* pFilePath = TEXT("../Bin/DataFiles/Level_Logo.xlsx");
-    static int iInstanceID = { 1 };
+    const TCHAR* pFilePath = OFN.lpstrFile; // TEXT("../Bin/DataFiles/Level_Logo.xlsx");
     bool bIsReset = { true };
+    m_iInstanceID = 0;
     for (CSpriteObject* pObject : m_CreateObjectVec)
     {
         if (nullptr == pObject)
             continue;
 
+        ++m_iInstanceID;
         SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
 
         OBJECT_METADATA tMetaData;
-        tMetaData.iInstanceID = iInstanceID;
+        tMetaData.iInstanceID = m_iInstanceID;
         tMetaData.pObjectID = { nullptr };
         tMetaData.pNameTag = pObject->Get_NameTag();
         tMetaData.pClassName = pObject->Get_ClassName();
@@ -478,7 +639,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         }
 
         OBJECT_TRANSFORM tTransform;
-        tTransform.iInstanceID = iInstanceID;
+        tTransform.iInstanceID = m_iInstanceID;
         tTransform.pObjectID = { nullptr };
         tTransform.fSize.x = tSpriteInfo.fSize.x;
         tTransform.fSize.y = tSpriteInfo.fSize.y;
@@ -525,7 +686,7 @@ HRESULT CMyImGui::Save_Object_Excel()
             {
                 continue;
             }
-            tComponentInfo.iInstanceID = iInstanceID;
+            tComponentInfo.iInstanceID = m_iInstanceID;
             tComponentInfo.pComponentTag = iter.first;
             tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
 
@@ -536,7 +697,6 @@ HRESULT CMyImGui::Save_Object_Excel()
         }
 
         bIsReset = false;
-        ++iInstanceID;
     }
 
     MSG_BOX("SAVE SUCCESS");
@@ -722,25 +882,25 @@ HRESULT CMyImGui::ShowInstalledWindow()
         ImGui::EndListBox();
     }
 
-    if (ImGui::Button("Save Excel"))
+    if (ImGui::Button("Save Object"))
     {
-        if (FAILED(Save_Object_Excel()))
+        if (FAILED(Save_Object()))
         {
-            MSG_BOX("CMyImGui - Save_Object_Excel - FAILED");
+            MSG_BOX("CMyImGui - Save_Object - FAILED");
         }
     }
     ImGui::SameLine();
 
-    if (ImGui::Button("Load Excel"))
+    if (ImGui::Button("Load Object"))
     {
         //if (FAILED(Load_Object()))
         //{
         //    MSG_BOX("CMyImGui - Load_Object - FAILED");
         //}
 
-        if (FAILED(Load_Object_Excel()))
+        if (FAILED(Load_Object()))
         {
-            MSG_BOX("CMyImGui - ShowInspectorWindow - FAILED");
+            MSG_BOX("CMyImGui - Load_Object - FAILED");
         }
     }
 
@@ -981,6 +1141,7 @@ HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
     _tchar* pName = { nullptr };
     CToWC(szName, pName);
     m_pSelectedObject->Set_NameTag(pName);
+    Safe_Delete_Array(pName); // 현재 Set_NameTag 안에서 동적할당 중
 
 
     static ImGuiComboFlags flags = 0;
@@ -1596,11 +1757,12 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     lstrcpy(pDest, TEXT("Environment"));
     const _tchar* pClassName = pDest;
     m_pSelectedObject->Set_ClassName(pClassName);
+    Safe_Delete_Array(pClassName); // 현재 Set_Class 함수 내에서 동적할당 수행함.
     m_pSelectedObject->Set_Layer(m_iLayerBitset);
 
     _tchar* pLayer = { nullptr };
     CToWC(m_pLayerC, pLayer);
-    m_pSelectedObject->Set_Layer(pLayer);
+    m_pSelectedObject->Set_Layer(pLayer, true);
     m_CreateObjectVec.emplace_back(m_pSelectedObject);
     //if (nullptr != m_pSelectedObject)
     //{

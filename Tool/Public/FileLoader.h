@@ -72,6 +72,11 @@ public:
         return &m_OriginalDataMap;
     }
 
+public:
+    void    Set_ObjectTransformMap(const unordered_map<int, OBJECT_TRANSFORM>& ObjectTransformMap) { m_ObjectTransformMap = ObjectTransformMap; }
+
+    void    Set_ComponentInfoMap(const unordered_map<int, list<COMPONENT_INFO>>& ComponentInfoMap) { m_ComponentInfoMap = ComponentInfoMap; }
+
 private:
     _tchar* Copy_WChar(const _tchar* pWChar);
     void Clear_LoadInfo();

@@ -45,6 +45,8 @@ HRESULT CEnvironment::Initialize(void* pArg)
 
 _uint CEnvironment::Tick(_double TimeDelta)
 {
+	m_LayerBitset = LAYER::BACKGROUND;
+
 	return __super::Tick(TimeDelta);
 }
 

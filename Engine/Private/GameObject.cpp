@@ -171,7 +171,11 @@ void CGameObject::Free()
 {
 	Safe_Delete_Array(m_pNameTag);
 	Safe_Delete_Array(m_pClassName);
-	Safe_Delete_Array(m_pLayerTag);
+
+	if (m_IsAllocatedCStringFlag & CSTRING_ALLOCATION::Layer)
+	{
+		Safe_Delete_Array(m_pLayerTag);
+	}
 
 	for (auto& Pair : m_Components)
 	{

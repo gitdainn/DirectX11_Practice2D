@@ -275,6 +275,12 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	CComponent* pComponent = { nullptr };
 	for (COMPONENT_INFO tInfo : ComponentList)
 	{
+		if (nullptr == tInfo.pPrototypeTag)
+		{
+			MSG_BOX("CSpriteObject - Load_Components_Excel() - NULL");
+				continue;
+		}
+
 		if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, tInfo.pPrototypeTag,
 			tInfo.pComponentTag, &pComponent, &tInfo)))
 		{

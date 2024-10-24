@@ -120,7 +120,7 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
-	if (LAYER::PLAYER_ATK == pTarget->Get_LayerBitset())
+	if (LAYER::PLAYER_ATK & pTarget->Get_LayerBitset())
 	{
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());

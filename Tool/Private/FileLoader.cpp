@@ -147,7 +147,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, LEVEL eLevel, vector<CS
 				pAddObject->Set_SpriteTag(pTag);
 				pAddObject->Set_NameTag(pNameTag);
 				pAddObject->Set_ClassName(pClassName);
-				pAddObject->Set_Layer(pLayer);
+				pAddObject->Set_Layer(pLayer, true);
 				pAddObject->Set_Layer(iLayerBitset);
 				pAddObject->Set_Order(iOrder);
 
