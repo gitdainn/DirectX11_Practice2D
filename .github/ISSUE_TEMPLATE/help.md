@@ -1,9 +1,10 @@
 ---
-name: "HELP"
+name: HELP
 about: 도움이 필요한 사항에 대해 작성해주세요.
 title: "[HELP]"
 labels: help wanted
 assignees: limjh1
+
 ---
 
 ## Problem
@@ -24,4 +25,3 @@ assignees: limjh1
 참고자료 및 해결할 때 도움될만한 링크 첨부
 
 ## Etc
-
