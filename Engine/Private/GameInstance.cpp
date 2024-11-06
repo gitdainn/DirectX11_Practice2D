@@ -249,6 +249,14 @@ list<class CGameObject*>* CGameInstance::Get_ObjectList(_uint iLevelIndex, const
 	return m_pObject_Manager->Get_ObjectList(iLevelIndex, pLayerTag);
 }
 
+CGameObject* CGameInstance::Get_LastObject(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_LastObject(iLevelIndex, pLayerTag);
+}
+
 CGameObject* CGameInstance::Get_GameObjectByName(_uint iLevelIndex, const _tchar* pLayerTag, const _tchar* pObjName)
 {
 	if (nullptr == m_pObject_Manager)
@@ -273,12 +281,12 @@ HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelI
 	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, pArg);
 }
 
-HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
+HRESULT CGameInstance::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const SPRITE_INFO& tSpriteInfo, void* pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, SpriteInfo, pArg);
+	return m_pObject_Manager->Add_GameObject(pPrototypeTag, iLevelIndex, pLayerTag, tSpriteInfo, pArg);
 }
 
 CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* pArg)
@@ -289,7 +297,7 @@ CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, void* 
 	return m_pObject_Manager->Clone_GameObject(pPrototypeTag, pArg);
 }
 
-CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& tSpriteInfo, void* pArg)
+CGameObject* CGameInstance::Clone_GameObject(const _tchar* pPrototypeTag, const SPRITE_INFO& tSpriteInfo, void* pArg)
 {
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
@@ -479,6 +487,15 @@ void CGameInstance::Clear_Collider()
 		return;
 
 	m_pCollision_Manager->Clear_Collider();
+	return;
+}
+
+void CGameInstance::Set_CollisionLayerMatrix(const _tchar* pLayerDest, const _tchar* pLayerSour, const _bool bIsCollision)
+{
+	if (nullptr == m_pCollision_Manager)
+		return;
+
+	m_pCollision_Manager->Set_CollisionLayerMatrix(pLayerDest, pLayerSour, bIsCollision);
 	return;
 }
 

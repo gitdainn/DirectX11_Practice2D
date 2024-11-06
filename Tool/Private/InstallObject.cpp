@@ -24,7 +24,7 @@ HRESULT CInstallObject::Initialize_Prototype()
     return __super::Initialize_Prototype();
 }
 
-HRESULT CInstallObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CInstallObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -140,7 +140,7 @@ CInstallObject* CInstallObject::Create(ID3D11Device* pDevice, ID3D11DeviceContex
     return pInstance;
 }
 
-CSpriteObject* CInstallObject::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CInstallObject::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
     CInstallObject* pInstance = new CInstallObject(*this);
 

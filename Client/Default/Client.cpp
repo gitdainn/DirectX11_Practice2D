@@ -55,11 +55,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	CGameInstance*		pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_Default"))))
+    if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_Default"))))
+    {
+        Safe_Release(pGameInstance);
 		return E_FAIL;
+    }
 
-	if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_60"))))
+    if (FAILED(pGameInstance->Ready_Timer(TEXT("Timer_60"))))
+    {
+        Safe_Release(pGameInstance);
 		return E_FAIL;
+    }
 
     HACCEL hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_CLIENT));
 
@@ -102,7 +108,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}		
 	}
 
-	Safe_Release(pGameInstance);
+    Safe_Release(pGameInstance);
 
 	if (0 != Safe_Release(pMainApp))
 		return FALSE;

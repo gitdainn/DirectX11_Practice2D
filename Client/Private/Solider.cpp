@@ -21,7 +21,7 @@ HRESULT CSolider::Initialize_Prototype()
     return __super::Initialize_Prototype();
 }
 
-HRESULT CSolider::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSolider::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -212,7 +212,7 @@ void CSolider::Attack(_double TimeDelta)
     Attach_Collider(LAYER_ENEMYATK, m_pDefaultAtkColliderCom);
 
     // 특정 이미지 인덱스부터 돌진함.
-        const _uint iStartRushIndex = m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex + 4;
+    const _uint iStartRushIndex = m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex + 4;
     if (iStartRushIndex <= m_iUVTextureIndex)
     {
         TimeAcc += TimeDelta;
@@ -233,6 +233,7 @@ void CSolider::Attack(_double TimeDelta)
         m_pTransformCom->Set_State(CTransform::STATE_POSITION, vLerpPosition);
     }
 
+    return;
 }
 
 void CSolider::Chase(_double TimeDelta)
@@ -272,7 +273,7 @@ CSolider* CSolider::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
     return pInstance;
 }
 
-CSpriteObject* CSolider::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CSolider::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
     CSolider* pInstance = new CSolider(*this);
 

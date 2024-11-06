@@ -25,9 +25,9 @@ protected:
 	virtual ~CCamera() = default;
 
 public:
-	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
@@ -41,7 +41,7 @@ protected:
 	CAMERADESC					m_CameraDesc;
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const override;
+	virtual CGameObject* Clone(const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr) const override;
 	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };

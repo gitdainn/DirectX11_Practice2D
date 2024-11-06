@@ -16,7 +16,7 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 	// ATK이 연속으로 들어오면 Combo 증가, 연속이 아니면 다른 상태 거쳐서 오므로 Combo 초기화됨
 	case STATE_TYPE::DEFAULT_ATK:
 		// @note - 연산자 우선수위: 증감 연산자 우선, 삼항 연산자 (?)
-		m_iCombo = m_iMaxCombo < ++m_iCombo ? m_iMaxCombo : m_iCombo;
+		m_iCombo = (_uint)m_iMaxCombo < ++m_iCombo ? (_uint)m_iMaxCombo : m_iCombo;
 		pState = new CPlayerAtk(*this);
 		break;
 

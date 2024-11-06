@@ -16,7 +16,7 @@ private:
 public:
 	HRESULT Initialize_Prototype();
 	HRESULT Initialize(void* pArg) override;
-	void Tick(_double TimeDelta) override;
+	_uint Tick(_double TimeDelta) override;
 
 protected:
 	virtual _bool Intersects(CColliderAABB2D* pTarget) const override;

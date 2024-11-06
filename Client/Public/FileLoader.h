@@ -38,6 +38,7 @@ public:
             return E_FAIL;
 
         m_IDPrototypeNameMap.insert({ pID, pPrototype });
+        return S_OK;
     }
 
 public:

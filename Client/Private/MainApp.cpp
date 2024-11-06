@@ -8,6 +8,8 @@
 #include "Line_Manager.h"
 #include "UI_Handler.h"
 #include "Utility.h"
+#include "Widget.h"
+#include "HealthBarWidget.h"
 
 #pragma region LOAD
 #include "ColliderAABB2D.h"
@@ -156,14 +158,18 @@ HRESULT CMainApp::SetUp_StartLevel(LEVEL eNextLevelID)
 
 HRESULT CMainApp::Ready_CollisionLayerMatrix()
 {
-	//m_pGameInstance->Set_CollisionLayer(LAYER_PLAYER, LAYER_ENEMYATK | LAYER_BACKGROUND | LAYER_DEFAULT | LAYER_ITEM);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_ENEMY, LAYER_PLAYERATK);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_PLAYERATK, LAYER_ENEMY);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_ENEMYATK, LAYER_PLAYER);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_BACKGROUND, LAYER_PLAYER | LAYER_DEFAULT);
-	//m_pGameInstance->Set_CollisionLayer(LAYER_ITEM, LAYER_PLAYER);
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ENVIRONMENT, true);
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ENEMYATK, true);
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ITEM, true);
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_ENEMY,  LAYER_PLAYERATK, true);
+
+	Safe_Release(pGameInstance);
 	return S_OK;
 }
 
@@ -212,8 +218,22 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
 		return E_FAIL;
 
+	/* For.Prototype_Component_Widget */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Widget"),
+		CWidget::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_HealthBarWidget */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_HealthBarWidget"),
+		CHealthBarWidget::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+
 #pragma region COLLIDER
-	/* For.Prototype_Component_Sprite_Background */
+	/* For.Prototype_Component_Collider_AABB */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		CColliderAABB2D::Create(m_pDevice, m_pContext))))
 	{
@@ -413,7 +433,7 @@ void CMainApp::Free()
 	//Safe_Release(m_pRenderer); // Renderer는 컴포넌트에 추가되어 있어, 추후 Component에서 모두 Release하기 떄문에 X
 	Safe_Release(m_pContext);
 	Safe_Release(m_pDevice);
-	Safe_Release(m_pGameInstance);	
+	Safe_Release(m_pGameInstance);
 
 	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
 	CPlayer_Manager::GetInstance()->DestroyInstance();

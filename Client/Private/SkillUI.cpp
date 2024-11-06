@@ -23,7 +23,7 @@ HRESULT CSkillUI::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkillUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSkillUI::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -65,7 +65,7 @@ HRESULT CSkillUI::Add_Components(void* pArg)
 
 HRESULT CSkillUI::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;
@@ -86,7 +86,7 @@ CSkillUI* CSkillUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CSpriteObject* CSkillUI::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CSkillUI::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CSkillUI* pInstance = new CSkillUI(*this);
 

@@ -24,7 +24,7 @@ HRESULT CLittleBorn::Initialize_Prototype()
     return __super::Initialize_Prototype();
 }
 
-HRESULT CLittleBorn::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CLittleBorn::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -119,7 +119,7 @@ CLittleBorn* CLittleBorn::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     return pInstance;
 }
 
-CSpriteObject* CLittleBorn::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CLittleBorn::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
     CLittleBorn* pInstance = new CLittleBorn(*this);
 

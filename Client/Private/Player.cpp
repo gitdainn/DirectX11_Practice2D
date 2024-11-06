@@ -5,6 +5,7 @@
 #include "Line_Manager.h"
 #include "FileLoader.h"
 #include "Skill.h"
+#include "Player_Manager.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -21,7 +22,7 @@ HRESULT CPlayer::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CPlayer::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CPlayer::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -106,6 +107,7 @@ _uint CPlayer::LateTick(_double TimeDelta)
 		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
 		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
 		Attach_Collider(LAYER_PLAYERATK, m_pDefaultAtkColliderCom);
+		m_pDefaultAtkColliderCom->Set_Owner(this);
 	}
 
 	SkillLateTick(TimeDelta);
@@ -178,16 +180,33 @@ void CPlayer::SkillRender()
 	}
 }
 
-void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
+	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
+	if (nullptr == pObject || nullptr == pTargetCollider)
+		return;
+
+	if (!lstrcmp(LAYER_ENEMYATK, pTargetLayer))
+	{
+		Input_Handler(STATE_TYPE::DAMAGED);
+		CPlayer_Manager* pPlayer_Manager = CPlayer_Manager::GetInstance();
+		if (nullptr != pPlayer_Manager)
+		{
+			Safe_AddRef(pPlayer_Manager);
+			pPlayer_Manager->Set_Damaged(pObject->Get_Attack());
+		}
+		Safe_Release(pPlayer_Manager);
+	}
+
+	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CPlayer::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CPlayer::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -420,7 +439,10 @@ HRESULT CPlayer::Add_Components(void* pArg)
 
 HRESULT CPlayer::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_Shader_UVAnim()))
 		return E_FAIL;
 
 	return S_OK;
@@ -437,6 +459,7 @@ void CPlayer::Free()
 		Safe_Release(m_pSkill[i]);
 	}
 	Safe_Delete(m_pAirState);
+	Safe_Delete(m_pState);
 
 	Safe_Release(m_pDefaultAtkColliderCom);
 }

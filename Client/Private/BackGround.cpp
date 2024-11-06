@@ -23,7 +23,7 @@ HRESULT CBackGround::Initialize_Prototype()
 	return S_OK;	
 }
 
-HRESULT CBackGround::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CBackGround::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -77,7 +77,7 @@ HRESULT CBackGround::Add_Components(void* pArg)
 
 HRESULT CBackGround::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;
@@ -88,17 +88,17 @@ void CBackGround::Add_Animation()
 	return;
 }
 
-void CBackGround::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CBackGround::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CBackGround::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CBackGround::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 
 }
 
-void CBackGround::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CBackGround::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -115,7 +115,7 @@ CBackGround* CBackGround::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
 	return pInstance;
 }
 
-CSpriteObject * CBackGround::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject * CBackGround::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CBackGround*		pInstance = new CBackGround(*this);
 

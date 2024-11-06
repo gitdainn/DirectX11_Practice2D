@@ -24,7 +24,7 @@ HRESULT CSkulItem::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkulItem::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSkulItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -52,7 +52,6 @@ HRESULT CSkulItem::Initialize(void* pArg)
 
 _uint CSkulItem::Tick(_double TimeDelta)
 {
-
 	return __super::Tick(TimeDelta);
 }
 
@@ -66,12 +65,12 @@ HRESULT CSkulItem::Render()
 	return __super::Render();
 }
 
-void CSkulItem::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSkulItem::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionEnter(pTargetCollider, pTarget);
+	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CSkulItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSkulItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
@@ -97,10 +96,10 @@ void CSkulItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget
 		m_bIsDead = true;
 	}
 
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CSkulItem::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSkulItem::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -146,9 +145,8 @@ HRESULT CSkulItem::Add_Components(void* pArg)
 
 HRESULT CSkulItem::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
-
 
 	return S_OK;
 }
@@ -166,7 +164,7 @@ CSkulItem* CSkulItem::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	return pInstance;
 }
 
-CSpriteObject* CSkulItem::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CSkulItem::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CSkulItem* pInstance = new CSkulItem(*this);
 

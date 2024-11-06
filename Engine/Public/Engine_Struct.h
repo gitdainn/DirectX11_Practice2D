@@ -3,7 +3,7 @@
 namespace Engine
 {
 	/** @note - Typedef.h 헤더를 먼저 선언해야 형식 지정자를 읽음 */
-	typedef struct ENGINE_DLL tSpriteInfo
+	struct ENGINE_DLL SPRITE_INFO
 	{
 		_float2	fSize = { 300.f, 320.f };
 		_float2	fSizeRatio = { 1.f, 1.f };
@@ -14,7 +14,7 @@ namespace Engine
 		const _tchar* pPrototypeTag = { nullptr };
 		const _tchar* pTextureComTag = { nullptr };
 		_float4	vColor = { 1.f, 1.f, 1.f, 1.f };
-	}SPRITE_INFO;
+	};
 
 	typedef struct ENGINE_DLL tObjectMetaData
 	{

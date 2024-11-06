@@ -23,7 +23,7 @@ HRESULT CDisplayUI::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CDisplayUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CDisplayUI::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -65,8 +65,14 @@ HRESULT CDisplayUI::Add_Components(void* pArg)
 
 HRESULT CDisplayUI::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
+
+	if (m_iShaderPassIndex == (_uint)VTXTEX_PASS::Wrap_X)
+	{
+		if (FAILED(SetUp_Shader_Wrap()))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -86,7 +92,7 @@ CDisplayUI* CDisplayUI::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 	return pInstance;
 }
 
-CSpriteObject* CDisplayUI::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CDisplayUI::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CDisplayUI* pInstance = new CDisplayUI(*this);
 

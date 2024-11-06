@@ -45,6 +45,36 @@ CGameObject* CObject_Manager::Get_GameObjectByName(_uint iLevelIndex, const _tch
 	return nullptr;
 }
 
+CGameObject* CObject_Manager::Get_LastObject(_uint iLevelIndex, const _tchar* pLayerTag)
+{
+	list<CGameObject*>* pObjectList = Get_ObjectList(iLevelIndex, pLayerTag);
+	if (nullptr == pObjectList)
+		return nullptr;
+
+	if (pObjectList->empty())
+		return nullptr;
+
+	return pObjectList->back();
+}
+
+CGameObject* CObject_Manager::Get_LastObject(_uint iLevelIndex, const _tchar* pLayerTag, const _uint iNum)
+{
+	list<CGameObject*>* pObjectList = Get_ObjectList(iLevelIndex, pLayerTag);
+	if (nullptr == pObjectList)
+		return nullptr;
+
+	if (0 >= iNum || pObjectList->size() < iNum)
+		return nullptr;
+
+	auto iter = pObjectList->end();
+	for (_uint i = 0; i < iNum; ++i)
+	{
+		--iter;
+	}
+
+	return *iter;
+}
+
 HRESULT CObject_Manager::Reserve_Manager(_uint iNumLevels)
 {
 	if (nullptr != m_pLayersMap)
@@ -112,7 +142,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 }
 
 /* 원형객체를 찾아 복제하여 레이어에 추가한다. */
-HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const tSpriteInfo& SpriteInfo, void* pArg)
+HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const SPRITE_INFO& tSpriteInfo, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject*		pPrototype = Find_Prototype(pPrototypeTag);
@@ -120,7 +150,7 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 		return E_FAIL;
 
 	/* 사본을 생성한다. */
-	CGameObject* pGameObject = pPrototype->Clone(SpriteInfo, pArg);
+	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
 
 	if (nullptr == pGameObject)
 		return E_FAIL;	
@@ -162,7 +192,7 @@ CGameObject* CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, voi
 	return pGameObject;	
 }
 
-CGameObject* CObject_Manager::Clone_GameObject(const _tchar* pPrototypeTag, const tSpriteInfo& tSpriteInfo, void* pArg)
+CGameObject* CObject_Manager::Clone_GameObject(const _tchar* pPrototypeTag, const SPRITE_INFO& tSpriteInfo, void* pArg)
 {
 	/* 원형을 찾는다. */
 	CGameObject* pPrototype = Find_Prototype(pPrototypeTag);
@@ -236,7 +266,6 @@ CLayer * CObject_Manager::Find_Layer(_uint iLevelIndex, const _tchar* pLayerTag)
 
 void CObject_Manager::Free()
 {
-
 	for (_uint i = 0; i < m_iNumLevels; ++i)
 	{
 		if (nullptr == m_pLayersMap)

@@ -47,13 +47,15 @@ HRESULT CColliderOBB2D::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CColliderOBB2D::Tick(_double TimeDelta)
+_uint CColliderOBB2D::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
 	// m_pOBB_Original->Transform(*m_pOBB, TransformMatrix);
 
 	m_bIsCollision = false;
+
+	return _uint();
 }
 
 _bool CColliderOBB2D::Intersects(CColliderAABB2D* pTarget) const

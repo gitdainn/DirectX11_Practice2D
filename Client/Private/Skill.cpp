@@ -14,7 +14,7 @@ HRESULT CSkill::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkill::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSkill::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -113,7 +113,7 @@ HRESULT CSkill::Add_Components(void* pArg)
 
 HRESULT CSkill::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;

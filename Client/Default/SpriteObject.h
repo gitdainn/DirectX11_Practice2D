@@ -24,19 +24,20 @@ class CTransform;
 class CVIBuffer_Rect;
 class CShader;
 class CTexture;
+class CWidget;
 END
 
 BEGIN(Client)
 
 /* 순수 가상 함수 */
-class CSpriteObject : public CGameObject
+class CSpriteObject abstract : public CGameObject
 {
 public:
 	explicit CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual ~CSpriteObject() = default;
 
 public:
-	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr);
+	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
@@ -44,9 +45,9 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
 protected: // Animation
 	struct ANIM_INFO
@@ -81,7 +82,7 @@ protected: // Animation
 
 public:
 	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
-	HRESULT Change_TextureComponent(const _tchar* pPrototypeTag);
+	HRESULT			Change_TextureComponent(const _tchar* pPrototypeTag);
 
 public:
 	const int		Get_Attack()
@@ -172,7 +173,12 @@ public:
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
-	virtual HRESULT SetUp_ShaderResources();
+
+	virtual HRESULT SetUp_ShaderResources() = 0;
+	HRESULT SetUp_ShaderDefault();
+	HRESULT SetUp_Shader_UVAnim();
+	HRESULT SetUp_Shader_Wrap();
+
 	HRESULT Load_Components_Excel();
 	HRESULT	Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider);
 	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
@@ -190,10 +196,11 @@ protected:
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
+	CWidget* m_pWidgetCom = { nullptr };
 
 protected:
 	bool	m_bIsAnimUV;
-	bool	m_bIsEndSprite;
+	bool	m_bIsEndSprite; 
 
 	_vector					m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
@@ -213,6 +220,8 @@ protected:
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 protected:
+	SPRITE_INFO m_tSpriteInfo;
+
 	SKUL_RANK	m_eSkulRank;
 	SKUL_TYPE	m_eSkulType;
 
@@ -236,7 +245,7 @@ protected:
 	_double m_InvulnerabilityDuration = { 0.0 };
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CGameObject* Clone(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) const = 0;
 	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };

@@ -26,7 +26,7 @@ HRESULT CGrimReaper::Initialize_Prototype()
     return __super::Initialize_Prototype();
 }
 
-HRESULT CGrimReaper::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CGrimReaper::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -168,7 +168,7 @@ CGrimReaper* CGrimReaper::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCo
     return pInstance;
 }
 
-CSpriteObject* CGrimReaper::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CGrimReaper::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
     CGrimReaper* pInstance = new CGrimReaper(*this);
 

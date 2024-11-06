@@ -112,6 +112,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     _tchar* pTag = new _tchar[MAX_PATH];
     lstrcpy(pTag, TEXT("Prototype_Component_Sprite_ForestTile"));
     tSpriteInfo.pTextureComTag = pTag;
+    pGameInstance->Add_Garbage(tSpriteInfo.pTextureComTag);
     if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), LEVEL_STATIC, TEXT("Layer_Default"), tSpriteInfo))))
     {
         MSG_BOX("CMyImGui - Tick() - NULL");
@@ -290,7 +291,6 @@ HRESULT CMyImGui::Save_Object()
      _uint iLength = { 0 };
      _tchar szBuffer[MAX_PATH]{};
 
-     m_iInstanceID = 0;
      for (CSpriteObject* pObject : m_CreateObjectVec)
      {
          if (nullptr == pObject)
@@ -589,6 +589,183 @@ HRESULT CMyImGui::Load_Object()
     return S_OK;
 }
 
+HRESULT CMyImGui::Save_Widget()
+{
+    return E_NOTIMPL;
+}
+
+HRESULT CMyImGui::Load_Widget()
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    Safe_AddRef(pGameInstance);
+
+    OPENFILENAME    OFN;
+    if (FAILED(Get_OpenFileName(OFN)))
+    {
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+
+    /* 로드 순서 (저장 순서와 동일): 메타 데이터 - 트랜스폼 - 컴포넌트 순 */
+    const TCHAR* pFilePath = OFN.lpstrFile;
+    HANDLE hFile = CreateFile(pFilePath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, 0);
+
+    if (INVALID_HANDLE_VALUE == hFile)
+    {
+        CloseHandle(hFile);
+        Safe_Release(pGameInstance);
+        return E_FAIL;
+    }
+
+    DWORD   dwByte = 0;
+    _bool   bRes = { false };
+
+    _uint iListSize = { 0 };
+    bRes = ReadFile(hFile, &iListSize, sizeof(_uint), &dwByte, nullptr);
+
+    CFileLoader* pFileLoader = CFileLoader::GetInstance();
+    if (nullptr == pFileLoader)
+    {
+        MSG_BOX("CMyImGui - Load_Object_Excel() - FileLoader is NULL");
+        CloseHandle(hFile);
+        Safe_Release(pGameInstance);
+        Safe_Release(pFileLoader);
+        return E_FAIL;
+    }
+    Safe_AddRef(pFileLoader);
+
+    _uint iLength = { 0 };
+    unordered_map<int, OBJECT_TRANSFORM> ObjectTransformMap;
+    unordered_map<int, list<COMPONENT_INFO>> ComponentInfoMap;
+
+    for (_uint i = 0; i < iListSize; ++i)
+    {
+        _tchar szObjectID[MAX_PATH]{};
+        _tchar szNameTag[MAX_PATH]{};
+        _tchar szClassName[MAX_PATH]{};
+        _tchar szLayer[MAX_PATH]{};
+
+        _tchar szComponentInfo[MAX_PATH]{};
+
+#pragma region 메타 데이터 로드
+        OBJECT_METADATA tMetaData;
+        bRes = ReadFile(hFile, &tMetaData, sizeof(OBJECT_METADATA), &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szObjectID, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szNameTag, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szClassName, iLength, &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, szLayer, iLength, &dwByte, nullptr);
+#pragma endregion
+
+#pragma region 트랜스폼 로드
+        OBJECT_TRANSFORM tTransform;
+        bRes = ReadFile(hFile, &tTransform, sizeof(OBJECT_TRANSFORM), &dwByte, nullptr);
+
+        bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+        bRes = ReadFile(hFile, &tTransform.pObjectID, iLength, &dwByte, nullptr);
+
+        ObjectTransformMap.emplace(tTransform.iInstanceID, tTransform);
+        pFileLoader->Set_ObjectTransformMap(ObjectTransformMap);
+#pragma endregion
+
+#pragma region 컴포넌트 로드
+        _uint iComponentNum = { 0 };
+        bRes = ReadFile(hFile, &iComponentNum, sizeof(_uint), &dwByte, nullptr);
+
+        COMPONENT_INFO tComponentInfo;
+        for (_uint i = 0; i < iComponentNum; ++i)
+        {
+            bRes = ReadFile(hFile, &tComponentInfo, sizeof(COMPONENT_INFO), &dwByte, nullptr);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            _tchar* pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pComponentTag = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pPrototypeTag = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            bRes = ReadFile(hFile, &iLength, sizeof(_uint), &dwByte, nullptr);
+            bRes = ReadFile(hFile, szComponentInfo, iLength, &dwByte, nullptr);
+            pComponent = new _tchar[lstrlen(szComponentInfo) + 1]{ };
+            lstrcpy(pComponent, szComponentInfo);
+            tComponentInfo.pSortingLayer = pComponent;
+            pGameInstance->Add_Garbage(pComponent);
+
+            auto iter = ComponentInfoMap.find(tComponentInfo.iInstanceID);
+            if (ComponentInfoMap.end() != iter)
+            {
+                (*iter).second.emplace_back(tComponentInfo);
+            }
+            else
+            {
+                list<COMPONENT_INFO> ComponentList;
+                ComponentList.emplace_back(tComponentInfo);
+                /** @qurious - 컨테이너에 삽입할 땐 복제되어 들어가는 것인가? (지역 변수면 소멸되니까 사라질테니!) */
+                ComponentInfoMap.emplace(tComponentInfo.iInstanceID, ComponentList);
+            }
+        }
+        pFileLoader->Set_ComponentInfoMap(ComponentInfoMap);
+#pragma endregion
+
+#pragma region 오브젝트 생성
+        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, szLayer, &tMetaData.iInstanceID)))
+        {
+            MSG_BOX("CMyImGui - Load_Object() - FAILED");
+            CloseHandle(hFile);
+            Safe_Release(pGameInstance);
+            Safe_Release(pFileLoader);
+            return E_FAIL;
+        }
+
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, szLayer);
+        if (nullptr == pObjectList)
+        {
+            MSG_BOX("CFileLoader - Load_Excel() - NULL");
+        }
+        CSpriteObject* pAddObject = dynamic_cast<CSpriteObject*>(pObjectList->back());
+        if (nullptr != pAddObject)
+        {
+            static int iIndex = { 1 };
+            char* pTag = new char[MAX_PATH] {};
+            strcpy(pTag, "pObjectID");
+            strcat(pTag, to_string(++iIndex).c_str());
+            pAddObject->Set_SpriteTag(pTag);
+            pAddObject->Set_NameTag(szNameTag);
+            pAddObject->Set_ClassName(szClassName);
+
+            _tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
+            lstrcpy(pLayer, szLayer);
+            pAddObject->Set_Layer(pLayer, true);
+            pAddObject->Set_Order(tMetaData.iOrder);
+
+            m_CreateObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
+        }
+#pragma endregion
+
+        ComponentInfoMap.clear();
+        ObjectTransformMap.clear();
+    }
+    CloseHandle(hFile);
+    Safe_Release(pGameInstance);
+    Safe_Release(pFileLoader);
+
+    return S_OK;
+}
+
 HRESULT CMyImGui::Save_Object_Excel()
 {
     if (m_CreateObjectVec.empty())
@@ -611,7 +788,6 @@ HRESULT CMyImGui::Save_Object_Excel()
 
     const TCHAR* pFilePath = OFN.lpstrFile; // TEXT("../Bin/DataFiles/Level_Logo.xlsx");
     bool bIsReset = { true };
-    m_iInstanceID = 0;
     for (CSpriteObject* pObject : m_CreateObjectVec)
     {
         if (nullptr == pObject)
@@ -854,6 +1030,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
         tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
         // 1. 클래스 이름을 누르면 .second에 있는 Texture, TextureIndex 정보로 생성됨.
         tSpriteInfo.pTextureComTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_Component_Sprite_"));
+        pGameInstance->Add_Garbage(tSpriteInfo.pTextureComTag);
         Install_GameObject(tSpriteInfo);
     }
 
@@ -915,7 +1092,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
         }
     }
 
-    if (ImGui::Button("Save UI"))
+    if (ImGui::Button("Save Excel"))
     {
         if (FAILED(Save_Object_Excel()))
         {
@@ -924,7 +1101,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
     }
     ImGui::SameLine();
 
-    if (ImGui::Button("Load UI"))
+    if (ImGui::Button("Load Excel"))
     {
         if (FAILED(Load_Object_Excel()))
         {
@@ -1555,6 +1732,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         tSpriteInfo.iTextureIndex = m_pSpriteListIndex[m_iFolderIndex];
         // 1. 클래스 이름을 누르면 .second에 있는 Texture, TextureIndex 정보로 생성됨.
         tSpriteInfo.pTextureComTag = ConvertCWithWC(m_FolderNameVec[m_iFolderIndex], TEXT("Prototype_Component_Sprite_"));
+        pGameInstance->Add_Garbage(tSpriteInfo.pTextureComTag);
         Install_GameObject(tSpriteInfo);
     }
 
@@ -1581,6 +1759,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
         _tchar* pTemp = new _tchar[lstrlen(pObject->Get_SpriteInfo().pTextureComTag) + 1]{};
         lstrcpy(pTemp, pObject->Get_SpriteInfo().pTextureComTag);
         tSpriteInfo.pTextureComTag = pTemp;
+        pGameInstance->Add_Garbage(tSpriteInfo.pTextureComTag);
         Install_GameObject(tSpriteInfo);
     }
 

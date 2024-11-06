@@ -30,7 +30,7 @@ protected:
 	void Compute_ViewZ(_fvector vPosition);
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const override;
+	virtual CGameObject* Clone(const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr) const override;
 	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };

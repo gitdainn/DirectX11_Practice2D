@@ -18,15 +18,15 @@ CCamera::CCamera(const CCamera & rhs)
 
 }
 
-void CCamera::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CCamera::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CCamera::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CCamera::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CCamera::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CCamera::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -87,7 +87,7 @@ HRESULT CCamera::Render()
 	return S_OK;
 }
 
-CGameObject* CCamera::Clone(const tSpriteInfo& SpriteInfo, void* pArg) const
+CGameObject* CCamera::Clone(const SPRITE_INFO& tSpriteInfo, void* pArg) const
 {
 	return nullptr;
 }

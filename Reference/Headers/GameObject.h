@@ -25,9 +25,9 @@ public:
 	virtual HRESULT Render();
 
 public:
-	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
-	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
-	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) = 0;
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) = 0;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) = 0;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) = 0;
 
 	enum CSTRING_ALLOCATION
 	{
@@ -49,6 +49,11 @@ public:
 	const _tchar* Get_NameTag() const
 	{
 		return m_pNameTag;
+	}
+
+	const _bool Get_IsDead() const
+	{
+		return m_bIsDead;
 	}
 
 	CTransform* Get_TransformCom() const {
@@ -81,14 +86,19 @@ public:
 	}
 
 public:
-	void Set_InstanceID(const _uint& iID)
+	void Set_InstanceID(const _uint iID)
 	{
 		m_iInstanceID = iID;
 	}
 
-	void Set_Order(const _uint& iOrder)
+	void Set_Order(const _uint iOrder)
 	{
 		m_iOrder = iOrder;
+	}
+
+	void Set_Dead()
+	{
+		m_bIsDead = true;
 	}
 
 	void Set_ShaderPass(const _uint iPassIndex)
@@ -172,7 +182,6 @@ protected:
 protected:
 	/* 해시테이블 */
 	unordered_map<const _tchar*, CComponent*>			m_Components;
-	SPRITE_INFO m_tSpriteInfo;
 
 protected:
 	static int g_iObjectID;
@@ -195,7 +204,7 @@ protected:
 	_uint	m_IsAllocatedCStringFlag;
 
 public:			
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CGameObject* Clone(const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr) const = 0;
 	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };

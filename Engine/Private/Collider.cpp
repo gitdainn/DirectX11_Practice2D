@@ -93,11 +93,12 @@ HRESULT CCollider::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CCollider::Tick(_double TimeDelta)
+_uint CCollider::Tick(_double TimeDelta)
 {
-	if (nullptr == m_pOwner)
+	if (nullptr == m_pOwner || m_pOwner->Get_IsDead())
 	{
-		return;
+		m_bIsDead = true;
+		return OBJ_DEAD;
 	}
 
 	m_bIsCollision = false;
@@ -120,7 +121,7 @@ void CCollider::Tick(_double TimeDelta)
 	Safe_Release(pGameInstance);
 }
 
-_bool CCollider::IsCollision(CCollider* pTargetCollider)
+const _bool CCollider::IsCollision(CCollider* pTargetCollider)
 {
 	if (nullptr == pTargetCollider)
 		return false;
@@ -142,28 +143,28 @@ _bool CCollider::IsCollision(CCollider* pTargetCollider)
 	return bIsCollision;
 }
 
-void CCollider::OnCollisionEnter(CCollider* pTargetCollider)
+void CCollider::OnCollisionEnter(CCollider* pTargetCollider, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == m_pOwner)
 		return;
 
-	m_pOwner->OnCollisionEnter(pTargetCollider, pTargetCollider->Get_Owner());
+	m_pOwner->OnCollisionEnter(pTargetCollider, pTargetCollider->Get_Owner(), pTargetLayer);
 }
 
-void CCollider::OnCollisionStay(CCollider* pTargetCollider)
+void CCollider::OnCollisionStay(CCollider* pTargetCollider, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == m_pOwner)
 		return;
 
-	m_pOwner->OnCollisionStay(pTargetCollider, pTargetCollider->Get_Owner());
+	m_pOwner->OnCollisionStay(pTargetCollider, pTargetCollider->Get_Owner(), pTargetLayer);
 }
 
-void CCollider::OnCollisionExit(CCollider* pTargetCollider)
+void CCollider::OnCollisionExit(CCollider* pTargetCollider, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == m_pOwner)
 		return;
 
-	m_pOwner->OnCollisionExit(pTargetCollider, pTargetCollider->Get_Owner());
+	m_pOwner->OnCollisionExit(pTargetCollider, pTargetCollider->Get_Owner(), pTargetLayer);
 }
 
 void CCollider::Set_Owner(CGameObject* pOwner)

@@ -75,11 +75,12 @@ public:
 private:
 	HRESULT Save_Object();
 	HRESULT Load_Object();
+	HRESULT Save_Widget();
+	HRESULT Load_Widget();
 	HRESULT	Save_Line();
 	HRESULT	Load_Line();
 	HRESULT Save_Object_Excel();
 	HRESULT Load_Object_Excel();
-	HRESULT Load_PreviousData(); // 구조체 수정 전에 저장했떤 파일 불러오기
 
 private:
 	void	Key_Input(_double TimeDelta);
@@ -112,7 +113,7 @@ private:
 	const char*				m_pLayerC;
 	unordered_map<const _tchar*, ORIGINAL_DATA>		m_OriginalDataMap;
 
-	_uint					m_iInstanceID = { 0 };
+	_uint					m_iInstanceID = { 500 };
 
 	/** @note - 자료구조 선택 이유
 	* 1. 토글 열 때마다 추가해야하는 폴더 경우 map으로 key값으로 찾아 상수 시간복잡도이고, 삽입 부담X

@@ -178,6 +178,8 @@
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\Public\Environment.h" />
     <ClInclude Include="..\Public\GrimReaper.h" />
+    <ClInclude Include="..\Public\HealthBarUI.h" />
+    <ClInclude Include="..\Public\HealthBarWidget.h" />
     <ClInclude Include="..\Public\InputHandler.h" />
     <ClInclude Include="..\Public\Item.h" />
     <ClInclude Include="..\Public\Level_GamePlay.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="..\Public\Tile.h" />
     <ClInclude Include="..\Public\UI.h" />
     <ClInclude Include="..\Public\UI_Handler.h" />
+    <ClInclude Include="..\Public\UI_Manager.h" />
     <ClInclude Include="..\Public\WaterSkul.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Client_Defines.h" />
@@ -229,6 +232,8 @@
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\Private\Environment.cpp" />
     <ClCompile Include="..\Private\GrimReaper.cpp" />
+    <ClCompile Include="..\Private\HealthBarUI.cpp" />
+    <ClCompile Include="..\Private\HealthBarWidget.cpp" />
     <ClCompile Include="..\Private\InputHandler.cpp" />
     <ClCompile Include="..\Private\Item.cpp" />
     <ClCompile Include="..\Private\Level_GamePlay.cpp" />
@@ -264,6 +269,7 @@
     <ClCompile Include="..\Private\Tile.cpp" />
     <ClCompile Include="..\Private\UI.cpp" />
     <ClCompile Include="..\Private\UI_Handler.cpp" />
+    <ClCompile Include="..\Private\UI_Manager.cpp" />
     <ClCompile Include="..\Private\WaterSkul.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SpriteObject.cpp" />

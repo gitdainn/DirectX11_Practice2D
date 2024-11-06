@@ -17,7 +17,9 @@ namespace Client
 	{
 		Default,
 		UV_Anim,
-		FlipUV_Anim
+		FlipUV_Anim,
+		Discard,
+		Wrap_X
 	}VTXTEX_PASS;
 
 	enum class CONTROL_KEY
@@ -111,6 +113,7 @@ using namespace Client;
 #define	TAG_TRANSFORM			TEXT("Com_Transform")
 #define	TAG_RENDERER			TEXT("Com_Renderer")
 #define	TAG_SHADER				TEXT("Com_Shader")
+#define	TAG_WIDGET				TEXT("Com_Widget")
 #define	TAG_MODEL				TEXT("Com_Model")
 #define	TAG_BUFFER				TEXT("Com_VIBuffer")
 #define	TAG_TEXTURE				TEXT("Com_Texture")

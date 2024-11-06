@@ -37,6 +37,9 @@
 // File
 #include <commdlg.h>
 
+// Debug
+#include <cassert>
+
 using namespace std;
 using namespace DirectX;
 

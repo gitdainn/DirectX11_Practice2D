@@ -24,7 +24,7 @@ HRESULT CItem::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CItem::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -50,7 +50,6 @@ HRESULT CItem::Initialize(void* pArg)
 
 _uint CItem::Tick(_double TimeDelta)
 {
-
 	return __super::Tick(TimeDelta);
 }
 
@@ -66,17 +65,17 @@ HRESULT CItem::Render()
 	return __super::Render();
 }
 
-void CItem::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CItem::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionEnter(pTargetCollider, pTarget);
+	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CItem::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CItem::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -136,7 +135,7 @@ HRESULT CItem::Add_Components(void* pArg)
 
 HRESULT CItem::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;

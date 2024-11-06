@@ -1,62 +1,70 @@
 #include "Shader_Defines.hpp"
 
-matrix			g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
+matrix g_WorldMatrix, g_ViewMatrix, g_ProjMatrix;
 
-texture2D		g_Texture;
-texture2D		g_DepthTexture;
-float4			g_vColor;
-int				g_iUVIndexX;
-int				g_iUVIndexY;
-int				g_iUVTexNumX;
-int				g_iUVTexNumY;
+texture2D g_Texture;
+texture2D g_MaskTexture;
+texture2D g_DepthTexture;
+
+float g_fNormalizedX = { 1.f };
+float g_fNormalizedY = { 1.f };
+
+float3 g_ObjectSize;
+float2 g_TextureSize;
+
+float4 g_vColor;
+int g_iUVIndexX;
+int g_iUVIndexY;
+int g_iUVTexNumX;
+int g_iUVTexNumY;
 
 struct VS_IN
 {
-	float3		vPosition : POSITION;
-	float2		vTexUV : TEXCOORD0;
+    float3 vPosition : POSITION;
+    float2 vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT
 {
-	float4		vPosition : SV_POSITION;
-	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos: TEXCOORD1;
+    float4 vPosition : SV_POSITION;
+    float2 vTexUV : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
-	VS_OUT		Out = (VS_OUT)0;
+    VS_OUT Out = (VS_OUT) 0;
 
-	matrix		matWV, matWVP;
+    matrix matWV, matWVP;
 
-	matWV = mul(g_WorldMatrix, g_ViewMatrix);
-	matWVP = mul(matWV, g_ProjMatrix);
+    matWV = mul(g_WorldMatrix, g_ViewMatrix);
+    matWVP = mul(matWV, g_ProjMatrix);
 
-	Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
-	Out.vTexUV = In.vTexUV;
-	Out.vProjPos = Out.vPosition;
+    Out.vPosition = mul(float4(In.vPosition, 1.f), matWVP);
+    Out.vTexUV = In.vTexUV;
+    Out.vProjPos = Out.vPosition;
 
-	return Out;
+    return Out;
 }
 
 struct PS_IN
-{	
-	float4		vPosition : SV_POSITION;
-	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos: TEXCOORD1;
+{
+    float4 vPosition : SV_POSITION;
+    float2 vTexUV : TEXCOORD0;
+    float4 vProjPos : TEXCOORD1;
 };
 
 struct PS_OUT
 {
-	float4		vColor : SV_TARGET0;		
+    float4 vColor : SV_TARGET0;
 };
 
 /* 픽셀의 색을 결정한다. */
 PS_OUT PS_MAIN(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
+    PS_OUT Out = (PS_OUT) 0;
 	
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
 
     if (0.1 >= Out.vColor.a)
         discard;
@@ -107,41 +115,70 @@ PS_OUT PS_FlipUV_ANIM(PS_IN In)
     return Out;
 }
 
-PS_OUT PS_MAIN_SOFTEFFECT(PS_IN In)
+PS_OUT PS_Discard(PS_IN In)
 {
-	PS_OUT Out = (PS_OUT)0;
+    PS_OUT Out = (PS_OUT) 0;
 
-	Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+    // LinearSampler는 텍스처UV를 크기만큼 반복해서 채움. (wrap)
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+    
+    if (g_fNormalizedX < In.vTexUV.x)
+        discard;
+	
+    if (g_fNormalizedY < In.vTexUV.y)
+        discard;
 
-	float2		vUV;
-
-	vUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
-	vUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
-
-	float4		vDepthDesc = g_DepthTexture.Sample(PointSampler, vUV);
-
-	float		fOldZ = vDepthDesc.y * 300.f;
-	float		fViewZ = In.vProjPos.w;
-
-	Out.vColor.a = Out.vColor.a * saturate(fOldZ - fViewZ);
-
-	return Out;
+    return Out;
 }
 
-technique11		DefaultTechnique
+/** 오브젝트 크기만큼 x축 이미지를 반복해서 출력합니다. */
+PS_OUT PS_WRAP_X(PS_IN In)
 {
-	pass Default
-	{
-		SetRasterizerState(RS_Default);
-		SetDepthStencilState(DSS_Default, 0);
-		SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+    PS_OUT Out = (PS_OUT) 0;
+    
+    float fWrapNum = g_ObjectSize.x / g_TextureSize;
+    In.vTexUV.x *= fWrapNum;
+    
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+    
+    return Out;
+}
 
-		VertexShader = compile vs_5_0 VS_MAIN();
-		GeometryShader = NULL;
-		HullShader = NULL;
-		DomainShader = NULL;
-		PixelShader = compile ps_5_0 PS_MAIN();
-	}
+PS_OUT PS_MAIN_SOFTEFFECT(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+    float2 vUV;
+
+    vUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+    vUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+    float4 vDepthDesc = g_DepthTexture.Sample(PointSampler, vUV);
+
+    float fOldZ = vDepthDesc.y * 300.f;
+    float fViewZ = In.vProjPos.w;
+
+    Out.vColor.a = Out.vColor.a * saturate(fOldZ - fViewZ);
+
+    return Out;
+}
+
+technique11 DefaultTechnique
+{
+    pass Default
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
 
     pass UV_ANIM
     {
@@ -167,5 +204,31 @@ technique11		DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_FlipUV_ANIM();
+    }
+
+    pass UV_DISCARD
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_Discard();
+    }
+
+    pass UV_WRAP_X
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_AlphaBlend, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_WRAP_X();
     }
 }

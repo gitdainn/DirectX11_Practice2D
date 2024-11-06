@@ -214,7 +214,7 @@ HRESULT CFileLoader::Load_Excel(const _tchar* pFilePath, const LEVEL eLevel)
 			_tchar pPrototypeTag[MAX_PATH] = TEXT("Prototype_GameObject_");
 			lstrcat(pPrototypeTag, pClassName);
 			Safe_Delete_Array(pClassName);
-			Safe_Delete_Array(pLayer);
+			pGameInstance->Add_Garbage(pLayer); // @error - Safe_DeleteArray 함녀 괜찮은데 이걸로 함녀 오류 뜸
 
 			if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &iInstanceID)))
 			{
@@ -504,7 +504,7 @@ HRESULT CFileLoader::Load_SkillData_Excel(const _tchar* pFilePath)
 		const int iLastCol = pSheet->lastCol();
 		const int iFirstRow = { 4 };
 		const int iFirstCol = { 1 };
-		for (_uint iRow = iFirstRow; iRow <= iLastRow; ++iRow)
+		for (_uint iRow = iFirstRow; iRow <= (_uint)iLastRow; ++iRow)
 		{
 			SKILL_EXCEL tSkillInfo;
 			ZeroMemory(&tSkillInfo, sizeof(SKILL_EXCEL));
@@ -517,7 +517,7 @@ HRESULT CFileLoader::Load_SkillData_Excel(const _tchar* pFilePath)
 			const _uint iDamageLevel = { 3 };
 			for (_uint i = 0; i < iDamageLevel; ++i)
 			{
-				tSkillInfo.iDamage[i] = pSheet->readNum(iRow, iFirstCol + iCol++);
+				tSkillInfo.iDamage[i] = (_uint)pSheet->readNum(iRow, iFirstCol + iCol++);
 			}
 
 			tSkillInfo.CoolDown = pSheet->readNum(iRow, iFirstCol + iCol++);

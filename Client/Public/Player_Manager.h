@@ -2,6 +2,8 @@
 #include "Base.h"
 #include "Player.h"
 
+class CUI_Handler;
+
 /** @qurious - 싱글톤에 final 붙이면 안된다? */
 class CPlayer_Manager : public CBase
 {
@@ -59,16 +61,21 @@ public: // Getter //
         return m_bIsMaxSkulEquipped;
     }
 
+public: // State //
+    void    Set_Damaged(const _int iDamaged);
+
 private:
     CPlayer* m_pMainSkul = { nullptr };
     CPlayer* m_pSubSkul = { nullptr };
+    CUI_Handler* m_pUI_Handler = { nullptr };
 
 private:
     _bool   m_bIsAcquireSkul = { false };
     _bool   m_bIsMaxSkulEquipped = { false };
 
 private:
-    _int m_iHp;
+    _int m_iHp = { 100 };
+    _int m_iMaxHp = { 100 };
     _int m_iMagicAttack;
     _int m_iPhysicalAttack;
     _int m_iMagicDefense;

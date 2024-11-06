@@ -6,7 +6,9 @@ IMPLEMENT_SINGLETON(CPlayer_Manager)
 
 CPlayer_Manager::CPlayer_Manager()
     : m_pMainSkul(nullptr), m_pSubSkul(nullptr)
+    , m_pUI_Handler(CUI_Handler::GetInstance())
 {
+    Safe_AddRef(m_pUI_Handler);
 }
 
 CPlayer_Manager::~CPlayer_Manager()
@@ -107,8 +109,20 @@ void CPlayer_Manager::Swap_Skul()
     Safe_Release(pUIHandler);
 }
 
+void CPlayer_Manager::Set_Damaged(const _int iDamaged)
+{
+    if (0 > iDamaged)
+        return;
+
+    m_iHp -= iDamaged;
+    m_pUI_Handler->Set_Hp(m_iHp);
+}
+
 void CPlayer_Manager::Free()
 {
     __super::Free();
+
+    Safe_Release(m_pUI_Handler);
+
     return;
 }

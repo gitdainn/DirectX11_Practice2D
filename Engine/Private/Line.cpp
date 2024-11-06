@@ -133,7 +133,7 @@ HRESULT CLine::Render()
 	return S_OK;
 }
 
-CGameObject* CLine::Clone(const tSpriteInfo& SpriteInfo, void* pArg) const
+CGameObject* CLine::Clone(const SPRITE_INFO& tSpriteInfo, void* pArg) const
 {
     MSG_BOX("CLine - Clone() - NOT Use this Clone");
     return nullptr;

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "UI_Handler.h"
+#include "HealthBarUI.h"
+#include "Widget.h"
 
 IMPLEMENT_SINGLETON(CUI_Handler)
 
@@ -42,6 +44,214 @@ void CUI_Handler::Ready_PrototypeTag()
     tPrototype.pProfileTag = TEXT("AquaSkull");
     m_UIPrototypeMap.emplace(TEXT("워터스컬"), tPrototype);
     tPrototype.SkillTagVec.clear();
+
+    return;
+}
+
+void CUI_Handler::ChangeSkul(CPlayer* pPlayer, _bool bChangeMainSkul)
+{
+    if (nullptr == pPlayer)
+    {
+        MSG_BOX("CUI_Handler - SwapSkul() - NULL");
+        return;
+    }
+
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (nullptr == pGameInstance)
+        return;
+    Safe_AddRef(pGameInstance);
+
+    // true이면 main 스컬을 교체
+    if (bChangeMainSkul)
+    {
+        CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainProfile"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        CUI* pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+
+        auto CompareStr = [=](const pair<const _tchar*, PROTOTAG_TYPE>& Pair)->bool
+            {
+                return !lstrcmp(Pair.first, pPlayer->Get_NameTag());
+            };
+        /* @note - find_if는 단일 인자를 받는 함수/함수객체만 가능함. - 요소를 조건자로 자동 전달하기 때문 */
+        auto ChangePlayerIter = find_if(m_UIPrototypeMap.begin(), m_UIPrototypeMap.end(), CompareStr);
+        if (m_UIPrototypeMap.end() == ChangePlayerIter)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.pProfileTag);
+
+        pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainSkill1"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[0]);
+
+        pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_MAINSKUL_UI, TEXT("MainSkill2"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[1]);
+
+    }
+    else
+    {
+        CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubProfile"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        CUI* pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+        auto CompareStr = [=](const pair<const _tchar*, PROTOTAG_TYPE>& Pair)->bool
+            {
+                return !lstrcmp(Pair.first, pPlayer->Get_NameTag());
+            };
+        /* @note - find_if는 단일 인자를 받는 함수/함수객체만 가능함. - 요소를 조건자로 자동 전달하기 때문 */
+        auto ChangePlayerIter = find_if(m_UIPrototypeMap.begin(), m_UIPrototypeMap.end(), CompareStr);
+        if (m_UIPrototypeMap.end() == ChangePlayerIter)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.pProfileTag);
+
+        pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubSkill1"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[0]);
+
+        pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_SUBSKUL_UI, TEXT("SubSkill2"));
+        if (nullptr == pObject)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+
+        pUI = dynamic_cast<CUI*>(pObject);
+        if (nullptr == pUI)
+        {
+            Safe_Release(pGameInstance);
+            return;
+        }
+        pUI->Set_SpriteFileName(ChangePlayerIter->second.SkillTagVec[1]);
+    }
+
+    Safe_Release(pGameInstance);
+    return;
+}
+
+void CUI_Handler::OnOffRender(const _tchar* pLayer, const _bool bIsRender)
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (nullptr == pGameInstance)
+    {
+        Safe_Release(pGameInstance);
+        return;
+    }
+    Safe_AddRef(pGameInstance);
+
+    list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList((_uint)LEVEL_LOGO, pLayer);
+    if (nullptr == pObjList)
+    {
+        Safe_Release(pGameInstance);
+        return;
+    }
+
+    for (CGameObject* pObj : *pObjList)
+    {
+        if (nullptr == pObj)
+            continue;
+        pObj->OnOffRender(bIsRender);
+    }
+
+    Safe_Release(pGameInstance);
+    return;
+}
+
+void CUI_Handler::Set_Hp(const _int iHp)
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (nullptr == pGameInstance)
+    {
+        Safe_Release(pGameInstance);
+        return;
+    }
+    Safe_AddRef(pGameInstance);
+
+    CGameObject* pObject = pGameInstance->Get_GameObjectByName((_uint)LEVEL_LOGO, LAYER_UI, TEXT("PlayerHealthBar"));
+    if (nullptr == pObject)
+    {
+        Safe_Release(pGameInstance);
+        return;
+    }
+
+    CHealthBarUI* pHealthBar = dynamic_cast<CHealthBarUI*>(pObject);
+    if (nullptr == pHealthBar)
+    {
+        Safe_Release(pGameInstance);
+        return;
+    }
+
+    pHealthBar->Set_Hp(iHp);
+    Safe_Release(pGameInstance);
+}
+
+void CUI_Handler::Set_Hp(CWidget* pWidgetCom, const _int iHp)
+{
+    if (nullptr == pWidgetCom)
+        return;
+
+    CGameObject* pObject = pWidgetCom->Get_WidgetByName(TEXT("EnemyHealthBar"));
+    if (nullptr == pObject)
+        return;
+
+    CHealthBarUI* pHealthBar = dynamic_cast<CHealthBarUI*>(pObject);
+    if (nullptr == pHealthBar)
+        return;
+
+    pHealthBar->Set_Hp(iHp);
 
     return;
 }

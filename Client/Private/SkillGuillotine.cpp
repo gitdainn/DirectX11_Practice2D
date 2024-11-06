@@ -15,7 +15,7 @@ HRESULT CSkillGuillotine::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkillGuillotine::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSkillGuillotine::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -161,7 +161,7 @@ CSkillGuillotine* CSkillGuillotine::Create(ID3D11Device* pDevice, ID3D11DeviceCo
 	return pInstance;
 }
 
-CSpriteObject* CSkillGuillotine::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CSkillGuillotine::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CSkillGuillotine* pInstance = new CSkillGuillotine(*this);
 

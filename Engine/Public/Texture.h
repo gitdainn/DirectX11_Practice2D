@@ -26,7 +26,7 @@ public:
 	virtual HRESULT Initialize(void* pArg);
 
 public:
-	inline void Set_OriginalTextureSize(const _uint& iTextureIndex, const _float2 fSize)
+	inline void Set_OriginalTextureSize(const _uint iTextureIndex, const _float2 fSize)
 	{
 		if (m_iNumTextures <= iTextureIndex || 0 > iTextureIndex)
 		{
@@ -36,7 +36,7 @@ public:
 		m_TextureSizeVec[iTextureIndex] = fSize;
 	};
 
-	const _float2 Get_OriginalTextureSize(const _uint& iTextureIndex) const
+	const _float2 Get_OriginalTextureSize(const _uint iTextureIndex) const
 	{
 		if (m_iNumTextures <= iTextureIndex || 0 > iTextureIndex)
 		{
@@ -45,6 +45,24 @@ public:
 		};
 
 		return m_TextureSizeVec[iTextureIndex];
+	}
+
+	const _float2 Get_OriginalTextureSize(const _tchar* pFileName) const
+	{
+		if (nullptr == pFileName)
+		{
+			MSG_BOX("CTexture - Get_OriginalTextureSize() - NULL");
+			return _float2(0.f, 0.f);
+		};
+
+		auto iter = find_if(m_SRVMap.begin(), m_SRVMap.end(), CTag_Finder(pFileName));
+		if (m_SRVMap.end() == iter)
+		{
+			MSG_BOX("CTexture - Get_OriginalTextureSize() - NULL");
+			return _float2(0.f, 0.f);
+		}
+
+		return iter->second.second;
 	}
 
 	const vector<const _tchar*>* Get_TexturePathVec() const
@@ -78,9 +96,9 @@ private:
 
 private:
 	vector<ID3D11ShaderResourceView*>			m_SRVs;
-	unordered_map<const _tchar*, ID3D11ShaderResourceView*>			m_SRVMap;
+	unordered_map<const _tchar*, pair<ID3D11ShaderResourceView*, _float2>>			m_SRVMap; // <텍스처명, pair<리소스, 텍스처 사이즈>
 	vector<const _tchar*>						m_TexturePathVec;
-	vector<_float2>								m_TextureSizeVec;
+	vector<_float2>								m_TextureSizeVec; // 인덱스로 텍스처의 원본 크기를 얻기 위함.
 	_uint										m_iNumTextures = { 0 };
 	_uint										m_iTextureIndex = { 0 };
 	_uint										m_iOrder = { 0 };

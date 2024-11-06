@@ -15,7 +15,7 @@ HRESULT CSkillGateOfNether::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CSkillGateOfNether::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSkillGateOfNether::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	m_iUVTexNumX = 5;
 	m_iUVTexNumY = 7;
@@ -153,7 +153,7 @@ CSkillGateOfNether* CSkillGateOfNether::Create(ID3D11Device* pDevice, ID3D11Devi
 	return pInstance;
 }
 
-CSpriteObject* CSkillGateOfNether::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CSkillGateOfNether::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CSkillGateOfNether* pInstance = new CSkillGateOfNether(*this);
 

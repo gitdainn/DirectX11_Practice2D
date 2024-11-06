@@ -43,13 +43,15 @@ HRESULT CColliderSphere2D::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CColliderSphere2D::Tick(_double TimeDelta)
+_uint CColliderSphere2D::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 
 	//m_pSphere_Original->Transform(*m_pSphere, TransformMatrix);
 
 	m_bIsCollision = false;
+
+	return _uint();
 }
 
 _bool CColliderSphere2D::Intersects(CColliderAABB2D* pTarget) const

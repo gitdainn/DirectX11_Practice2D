@@ -2,6 +2,8 @@
 #include "Enemy.h"
 #include "Line_Manager.h"
 #include "FileLoader.h"
+#include "UI_Handler.h"
+#include "Widget.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -34,7 +36,7 @@ HRESULT CEnemy::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEnemy::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CEnemy::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 	{
@@ -51,8 +53,10 @@ HRESULT CEnemy::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
 	XMStoreFloat2(&vPosition, m_pTransformCom->Get_State(CTransform::STATE_POSITION));
 
 	if (FAILED(pGameInstance->Get_CurrentLineEndPoint(vPosition, m_LineEndPoints)))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
-
+	}
 	Safe_Release(pGameInstance);
 
 	CTransform::TRANSFORM_DESC tTransDesc;
@@ -97,6 +101,11 @@ _uint CEnemy::Tick(_double TimeDelta)
 		m_bIsDead = true;
 	}
 
+	if (nullptr != m_pWidgetCom)
+	{
+		m_pWidgetCom->Tick_BindToOwner(TimeDelta);
+	}
+
 	m_StateFunc(*this, TimeDelta);
 
 	return __super::Tick(TimeDelta);
@@ -114,32 +123,38 @@ HRESULT CEnemy::Render()
 	return __super::Render();
 }
 
-void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
-	if (!lstrcmp(LAYER_PLAYERATK, pTarget->Get_Layer()))
+	if (!lstrcmp(LAYER_PLAYERATK, pTargetLayer))
 	{
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());
+		CUI_Handler::GetInstance()->Set_Hp(m_pWidgetCom, m_iHp);
 	}
 
-	__super::OnCollisionEnter(pTargetCollider, pTarget);
+	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
 }
 
-void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
+	if (!lstrcmp(LAYER_PLAYERATK, pTargetLayer))
+	{
+		int i = 0;
+	}
 }
 
-void CEnemy::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnemy::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
+	int i = 0;
 }
 
 #pragma region ENEMY_STATE
@@ -231,6 +246,22 @@ HRESULT CEnemy::Add_Components(void* pArg)
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
 
+	/* For.Com_Shader */
+	CWidget::WIDGET_ARGUMENT tWidgetArgument;
+	tWidgetArgument.pOwner = this;
+	tWidgetArgument.pFilePath = TEXT("HealthBarW");
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_HealthBarWidget"),
+		TAG_WIDGET, (CComponent**)&m_pWidgetCom, &tWidgetArgument)))
+		return E_FAIL;
+
+	///* For.Com_Shader */
+	//CWidget::WIDGET_ARGUMENT tWidgetArgument;
+	//tWidgetArgument.pOwner = this;
+	//tWidgetArgument.pFilePath = TEXT("HealthBarW");
+	//if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Widget"),
+	//	TAG_WIDGET, (CComponent**)&m_pWidgetCom, &tWidgetArgument)))
+	//	return E_FAIL;
+
 #pragma region COLLIDER
 	if (nullptr == m_pColliderCom)
 	{
@@ -269,7 +300,10 @@ HRESULT CEnemy::Add_Components(void* pArg)
 
 HRESULT CEnemy::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_Shader_UVAnim()))
 		return E_FAIL;
 
 	return S_OK;

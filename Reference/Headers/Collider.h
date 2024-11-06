@@ -31,7 +31,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg) override;
-	virtual void Tick(_double TimeDelta);
+	virtual _uint Tick(_double TimeDelta);
 
 public:
 	_vector	Get_IntersectVectorX(CCollider* pTargetCollider)
@@ -53,10 +53,10 @@ public:
 	}
 
 public:
-	_bool IsCollision(CCollider* pTargetCollider);
-	void OnCollisionEnter(CCollider* pTargetCollider);
-	void OnCollisionStay(CCollider* pTargetCollider);
-	void OnCollisionExit(CCollider* pTargetCollider);
+	const _bool IsCollision(CCollider* pTargetCollider);
+	void OnCollisionEnter(CCollider* pTargetCollider, const _tchar* pLayer);
+	void OnCollisionStay(CCollider* pTargetCollider, const _tchar* pLayer);
+	void OnCollisionExit(CCollider* pTargetCollider, const _tchar* pLayer);
 
 protected:
 	virtual _bool Intersects(CColliderAABB2D* pTarget) const = 0;
@@ -100,9 +100,14 @@ public:
 		return m_tColliderDesc;
 	}
 
-	const _bool& Get_IsBlock() const
+	const _bool Get_IsBlock() const
 	{
 		return m_bIsBlock;
+	}
+
+	const _bool Get_IsDead() const
+	{
+		return m_bIsDead;
 	}
 
 protected:
@@ -125,6 +130,7 @@ protected:
 	COLLIDER_DESC			m_tColliderDesc;
 	_bool					m_bIsCollision = { false };
 	_bool					m_bIsBlock = { false };
+	_bool					m_bIsDead = { false };
 	_uint					m_iID = { 0 };
 
 public:

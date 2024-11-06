@@ -22,7 +22,7 @@ HRESULT CTile::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CTile::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CTile::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -72,7 +72,7 @@ HRESULT CTile::Add_Components(void* pArg)
 
 HRESULT CTile::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;
@@ -83,17 +83,17 @@ void CTile::Add_Animation()
 	return;
 }
 
-void CTile::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CTile::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CTile::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CTile::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 
 }
 
-void CTile::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CTile::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -110,7 +110,7 @@ CTile* CTile::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	return pInstance;
 }
 
-CSpriteObject* CTile::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CTile::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CTile* pInstance = new CTile(*this);
 

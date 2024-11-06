@@ -11,6 +11,7 @@ CUI::CUI(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 CUI::CUI(const CUI& rhs)
 	: CSpriteObject(rhs)
+	, m_pOwner(nullptr)
 {
 
 }
@@ -23,7 +24,7 @@ HRESULT CUI::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CUI::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CUI::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -66,48 +67,6 @@ HRESULT CUI::Add_Components(void* pArg)
 		return E_FAIL;
 
 	return __super::Add_Components(pArg);
-}
-
-HRESULT CUI::SetUp_ShaderResources()
-{
-	//if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-	//	return E_FAIL;
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
-	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
-	//if (m_bIsScroll)
-	//{
-	//	Scroll_Screen(WorldMatrix);
-	//}
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
-		return E_FAIL;
-
-	Safe_Release(pGameInstance);
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
-		return E_FAIL;
-
-	if (nullptr == m_pSpriteFileName)
-	{
-		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
-			return E_FAIL;
-	}
-
-
-	return S_OK;
 }
 
 void CUI::Free()

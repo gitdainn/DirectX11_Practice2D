@@ -43,12 +43,14 @@ HRESULT CColliderAABB2D::Initialize(void* pArg)
 	return S_OK;
 }
 
-void CColliderAABB2D::Tick(_double TimeDelta)
+_uint CColliderAABB2D::Tick(_double TimeDelta)
 {
 	__super::Tick(TimeDelta);
 	//m_pAABB_Original->Transform(*m_pAABB, Remove_Rotation(TransformMatrix));
 
 	m_bIsCollision = false;
+
+	return _uint();
 }
 
 _bool CColliderAABB2D::Intersects(CColliderAABB2D* pTarget) const

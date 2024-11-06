@@ -31,7 +31,7 @@ private:
 	VertexPositionColor	m_SourVertex;
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& SpriteInfo, void* pArg = nullptr) const;
+	virtual CGameObject* Clone(const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr) const;
 	virtual CGameObject* Clone(void* pArg = nullptr) const;
 	virtual void Free() override;
 };

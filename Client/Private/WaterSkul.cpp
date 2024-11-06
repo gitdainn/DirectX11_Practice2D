@@ -23,7 +23,7 @@ HRESULT CWaterSkul::Initialize_Prototype()
     return __super::Initialize_Prototype();
 }
 
-HRESULT CWaterSkul::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CWaterSkul::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
     if (FAILED(__super::Initialize(InSpriteInfo)))
     {
@@ -158,7 +158,7 @@ CWaterSkul* CWaterSkul::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
     return pInstance;
 }
 
-CSpriteObject* CWaterSkul::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CWaterSkul::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
     CWaterSkul* pInstance = new CWaterSkul(*this);
 

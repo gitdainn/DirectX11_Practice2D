@@ -20,6 +20,7 @@
 #include "Tile.h"
 #include "Environment.h"
 #include "DisplayUI.h"
+#include "HealthBarUI.h"
 #include "SkulItem.h"
 #pragma endregion
 
@@ -178,6 +179,14 @@ HRESULT CLoader::Loaiding_GameObject_Logo()
 	/* For.Prototype_GameObject_DisplayUI */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_DisplayUI"),
 		CDisplayUI::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_HealthBarUI */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_HealthBarUI"),
+		CHealthBarUI::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

@@ -193,7 +193,7 @@ bool CLine_Manager::IsCurrentLineOccupied(const _float2& vObjectPosition, _float
 		&& _float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tRightVertex.position)
 	{
 		_float fLandingY = { 0 };
-		if (FAILED(HasPassableLine(vObjectPosition, fLandingY)))
+		if (!HasPassableLine(vObjectPosition, fLandingY))
 			return false;
 	}
 

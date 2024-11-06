@@ -35,7 +35,7 @@ public:
 	virtual ~CSpriteObject() = default;
 
 public:
-	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr);
+	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
@@ -61,9 +61,9 @@ protected: // Animation
 	HRESULT Load_Components_Excel();
 
 public:
-	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override;
-	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override;
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
 public:
 	void	Set_TextureIndex(const _uint& iIndex)
@@ -166,6 +166,8 @@ protected:
 	CCollider* m_pColliderCom = { nullptr };
 
 protected:
+	SPRITE_INFO m_tSpriteInfo;
+
 	_bool	m_bIsAnimUV;
 	_bool	m_bIsEndSprite;
 	_bool	m_bIsScroll;
@@ -181,7 +183,7 @@ protected:
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 public:
-	virtual CGameObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const = 0;
+	virtual CGameObject* Clone(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) const = 0;
 	virtual CGameObject* Clone(void* pArg = nullptr) const = 0;
 	virtual void Free() override;
 };

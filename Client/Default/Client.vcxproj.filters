@@ -136,6 +136,12 @@
     <Filter Include="02.GameObject\Item\SkulItem">
       <UniqueIdentifier>{409f4280-b4ee-432d-8cc5-55694abad02f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\UI\HealthBarUI">
+      <UniqueIdentifier>{19823016-2442-4a0c-b6bb-8426984bfb48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="07.Widget">
+      <UniqueIdentifier>{6471fa46-695d-44c2-8a00-786975cda860}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -268,6 +274,13 @@
     <ClInclude Include="..\Public\SkulItem.h">
       <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\UI_Manager.h">
+      <Filter>05.Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HealthBarUI.h">
+      <Filter>02.GameObject\UI\HealthBarUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HealthBarWidget.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -388,6 +401,13 @@
     <ClCompile Include="..\Private\SkulItem.cpp">
       <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\UI_Manager.cpp">
+      <Filter>05.Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HealthBarUI.cpp">
+      <Filter>02.GameObject\UI\HealthBarUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HealthBarWidget.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

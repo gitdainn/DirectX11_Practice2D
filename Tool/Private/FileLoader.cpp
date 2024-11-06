@@ -74,7 +74,9 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 			{
 				bRes = ReadFile(hFile, pTextureComTag, iLength, &dwByte, nullptr);
 				tSpriteInfo.pTextureComTag = pTextureComTag;
+
 			}
+			pGameInstance->Add_Garbage(tSpriteInfo.pTextureComTag);
 
 			if (FAILED(pGameInstance->Add_GameObject(tSpriteInfo.pPrototypeTag, (_uint)eLevel, TEXT("Layer_Default"), tSpriteInfo)))
 			{

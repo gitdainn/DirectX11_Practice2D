@@ -14,7 +14,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
 	, m_bIsScroll(true)
 {
-	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
+	ZeroMemory(&m_tSpriteInfo, sizeof(SPRITE_INFO));
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fSizeRatio = { 1.f, 1.f };
@@ -83,7 +83,7 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 }
 
 // @qurious - 매개변수 &가 원본 참조..인데 주소 참조는아닌가? 그렇기에 memcpy에서 & 또 써줘야함?
-HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
 	m_iTextureIndex = m_tSpriteInfo.iTextureIndex;
@@ -164,7 +164,6 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 		MSG_BOX("CSpriteObject - ChangeTextureComponent() - FAILED");
 		return E_FAIL;
 	}
-	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag); 
 	m_tSpriteInfo.pTextureComTag = pPrototypeTag;
 
 	return S_OK;
@@ -298,11 +297,11 @@ HRESULT CSpriteObject::Load_Components_Excel()
 	return S_OK;
 }
 
-void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
@@ -317,7 +316,7 @@ void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTa
 	}
 }
 
-void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -334,7 +333,10 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 	}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 
@@ -403,7 +405,7 @@ void CSpriteObject::Free()
 		Safe_Delete_Array(m_pAnimInfo);
 	}
 
-	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	//Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
 	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
 
 	Safe_Delete_Array(m_pSpriteTag);

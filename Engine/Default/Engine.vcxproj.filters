@@ -151,6 +151,18 @@
     <Filter Include="01.Utility\13.Manager\LineManager\Line">
       <UniqueIdentifier>{e1a97459-a404-49bf-9bb4-d53f5045fe89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\Widget_Manager">
+      <UniqueIdentifier>{44d0559d-ffb4-4c92-82d1-9e54291549dc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Component\Widget_Manager\UserInterface">
+      <UniqueIdentifier>{f1c93025-6a85-45a1-9990-6c0440bbd410}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\03.Component\Widget_Manager\Widget">
+      <UniqueIdentifier>{6f2f49be-8385-432f-b4e1-7adf55022516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{8db52426-1eac-4e1f-a3e3-978d9f641351}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -287,6 +299,9 @@
     </ClCompile>
     <ClCompile Include="..\Private\Line.cpp">
       <Filter>01.Utility\13.Manager\LineManager\Line</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Widget.cpp">
+      <Filter>01.Utility\03.Component\Widget_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -476,5 +491,22 @@
     <ClInclude Include="..\Public\Line.h">
       <Filter>01.Utility\13.Manager\LineManager\Line</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Widget.h">
+      <Filter>01.Utility\03.Component\Widget_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp">
+      <Filter>97.ShaderFiles</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Cell.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Deferred.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Vtxtex.hlsl">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

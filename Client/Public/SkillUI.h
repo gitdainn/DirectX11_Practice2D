@@ -14,7 +14,7 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype() override; /* 원형객체의 초기화작업 */
-	virtual HRESULT Initialize(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) override; /* 사본객체의 초기화작업 */
+	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) override; /* 사본객체의 초기화작업 */
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
@@ -54,9 +54,9 @@ private:
 	}
 
 public:
-	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget) override {};
-	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget) override {};
-	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget) override {};
+	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override {};
+	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override {};
+	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override {};
 
 private:
 	list<CUI*>			m_ChildList;
@@ -64,7 +64,7 @@ private:
 public:
 	/* 사본 객체를 생성한다. */
 	static  CSkillUI* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
-	virtual CSpriteObject* Clone(const tSpriteInfo& InSpriteInfo, void* pArg = nullptr) const;
+	virtual CSpriteObject* Clone(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) const;
 	virtual CSpriteObject* Clone(void* pArg = nullptr) const;
 	virtual void Free() override;
 };

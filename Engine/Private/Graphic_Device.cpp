@@ -14,29 +14,29 @@ HRESULT CGraphic_Device::Ready_Graphic_Device(HWND hWnd, GRAPHIC_DESC::WINMODE e
 	_uint		iFlag = 0;
 
 #ifdef _DEBUG
-	// ÇØÁ¦ ¾ÈµÈ D3D11 COM °´Ã¼ ÃßÀûÇÏ´Â ÇÃ·¡±×
+	// ï¿½ï¿½ï¿½ï¿½ ï¿½Èµï¿½ D3D11 COM ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ã·ï¿½ï¿½ï¿½
 	iFlag = D3D11_CREATE_DEVICE_DEBUG;
 #endif
 	D3D_FEATURE_LEVEL			FeatureLV;
 
-	/* ±×·¡ÇÈ ÀåÄ¡¸¦ ÃÊ±âÈ­ÇÑ´Ù. */
+	/* ï¿½×·ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½. */
 	if (FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, 0, iFlag, nullptr, 0, D3D11_SDK_VERSION, &m_pDevice, &FeatureLV, &m_pDeviceContext)))
 		return E_FAIL;
 
-	/* SwapChain Àü¸é°ú ÈÄ¸é¹öÆÛ¸¦ ¹ø°¥¾Æ°¡¸ç È­¸é¿¡ º¸¿©ÁØ´Ù.(Present) */
+	/* SwapChain ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ä¸ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Æ°ï¿½ï¿½ï¿½ È­ï¿½é¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.(Present) */
 
-	/* ¹é¹öÆÛ´Â¸¸µç°Å¾ß. */
+	/* ï¿½ï¿½ï¿½ï¿½Û´Â¸ï¿½ï¿½ï¿½Å¾ï¿½. */
 	if (FAILED(Ready_SwapChain(hWnd, eWinMode, iWinCX, iWinCY)))
 		return E_FAIL;
 
-	/* ¹é¹öÆÛ ºä ¸¦ ¸¸µç´Ù.*/
+	/* ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½.*/
 	if (FAILED(Ready_BackBufferRenderTargetView()))
 		return E_FAIL;
 
 	if (FAILED(Ready_DepthStencilRenderTargetView(iWinCX, iWinCY)))
 		return E_FAIL;
 
-	/* ÀåÄ¡¿¡ ¹ÙÀÎµåÇØ³õÀ» ·»´õÅ¸°Ùµé°ú µª½º½ºÅÙ½Çºä¸¦ ¼ÂÆÃÇÑ´Ù. */
+	/* ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½Îµï¿½ï¿½Ø³ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½Ùµï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù½Çºä¸¦ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 	m_pDeviceContext->OMSetRenderTargets(1, &m_pBackBufferRTV, 
 		m_pDepthStencilView);		
 	
@@ -69,7 +69,7 @@ HRESULT CGraphic_Device::Clear_BackBuffer_View(_float4 vClearColor)
 	//	vClearColor, 1.f, 0)
 	//
 
-	/* ¹é¹öÆÛ¸¦ ÃÊ±âÈ­ÇÑ´Ù.  */
+	/* ï¿½ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½Ê±ï¿½È­ï¿½Ñ´ï¿½.  */
 	m_pDeviceContext->ClearRenderTargetView(m_pBackBufferRTV, (_float*)&vClearColor);
 
  	return S_OK;
@@ -90,8 +90,8 @@ HRESULT CGraphic_Device::Present()
 	if (nullptr == m_pSwapChain)
 		return E_FAIL;
 
-	/* Àü¸é ¹öÆÛ¿Í ÈÄ¸é¹öÆÛ¸¦ ±³Ã¼ÇÏ¿© ÈÄ¸é¹öÆÛ¸¦ Àü¸éÀ¸·Î º¸¿©ÁÖ´Â ¿ªÇÒÀ» ÇÑ´Ù. */
-	/* ÈÄ¸é¹öÆÛ¸¦ Á÷Á¢È­¸é¿¡ º¸¿©ÁÙ²². */	
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Û¿ï¿½ ï¿½Ä¸ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½Ã¼ï¿½Ï¿ï¿½ ï¿½Ä¸ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½. */
+	/* ï¿½Ä¸ï¿½ï¿½ï¿½Û¸ï¿½ ï¿½ï¿½ï¿½ï¿½È­ï¿½é¿¡ ï¿½ï¿½ï¿½ï¿½ï¿½Ù²ï¿½. */	
 	return m_pSwapChain->Present(0, 0);	
 }
 
@@ -107,11 +107,11 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMo
 	IDXGIFactory*			pFactory = nullptr;
 	pAdapter->GetParent(__uuidof(IDXGIFactory), (void**)&pFactory);
 
-	/* ½º¿ÒÃ¼ÀÎÀ» »ý¼ºÇÑ´Ù. = ÅØ½ºÃÄ¸¦ »ý¼ºÇÏ´Â ÇàÀ§ + ½º¿ÒÇÏ´Â ÇüÅÂ  */
+	/* ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. = ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ + ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½  */
 	DXGI_SWAP_CHAIN_DESC		SwapChain;
 	ZeroMemory(&SwapChain, sizeof(DXGI_SWAP_CHAIN_DESC));
 			
-	/*ÅØ½ºÃÄ(¹é¹öÆÛ)¸¦ »ý¼ºÇÏ´Â ÇàÀ§*/
+	/*ï¿½Ø½ï¿½ï¿½ï¿½(ï¿½ï¿½ï¿½ï¿½ï¿½)ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	SwapChain.BufferDesc.Width = iWinCX;
 	SwapChain.BufferDesc.Height = iWinCY;
 	SwapChain.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM;
@@ -120,7 +120,7 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMo
 	SwapChain.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 	SwapChain.BufferCount = 1;
 
-	/*½º¿ÒÇÏ´Â ÇüÅÂ*/
+	/*ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½*/
 	SwapChain.BufferDesc.RefreshRate.Numerator = 60;
 	SwapChain.BufferDesc.RefreshRate.Denominator = 1;
 	SwapChain.SampleDesc.Quality = 0;
@@ -129,7 +129,7 @@ HRESULT CGraphic_Device::Ready_SwapChain(HWND hWnd, GRAPHIC_DESC::WINMODE eWinMo
 	SwapChain.Windowed = eWinMode;
 	SwapChain.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
 
-	/* ¹é¹öÆÛ¶ó´Â ÅØ½ºÃÄ¸¦ »ý¼ºÇß´Ù. */
+	/* ï¿½ï¿½ï¿½ï¿½Û¶ï¿½ï¿½ ï¿½Ø½ï¿½ï¿½Ä¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ß´ï¿½. */
 	if (FAILED(pFactory->CreateSwapChain(m_pDevice, &SwapChain, &m_pSwapChain)))
 		return E_FAIL;
 
@@ -146,11 +146,11 @@ HRESULT CGraphic_Device::Ready_BackBufferRenderTargetView()
 	if (nullptr == m_pDevice)
 		return E_FAIL;
 
-	/* ³»°¡ ¾ÕÀ¸·Î »ç¿ëÇÏ±âÀ§ÇÑ ¿ëµµÀÇ °´Ã¼¸¦ »ý¼ºÇÏ±âÀ§ÇÑ º£ÀÌ½º µ¥ÀÌÅÍ¸¦ °¡Áö°í ÀÖ´Â °´Ã¼ÀÌ´Ù. */
-	/* ³»°¡ ¾ÕÀ¸·Î »ç¿ëÇÏ±âÀ§ÇÑ ¿ëµµÀÇ °´Ã¼ : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ëµµï¿½ï¿½ ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö´ï¿½ ï¿½ï¿½Ã¼ï¿½Ì´ï¿½. */
+	/* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ëµµï¿½ï¿½ ï¿½ï¿½Ã¼ : ID3D11RenderTargetView, ID3D11ShaderResoureView, ID3D11DepthStencilView */
 	ID3D11Texture2D*		pBackBufferTexture = nullptr;
 
-	/* ½º¿ÒÃ¼ÀÎÀÌ µé°íÀÖ´ø ÅØ½ºÃ³¸¦ °¡Á®¿ÍºÁ. */
+	/* ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ ï¿½Ø½ï¿½Ã³ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Íºï¿½. */
 	if (FAILED(m_pSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&pBackBufferTexture)))
 		return E_FAIL;
 

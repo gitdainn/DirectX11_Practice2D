@@ -3,6 +3,7 @@
 #include "State.h"
 #include "PlayerIdle.h"
 #include "FileLoader.h"
+#include "Widget.h"
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
@@ -15,7 +16,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_bIsInAir(false)
 	, m_pAirState(nullptr)
 {
-	ZeroMemory(&m_tSpriteInfo, sizeof tSpriteInfo);
+	ZeroMemory(&m_tSpriteInfo, sizeof(SPRITE_INFO));
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
@@ -51,11 +52,13 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 		MSG_BOX("CSpriteObject - Initialize - FileLoader is NULL");
 		return E_FAIL;
 	}
+	Safe_AddRef(pFileLoader);
 
 	OBJECT_TRANSFORM tObjectTransform;
 	if (FAILED(pFileLoader->Get_ObjectTransform(m_iInstanceID, tObjectTransform)))
 	{
 		MSG_BOX("CSpriteObject - Initialize - FileLoad FAILED");
+		Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
 	_float4x4 WorldMatrix;
@@ -75,11 +78,12 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
+	Safe_Release(pFileLoader);
 	return S_OK;
 }
 
 // @qurious - 매개변수 &가 원본 참조..인데 주소 참조는아닌가? 그렇기에 memcpy에서 & 또 써줘야함?
-HRESULT CSpriteObject::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	memcpy(&m_tSpriteInfo, &InSpriteInfo, sizeof m_tSpriteInfo);
 
@@ -129,7 +133,10 @@ _uint CSpriteObject::LateTick(_double TimeDelta)
 HRESULT CSpriteObject::Render()
 {
 	if (FAILED(SetUp_ShaderResources()))
+	{
+		MSG_BOX("CSpriteObject - Render() - SetUp_ShaderResources is FAILED");
 		return E_FAIL;
+	}
 
 	m_pShaderCom->Begin(m_iShaderPassIndex);
 
@@ -168,11 +175,6 @@ HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
 
 HRESULT CSpriteObject::Add_Components(void* pArg)
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return E_FAIL;
-	Safe_AddRef(pGameInstance);
-
 	/* For.Com_Transform */
 	if (FAILED(CGameObject::Add_Components((_uint)LEVEL::LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
 		TAG_TRANSFORM, (CComponent**)(&m_pTransformCom))))
@@ -194,33 +196,32 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 			TAG_TEXTURE, (CComponent**)&m_pTextureCom, nullptr)))
 		{
 			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
-			Safe_Release(pGameInstance);
 			return E_FAIL;
 		}
 	}
 
-	Safe_Release(pGameInstance);
-
 	return S_OK;
 }
 
-HRESULT CSpriteObject::SetUp_ShaderResources()
+HRESULT CSpriteObject::SetUp_ShaderDefault()
 {
-	//if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-	//	return E_FAIL;
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
-	//if (m_bIsScroll)
-	//{
-	//	Scroll_Screen(WorldMatrix);
-	//}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
 
-	Safe_Release(pGameInstance);
+	//if (m_bIsScroll)
+//{
+//	Scroll_Screen(WorldMatrix);
+//}
+
+		Safe_Release(pGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -242,7 +243,32 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 			return E_FAIL;
 	}
 
-#pragma UV 텍스처 셋팅
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_Wrap()
+{
+	if (FAILED(m_pShaderCom->Set_RawValue("g_ObjectSize", &m_pTransformCom->Get_Scaled(), sizeof(_float3))))
+		return E_FAIL;
+
+	_float2 fSize = { 0.f, 0.f };
+	if (nullptr == m_pSpriteFileName)
+	{
+		fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+	}
+	else
+	{
+		fSize = m_pTextureCom->Get_OriginalTextureSize(m_pSpriteFileName);
+	}
+
+	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureSize", &fSize, sizeof(_float2))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_UVAnim()
+{
 	if (m_bIsAnimUV)
 	{
 		_uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
@@ -262,7 +288,6 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumY", &m_iUVTexNumY, sizeof(_uint))))
 			return E_FAIL;
 	}
-#pragma endregion
 
 	return S_OK;
 }
@@ -316,6 +341,7 @@ HRESULT CSpriteObject::Attach_Collider(const _tchar* pLayerTag, CCollider* pColl
 	if (FAILED(pGameInstance->Attach_Collider(pLayerTag, pCollider)))
 	{
 		MSG_BOX("CSpriteObject - LateTick() - FAILED");
+		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
 	Safe_Release(pGameInstance);
@@ -386,13 +412,13 @@ HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag)
 	return S_OK;
 }
 
-void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
 }
 
-void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
@@ -407,7 +433,7 @@ void CSpriteObject::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTa
 	}
 }
 
-void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
@@ -463,7 +489,7 @@ void CSpriteObject::Free()
 
 	/** @note - m_pSpriteFileName 해제하면 안되는 이유
 	현재 m_pSpriteFileName는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/
-	Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
+	//Safe_Delete_Array(m_tSpriteInfo.pTextureComTag);
 	Safe_Delete_Array(m_tSpriteInfo.pPrototypeTag);
 
 	// @note - Add_Prototype으로 만든 원본 객체들은 m_Prototypes에서 삭제해줌. (원본은 삭제해야하니까 AddRef X)
@@ -475,4 +501,5 @@ void CSpriteObject::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pWidgetCom);
 }

@@ -23,9 +23,9 @@ CTexture::CTexture(const CTexture& rhs)
 	{
 		_tchar* pKey = new _tchar[lstrlen(Pair.first) + 1]{};
 		lstrcpy(pKey, Pair.first);
-		ID3D11ShaderResourceView* pSRV = Pair.second;
+		ID3D11ShaderResourceView* pSRV = Pair.second.first;
 		//Safe_AddRef(pSRV);
-		m_SRVMap.emplace(pKey, pSRV);
+		m_SRVMap.emplace(pKey, make_pair(pSRV, _float2(0.f, 0.f)));
 	}
 
 	_uint iIndex = 0;
@@ -52,15 +52,15 @@ HRESULT CTexture::Set_ShaderResource(CShader* pShader, const char* pConstantName
 	if (nullptr == pFileName)
 		return E_FAIL;
 
-	auto CompareLamda = [=](const pair<const _tchar*, ID3D11ShaderResourceView*>& Pair)->bool
+	auto CompareLamda = [=](const pair<const _tchar*, pair<ID3D11ShaderResourceView*, _float2>>& Pair)->bool
 		{
 			return !lstrcmp(Pair.first, pFileName);
 		};
-	const auto& Iter = find_if(m_SRVMap.begin(), m_SRVMap.end(), CompareLamda);
+	const auto Iter = find_if(m_SRVMap.begin(), m_SRVMap.end(), CompareLamda);
 	if (m_SRVMap.end() == Iter)
 		return E_FAIL;
 
-	ID3D11ShaderResourceView* pSRV = Iter->second;
+	ID3D11ShaderResourceView* pSRV = Iter->second.first;
 	if (nullptr == pSRV)
 		return E_FAIL;
 
@@ -111,10 +111,13 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 
 		// @note - 문자열(char*, wchar_t*)은 결국 주소이기 때문에, map 컨테이너에 넣을 때 new로 생성해서 emplace하지 않으면
 		// 문자열이 달라도 주소가 동일하기 때문에 동일한 key 값으로 인지해서 추가되는 것이 아니고 해당 key값의 value만 바뀜
+
+		_float2 fOriginalTextureSize = Get_OriginalTextureSize(pSRV);
+		m_TextureSizeVec[iIndex] = fOriginalTextureSize;
+
 		_tchar* pFileName = new _tchar[MAX_PATH]();
 		lstrcpy(pFileName, szFileName);
-		m_SRVMap.emplace(pFileName, pSRV); // 파일명으로 리소스 찾기 위함.
-		m_TextureSizeVec[iIndex] = (Get_OriginalTextureSize(pSRV));
+		m_SRVMap.emplace(pFileName, make_pair(pSRV, fOriginalTextureSize)); // 파일명으로 리소스 찾기 위함.
 
 		_tchar* pPath = new _tchar[lstrlen(pFilePath) + 1];
 		lstrcpy(pPath, pFilePath);
@@ -268,7 +271,7 @@ void CTexture::Free()
 	m_SRVs.clear();
 
 	// @note - 맵 순회 시 pair로 순회함
-	for (pair<const _tchar*, ID3D11ShaderResourceView*> Pair : m_SRVMap)
+	for (pair<const _tchar*, pair<ID3D11ShaderResourceView*, _float2>> Pair : m_SRVMap)
 	{
 		Safe_Delete_Array(Pair.first);
 		//Safe_Release(Pair.second);

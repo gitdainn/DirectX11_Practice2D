@@ -23,7 +23,7 @@ HRESULT CEnvironment::Initialize_Prototype()
 	return S_OK;
 }
 
-HRESULT CEnvironment::Initialize(const tSpriteInfo& InSpriteInfo, void* pArg)
+HRESULT CEnvironment::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 {
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
@@ -76,7 +76,7 @@ HRESULT CEnvironment::Add_Components(void* pArg)
 
 HRESULT CEnvironment::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
 		return E_FAIL;
 
 	return S_OK;
@@ -87,17 +87,17 @@ void CEnvironment::Add_Animation()
 	return;
 }
 
-void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
-void CEnvironment::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnvironment::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	__super::OnCollisionStay(pTargetCollider, pTarget);
+	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 
 }
 
-void CEnvironment::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget)
+void CEnvironment::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }
 
@@ -114,7 +114,7 @@ CEnvironment* CEnvironment::Create(ID3D11Device* pDevice, ID3D11DeviceContext* p
 	return pInstance;
 }
 
-CSpriteObject* CEnvironment::Clone(const tSpriteInfo& InSpriteInfo, void* pArg) const
+CSpriteObject* CEnvironment::Clone(const SPRITE_INFO& InSpriteInfo, void* pArg) const
 {
 	CEnvironment* pInstance = new CEnvironment(*this);
 
