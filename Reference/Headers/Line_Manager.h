@@ -71,18 +71,18 @@ public:
 		return m_LineList;
 	}
 	
-	HRESULT Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints)
-	{
-		_float fLandingY = { 0.f };
-		if (false == IsCurrentLineOccupied(vObjectPosition, fLandingY))
-			return E_FAIL;
-			
+	/** @notice - IsCurrentLineOccupied 함수를 먼저 호출한 뒤 사용해주세요. */
+	HRESULT Get_CurrentLineEndPoint(const _float2 vObjectPosition, pair<_float3, _float3>& EndPoints)
+	{			
 		EndPoints = make_pair(_float3(m_tClosestLandingLine.tLeftVertex.position), _float3(m_tClosestLandingLine.tRightVertex.position));
 		return S_OK;
 	}
 
-	bool HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY);
-	bool IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY);
+	/** 발밑에 탈 수 있는 선이 있는지 검사합니다. */
+	bool HasPassableLine(const _float2 vInObjectPosition, _float& fOutLandingY);
+
+	/** 현재 선을 타고 있는 중인지 검사합니다. */
+	bool IsCurrentLineOccupied(const _float2 vObjectPosition, _float& fOutLandingY);
 
 private:
 	// 두 점을 지나는 직선의 방정식 구하기 (return: 기울기)

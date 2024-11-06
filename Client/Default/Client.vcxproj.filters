@@ -142,6 +142,9 @@
     <Filter Include="07.Widget">
       <UniqueIdentifier>{6471fa46-695d-44c2-8a00-786975cda860}</UniqueIdentifier>
     </Filter>
+    <Filter Include="03.DesignPattern\State\EnemyState">
+      <UniqueIdentifier>{179d0ae6-10eb-4ae0-a396-e22c7c57b9d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -281,6 +284,9 @@
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\HealthBarWidget.h" />
+    <ClInclude Include="..\Public\EnemyJump.h">
+      <Filter>03.DesignPattern\State\EnemyState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -408,6 +414,9 @@
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\HealthBarWidget.cpp" />
+    <ClCompile Include="..\Private\EnemyJump.cpp">
+      <Filter>03.DesignPattern\State\EnemyState</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

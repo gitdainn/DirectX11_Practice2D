@@ -1,6 +1,5 @@
 #pragma once
 
-
 namespace Engine
 {
 	class CTag_Finder

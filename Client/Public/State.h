@@ -3,11 +3,11 @@
 
 #include "SpriteObject.h"
 
-class CState
+class CState abstract
 {
 public:
     explicit CState() {}
-    ~CState() {}
+    virtual ~CState() {}
 
 public:
     /** @note - 순수 가상 함수는 virtual 가상 함수에만 사용 가능 */

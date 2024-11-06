@@ -142,7 +142,7 @@ HRESULT CLine_Manager::Render()
 }
 #endif
 
-bool CLine_Manager::HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY)
+bool CLine_Manager::HasPassableLine(const _float2 vInObjectPosition, _float& fOutLandingY)
 {
 	if (m_LineList.empty())
 		return false;
@@ -186,7 +186,7 @@ bool CLine_Manager::HasPassableLine(const _float2& vInObjectPosition, _float& fO
 	return true;
 }
 
-bool CLine_Manager::IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY)
+bool CLine_Manager::IsCurrentLineOccupied(const _float2 vObjectPosition, _float& fOutLandingY)
 {
 	// 매번 검사하면 오르막길을 못 오르기 때문에 한 번만 검사하고, 무조건 내가 타고 있는 라인의 y로 고정
 	if (_float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tLeftVertex.position

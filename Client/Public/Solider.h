@@ -27,7 +27,6 @@ protected:
 	virtual void Walk(_double TimeDelta) override;
 	virtual void Attack(_double TimeDelta);
 	virtual void Chase(_double TimeDelta) override;
-	virtual void Damaged(_double TimeDelta) override;
 
 public:
 	/* Prototype */

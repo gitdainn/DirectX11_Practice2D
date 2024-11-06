@@ -3,6 +3,7 @@
 #include "Player_Manager.h"
 #include <functional>
 
+class CEnemyJump;
 
 class CEnemy abstract : public CSpriteObject
 {
@@ -11,10 +12,10 @@ public:
 	explicit CEnemy(const CEnemy& rhs);
 	~CEnemy() {}
 
-protected:
+public:
 	enum ENEMY_STATE
 	{
-		IDLE, WALK, CHASE, ATK1, ATK2, DAMAGED, ENEMY_END
+		IDLE, WALK, CHASE, ATK1, ATK2, DAMAGED, JUMP, ENEMY_END
 	};
 
 public:
@@ -40,13 +41,15 @@ protected:
 	virtual void Attack(_double TimeDelta);
 	virtual void Chase(_double TimeDelta);
 	virtual void Damaged(_double TimeDelta);
+	virtual void Jump(_double TimeDelta);
+	virtual void Enter_State(const ENEMY_STATE eEnemyState);
 
 protected:
-	virtual void End_Animation(_uint& iSpriteIndex) override;
+	virtual void	End_Animation(_uint& iSpriteIndex) override;
 	//void	Mapping_SkulData(const _tchar* pObjectID);
 	//CSkill* Get_Skill(const _tchar* pObjectID);
 	//void Awaken();
-	virtual void Add_Animation() = 0;
+	virtual void	Add_Animation() = 0;
 
 protected:
 	CTransform* Get_PlayerTransformCom() const
@@ -74,7 +77,7 @@ protected:
 		_vector vDirectionPosX = XMVectorSetY(vDirectionPos, 0.f);
 		return XMVectorGetX(XMVector3Length(vDirectionPosX - vCurrentPosX));
 	}
-	void	Landing_Ground();
+	HRESULT	Landing_Ground();
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
@@ -91,10 +94,16 @@ protected:
 
 protected:
 	pair<_float3, _float3>	m_LineEndPoints;
-
 	_uint	m_iSearchRoundsCount = { 0 };
-
 	_double	m_IdleTimeAcc = { 0.0 };
+	_double m_DamagedTimeAcc = { 0.0 };
+
+	SPRITE_DIRECTION	m_eTargetDirection;
+	CEnemyJump* m_pEnemyJump = { nullptr };
+
+	// Damaged 함수 //
+	_vector	m_vStartPosition = { 0.f, 0.f, 0.f, 0.f };
+	_vector m_vDirectionPosition = { 0.f, 0.f, 0.f, 0.f };
 
 public:
 	/* Prototype */

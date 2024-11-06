@@ -176,6 +176,7 @@
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Command.h" />
     <ClInclude Include="..\Public\Enemy.h" />
+    <ClInclude Include="..\Public\EnemyJump.h" />
     <ClInclude Include="..\Public\Environment.h" />
     <ClInclude Include="..\Public\GrimReaper.h" />
     <ClInclude Include="..\Public\HealthBarUI.h" />
@@ -230,6 +231,7 @@
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Command.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
+    <ClCompile Include="..\Private\EnemyJump.cpp" />
     <ClCompile Include="..\Private\Environment.cpp" />
     <ClCompile Include="..\Private\GrimReaper.cpp" />
     <ClCompile Include="..\Private\HealthBarUI.cpp" />
