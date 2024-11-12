@@ -4,6 +4,7 @@
 #include "FileLoader.h"
 #include "UI_Handler.h"
 #include "Widget.h"
+#include "LineRider.h"
 #include "EnemyJump.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
@@ -45,10 +46,6 @@ HRESULT CEnemy::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	// 흠.. 먼저 HasPossableLine 하는 게 좋을 듯하긴함.
-	if (FAILED(Landing_Ground()))
-		return E_FAIL;
-
 	CTransform::TRANSFORM_DESC tTransDesc;
 	tTransDesc.SpeedPerSec = m_fMovementSpeed;
 	m_pTransformCom->Set_TransformDesc(tTransDesc);
@@ -63,9 +60,6 @@ HRESULT CEnemy::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(Landing_Ground()))
-		return E_FAIL;
-
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	if (nullptr == pGameInstance)
 		return E_FAIL;
@@ -74,7 +68,10 @@ HRESULT CEnemy::Initialize(void* pArg)
 	XMStoreFloat2(&vPosition, m_pTransformCom->Get_State(CTransform::STATE_POSITION));
 
 	if (FAILED(pGameInstance->Get_CurrentLineEndPoint(vPosition, m_LineEndPoints)))
+	{
+		MSG_BOX("CEnemy - Initialize() - FAILED");
 		return E_FAIL;
+	}
 
 	Safe_Release(pGameInstance);
 
@@ -87,6 +84,9 @@ HRESULT CEnemy::Initialize(void* pArg)
 
 _uint CEnemy::Tick(_double TimeDelta)
 {
+	// 툴에서 받아오는 이미지 Layer 설정해서 가져오기 귀차나사ㅓ.. 임시..용
+	Set_Layer(LAYER_ENEMY, false);
+
 	if (0 >= m_iHp)
 	{
 		m_bIsDead = true;
@@ -98,6 +98,8 @@ _uint CEnemy::Tick(_double TimeDelta)
 	}
 
 	m_StateFunc(*this, TimeDelta);
+
+	DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION));
 
 	return __super::Tick(TimeDelta);
 }
@@ -173,7 +175,7 @@ void CEnemy::Damaged(_double TimeDelta)
 	{
 		m_DamagedTimeAcc = 0.0;
 
-		if (FAILED(Landing_Ground()))
+		if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
 			Input_Handler(ENEMY_STATE::JUMP);
 		else
 			Input_Handler(ENEMY_STATE::IDLE);
@@ -182,7 +184,7 @@ void CEnemy::Damaged(_double TimeDelta)
 	}
 
 	// 넉백
-	_vector vLerpPos = XMVectorLerp(m_vStartPosition, m_vDirectionPosition, CUtil::GetT_FastToSlow(m_DamagedTimeAcc));
+	_vector vLerpPos = XMVectorLerp(m_vStartPosition, m_vDirectionPosition, (_float)CUtil::GetT_FastToSlow(m_DamagedTimeAcc));
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vLerpPos);
 
 	return;
@@ -195,11 +197,25 @@ void CEnemy::Jump(_double TimeDelta)
 		Input_Handler(ENEMY_STATE::IDLE);
 	}
 
-	if (m_pEnemyJump->Get_IsDead())
+	if (m_pEnemyJump->Get_IsFalling())
 	{
-		Safe_Delete(m_pEnemyJump);
-		Input_Handler(ENEMY_STATE::IDLE);
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		_float fLandingY = { 0.f };
+		// 착지 시점을 체크합니다.
+		if (m_pLineRiderCom->CheckLineLanding(vPosition, fLandingY))
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+
+			m_bIsInAir = false;
+			Input_Handler(ENEMY_STATE::IDLE);
+		}
 	}
+
+	//if (m_pEnemyJump->Get_IsDead())
+	//{
+	//	Safe_Delete(m_pEnemyJump);
+	//	Input_Handler(ENEMY_STATE::IDLE);
+	//}
 
 	m_pEnemyJump->Update(this, TimeDelta);
 }
@@ -240,21 +256,10 @@ void CEnemy::End_Animation(_uint& iSpriteIndex)
 
 void CEnemy::Enter_State(const ENEMY_STATE eEnemyState)
 {
-	// 플레이어 위치에 따라서
+	if(ENEMY_STATE::IDLE != eEnemyState)
+		LookAtPlayer();
+
 	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	CTransform* pPlayerTransform = Get_PlayerTransformCom();
-	if (nullptr == pPlayerTransform)
-		return;
-
-	_vector vPlayerPosition = vPosition - pPlayerTransform->Get_State(CTransform::STATE_POSITION);
-
-	_float vDirectionVecX = XMVectorGetX(vPlayerPosition - vPosition);
-	if (SPRITE_DIRECTION::LEFT == m_eSpriteDirection && 0.f > vDirectionVecX
-		|| SPRITE_DIRECTION::RIGHT == m_eSpriteDirection && 0.f < vDirectionVecX)
-	{
-		Switch_SpriteDirection();
-	}
-
 	if (ENEMY_STATE::DAMAGED == eEnemyState)
 	{
 		_float	fKnockBackDistance = { 10.f };
@@ -269,6 +274,13 @@ void CEnemy::Enter_State(const ENEMY_STATE eEnemyState)
 		m_vStartPosition = vPosition;
 		m_vDirectionPosition = XMVectorSetX(m_vStartPosition, XMVectorGetX(m_vStartPosition) + fKnockBackDistance);
 	}
+	else if (ENEMY_STATE::ATK1 == eEnemyState)
+	{
+		const _float fTotalRushDistance = { 30.f };
+		m_vStartPosition = vPosition;
+		const _float fDirection = SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -1.f : 1.f;
+		m_vDirectionPosition = XMVectorSetX(m_vStartPosition, XMVectorGetX(m_vStartPosition) + fTotalRushDistance * fDirection);
+	}
 	else if (ENEMY_STATE::JUMP == eEnemyState)
 	{
 		if (nullptr != m_pEnemyJump)
@@ -281,37 +293,22 @@ void CEnemy::Enter_State(const ENEMY_STATE eEnemyState)
 	return;
 }
 
-/** @error - 현재 선이 바뀌는 시점 한 번씩만 Landing_Ground를 호출하고, 좌우로만 움직이고 있어 대각선으로 가려면 수정해야합니다. */
-HRESULT CEnemy::Landing_Ground()
+void CEnemy::LookAtPlayer()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return E_FAIL;
-	Safe_AddRef(pGameInstance);
+	const _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	const CTransform* pPlayerTransform = Get_PlayerTransformCom();
+	if (nullptr == pPlayerTransform)
+		return;
 
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float2 fPosition = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
-	_float fLandingY = { 0.f };
+	const _vector vPlayerPosition = pPlayerTransform->Get_State(CTransform::STATE_POSITION);
+	_float vPlayerLookVecX = XMVectorGetX(vPlayerPosition - vPosition);
 
-	if (pGameInstance->IsCurrentLineOccupied(fPosition, fLandingY))
+	// 이미지 방향이 왼쪽인데 플레이어를 바라보는 방향벡터가 양수이면 이미지 방향을 교체합니다. (반대도 동일)
+	if ((SPRITE_DIRECTION::LEFT == m_eSpriteDirection) && (0.f < vPlayerLookVecX)
+		|| (SPRITE_DIRECTION::RIGHT == m_eSpriteDirection) && (0.f > vPlayerLookVecX))
 	{
-		// 선 양 끝 다시 셋팅
-		if (FAILED(pGameInstance->Get_CurrentLineEndPoint(fPosition, m_LineEndPoints)))
-		{
-			Safe_Release(pGameInstance);
-			MSG_BOX("CEnemy - Landing_Ground() - FAILED");
-		}
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+		Switch_SpriteDirection();
 	}
-	else
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	Safe_Release(pGameInstance);
-
-	return S_OK;
 }
 
 HRESULT CEnemy::Add_Components(void* pArg)
@@ -329,13 +326,10 @@ HRESULT CEnemy::Add_Components(void* pArg)
 		TAG_WIDGET, (CComponent**)&m_pWidgetCom, &tWidgetArgument)))
 		return E_FAIL;
 
-	///* For.Com_Shader */
-	//CWidget::WIDGET_ARGUMENT tWidgetArgument;
-	//tWidgetArgument.pOwner = this;
-	//tWidgetArgument.pFilePath = TEXT("HealthBarW");
-	//if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Widget"),
-	//	TAG_WIDGET, (CComponent**)&m_pWidgetCom, &tWidgetArgument)))
-	//	return E_FAIL;
+	/* For.Com_LineRider */
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		TAG_LINERIDER, (CComponent**)&m_pLineRiderCom, &m_tSpriteInfo.fPosition)))
+		return E_FAIL;
 
 #pragma region COLLIDER
 	if (nullptr == m_pColliderCom)

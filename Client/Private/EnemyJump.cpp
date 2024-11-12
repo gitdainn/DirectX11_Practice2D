@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "Enemy.h"
 #include "EnemyJump.h"
+#include "LineRider.h"
 
 CEnemyJump::CEnemyJump()
 	: m_bIsDead(false)
@@ -60,23 +61,27 @@ void CEnemyJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 	if (nullptr == pEnemy)
 		return;
 
+	CLineRider* pLineRiderCom = dynamic_cast<CLineRider*>(pObject->Get_Component(TAG_LINERIDER));
+	if (nullptr == pLineRiderCom)
+		return;
+
 	if (m_bIsFalling)
 	{
-		// 플레이어 위치 이동 전 착지 가능한 땅을 먼저 검사한 후, 이동 후, 높이 비교해서 붙여야 함.
-		_float fLandingY = { 0.f };
-		if (HasPassableLine(pObject, fLandingY))
-		{
-			Parabola(pObject, TimeDelta);
+		//// 플레이어 위치 이동 전 착지 가능한 땅을 먼저 검사한 후, 이동 후, 높이 비교해서 붙여야 함.
+		//_float fLandingY = { 0.f };
+		//if (HasPassableLine(pObject, fLandingY))
+		//{
+		//	Parabola(pObject, TimeDelta);
 
-			// 착지할 땅보다 아래로 떨어지면 착지시키기.
-			if (AttachToLineIfBelow(pObject, fLandingY))
-			{
-				m_bIsFalling = false;
-				m_bIsDead = true;
-				return;
-			}
-		}
-		else
+		//	// 착지할 땅보다 아래로 떨어지면 착지시키기.
+		//	if (AttachToLineIfBelow(pObject, fLandingY))
+		//	{
+		//		m_bIsFalling = false;
+		//		m_bIsDead = true;
+		//		return;
+		//	}
+		//}
+		//else
 		{
 			Parabola(pObject, TimeDelta);
 			// 화면 밖이면 게임 엔드
@@ -90,13 +95,15 @@ void CEnemyJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
 	const _float fJumpSpeed = 3.f;
+
+	m_JumpTimeAcc += TimeDelta * fJumpSpeed;
+
 	// sin(포물선운동 진행각도90) = 1
 	m_UpTime = m_fPower * m_JumpTimeAcc * (_float)TimeDelta;
 	m_DownTime = (fGravity * m_JumpTimeAcc * m_JumpTimeAcc) * 0.5f;
 
 	_float fJumpY = (_float)(m_UpTime - m_DownTime);
 	// @note - 전체적인 곡선 모양은 동일한데 속도만 빨리하고 싶다면 그래프상 시간을 빠르게 흐르게 하면 된다! (즉 시간만 속도 올려주기)
-	m_JumpTimeAcc += TimeDelta * fJumpSpeed;
 
 	if (m_UpTime < m_DownTime)
 		m_bIsFalling = true;
@@ -112,64 +119,6 @@ void CEnemyJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
 	pTransformCom->Set_State(CTransform::STATE_POSITION
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
-}
-
-const _bool CEnemyJump::IsOnGround(CSpriteObject* pObject)
-{
-	if (nullptr == pObject)
-	{
-		MSG_BOX("CEnemyJump - IsOnGround() - NULL");
-		return false;
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return false;
-	Safe_AddRef(pGameInstance);
-
-	CTransform* pTransformCom = pObject->Get_TransformCom();
-	_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float2 vPlayerPos = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
-
-	_float fLandingY = { 0.f };
-	if (pGameInstance->HasPassableLine(vPlayerPos, fLandingY))
-	{
-		// 착지할 땅보다 아래로 떨어지면 착지시키기.
-		if (fLandingY > XMVectorGetY(vPosition))
-		{
-			pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-			Safe_Release(pGameInstance);
-			return true;
-		}
-	}
-
-	Safe_Release(pGameInstance);
-
-	return false;
-}
-
-const _bool CEnemyJump::HasPassableLine(CSpriteObject* pObject, _float& fLandingY)
-{
-	if (nullptr == pObject)
-	{
-		MSG_BOX("CEnemyJump - IsOnGround() - NULL");
-		return false;
-	}
-
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return false;
-	Safe_AddRef(pGameInstance);
-
-	CTransform* pTransformCom = pObject->Get_TransformCom();
-	_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float2 vPlayerPos = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
-
-	_bool bHasPassableLine = pGameInstance->HasPassableLine(vPlayerPos, fLandingY);
-
-	Safe_Release(pGameInstance);
-
-	return bHasPassableLine;
 }
 
 const _bool CEnemyJump::AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY)

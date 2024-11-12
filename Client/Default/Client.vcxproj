@@ -194,6 +194,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerAtk.h" />
+    <ClInclude Include="..\Public\PlayerDamaged.h" />
     <ClInclude Include="..\Public\PlayerDash.h" />
     <ClInclude Include="..\Public\PlayerIdle.h" />
     <ClInclude Include="..\Public\PlayerJump.h" />
@@ -249,6 +250,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerAtk.cpp" />
+    <ClCompile Include="..\Private\PlayerDamaged.cpp" />
     <ClCompile Include="..\Private\PlayerDash.cpp" />
     <ClCompile Include="..\Private\PlayerIdle.cpp" />
     <ClCompile Include="..\Private\PlayerJump.cpp" />

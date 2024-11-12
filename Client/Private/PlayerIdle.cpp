@@ -3,6 +3,7 @@
 #include "PlayerWalk.h"
 #include "PlayerAtk.h"
 #include "PlayerDash.h"
+#include "PlayerDamaged.h"
 
 CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
@@ -34,6 +35,10 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 		break;
 
 	case STATE_TYPE::SKILL2:
+		break;
+
+	case STATE_TYPE::DAMAGED:
+		pState = new CPlayerDamaged();
 		break;
 
 	default:

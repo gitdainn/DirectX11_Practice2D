@@ -74,6 +74,11 @@ HRESULT CGameObject::Initialize(void * pArg)
 	return S_OK;
 }
 
+HRESULT CGameObject::Late_Initialize(void* pArg)
+{
+	return S_OK;
+}
+
 _uint CGameObject::Tick(_double TimeDelta)
 {
 	if (m_bIsDead)

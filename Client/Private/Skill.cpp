@@ -9,6 +9,7 @@ CSkill::CSkill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 
 HRESULT CSkill::Initialize_Prototype()
 {
+	Set_Layer(LAYER_PLAYERATK, false);
 	__super::Initialize_Prototype();
 
 	return S_OK;
@@ -37,6 +38,40 @@ HRESULT CSkill::Initialize(void* pArg)
 	Mapping_SkillData(m_pNameTag);
 
 	m_bIsRender = false;
+	return S_OK;
+}
+
+HRESULT CSkill::Late_Initialize(void* pArg)
+{
+	if (nullptr == m_pSpriteFileName)
+		m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+	else
+		m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_pSpriteFileName);
+
+	if (m_bIsAnimUV)
+	{
+		m_tSpriteInfo.fSize.x /= m_iUVTexNumX;
+		m_tSpriteInfo.fSize.y /= m_iUVTexNumY;
+	}
+
+	m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x, m_tSpriteInfo.fSize.y/* + m_tSpriteInfo.fSize.y * 0.5f*/, 0.f));
+
+	/* For. Com_Collider */
+	COMPONENT_INFO tComponentInfo;
+	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
+	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
+	tComponentInfo.fSize = m_tSpriteInfo.fSize;
+
+	tComponentInfo.fOffset = _float2(0.f, 0.f);
+
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
+	{
+		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		return E_FAIL;
+	}
+	m_pColliderCom->Set_Owner(this);
+
 	return S_OK;
 }
 
@@ -92,28 +127,9 @@ HRESULT CSkill::Add_Components(void* pArg)
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
 		return E_FAIL;
 
-	/* For. Com_Collider */
-	COMPONENT_INFO tComponentInfo;
-	ZeroMemory(&tComponentInfo, sizeof(COMPONENT_INFO));
-	tComponentInfo.fPosition = m_tSpriteInfo.fPosition;
-	//tComponentInfo.fSize = _float2(m_tSpriteInfo.fSize.x / m_iUVTexNumX, m_tSpriteInfo.fSize.y / m_iUVTexNumY);
-	tComponentInfo.fSize = _float2(320.f, 150.f);
-	tComponentInfo.fOffset = _float2(0.f, 0.f);
-
-	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
-		TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
-	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
-		return E_FAIL;
-	}
-	m_pColliderCom->Set_Owner(this);
-
-	return S_OK;
-}
-
-HRESULT CSkill::SetUp_ShaderResources()
-{
-	if (FAILED(SetUp_ShaderDefault()))
+	/* For.Com_LineRider */
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		TAG_LINERIDER, (CComponent**)&m_pLineRiderCom, &m_tSpriteInfo.fPosition)))
 		return E_FAIL;
 
 	return S_OK;
@@ -149,26 +165,6 @@ void CSkill::Mapping_SkillData(const _tchar* pObjectID)
 	Safe_Release(pFileLoader);
 
 	return;
-}
-
-HRESULT CSkill::Landing_Ground(const _vector& vPosition)
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return E_FAIL;
-	Safe_AddRef(pGameInstance);
-
-	_float fLandingY = { 0.f };
-	if (!pGameInstance->IsCurrentLineOccupied(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;
-	}
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-	Safe_Release(pGameInstance);
-
-	return S_OK;
 }
 
 void CSkill::Free()

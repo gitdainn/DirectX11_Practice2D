@@ -7,8 +7,6 @@ USING(Tool)
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_iUVTextureIndex(0)
-	, m_iUVTexNumX(0), m_iUVTexNumY(0)
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
@@ -320,9 +318,8 @@ void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTa
 {
 }
 
-HRESULT CSpriteObject::SetUp_ShaderResources()
+HRESULT CSpriteObject::SetUp_ShaderDefault()
 {
-	// 실제 Transform에 더해버리면 계속누적해서 더해버리니까 실제 위치에는 적용 안되도록 출려갛ㄹ 때만 + Scroll
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
@@ -340,20 +337,56 @@ HRESULT CSpriteObject::SetUp_ShaderResources()
 
 	Safe_Release(pGameInstance);
 
-	//if (FAILED(m_pTransformCom->Set_ShaderResource(m_pShaderCom, "g_WorldMatrix")))
-	//	return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
+		return E_FAIL;
+
 	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
-		return E_FAIL;
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_Wrap()
+{
+	//if (FAILED(m_pShaderCom->Set_RawValue("g_ObjectSize", &m_pTransformCom->Get_Scaled(), sizeof(_float3))))
+	//	return E_FAIL;
+
+	//_float2 fSize = { 0.f, 0.f };
+	//fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+
+	//if (FAILED(m_pShaderCom->Set_RawValue("g_TextureSize", &fSize, sizeof(_float2))))
+	//	return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_UVAnim()
+{
+	if (m_bIsAnimUV)
+	{
+		_uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
+		/** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
+		_uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
+
+		// 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexY", &iUVIndexY, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumX", &m_iUVTexNumX, sizeof(_uint))))
+			return E_FAIL;
+
+		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumY", &m_iUVTexNumY, sizeof(_uint))))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

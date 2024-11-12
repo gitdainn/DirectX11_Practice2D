@@ -52,7 +52,8 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     Safe_Release(pFileLoader);
 
 #pragma region 폴더명
-    m_FolderNameVec.emplace_back("Player");
+    m_FolderNameVec.emplace_back("GrimReaperUV");
+    m_FolderNameVec.emplace_back("Enemy_Solider");
     m_FolderNameVec.emplace_back("ForestTile");
     m_FolderNameVec.emplace_back("ForestEnvironment");
     m_FolderNameVec.emplace_back("Background");
@@ -67,6 +68,8 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_ClassNameVec.emplace_back("Environment");
     m_ClassNameVec.emplace_back("Tile");
     m_ClassNameVec.emplace_back("BackGround");
+    m_ClassNameVec.emplace_back("Player"); // 기본 플레이어 시작위치 (원래는 LittleBorn)
+    m_ClassNameVec.emplace_back("Solider"); // Enemy클래스로 생성 시 알아서 각 객체로 만들어지는 기능 만들면 좋을듯
 #pragma endregion
 
 #pragma region 렌더그룹
@@ -291,16 +294,17 @@ HRESULT CMyImGui::Save_Object()
      _uint iLength = { 0 };
      _tchar szBuffer[MAX_PATH]{};
 
+     static _uint iObjectInstance = { 100 };
      for (CSpriteObject* pObject : m_CreateObjectVec)
      {
          if (nullptr == pObject)
              continue;
 
-         ++m_iInstanceID;
+         ++iObjectInstance;
 #pragma region 메타 데이터 저장
          SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
          OBJECT_METADATA tMetaData;
-         tMetaData.iInstanceID = m_iInstanceID;
+         tMetaData.iInstanceID = iObjectInstance;
          tMetaData.pObjectID = { nullptr };
          tMetaData.pNameTag = pObject->Get_NameTag();
          tMetaData.pClassName = pObject->Get_ClassName();
@@ -331,7 +335,7 @@ HRESULT CMyImGui::Save_Object()
 
 #pragma region 트랜스폼 저장
          OBJECT_TRANSFORM tTransform;
-         tTransform.iInstanceID = m_iInstanceID;
+         tTransform.iInstanceID = iObjectInstance;
          tTransform.pObjectID = { nullptr };
          tTransform.fSize.x = tSpriteInfo.fSize.x;
          tTransform.fSize.y = tSpriteInfo.fSize.y;
@@ -387,7 +391,7 @@ HRESULT CMyImGui::Save_Object()
              {
                  continue;
              }
-             tComponentInfo.iInstanceID = m_iInstanceID;
+             tComponentInfo.iInstanceID = iObjectInstance;
              tComponentInfo.pComponentTag = iter.first;
              tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
 
@@ -545,7 +549,10 @@ HRESULT CMyImGui::Load_Object()
 #pragma endregion
 
 #pragma region 오브젝트 생성
-        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, szLayer, &tMetaData.iInstanceID)))
+        _tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
+        lstrcpy(pLayer, szLayer);
+
+        if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Install"), (_uint)LEVEL_TOOL, pLayer, &tMetaData.iInstanceID)))
         {
             MSG_BOX("CMyImGui - Load_Object() - FAILED");
             CloseHandle(hFile);
@@ -554,7 +561,7 @@ HRESULT CMyImGui::Load_Object()
             return E_FAIL;
         }
 
-        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, szLayer);
+        list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)LEVEL_TOOL, pLayer);
         if (nullptr == pObjectList)
         {
             MSG_BOX("CFileLoader - Load_Excel() - NULL");
@@ -570,8 +577,6 @@ HRESULT CMyImGui::Load_Object()
             pAddObject->Set_NameTag(szNameTag);
             pAddObject->Set_ClassName(szClassName);
 
-            _tchar* pLayer = new _tchar[lstrlen(szLayer) + 1]{ };
-            lstrcpy(pLayer, szLayer);
             pAddObject->Set_Layer(pLayer, true);
             pAddObject->Set_Order(tMetaData.iOrder);
 
@@ -788,16 +793,18 @@ HRESULT CMyImGui::Save_Object_Excel()
 
     const TCHAR* pFilePath = OFN.lpstrFile; // TEXT("../Bin/DataFiles/Level_Logo.xlsx");
     bool bIsReset = { true };
+
+    static _uint iExcelInstance = { 500 };
     for (CSpriteObject* pObject : m_CreateObjectVec)
     {
         if (nullptr == pObject)
             continue;
 
-        ++m_iInstanceID;
+        ++iExcelInstance;
         SPRITE_INFO tSpriteInfo = pObject->Get_SpriteInfo();
 
         OBJECT_METADATA tMetaData;
-        tMetaData.iInstanceID = m_iInstanceID;
+        tMetaData.iInstanceID = iExcelInstance;
         tMetaData.pObjectID = { nullptr };
         tMetaData.pNameTag = pObject->Get_NameTag();
         tMetaData.pClassName = pObject->Get_ClassName();
@@ -810,7 +817,7 @@ HRESULT CMyImGui::Save_Object_Excel()
         }
 
         OBJECT_TRANSFORM tTransform;
-        tTransform.iInstanceID = m_iInstanceID;
+        tTransform.iInstanceID = iExcelInstance;
         tTransform.pObjectID = { nullptr };
         tTransform.fSize.x = tSpriteInfo.fSize.x;
         tTransform.fSize.y = tSpriteInfo.fSize.y;
@@ -857,7 +864,7 @@ HRESULT CMyImGui::Save_Object_Excel()
             {
                 continue;
             }
-            tComponentInfo.iInstanceID = m_iInstanceID;
+            tComponentInfo.iInstanceID = iExcelInstance;
             tComponentInfo.pComponentTag = iter.first;
             tComponentInfo.iTextureIndex = pObject->Get_TextureIndex();
 
@@ -1172,6 +1179,7 @@ HRESULT CMyImGui::ShowSpriteWindow()
                                     break;
 
                                 m_pPreviewObject->Change_TextureComponent(pPrototypeTag);
+                                Safe_Delete_Array(pPrototypeTag);
                             }
                             m_iFolderIndex = iFolderIndex;
 
@@ -1222,7 +1230,7 @@ HRESULT CMyImGui::ShowInspectorWindow()
     //ImGui::Text("Layer: "); ImGui::SameLine(); ImGui::Text(pLayer);
     //Safe_Delete_Array(pLayer);
 
-    const _bool& bIsSelectionChanged = CheckSelectionChanged();
+    const _bool bIsSelectionChanged = CheckSelectionChanged();
 
     Default_Info(bIsSelectionChanged);
 
@@ -1273,7 +1281,7 @@ HRESULT CMyImGui::ShowSettings()
     return S_OK;
 }
 
-HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
+HRESULT CMyImGui::Default_Info(const _bool bIsSelectionChanged)
 {
     static char szName[MAX_PATH] = { "" };
 
@@ -1310,7 +1318,7 @@ HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
     /* NameTag 지정하기 */
     ImGui::InputText("NameTag", szName, IM_ARRAYSIZE(szName));
     _tchar* pName = { nullptr };
-    CToWC(szName, pName);
+    CToWC(szName, pName); // @error - 여기서 왜 const 상수가 값이 바뀌냐...?
     m_pSelectedObject->Set_NameTag(pName);
     Safe_Delete_Array(pName); // 현재 Set_NameTag 안에서 동적할당 중
 
@@ -1345,7 +1353,7 @@ HRESULT CMyImGui::Default_Info(const _bool& bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
+HRESULT CMyImGui::Inspector_Transform(const _bool bIsSelectionChanged)
 {
     if (ImGui::TreeNode("Transform"))
     {
@@ -1377,8 +1385,13 @@ HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
                 return S_OK;
             }
 
-            const int iTextureIndex = m_pSelectedObject->Get_TextureIndex();
-            _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
+            //_float3 vScale = pSelectedObjectTransform->Get_Scaled();
+
+            //if (!m_pSelectedObject->Get_bIsAnimUV())
+            //{
+            //    const int iTextureIndex = m_pSelectedObject->Get_TextureIndex();
+            //    _float2 vScale = pTexture->Get_OriginalTextureSize(iTextureIndex);
+            //}
 
             _float2 vScaleRatio = m_pSelectedObject->Get_ScaleRatio();
             fScaleRatio[0] = vScaleRatio.x;
@@ -1392,8 +1405,8 @@ HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
             , fSpeed[eTransform::POSITION], fMin[eTransform::POSITION], fMax[eTransform::POSITION], "%.1f");
         //ImGui::DragFloat3("Rotation", vPosition
         //    , fSpeed[eTransform::ROTATION], fMin[eTransform::ROTATION], fMax[eTransform::ROTATION]);
-        ImGui::DragFloat3("Scale", fScale
-            , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE], "%.1f");
+        //ImGui::DragFloat3("Scale", fScale
+        //    , fSpeed[eTransform::SCALE], fMin[eTransform::SCALE], fMax[eTransform::SCALE], "%.1f");
         ImGui::DragFloat3("ScaleRatio", fScaleRatio
             , fSpeed[eTransform::SCALE_RATIO], fMin[eTransform::SCALE_RATIO], fMax[eTransform::SCALE_RATIO], "%.1f");
 
@@ -1408,96 +1421,7 @@ HRESULT CMyImGui::Inspector_Transform(const _bool& bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool& bIsSelectionChanged)
-{
-
-    if (ImGui::TreeNode("SpriteRenderer"))
-    {
-        CComponent* pComponent = m_pSelectedObject->Get_Component(TAG_TEXTURE);
-        CTexture* pTexture = dynamic_cast<CTexture*>(pComponent);
-
-        static int iOrder = { 0 };
-        if (bIsSelectionChanged)
-            iOrder = m_pSelectedObject->Get_Order();
-        ImGui::InputInt("Order in Layer", &iOrder);
-
-        CGameInstance* pGameInstance = CGameInstance::GetInstance();
-        Safe_AddRef(pGameInstance);
-        if (pGameInstance->Get_KeyDown(DIK_UP))
-        {
-            ++iOrder;
-        }
-        else if (pGameInstance->Get_KeyDown(DIK_DOWN))
-        {
-            --iOrder;
-        }
-        Safe_Release(pGameInstance);
-        m_pSelectedObject->Set_Order(iOrder);
-
-        static ImGuiComboFlags flags = 0;
-        static _uint iRenderIndex = { 0 };
-
-        if (bIsSelectionChanged)
-            iRenderIndex = (_uint)m_pSelectedObject->Get_RenderGroup();
-
-        if (ImGui::BeginCombo("RenderGroup", m_RenderGroupVec[iRenderIndex], flags))
-        {
-            for (int iListIndex = 0; iListIndex < m_RenderGroupVec.size(); iListIndex++)
-            {
-                const bool is_selected = (iRenderIndex == iListIndex);
-                // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
-                if (ImGui::Selectable(m_RenderGroupVec[iListIndex], is_selected))
-                {
-                    iRenderIndex = iListIndex; // 선택한 항목의 인덱스를 저장
-                    m_pSelectedObject->Set_RenderGroup(CRenderer::RENDERGROUP(iRenderIndex));
-                }
-
-                if (is_selected)
-                    ImGui::SetItemDefaultFocus();
-            }
-            ImGui::EndCombo();
-        }
-
-        static _uint iLayerIndex = { 0 };
-        //static unique_ptr<char> pLayer = make_unique<char>(MAX_PATH);
-
-        //if (bIsSelectionChanged)
-        //{
-        //    for (_uint i = 0; i < m_LayerVec.size(); ++i)
-        //    {
-        //        if (!strcmp(m_LayerVec[i], m_pSelectedObject->Get_Layer()))
-        //        {
-        //            iLayerIndex = i;
-        //            break;
-        //        }
-        //    }
-        //}
-
-        //if (ImGui::BeginCombo("Layer", m_LayerVec[iLayerIndex], flags))
-        //{
-        //    for (int iListIndex = 0; iListIndex < m_LayerVec.size(); iListIndex++)
-        //    {
-        //        const bool is_selected = (iLayerIndex == iListIndex);
-        //        // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
-        //        if (ImGui::Selectable(m_LayerVec[iListIndex], is_selected))
-        //        {
-        //            iLayerIndex = iListIndex; // 선택한 항목의 인덱스를 저장
-        //            m_pSelectedObject->Set_Layer(m_LayerVec[iLayerIndex]);
-        //        }
-
-        //        if (is_selected)
-        //            ImGui::SetItemDefaultFocus();
-        //    }
-        //    ImGui::EndCombo();
-        //}
-
-        ImGui::TreePop();
-    }
-
-    return S_OK;
-}
-
-HRESULT CMyImGui::Inspector_Components(const _bool& bIsSelectionChanged)
+HRESULT CMyImGui::Inspector_Components(const _bool bIsSelectionChanged)
 {
 #pragma region 컴포넌트 추가
     static ImGuiComboFlags flags = 0;
@@ -1554,6 +1478,7 @@ HRESULT CMyImGui::Inspector_Components(const _bool& bIsSelectionChanged)
         {
             MSG_BOX("CMyImGui - ShowInspectorWindow - Add_Component - FAILED");
         }
+        Safe_Delete_Array(pPrototypeTag);
         m_pSelectedObject->Mapping_Component(TAG_COLL_AABB);
         
         CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -1594,7 +1519,162 @@ HRESULT CMyImGui::Inspector_Components(const _bool& bIsSelectionChanged)
     return S_OK;
 }
 
-HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider, const _bool& bIsSelectionChanged)
+HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
+{
+
+    if (ImGui::TreeNode("SpriteRenderer"))
+    {
+        CComponent* pComponent = m_pSelectedObject->Get_Component(TAG_TEXTURE);
+        CTexture* pTexture = dynamic_cast<CTexture*>(pComponent);
+
+        static int iOrder = { 0 };
+        if (bIsSelectionChanged)
+            iOrder = m_pSelectedObject->Get_Order();
+        ImGui::InputInt("Order in Layer", &iOrder);
+
+        CGameInstance* pGameInstance = CGameInstance::GetInstance();
+        Safe_AddRef(pGameInstance);
+        if (pGameInstance->Get_KeyDown(DIK_UP))
+        {
+            ++iOrder;
+        }
+        else if (pGameInstance->Get_KeyDown(DIK_DOWN))
+        {
+            --iOrder;
+        }
+        Safe_Release(pGameInstance);
+        m_pSelectedObject->Set_Order(iOrder);
+
+        static ImGuiComboFlags flags = 0;
+        static _uint iRenderIndex = { 0 };
+
+        if (bIsSelectionChanged)
+            iRenderIndex = (_uint)m_pSelectedObject->Get_RenderGroup();
+
+        if (ImGui::BeginCombo("RenderGroup", m_RenderGroupVec[iRenderIndex], flags))
+        {
+            for (int iListIndex = 0; iListIndex < m_RenderGroupVec.size(); iListIndex++)
+            {
+                const bool is_selected = (iRenderIndex == iListIndex);
+                // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+                if (ImGui::Selectable(m_RenderGroupVec[iListIndex], is_selected))
+                {
+                    iRenderIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+                    m_pSelectedObject->Set_RenderGroup(CRenderer::RENDERGROUP(iRenderIndex));
+                }
+
+                if (is_selected)
+                    ImGui::SetItemDefaultFocus();
+            }
+            ImGui::EndCombo();
+        }
+
+        static _uint iLayerIndex = { 0 };
+#pragma region 주석
+        //static unique_ptr<char> pLayer = make_unique<char>(MAX_PATH);
+
+        //if (bIsSelectionChanged)
+        //{
+        //    for (_uint i = 0; i < m_LayerVec.size(); ++i)
+        //    {
+        //        if (!strcmp(m_LayerVec[i], m_pSelectedObject->Get_Layer()))
+        //        {
+        //            iLayerIndex = i;
+        //            break;
+        //        }
+        //    }
+        //}
+
+        //if (ImGui::BeginCombo("Layer", m_LayerVec[iLayerIndex], flags))
+        //{
+        //    for (int iListIndex = 0; iListIndex < m_LayerVec.size(); iListIndex++)
+        //    {
+        //        const bool is_selected = (iLayerIndex == iListIndex);
+        //        // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
+        //        if (ImGui::Selectable(m_LayerVec[iListIndex], is_selected))
+        //        {
+        //            iLayerIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+        //            m_pSelectedObject->Set_Layer(m_LayerVec[iLayerIndex]);
+        //        }
+
+        //        if (is_selected)
+        //            ImGui::SetItemDefaultFocus();
+        //    }
+        //    ImGui::EndCombo();
+        //}
+#pragma endregion
+
+        // CheckBox는 클릭된 시점을 true
+        static bool bIsMultiple = false;
+        if (bIsSelectionChanged)
+        {
+            if (m_pSelectedObject->Get_bIsAnimUV())
+            {
+                bIsMultiple = true;
+            }
+            else
+            {
+                bIsMultiple = false;
+            }
+        }
+
+        if (ImGui::Checkbox("Multiple", &bIsMultiple))
+        {
+            m_pSelectedObject->Set_IsAnimUV(!m_pSelectedObject->Get_bIsAnimUV());
+
+            if (m_pSelectedObject->Get_bIsAnimUV())
+                m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::UV_Anim);
+            else
+                m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+        }
+
+
+
+        if (bIsMultiple)
+            Inspector_Multiple(bIsSelectionChanged);
+
+        ImGui::TreePop();
+    }
+
+    return S_OK;
+}
+
+HRESULT CMyImGui::Inspector_Multiple(const _bool bIsSelectionChanged)
+{
+    if (nullptr == m_pSelectedObject)
+        return E_FAIL;
+
+    if (ImGui::TreeNode("Sprite Slice"))
+    {
+        static int vec4i[4] = { 1, 1, 0, 0 };
+
+        ImGui::InputInt2("Column : Row", vec4i);
+
+        if (bIsSelectionChanged)
+        {
+            vec4i[0] = m_pSelectedObject->Get_UVTexNumX();
+            vec4i[1] = m_pSelectedObject->Get_UVTexNumY();
+        }
+
+        if (ImGui::Button("Slice"))
+        {
+            m_pSelectedObject->Set_UVTexNumX(vec4i[0]);
+            m_pSelectedObject->Set_UVTexNumY(vec4i[1]);
+            m_pSelectedObject->Set_SliceTextureSize(vec4i[0], vec4i[1]);
+        }
+
+
+        ImGui::TreePop();
+    }
+
+    if (ImGui::TreeNode("Animation"))
+    {
+        ImGui::TreePop();
+    }
+    return S_OK;
+}
+
+HRESULT CMyImGui::Inpsector_Collider(CCollider* pCollider, const _bool bIsSelectionChanged)
 {
     if (nullptr == pCollider)
     {
@@ -1959,6 +2039,7 @@ void CMyImGui::Add_SpriteListBox(const char* pFolderName)
         return;
     }
     m_pPreviewObject->Change_TextureComponent(pPrototypeTag);
+    Safe_Delete_Array(pPrototypeTag);
     vector<const _tchar*> m_TexturePathVec = *m_pPreviewObject->Get_TexturePathVec();
 
     vector<const char*> CPathVec;

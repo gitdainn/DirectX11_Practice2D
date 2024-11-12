@@ -5,11 +5,11 @@
 #include "InputHandler.h"
 #include "Player_Manager.h"
 #include "FileLoader.h"
-#include "Line_Manager.h"
 #include "UI_Handler.h"
 #include "Utility.h"
 #include "Widget.h"
 #include "HealthBarWidget.h"
+#include "LineRider.h"
 
 #pragma region LOAD
 #include "ColliderAABB2D.h"
@@ -216,6 +216,11 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	/* For.Prototype_Component_Shader_VtxTex*/
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_LineRider*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		CLineRider::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
 
 	/* For.Prototype_Component_Widget */

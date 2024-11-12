@@ -10,6 +10,11 @@ CSkillGuillotine::CSkillGuillotine(ID3D11Device* pDevice, ID3D11DeviceContext* p
 HRESULT CSkillGuillotine::Initialize_Prototype()
 {
 	m_pNameTag = new _tchar[MAX_PATH]{ TEXT("길로틴") };
+	m_bIsAnimUV = false;
+	m_bIsSkillAvailable = true;
+	m_iAnimType = 0;
+
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
 	__super::Initialize_Prototype();
 	return S_OK;
@@ -23,14 +28,6 @@ HRESULT CSkillGuillotine::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg
 	}
 
 	Add_Animation();
-
-	m_bIsAnimUV = false;
-	m_bIsSkillAvailable = true;
-	m_iAnimType = 0;
-
-	_float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
-	m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y + vScale.y * 0.5f, 0.f));
-	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 
 	return S_OK;
 }
@@ -55,9 +52,6 @@ _uint CSkillGuillotine::Tick(_double TimeDelta)
 	}
 	else
 		m_DelayTimeAcc += TimeDelta;
-
-	_float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
-	m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y + vScale.y * 0.5f, 0.f));
 
 	Play_Animation(TimeDelta, m_iTextureIndex);
 
@@ -88,10 +82,10 @@ void CSkillGuillotine::Enter(CSpriteObject* pOwner)
 	if (nullptr == pPlayerTransformCom)
 		return;
 
-	_vector vPosition = pPlayerTransformCom->Get_State(CTransform::STATE_POSITION);
-	XMStoreFloat2(&m_tSpriteInfo.fPosition, vPosition);
+	_vector vPlayerPosition = pPlayerTransformCom->Get_State(CTransform::STATE_POSITION);
+	XMStoreFloat2(&m_tSpriteInfo.fPosition, vPlayerPosition);
 
-	if (FAILED(Landing_Ground(vPosition)))
+	if (DefaultLineRider(vPlayerPosition))
 	{
 		m_bIsSkillAvailable = true;
 		return;
@@ -102,7 +96,7 @@ void CSkillGuillotine::Enter(CSpriteObject* pOwner)
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Adjust_PositionUp_Radius(vScale.y));
 
 	CCollider::COLLIDER_DESC tColliderDesc = m_pColliderCom->Get_ColliderDesc();
-	XMStoreFloat3(&tColliderDesc.vPosition, vPosition);
+	XMStoreFloat3(&tColliderDesc.vPosition, vPlayerPosition);
 	m_pColliderCom->Set_ColliderDesc(tColliderDesc);
 
 	m_iTextureIndex = m_pAnimInfo->iStartIndex;
@@ -142,7 +136,10 @@ HRESULT CSkillGuillotine::Add_Components(void* pArg)
 
 HRESULT CSkillGuillotine::SetUp_ShaderResources()
 {
-	if (FAILED(__super::SetUp_ShaderResources()))
+	if (FAILED(SetUp_ShaderDefault()))
+		return E_FAIL;
+
+	if (FAILED(SetUp_Shader_UVAnim()))
 		return E_FAIL;
 
 	return S_OK;

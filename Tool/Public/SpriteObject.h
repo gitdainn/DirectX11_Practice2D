@@ -66,17 +66,17 @@ public:
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
 public:
-	void	Set_TextureIndex(const _uint& iIndex)
+	void	Set_TextureIndex(const _uint iIndex)
 	{
 		m_iTextureIndex = iIndex;
 	}
 
-	void Set_SpriteDirection(const SPRITE_DIRECTION eDirection)
+	void Set_SpriteDirection(const SPRITE_DIRECTION& eDirection)
 	{
 		m_eSpriteDirection = eDirection;
 	}
 
-	void Set_SpriteInfo(const SPRITE_INFO tSpriteInfo)
+	void Set_SpriteInfo(const SPRITE_INFO& tSpriteInfo)
 	{
 		m_tSpriteInfo = tSpriteInfo;
 	}
@@ -93,18 +93,42 @@ public:
 		m_tSpriteInfo.pPrototypeTag = pTag;
 	}
 
-	void Set_ScaleRatio(const _float2& fSizeRatio)
+	void Set_ScaleRatio(const _float2 fSizeRatio)
 	{
 		m_tSpriteInfo.fSizeRatio = fSizeRatio;
-		m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.x
-											, m_tSpriteInfo.fSize.y * m_tSpriteInfo.fSizeRatio.y, 1.f));
+		if (!m_bIsAnimUV)
+		{
+			m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x * m_tSpriteInfo.fSizeRatio.x
+				, m_tSpriteInfo.fSize.y * m_tSpriteInfo.fSizeRatio.y, 1.f));
+		}
+		else
+		{
+			_float3 vScale = _float3(m_tSpriteInfo.fSize.x, m_tSpriteInfo.fSize.y, 0.f);
+			vScale.x /= m_iUVTexNumX;
+			vScale.y /= m_iUVTexNumY;
+			vScale.x *= fSizeRatio.x;
+			vScale.y *= fSizeRatio.y;
+
+			m_pTransformCom->Set_Scaled(vScale);
+		}
+
 	}
 
-	void Set_IsScroll(const _bool& bIsScroll)
-	{
+	void Set_IsScroll(const _bool bIsScroll) { 
 		m_bIsScroll = bIsScroll;
 	};
 
+	void	Set_IsAnimUV(const _bool bIsAnim) { m_bIsAnimUV = bIsAnim; }
+	void	Set_UVTexNumX(const _uint iUVTexNum) { m_iUVTexNumX = iUVTexNum; }
+	void	Set_UVTexNumY(const _uint iUVTexNum) { m_iUVTexNumY = iUVTexNum; }
+	void	Set_SliceTextureSize(const _uint iUVTexNumX, const _uint iUVTexNumY)
+	{
+		_float3 vScale = _float3(m_tSpriteInfo.fSize.x, m_tSpriteInfo.fSize.y, 0.f);
+		vScale.x /= iUVTexNumX;
+		vScale.y /= iUVTexNumY;
+
+		m_pTransformCom->Set_Scaled(vScale);
+	}
 public:
 	const bool IsEndSprite()
 	{
@@ -133,7 +157,7 @@ public:
 		return m_pSpriteTag;
 	}
 
-	const _float2& Get_ScaleRatio() const
+	const _float2 Get_ScaleRatio() const
 	{
 		return m_tSpriteInfo.fSizeRatio;
 	}
@@ -142,6 +166,10 @@ public:
 	{
 		return m_eRenderGroup;
 	}
+
+	const	_bool	Get_bIsAnimUV() const { return m_bIsAnimUV; }
+	const	_uint	Get_UVTexNumX() const { return m_iUVTexNumX; }
+	const	_uint	Get_UVTexNumY() const { return m_iUVTexNumY; }
 
 public:
 	template<typename T>
@@ -152,7 +180,11 @@ public:
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
-	virtual HRESULT SetUp_ShaderResources();
+	virtual HRESULT SetUp_ShaderResources() = 0;
+	HRESULT SetUp_ShaderDefault();
+	HRESULT SetUp_Shader_UVAnim();
+	HRESULT SetUp_Shader_Wrap();
+
 	void	Scroll_Screen(_float4x4& WorldMatrix) const;
 
 protected:
@@ -176,9 +208,9 @@ protected:
 	const _tchar*		m_pTextureComTag;
 	SPRITE_DIRECTION		m_eSpriteDirection;
 	
-	_uint	m_iUVTextureIndex;
-	_uint	m_iUVTexNumX;
-	_uint	m_iUVTexNumY;
+	_uint	m_iUVTextureIndex = { 0 };
+	_uint	m_iUVTexNumX = { 1 };
+	_uint	m_iUVTexNumY = { 1 };
 
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 

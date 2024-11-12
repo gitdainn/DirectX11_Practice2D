@@ -4,6 +4,8 @@
 
 BEGIN(Engine)
 
+class CLineRider;
+
 class CLine_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CLine_Manager)
@@ -78,8 +80,8 @@ public:
 		return S_OK;
 	}
 
-	/** 발밑에 탈 수 있는 선이 있는지 검사합니다. */
-	bool HasPassableLine(const _float2 vInObjectPosition, _float& fOutLandingY);
+	/** 탈 수 있는 가장 가까운 선을 얻습니다. */
+	HRESULT Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO& fOutLandingY);
 
 	/** 현재 선을 타고 있는 중인지 검사합니다. */
 	bool IsCurrentLineOccupied(const _float2 vObjectPosition, _float& fOutLandingY);
@@ -111,6 +113,9 @@ private:
 private:
 	list<LINE_INFO>	m_LineList;
 	LINE_INFO		m_tClosestLandingLine;
+
+private:
+	friend	class CLineRider;
 
 	//priority_queue<_float, vector<_float>, greater<_float>> m_PossibleLandingQueue;
 

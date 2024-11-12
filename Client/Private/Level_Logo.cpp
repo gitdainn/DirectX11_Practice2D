@@ -61,7 +61,7 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 #pragma endregion
 
 #pragma region 오브젝트 데이터
-	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/NewMap.data"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/Enemy.data"), LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_FIle FAILED");
 		return E_FAIL;
@@ -105,7 +105,6 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_BackGround"), LEVEL_LOGO, LAYER_BACKGROUND, tSpriteInfo)))
 	//	return E_FAIL;
 
-	//tSpriteInfo.fSize = _float2{ 300.f, 320.f };
 	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_GrimReaper"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 	{
 		Safe_Release(pGameInstance);

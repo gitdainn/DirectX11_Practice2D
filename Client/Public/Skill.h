@@ -11,6 +11,7 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) override;
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
+	virtual HRESULT Late_Initialize(void* pArg);
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
@@ -31,8 +32,8 @@ public:
 	}
 
 protected:
+	virtual HRESULT SetUp_ShaderResources() = 0;
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
-	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
 	void	Mapping_SkillData(const _tchar* pObjectID);
 
 protected:
@@ -44,8 +45,6 @@ protected:
 		m_LifeTimeAcc = 0.0;
 		m_DelayTimeAcc = 0.0;
 	}
-
-	HRESULT	Landing_Ground(const _vector& vPosition);
 
 protected:
 	_uint m_iMaxLevel;

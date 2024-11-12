@@ -31,7 +31,10 @@ HRESULT CItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	Landing_Ground();
+	if (DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+	{
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -43,7 +46,10 @@ HRESULT CItem::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	Landing_Ground();
+	if (DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+	{
+		return E_FAIL;
+	}
 
 	return S_OK;
 }
@@ -83,25 +89,6 @@ void CItem::End_Animation(_uint& iSpriteIndex)
 {
 	__super::End_Animation(iSpriteIndex);
 	iSpriteIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
-}
-
-void CItem::Landing_Ground()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return;
-	Safe_AddRef(pGameInstance);
-
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float fLandingY = { 0.f };
-	if (pGameInstance->IsCurrentLineOccupied(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY))
-	{
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-	}
-
-	Safe_Release(pGameInstance);
-
-	return;
 }
 
 HRESULT CItem::Add_Components(void* pArg)

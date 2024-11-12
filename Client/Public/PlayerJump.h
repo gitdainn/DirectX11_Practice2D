@@ -6,7 +6,6 @@ class CPlayerJump : public CState
 public:
     /** @note - 생성자가 하나라도 명시적으로 선언되어 있으면 자동으로 멤버들을 1대1 대입해주는 디폴트 생성자는 없기 떄문에 무조건 모든 변수 직접 초기화 또는 대입해야함 */
     explicit CPlayerJump();
-    explicit CPlayerJump(const _uint& iJumpCount);
     explicit CPlayerJump(const CPlayerJump& rhs);
     ~CPlayerJump();
 
@@ -22,10 +21,13 @@ public:
         m_fPower = 0.f;
     }
 
+    void  Set_IsDead(const _bool bIsDead) { m_bIsDead = bIsDead; }
+
+public:
+    const _bool Get_IsFalling() const { return m_bIsFalling; }
+
 private:
     void    Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    const bool     IsOnGround(CSpriteObject* pObject);
-    _bool           HasPassableLine(CSpriteObject* pObject, _float& fLandingY);
     _bool           AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);
 
 private:

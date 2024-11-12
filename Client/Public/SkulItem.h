@@ -26,7 +26,6 @@ public:
 protected:
 	virtual void End_Animation(_uint& iSpriteIndex) override;
 	virtual void Add_Animation();
-	void	Landing_Ground();
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;

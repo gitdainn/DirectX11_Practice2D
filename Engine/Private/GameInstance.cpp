@@ -532,22 +532,6 @@ HRESULT CGameInstance::Get_CurrentLineEndPoint(const _float2& vObjectPosition, p
 	return m_pLine_Manager->Get_CurrentLineEndPoint(vObjectPosition, EndPoints);
 }
 
-bool CGameInstance::HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY)
-{
-	if (nullptr == m_pLine_Manager)
-		return false;
-
-	return m_pLine_Manager->HasPassableLine(vInObjectPosition, fOutLandingY);
-}
-
-bool CGameInstance::IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY)
-{
-	if (nullptr == m_pLine_Manager)
-		return false;
-
-	return m_pLine_Manager->IsCurrentLineOccupied(vObjectPosition, fOutLandingY);
-}
-
 #ifdef _DEBUG
 HRESULT CGameInstance::Render_Collider()
 {

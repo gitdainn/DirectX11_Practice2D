@@ -163,6 +163,9 @@
     <Filter Include="97.ShaderFiles">
       <UniqueIdentifier>{8db52426-1eac-4e1f-a3e3-978d9f641351}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\03.Component\LineRider">
+      <UniqueIdentifier>{6f6a7f7e-8129-4146-b965-097b551a1645}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Private\Base.cpp">
@@ -305,6 +308,9 @@
     </ClCompile>
     <ClCompile Include="..\Public\Engine_Util.cpp">
       <Filter>99.Defines</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\LineRider.cpp">
+      <Filter>01.Utility\03.Component\LineRider</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -502,6 +508,9 @@
     </ClInclude>
     <ClInclude Include="..\Public\Engine_Util.h">
       <Filter>99.Defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\LineRider.h">
+      <Filter>01.Utility\03.Component\LineRider</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

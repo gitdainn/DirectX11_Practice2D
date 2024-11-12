@@ -24,7 +24,6 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 
 HRESULT CSpriteObject::Initialize_Prototype()
 {
-	m_pLayerTag = LAYER_DEFAULT;
 	return S_OK;
 }
 
@@ -79,6 +78,11 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
 	Safe_Release(pFileLoader);
+	return S_OK;
+}
+
+HRESULT CSpriteObject::Late_Initialize(void* pArg)
+{
 	return S_OK;
 }
 
@@ -263,6 +267,30 @@ HRESULT CSpriteObject::SetUp_Shader_Wrap()
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_TextureSize", &fSize, sizeof(_float2))))
 		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::JumpableLineRider(_double TImeDelta)
+{
+	return E_NOTIMPL;
+}
+
+HRESULT CSpriteObject::DefaultLineRider(const _vector vPosition)
+{
+	if (nullptr == m_pLineRiderCom)
+		return E_FAIL;
+
+	_float fLandingY = { 0.f };
+	if (FAILED((m_pLineRiderCom->Collision_Line(vPosition, fLandingY))))
+	{
+		// 착지할 라인이 없습니다.
+		return E_FAIL;
+	}
+	else
+	{
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+	}
 
 	return S_OK;
 }
@@ -502,4 +530,5 @@ void CSpriteObject::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColliderCom);
 	Safe_Release(m_pWidgetCom);
+	Safe_Release(m_pLineRiderCom);
 }

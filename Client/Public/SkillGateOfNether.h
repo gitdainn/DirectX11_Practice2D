@@ -30,7 +30,7 @@ protected:
 
 private:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
-	HRESULT SetUp_ShaderResources(); /* 셰이더 전역변수에 값을 던진다. */
+	virtual HRESULT SetUp_ShaderResources() override; /* 셰이더 전역변수에 값을 던진다. */
 
 public:
 	/* Prototype */

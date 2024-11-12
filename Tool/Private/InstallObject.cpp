@@ -121,7 +121,10 @@ HRESULT CInstallObject::Add_Components(void* pArg)
 
 HRESULT CInstallObject::SetUp_ShaderResources()
 {
-    if (FAILED(__super::SetUp_ShaderResources()))
+    if (FAILED(SetUp_ShaderDefault()))
+        return E_FAIL;
+
+    if (FAILED(SetUp_Shader_UVAnim()))
         return E_FAIL;
 
     return S_OK;

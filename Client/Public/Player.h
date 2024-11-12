@@ -43,16 +43,20 @@ public:
 		m_bIsInAir = bInAir;
 	}
 
+public:
+	CSkill* Get_Skill(const _tchar* pObjectID);
+
 protected:
-	virtual void End_Animation(_uint& iSpriteIndex) override;
-	void	Mapping_SkulData(const _tchar* pObjectID);
-	CSkill*	Get_Skill(const _tchar* pObjectID);
+	virtual void	End_Animation(_uint& iSpriteIndex) override;
+	virtual	HRESULT JumpableLineRider(_double TimeDelta) override;
+
 	virtual void Add_Animation() = 0;
+	void	Mapping_SkulData(const _tchar* pObjectID);
 	void Awaken();
+
 
 private:
 	void	Mapping_Type(const SKUL_TYPE& tType);
-	void	Landing_Ground();
 	
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
@@ -61,6 +65,7 @@ protected:
 protected:
 	CSkill* m_pSkill[iSkillNum] = { nullptr };
 	CCollider* m_pDefaultAtkColliderCom = { nullptr };
+
 	//unordered_map<const CONTROL_KEY, _uint>	m_ControlMap;
 	_bool	m_bIsEquipped;
 	_bool	m_bIsSwap;

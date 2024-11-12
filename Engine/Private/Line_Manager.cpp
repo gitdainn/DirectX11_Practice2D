@@ -142,10 +142,10 @@ HRESULT CLine_Manager::Render()
 }
 #endif
 
-bool CLine_Manager::HasPassableLine(const _float2 vInObjectPosition, _float& fOutLandingY)
+HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO& tClosestLine)
 {
 	if (m_LineList.empty())
-		return false;
+		return E_FAIL;
 
 	// greater: 내림차순 정렬
 	// priority_queue<_float>로 사용 시 기본 정렬인 less로 적용됨
@@ -172,43 +172,16 @@ bool CLine_Manager::HasPassableLine(const _float2 vInObjectPosition, _float& fOu
 		if (fClosestLandingLineY < fLandingY)
 		{
 			fClosestLandingLineY = fLandingY;
-			m_tClosestLandingLine = tLine;
+			tClosestLine = tLine;
 		}
 		// @qurious - 왜 emplace보다 insert가 안전한지. 무엇이 더 좋은지 알아볼 것
 	}
 
 	// 탈 수 있는 라인이 없다면 종료
 	if (fClosestLandingLineY == fImpossibleLanding)
-		return false;
-	
-	fOutLandingY = fClosestLandingLineY;
+		return E_FAIL;
 
-	return true;
-}
-
-bool CLine_Manager::IsCurrentLineOccupied(const _float2 vObjectPosition, _float& fOutLandingY)
-{
-	// 매번 검사하면 오르막길을 못 오르기 때문에 한 번만 검사하고, 무조건 내가 타고 있는 라인의 y로 고정
-	if (_float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tLeftVertex.position
-		&& _float3(0.f, 0.f, 0.f) == m_tClosestLandingLine.tRightVertex.position)
-	{
-		_float fLandingY = { 0 };
-		if (!HasPassableLine(vObjectPosition, fLandingY))
-			return false;
-	}
-
-	if (m_tClosestLandingLine.tLeftVertex.position.x > vObjectPosition.x
-		|| m_tClosestLandingLine.tRightVertex.position.x < vObjectPosition.x)
-	{
-		return false;
-	}
-
-	// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
-	_float3 fA = m_tClosestLandingLine.tLeftVertex.position;
-	_float3 fB = m_tClosestLandingLine.tRightVertex.position;
-
-	fOutLandingY = EquationOfLine(fA, fB, vObjectPosition.x);
-	return true;
+	return S_OK;
 }
 
 const _float CLine_Manager::Get_Slope(const _float3 fA, const _float3 fB)

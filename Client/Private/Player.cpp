@@ -6,6 +6,8 @@
 #include "FileLoader.h"
 #include "Skill.h"
 #include "Player_Manager.h"
+#include "PlayerDamaged.h"
+#include "LineRider.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -36,6 +38,7 @@ HRESULT CPlayer::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 
 	m_pState = new CPlayerIdle();
 	m_pAirState = new CPlayerJump();
+
 	return S_OK;
 }
 
@@ -52,6 +55,7 @@ HRESULT CPlayer::Initialize(void* pArg)
 
 	m_pState = new CPlayerIdle();
 	m_pAirState = new CPlayerJump();
+
 	return S_OK;
 }
 
@@ -75,19 +79,9 @@ _uint CPlayer::Tick(_double TimeDelta)
 	//	pGameInstance->Set_ScrollY(XMVectorGetY(vDir) * fCameraSpeed);
 	//	vPastPosition = vPosition;
 	//}
-
-	/* false == IsCurrentLineOccupied()이면 playerJump로 변환 + 추락 상태 만들기 */
-	if (m_bIsInAir)
-	{
-		m_pAirState->Update(this, TimeDelta);
-	}
-	// @ error - 공중 상태일 때, 추락하는 시점에 땅이 있으면 자연스럽게 안착해야 함.
-	else
-	{
-		// 안 뛰고 있으면 무조건 Landing_Ground해서 땅에 붙여버리기
-		Landing_Ground();
-	}
 	
+	JumpableLineRider(TimeDelta);
+
 	SkillTick(TimeDelta);
 
 	return __super::Tick(TimeDelta);
@@ -182,18 +176,22 @@ void CPlayer::SkillRender()
 
 void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
-	if (nullptr == pObject || nullptr == pTargetCollider)
+	CSpriteObject* pTargetObject = dynamic_cast<CSpriteObject*>(pTarget);
+	if (nullptr == pTargetObject || nullptr == pTargetCollider)
 		return;
 
 	if (!lstrcmp(LAYER_ENEMYATK, pTargetLayer))
 	{
 		Input_Handler(STATE_TYPE::DAMAGED);
+		CPlayerDamaged* pPlayerDamaged = dynamic_cast<CPlayerDamaged*>(m_pState);
+		if (nullptr != pPlayerDamaged)
+			pPlayerDamaged->Set_TargetDirection(pTargetObject->Get_SpriteDirection());
+		
 		CPlayer_Manager* pPlayer_Manager = CPlayer_Manager::GetInstance();
 		if (nullptr != pPlayer_Manager)
 		{
 			Safe_AddRef(pPlayer_Manager);
-			pPlayer_Manager->Set_Damaged(pObject->Get_Attack());
+			pPlayer_Manager->Set_Damaged(pTargetObject->Get_Attack());
 		}
 		Safe_Release(pPlayer_Manager);
 	}
@@ -255,6 +253,68 @@ void CPlayer::End_Animation(_uint& iSpriteIndex)
 {
 	__super::End_Animation(iSpriteIndex);
 	iSpriteIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
+}
+
+HRESULT CPlayer::JumpableLineRider(_double TimeDelta)
+{
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float fLandingY = { 0.f };
+
+	if (m_bIsInAir)
+	{
+		// 대쉬 중에는 점프 상태를 잠시 멈춥니다.
+		if (m_eCurrentState == STATE_TYPE::DASH)
+		{
+			CPlayerJump* pJump = dynamic_cast<CPlayerJump*>(m_pAirState);
+			if (nullptr != pJump)
+				pJump->Set_IsFalling(true);
+		}
+		else
+		{
+			m_pAirState->Update(this, TimeDelta);
+		}
+
+		CPlayerJump* pPlayerJump = dynamic_cast<CPlayerJump*>(m_pAirState);
+		if (nullptr == pPlayerJump)
+			return E_FAIL;
+
+		if (pPlayerJump->Get_IsFalling())
+		{
+			// 착지 시점을 체크합니다.
+			if (m_pLineRiderCom->CheckLineLanding(vPosition, fLandingY))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+
+				Set_IsInAir(false);
+
+				STATE_TYPE eCurrentState = Get_CurrentState();
+				//if (STATE_TYPE::ATK1 != eCurrentState
+				//	&& STATE_TYPE::ATK2 != eCurrentState
+				//	&& STATE_TYPE::DEFAULT_ATK != eCurrentState
+				//	&& STATE_TYPE::JUMP_ATK != eCurrentState)
+				{
+					Input_Handler(STATE_TYPE::IDLE, Get_SpriteDirection());
+					pPlayerJump->Set_IsDead(true);
+				}
+			}
+		}
+	}
+	else
+	{
+		// 안 뛰고 있으면 무조건 Landing_Ground해서 땅에 붙여버리기
+		// 붙일 땅이 없으면 추락 상태로 변경합니다.
+		if (FAILED((m_pLineRiderCom->Collision_Line(vPosition, fLandingY))))
+		{
+			Input_Handler(STATE_TYPE::JUMP, Get_SpriteDirection());
+			dynamic_cast<CPlayerJump*>(m_pAirState)->Set_IsFalling(true);
+		}
+		else
+		{
+			m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
+		}
+	}
+
+	return S_OK;
 }
 
 void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
@@ -365,40 +425,16 @@ void CPlayer::Mapping_Type(const SKUL_TYPE& tType)
 
 }
 
-void CPlayer::Landing_Ground()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return;
-	Safe_AddRef(pGameInstance);
-
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float fLandingY = { 0.f };
-	if (pGameInstance->IsCurrentLineOccupied(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY))
-	{
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-	}
-	else
-	{
-		m_bIsInAir = true;
-		Input_Handler(STATE_TYPE::JUMP);
-		CPlayerJump* pPlayerJump = dynamic_cast<CPlayerJump*>(m_pAirState);
-		if (nullptr != pPlayerJump)
-		{
-			pPlayerJump->Set_IsFalling(true);
-		}
-	}
-
-	Safe_Release(pGameInstance);
-	
-	return;
-}
-
 HRESULT CPlayer::Add_Components(void* pArg)
 {
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
+		return E_FAIL;
+
+	/* For.Com_LineRider */
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		TAG_LINERIDER, (CComponent**)&m_pLineRiderCom, &m_tSpriteInfo.fPosition)))
 		return E_FAIL;
 
 #pragma region COLLIDER

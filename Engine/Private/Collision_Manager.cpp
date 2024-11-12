@@ -27,19 +27,17 @@ _uint CCollision_Manager::LateTick(_double TimeDelta)
 	if (m_ColliderMap.empty())
 		return _uint();
 
-	auto iter = m_ColliderMap.begin();
-	for (iter; iter != m_ColliderMap.end();)
+	for (const auto& Pair : m_ColliderMap)
 	{
-		list<CCollider*> ColliderList = iter->second;
-		for (CCollider* pCollider : ColliderList)
+		list<CCollider*> ColliderList = Pair.second;
+		for (auto iter = ColliderList.begin() ; iter != ColliderList.end() ;)
 		{
-			if (nullptr == pCollider)
+			if (nullptr == *iter)
 				continue;
 
-			if (OBJ_DEAD == pCollider->Tick(TimeDelta))
+			if (OBJ_DEAD == (*iter)->Tick(TimeDelta))
 			{
-				//Safe_Release(pCollider);
-				iter = m_ColliderMap.erase(iter);
+				iter = ColliderList.erase(iter);
 			}
 			else
 				++iter;

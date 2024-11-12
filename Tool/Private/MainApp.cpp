@@ -150,21 +150,31 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	///* For.Prototype_Component_Sprite_LittleBorn */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_LittleBorn"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/LittleBorn/Wait_%d.png"), 48))))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;
-	//};
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Player/GrimReaper/GrimReaperUV_%d.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
 
-	///* For.Prototype_Component_Sprite_GrimReaper */
-	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_GrimReaperUV"),
-	//	CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Skul/Player/GrimReaper/GrimReaperUV_%d.png")))))
+#pragma region ENEMY_TEXTURE
+	/* For.Prototype_Component_Sprite_GrimReaper */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Enemy_Solider"),
+		CTexture::Create(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Enemy/Enemy_Solider_B.png")))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	///* For.Prototype_Component_Sprite_Enemy_Solider */
+	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Enemy_Solider"),
+	//	CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Enemy/")))))
 	//{
 	//	Safe_Release(pGameInstance);
 	//	return E_FAIL;
 	//};
+#pragma endregion
 
 	///* For.Prototype_Component_Sprite_WaterSkul */
 	//if (FAILED(pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_WaterSkulUV"),

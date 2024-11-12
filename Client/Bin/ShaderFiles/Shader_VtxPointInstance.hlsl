@@ -42,19 +42,19 @@ VS_OUT VS_MAIN(VS_IN In)
 
 struct GS_IN
 {
-	/*»ç°¢ÇüÀ» ±¸¼ºÇÏ±âÀ§ÇÑ º£ÀÌ½º Á¤º¸¸¦ °¡Áø Á¤Á¡.*/
+	/*ï¿½ç°¢ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ì½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.*/
 	float4		vPosition : POSITION;
 	float2		vPSize : PSIZE;
 };
 
-/* Áö¿À¸ÞÆ®¸® ¼ÎÀÌ´õ¿¡¼­ ¸¸µé¾î³½ Á¤Á¡. */
+/* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½Ì´ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½î³½ ï¿½ï¿½ï¿½ï¿½. */
 struct GS_OUT
 {	
 	float4		vPosition : SV_POSITION;
 	float2		vTexUV : TEXCOORD0;
 };
 
-/* ¼ÎÀÌ´õ ³»¿¡¼­ Á¤Á¡À» »ý¼ºÇØÁØ´Ù.  */
+/* ï¿½ï¿½ï¿½Ì´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø´ï¿½.  */
 [maxvertexcount(6)]
 void GS_MAIN(point GS_IN In[1], inout TriangleStream<GS_OUT> Triangle)
 {
@@ -109,7 +109,7 @@ struct PS_OUT
 	float4		vColor : SV_TARGET0;		
 };
 
-/* ÇÈ¼¿ÀÇ »öÀ» °áÁ¤ÇÑ´Ù. */
+/* ï¿½È¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½. */
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;

@@ -2,6 +2,7 @@
 #include "PlayerAtk.h"
 #include "PlayerIdle.h"
 #include "PlayerDash.h"
+#include "PlayerDamaged.h"
 
 CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
@@ -27,6 +28,10 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 
 	case STATE_TYPE::DASH:
 		pState = new CPlayerDash(eDirection);
+		break;
+
+	case STATE_TYPE::DAMAGED:
+		pState = new CPlayerDamaged();
 		break;
 
 	default:

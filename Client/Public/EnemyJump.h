@@ -23,10 +23,10 @@ public:
         m_fPower = 0.f;
     }
 
+    const _bool Get_IsFalling() { return m_bIsFalling; }
+
 private:
     void            Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    const _bool     IsOnGround(CSpriteObject* pObject);
-    const _bool     HasPassableLine(CSpriteObject* pObject, _float& fLandingY);
     const _bool     AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);
 
 private:

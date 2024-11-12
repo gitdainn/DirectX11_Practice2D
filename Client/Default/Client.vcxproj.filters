@@ -287,6 +287,9 @@
     <ClInclude Include="..\Public\EnemyJump.h">
       <Filter>03.DesignPattern\State\EnemyState</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\PlayerDamaged.h">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -416,6 +419,9 @@
     <ClCompile Include="..\Private\HealthBarWidget.cpp" />
     <ClCompile Include="..\Private\EnemyJump.cpp">
       <Filter>03.DesignPattern\State\EnemyState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\PlayerDamaged.cpp">
+      <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

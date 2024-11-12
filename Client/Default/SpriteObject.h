@@ -7,6 +7,7 @@
 #include "Transform.h"
 #include "Renderer.h"
 #include "Texture.h"
+#include "LineRider.h"
 #pragma endregion
 
 /** @note - 전방선언의 기준은?
@@ -39,6 +40,7 @@ public:
 public:
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
+	virtual HRESULT Late_Initialize(void* pArg = nullptr);
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
@@ -179,6 +181,12 @@ protected:
 	HRESULT SetUp_Shader_UVAnim();
 	HRESULT SetUp_Shader_Wrap();
 
+	/** 점프/추락 기능이 있는 객체에게 사용하는 선타기 기능입니다. */
+	virtual HRESULT	JumpableLineRider(_double TImeDelta);
+	/** 추락 기능이 없는 선타기 기능입니다. 
+	* @return - 현재 타고 있는 선을 벗어나면 E_FAIL을 반환합니다. (착지할 수 있는 땅이 없어도 E_FAIL 반환) */
+	HRESULT	DefaultLineRider(const _vector vPosition);
+
 	HRESULT Load_Components_Excel();
 	HRESULT	Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider);
 	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
@@ -191,12 +199,13 @@ protected:
 	ID3D11Device* m_pDevice = { nullptr };
 	ID3D11DeviceContext* m_pContext = { nullptr };
 
-protected:
+protected: // 컴포넌트 //
 	CVIBuffer_Rect* m_pVIBufferCom = { nullptr };
 	CShader* m_pShaderCom = { nullptr };
 	CTexture* m_pTextureCom = { nullptr };
 	CCollider* m_pColliderCom = { nullptr };
 	CWidget* m_pWidgetCom = { nullptr };
+	CLineRider* m_pLineRiderCom = { nullptr };
 
 protected:
 	bool	m_bIsAnimUV;

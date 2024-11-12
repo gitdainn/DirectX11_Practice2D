@@ -1,6 +1,7 @@
 #pragma once
 #include "SpriteObject.h"
 #include "Player_Manager.h"
+#include "LineRider.h"
 #include <functional>
 
 class CEnemyJump;
@@ -77,7 +78,8 @@ protected:
 		_vector vDirectionPosX = XMVectorSetY(vDirectionPos, 0.f);
 		return XMVectorGetX(XMVector3Length(vDirectionPosX - vCurrentPosX));
 	}
-	HRESULT	Landing_Ground();
+
+	void	LookAtPlayer();
 
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
@@ -93,9 +95,10 @@ protected:
 	function<void(CEnemy&, _double)> m_StateFunc;
 
 protected:
-	pair<_float3, _float3>	m_LineEndPoints;
+	pair<_float3, _float3>	m_LineEndPoints; // <왼쪽 점, 오른쪽 점>
 	_uint	m_iSearchRoundsCount = { 0 };
 	_double	m_IdleTimeAcc = { 0.0 };
+	_double	m_AttackTimeAcc = { 0.0 };
 	_double m_DamagedTimeAcc = { 0.0 };
 
 	SPRITE_DIRECTION	m_eTargetDirection;

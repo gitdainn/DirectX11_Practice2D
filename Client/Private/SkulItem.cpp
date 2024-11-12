@@ -31,7 +31,7 @@ HRESULT CSkulItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	Landing_Ground();
+	//Landing_Ground();
 	Add_Animation();
 
 	return S_OK;
@@ -44,7 +44,7 @@ HRESULT CSkulItem::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	Landing_Ground();
+	//Landing_Ground();
 	Add_Animation();
 
 	return S_OK;
@@ -111,25 +111,6 @@ void CSkulItem::End_Animation(_uint& iSpriteIndex)
 
 void CSkulItem::Add_Animation()
 {
-}
-
-void CSkulItem::Landing_Ground()
-{
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	if (nullptr == pGameInstance)
-		return;
-	Safe_AddRef(pGameInstance);
-
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float fLandingY = { 0.f };
-	if (pGameInstance->IsCurrentLineOccupied(_float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition)), fLandingY))
-	{
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-	}
-
-	Safe_Release(pGameInstance);
-
-	return;
 }
 
 HRESULT CSkulItem::Add_Components(void* pArg)

@@ -105,9 +105,6 @@ public: /* For. Line_Manager*/
 	HRESULT Get_LineList(list<LINE_INFO>& LineList) const;
 	HRESULT Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints) const;
 
-	bool HasPassableLine(const _float2& vInObjectPosition, _float& fOutLandingY);
-	bool IsCurrentLineOccupied(const _float2& vObjectPosition, _float& fOutLandingY);
-
 #ifdef _DEBUG
 	HRESULT Render_Collider();
 	HRESULT Render_Line();

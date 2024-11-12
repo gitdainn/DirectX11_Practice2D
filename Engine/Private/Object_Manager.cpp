@@ -116,9 +116,9 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 
 	/* 사본을 생성한다. */
 	CGameObject* pGameObject = pPrototype->Clone(pArg);
-
 	if (nullptr == pGameObject)
 		return E_FAIL;
+	pGameObject->Late_Initialize();
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
@@ -151,9 +151,9 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 
 	/* 사본을 생성한다. */
 	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
-
 	if (nullptr == pGameObject)
 		return E_FAIL;	
+	pGameObject->Late_Initialize();
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
@@ -188,6 +188,7 @@ CGameObject* CObject_Manager::Clone_GameObject(const _tchar * pPrototypeTag, voi
 	CGameObject*		pGameObject = pPrototype->Clone(pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
+	pGameObject->Late_Initialize();
 
 	return pGameObject;	
 }
@@ -203,6 +204,7 @@ CGameObject* CObject_Manager::Clone_GameObject(const _tchar* pPrototypeTag, cons
 	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
+	pGameObject->Late_Initialize();
 
 	return pGameObject;
 }

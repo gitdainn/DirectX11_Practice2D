@@ -58,14 +58,14 @@ private:
 	HRESULT ShowSettings();
 
 private: // Inspector //
-	HRESULT Default_Info(const _bool& bIsSelectionChanged);
-	HRESULT Inspector_Transform(const _bool& bIsSelectionChanged);
-	HRESULT Inspector_SpriteRenderer(const _bool& bIsSelectionChanged);
-	HRESULT Inspector_Components(const _bool& bIsSelectionChanged);
+	HRESULT Default_Info(const _bool bIsSelectionChanged);
+	HRESULT Inspector_Transform(const _bool bIsSelectionChanged);
+	HRESULT Inspector_SpriteRenderer(const _bool bIsSelectionChanged);
+	HRESULT	Inspector_Multiple(const _bool bIsSelectionChanged);
+	HRESULT Inspector_Components(const _bool bIsSelectionChanged);
 
 private:
-	HRESULT Inpsector_Collider(CCollider* pCollider, const _bool& bIsSelectionChanged);
-
+	HRESULT Inpsector_Collider(CCollider* pCollider, const _bool bIsSelectionChanged);
 public:
 	virtual HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	virtual _uint Tick(_double TimeDelta);
@@ -112,8 +112,6 @@ private:
 	_uint					m_iClassIndex;
 	const char*				m_pLayerC;
 	unordered_map<const _tchar*, ORIGINAL_DATA>		m_OriginalDataMap;
-
-	_uint					m_iInstanceID = { 500 };
 
 	/** @note - 자료구조 선택 이유
 	* 1. 토글 열 때마다 추가해야하는 폴더 경우 map으로 key값으로 찾아 상수 시간복잡도이고, 삽입 부담X

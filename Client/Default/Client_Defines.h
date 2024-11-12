@@ -113,6 +113,7 @@ using namespace Client;
 #define	TAG_TRANSFORM			TEXT("Com_Transform")
 #define	TAG_RENDERER			TEXT("Com_Renderer")
 #define	TAG_SHADER				TEXT("Com_Shader")
+#define	TAG_LINERIDER				TEXT("Com_LineRider")
 #define	TAG_WIDGET				TEXT("Com_Widget")
 #define	TAG_MODEL				TEXT("Com_Model")
 #define	TAG_BUFFER				TEXT("Com_VIBuffer")

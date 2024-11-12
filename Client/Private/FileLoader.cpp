@@ -140,7 +140,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 		lstrcpy(pLayer, szLayer);
 		if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &tMetaData.iInstanceID)))
 		{
-			MSG_BOX("CMyImGui - Load_Object() - FAILED");
+			MSG_BOX("CMyImGui - Load_FIle() - FAILED");
 			CloseHandle(hFile);
 			Safe_Release(pGameInstance);
 			Safe_Release(pFileLoader);
@@ -151,7 +151,7 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 		list<CGameObject*>* pObjectList = pGameInstance->Get_ObjectList((_uint)eLevel, pLayer);
 		if (nullptr == pObjectList)
 		{
-			MSG_BOX("CFileLoader - Load_Excel() - NULL");
+			MSG_BOX("CFileLoader - Load_FIle() - NULL");
 		}
 		CSpriteObject* pAddObject = dynamic_cast<CSpriteObject*>(pObjectList->back());
 		if (nullptr != pAddObject)
@@ -315,7 +315,7 @@ HRESULT CFileLoader::Load_ObjectTransform_Excel(const _tchar* pFilePath)
 
 			if (m_ObjectTransformMap.end() != m_ObjectTransformMap.find(iInstanceID))
 			{
-				MSG_BOX("CFileLoader - Load_SpriteInfo_Excel() - FAIL");
+				MSG_BOX("CFileLoader - Load_ObjectTransform_Excel() - FAIL");
 				continue;
 			}
 
