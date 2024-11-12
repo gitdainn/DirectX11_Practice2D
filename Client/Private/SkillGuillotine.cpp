@@ -85,7 +85,7 @@ void CSkillGuillotine::Enter(CSpriteObject* pOwner)
 	_vector vPlayerPosition = pPlayerTransformCom->Get_State(CTransform::STATE_POSITION);
 	XMStoreFloat2(&m_tSpriteInfo.fPosition, vPlayerPosition);
 
-	if (DefaultLineRider(vPlayerPosition))
+	if (FAILED(DefaultLineRider(vPlayerPosition)))
 	{
 		m_bIsSkillAvailable = true;
 		return;

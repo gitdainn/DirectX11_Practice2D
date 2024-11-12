@@ -31,7 +31,7 @@ HRESULT CItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	if (DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+	if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
 	{
 		return E_FAIL;
 	}
@@ -46,7 +46,7 @@ HRESULT CItem::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	if (DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION)))
+	if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
 	{
 		return E_FAIL;
 	}
@@ -96,6 +96,11 @@ HRESULT CItem::Add_Components(void* pArg)
 	/* For.Com_Shader */
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
 		TAG_SHADER, (CComponent**)&m_pShaderCom, nullptr)))
+		return E_FAIL;
+
+	/* For.Com_LineRider */
+	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		TAG_LINERIDER, (CComponent**)&m_pLineRiderCom, &m_tSpriteInfo.fPosition)))
 		return E_FAIL;
 
 #pragma region COLLIDER
