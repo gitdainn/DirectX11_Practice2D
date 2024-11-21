@@ -20,6 +20,7 @@ HRESULT CUI::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	m_pLayerTag = LAYER_UI;
+	m_bIsScroll = false;
 
 	return S_OK;
 }

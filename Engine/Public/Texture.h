@@ -91,12 +91,36 @@ public:
 		return S_OK;
 	}
 
+	const vector<ID3D11ShaderResourceView*>* Get_ResourceViewVec() const { return &m_SRVs; }
+
+#ifdef _DEBUG
+	const _uint	Get_FileIndex(const _tchar* pFileName) const
+	{
+		if (nullptr == pFileName)
+			return -1;
+
+		auto iter = find_if(m_FileIndexMap.begin(), m_FileIndexMap.end(), CTag_Finder(pFileName));
+		if (m_FileIndexMap.end() == iter)
+		{
+			MSG_BOX("Texture - Get_FileOrder() - 해당 파일명의 텍스처는 존재하지 않습니다.");
+			return -1;
+		}
+		return iter->second;
+	}
+#endif
+
 private:
 	const _float2 Get_OriginalTextureSize(ID3D11ShaderResourceView* pSRV) const;
 
 private:
 	vector<ID3D11ShaderResourceView*>			m_SRVs;
 	unordered_map<const _tchar*, pair<ID3D11ShaderResourceView*, _float2>>			m_SRVMap; // <텍스처명, pair<리소스, 텍스처 사이즈>
+
+#ifdef _DEBUG
+	/** 툴에서 폴더에 이미지 추가 시 기존 데이터의 인덱스가 변경됨으로 파일명으로 새롭게 바뀐 인덱스를 얻기 위함. */
+	unordered_map<const _tchar*, _uint> m_FileIndexMap;
+#endif
+
 	vector<const _tchar*>						m_TexturePathVec;
 	vector<_float2>								m_TextureSizeVec; // 인덱스로 텍스처의 원본 크기를 얻기 위함.
 	_uint										m_iNumTextures = { 0 };

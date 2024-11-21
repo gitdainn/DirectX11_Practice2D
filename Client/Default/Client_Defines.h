@@ -16,6 +16,7 @@ namespace Client
 	typedef enum class eVTXTEX_PASS
 	{
 		Default,
+		Color,
 		UV_Anim,
 		FlipUV_Anim,
 		Discard,
@@ -34,7 +35,7 @@ namespace Client
 	{
 		IDLE, WALK,
 		DASH, DEFAULT_ATK, ATK1, ATK2, JUMP_ATK, JUMP,
-		FALL, SKILL1, SKILL2, DAMAGED, MOTION_END
+		FALL, SKILL1, SKILL2, DAMAGED, SWAP, MOTION_END
 	};
 
 	enum class SKUL_RANK

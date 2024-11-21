@@ -73,6 +73,24 @@ PS_OUT PS_MAIN(PS_IN In)
 }
 
 /* 픽셀의 색을 결정한다. */
+PS_OUT PS_COLOR(PS_IN In)
+{
+    PS_OUT Out = (PS_OUT) 0;
+	
+    Out.vColor = g_Texture.Sample(LinearSampler, In.vTexUV);
+
+    if (0.1 >= Out.vColor.a)
+        discard;
+	
+    // saturate(In): 0~1 범위로 반환
+    Out.vColor.r = saturate(Out.vColor.r + g_vColor.x);
+    Out.vColor.g = saturate(Out.vColor.g + g_vColor.y);
+    Out.vColor.b = saturate(Out.vColor.b + g_vColor.z);
+    
+    return Out;
+}
+
+/* 픽셀의 색을 결정한다. */
 PS_OUT PS_UV_ANIM(PS_IN In)
 {
     PS_OUT Out = (PS_OUT) 0;
@@ -178,6 +196,19 @@ technique11 DefaultTechnique
         HullShader = NULL;
         DomainShader = NULL;
         PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
+    pass Color
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Default, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_COLOR();
     }
 
     pass UV_ANIM

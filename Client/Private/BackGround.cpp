@@ -19,6 +19,7 @@ HRESULT CBackGround::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Set_Layer(LAYER_BACKGROUND, false);
+	m_bIsScroll = false;
 
 	return S_OK;	
 }
@@ -28,8 +29,6 @@ HRESULT CBackGround::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
 	
-	m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 1.f));
-
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
@@ -39,8 +38,6 @@ HRESULT CBackGround::Initialize(void* pArg)
 {
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
-
-	m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 1.f));
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;

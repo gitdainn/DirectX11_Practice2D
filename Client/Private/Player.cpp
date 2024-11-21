@@ -20,6 +20,7 @@ HRESULT CPlayer::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
 	Set_Layer(LAYER_PLAYER, false);
+	m_bIsScroll = false;
 
 	return S_OK;
 }
@@ -64,7 +65,8 @@ _uint CPlayer::Tick(_double TimeDelta)
 	if (!m_bIsEquipped)
 		return _uint();
 
-	m_pState->Update(this, TimeDelta);
+	if(STATE_TYPE::SWAP != m_eCurrentState)
+		m_pState->Update(this, TimeDelta);
 
 	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	//static _vector vPastPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
@@ -93,16 +95,6 @@ _uint CPlayer::LateTick(_double TimeDelta)
 		return _uint();
 
 	Attach_Collider(m_pLayerTag, m_pColliderCom);
-
-	if (STATE_TYPE::DEFAULT_ATK == m_eCurrentState)
-	{
-		CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
-		tColliderDesc.vOffset.y = 30.f;
-		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
-		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-		Attach_Collider(LAYER_PLAYERATK, m_pDefaultAtkColliderCom);
-		m_pDefaultAtkColliderCom->Set_Owner(this);
-	}
 
 	SkillLateTick(TimeDelta);
 
@@ -180,7 +172,8 @@ void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget,
 	if (nullptr == pTargetObject || nullptr == pTargetCollider)
 		return;
 
-	if (!lstrcmp(LAYER_ENEMYATK, pTargetLayer))
+	// 무적 상태가 아닐 때 공격을 받으면
+	if ((!m_bIsInvulnerable) && (!lstrcmp(LAYER_ENEMYATK, pTargetLayer)))
 	{
 		Input_Handler(STATE_TYPE::DAMAGED);
 		CPlayerDamaged* pPlayerDamaged = dynamic_cast<CPlayerDamaged*>(m_pState);
@@ -423,6 +416,19 @@ void CPlayer::Mapping_Type(const SKUL_TYPE& tType)
 	else
 		MSG_BOX("CPlayer - Mapping_Type() - FAILED");
 
+}
+
+void CPlayer::Add_DefaultAtkCollider(const _uint iTextureIndex)
+{
+	if (iTextureIndex == m_iUVTextureIndex)
+	{
+		CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
+		tColliderDesc.vOffset.y = 30.f;
+		tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
+		m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
+		Attach_Collider(LAYER_PLAYERATK, m_pDefaultAtkColliderCom);
+		m_pDefaultAtkColliderCom->Set_Owner(this);
+	}
 }
 
 HRESULT CPlayer::Add_Components(void* pArg)

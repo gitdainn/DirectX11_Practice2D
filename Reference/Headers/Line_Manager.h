@@ -15,9 +15,9 @@ private:
 	virtual ~CLine_Manager() = default;
 
 public:
-	virtual HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
-	virtual _uint Tick(_double TimeDelta);
-	virtual _uint LateTick(_double TimeDelta);
+	HRESULT Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg = nullptr);
+	_uint Tick(_double TimeDelta);
+	_uint LateTick(_double TimeDelta);
 
 #ifdef _DEBUG
 public:
@@ -25,66 +25,15 @@ public:
 #endif // _DEBUG
 
 public:
-	void	Add_Vertex(const VertexPositionColor& tVertex)
-	{
-		if (nullptr == m_pDestVertex)
-		{
-			m_pDestVertex = new VertexPositionColor();
-			memcpy(m_pDestVertex, &tVertex, sizeof(VertexPositionColor));
-			return;
-		}
+	void	Add_Vertex(const VertexPositionColor& tVertex);
 
-		else if (nullptr == m_pSourVertex)
-		{
-			m_pSourVertex = new VertexPositionColor();
-			memcpy(m_pSourVertex, &tVertex, sizeof(VertexPositionColor));
-		}
-
-		LINE_INFO Line;
-		if ((*m_pDestVertex).position.x < (*m_pSourVertex).position.x)
-		{
-			memcpy(&(Line.tLeftVertex), m_pDestVertex, sizeof(VertexPositionColor));
-			memcpy(&(Line.tRightVertex), m_pSourVertex, sizeof(VertexPositionColor));
-		}
-		else
-		{
-			memcpy(&(Line.tLeftVertex), m_pSourVertex, sizeof(VertexPositionColor));
-			memcpy(&(Line.tRightVertex), m_pDestVertex, sizeof(VertexPositionColor));
-		}
-
-		m_LineList.emplace_back(Line); // 내 기억상.... 컨테이너에 넣을 때 복사본이라.... &원본이여도 괜찮을듯 하지만 일단 지켜보기!
-
-		Safe_Delete(m_pDestVertex);
-		Safe_Delete(m_pSourVertex);
-	}
-
-	void	DeleteBack_Line()
-	{
-		if (m_LineList.empty())
-			return;
-
-		list<LINE_INFO>::iterator iterLast = m_LineList.end();
-		m_LineList.erase(--iterLast);
-	}
+	void	DeleteBack_Line();
 
 public:
-	const list<LINE_INFO>& Get_LineList() const
-	{
-		return m_LineList;
-	}
-	
-	/** @notice - IsCurrentLineOccupied 함수를 먼저 호출한 뒤 사용해주세요. */
-	HRESULT Get_CurrentLineEndPoint(const _float2 vObjectPosition, pair<_float3, _float3>& EndPoints)
-	{			
-		EndPoints = make_pair(_float3(m_tClosestLandingLine.tLeftVertex.position), _float3(m_tClosestLandingLine.tRightVertex.position));
-		return S_OK;
-	}
-
+	const list<LINE_INFO>& Get_LineList() const { return m_LineList; }
 	/** 탈 수 있는 가장 가까운 선을 얻습니다. */
-	HRESULT Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO& fOutLandingY);
-
-	/** 현재 선을 타고 있는 중인지 검사합니다. */
-	bool IsCurrentLineOccupied(const _float2 vObjectPosition, _float& fOutLandingY);
+	HRESULT Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO** ppClosestLine);
+	void	Scroll_Line(const _float fScrollX, const _float fScrollY);
 
 private:
 	// 두 점을 지나는 직선의 방정식 구하기 (return: 기울기)
@@ -111,13 +60,11 @@ private:
 	VertexPositionColor*	m_pDestVertex = { nullptr };
 
 private:
+	list<LINE_INFO> m_OriginalLineList;
 	list<LINE_INFO>	m_LineList;
-	LINE_INFO		m_tClosestLandingLine;
 
 private:
 	friend	class CLineRider;
-
-	//priority_queue<_float, vector<_float>, greater<_float>> m_PossibleLandingQueue;
 
 public:
 	virtual void Free() override;

@@ -16,7 +16,7 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_Priority()))
 		return E_FAIL;
 
-	/* 검색시에 어떤 레벨에 있는 특정 태그에 있는 몇번째 녀석. */
+	///* 검색시에 어떤 레벨에 있는 특정 태그에 있는 몇번째 녀석. */
 	if (FAILED(Ready_Layer_GameObject()))
 		return E_FAIL;
 
@@ -56,14 +56,16 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 	if (FAILED(pFileLoader->Load_Line(TEXT("../Bin/DataFiles/Line.data"), m_pDevice, m_pContext)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Line FAILED");
+		Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
 #pragma endregion
 
 #pragma region 오브젝트 데이터
-	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/Enemy.data"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/Map.data"), LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_FIle FAILED");
+	 Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
 #pragma endregion
@@ -72,20 +74,23 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 	if (FAILED(pFileLoader->Load_ObjectTransform_Excel(TEXT("../Bin/DataFiles/UI.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
 
 	if (FAILED(pFileLoader->Load_ComponentInfo_Excel(TEXT("../Bin/DataFiles/UI.xlsx"))))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		Safe_Release(pFileLoader);
 		return E_FAIL;
 	}
 
-	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/UI.xlsx"), LEVEL::LEVEL_LOGO)))
-	{
-		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
-		return E_FAIL;
-	}
+	//if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/UI.xlsx"), LEVEL::LEVEL_LOGO)))
+	//{
+	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+	// Safe_Release(pFileLoader);
+	//	return E_FAIL;
+	//}
 #pragma endregion
 
 	Safe_Release(pFileLoader);
@@ -112,17 +117,23 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	}
 
 	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_LittleBorn"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
+	//{
+	//	Safe_Release(pGameInstance);
 	//	return E_FAIL;
+	//}
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER_ENEMY, tSpriteInfo)))
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Solider"), LEVEL_LOGO, LAYER_ENEMY, tSpriteInfo)))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;
+	//}
+
+	tSpriteInfo.fSize = _float2{ 30, 30.f };
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
 	{
 		Safe_Release(pGameInstance);
-		return E_FAIL;
+		return E_FAIL;		
 	}
-
-/*	tSpriteInfo.fSize = _float2{ 30, 30.f };
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
-		return E_FAIL;*/		
 
 	Safe_Release(pGameInstance);
 	return S_OK;

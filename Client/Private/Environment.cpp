@@ -29,7 +29,7 @@ HRESULT CEnvironment::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 	return S_OK;
 }
 
@@ -39,7 +39,7 @@ HRESULT CEnvironment::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 	return S_OK;
 }
 

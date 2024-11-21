@@ -15,6 +15,9 @@ CTexture::CTexture(const CTexture& rhs)
 	, m_iNumTextures(rhs.m_iNumTextures)
 	, m_SRVs(rhs.m_SRVs)
 	, m_TextureSizeVec(rhs.m_TextureSizeVec)
+#ifdef _DEBUG
+	, m_FileIndexMap(rhs.m_FileIndexMap)
+#endif
 {
 	for (ID3D11ShaderResourceView* pSRV : m_SRVs)
 		Safe_AddRef(pSRV);
@@ -25,7 +28,7 @@ CTexture::CTexture(const CTexture& rhs)
 		lstrcpy(pKey, Pair.first);
 		ID3D11ShaderResourceView* pSRV = Pair.second.first;
 		//Safe_AddRef(pSRV);
-		m_SRVMap.emplace(pKey, make_pair(pSRV, _float2(0.f, 0.f)));
+		m_SRVMap.emplace(pKey, make_pair(pSRV, Pair.second.second));
 	}
 
 	_uint iIndex = 0;
@@ -80,6 +83,7 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 {
 	m_iNumTextures = (_uint)TextureFileVec.size();
 	/** @qurious - resize와 reverse 차이, 그리고 emplace_back */
+	m_SRVs.resize(m_iNumTextures);
 	m_TextureSizeVec.resize(m_iNumTextures);
 	m_TexturePathVec.resize(m_iNumTextures);
 
@@ -107,7 +111,7 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 		else
 			hr = CreateWICTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
 
-		m_SRVs.emplace_back(pSRV);
+		m_SRVs[iIndex] = (pSRV);
 
 		// @note - 문자열(char*, wchar_t*)은 결국 주소이기 때문에, map 컨테이너에 넣을 때 new로 생성해서 emplace하지 않으면
 		// 문자열이 달라도 주소가 동일하기 때문에 동일한 key 값으로 인지해서 추가되는 것이 아니고 해당 key값의 value만 바뀜
@@ -118,6 +122,10 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 		_tchar* pFileName = new _tchar[MAX_PATH]();
 		lstrcpy(pFileName, szFileName);
 		m_SRVMap.emplace(pFileName, make_pair(pSRV, fOriginalTextureSize)); // 파일명으로 리소스 찾기 위함.
+
+#ifdef _DEBUG
+		m_FileIndexMap.emplace(pFileName, iIndex);
+#endif
 
 		_tchar* pPath = new _tchar[lstrlen(pFilePath) + 1];
 		lstrcpy(pPath, pFilePath);

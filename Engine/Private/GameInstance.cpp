@@ -410,20 +410,20 @@ const _float CGameInstance::Get_ScrollY() const
 	return m_pScroll_Manager->Get_ScrollY();
 }
 
-void CGameInstance::Set_ScrollX(const _float fX)
+void CGameInstance::Set_Scroll(const _float2 fScroll)
 {
 	if (nullptr == m_pScroll_Manager)
 		return;
 
-	return m_pScroll_Manager->Set_ScrollX(fX);
+	return m_pScroll_Manager->Set_Scroll(fScroll);
 }
 
-void CGameInstance::Set_ScrollY(const _float fY)
+void CGameInstance::Add_ScrollListener(CGameObject* pObject)
 {
 	if (nullptr == m_pScroll_Manager)
 		return;
 
-	return m_pScroll_Manager->Set_ScrollY(fY);
+	return m_pScroll_Manager->Add_ScrollListener(pObject);
 }
 
 void CGameInstance::Add_Garbage(char* pChar)
@@ -524,12 +524,13 @@ HRESULT CGameInstance::Get_LineList(list<LINE_INFO>& LineList) const
 	return S_OK;
 }
 
-HRESULT CGameInstance::Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints) const
+void CGameInstance::Scroll_Line(const _float fScrollX, const _float fScrollY)
 {
 	if (nullptr == m_pLine_Manager)
-		return E_FAIL;
+		return;
 
-	return m_pLine_Manager->Get_CurrentLineEndPoint(vObjectPosition, EndPoints);
+	m_pLine_Manager->Scroll_Line(fScrollX, fScrollY);
+	return;
 }
 
 #ifdef _DEBUG

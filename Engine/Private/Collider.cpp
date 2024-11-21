@@ -110,8 +110,14 @@ _uint CCollider::Tick(_double TimeDelta)
 	if (nullptr != pOwnerTransformCom)
 	{
 		_vector vOwnerPos = pOwnerTransformCom->Get_State(CTransform::STATE_POSITION);
-		m_tColliderDesc.vPosition = _float3(XMVectorGetX(vOwnerPos) + m_tColliderDesc.vOffset.x + pGameInstance->Get_ScrollX()
-											, XMVectorGetY(vOwnerPos) + m_tColliderDesc.vOffset.y + pGameInstance->Get_ScrollY(), 1.f);
+		m_tColliderDesc.vPosition = _float3(XMVectorGetX(vOwnerPos) + m_tColliderDesc.vOffset.x
+											, XMVectorGetY(vOwnerPos) + m_tColliderDesc.vOffset.y, 1.f);
+
+		//if (m_pOwner->Get_IsScroll())
+		//{
+		//	m_tColliderDesc.vPosition.x += pGameInstance->Get_ScrollX();
+		//	m_tColliderDesc.vPosition.y += pGameInstance->Get_ScrollY();
+		//}
 	}
 
 	_matrix ScaleMatrix = XMMatrixScaling(m_tColliderDesc.vScale.x, m_tColliderDesc.vScale.y, 1.f);

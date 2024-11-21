@@ -11,7 +11,6 @@ bool	operator==(XMFLOAT3 A, const XMFLOAT3 B)
 
 CLine_Manager::CLine_Manager()
 {
-	ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
 }
 
 HRESULT CLine_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContext, void* pArg)
@@ -30,7 +29,7 @@ HRESULT CLine_Manager::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pC
 
 	m_pEffect->SetVertexColorEnabled(true);
 
-	const void* pShaderByteCode = { nullptr };
+	const void*		pShaderByteCode = { nullptr };
 	size_t			iShaderByteCodeLength = { 0 };
 
 	m_pEffect->GetVertexShaderBytecode(&pShaderByteCode, &iShaderByteCodeLength);
@@ -142,7 +141,53 @@ HRESULT CLine_Manager::Render()
 }
 #endif
 
-HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO& tClosestLine)
+void CLine_Manager::Add_Vertex(const VertexPositionColor& tVertex)
+{
+	if (nullptr == m_pDestVertex)
+	{
+		m_pDestVertex = new VertexPositionColor();
+		memcpy(m_pDestVertex, &tVertex, sizeof(VertexPositionColor));
+		return;
+	}
+
+	else if (nullptr == m_pSourVertex)
+	{
+		m_pSourVertex = new VertexPositionColor();
+		memcpy(m_pSourVertex, &tVertex, sizeof(VertexPositionColor));
+	}
+
+	LINE_INFO Line;
+	if ((*m_pDestVertex).position.x < (*m_pSourVertex).position.x)
+	{
+		memcpy(&(Line.tLeftVertex), m_pDestVertex, sizeof(VertexPositionColor));
+		memcpy(&(Line.tRightVertex), m_pSourVertex, sizeof(VertexPositionColor));
+	}
+	else
+	{
+		memcpy(&(Line.tLeftVertex), m_pSourVertex, sizeof(VertexPositionColor));
+		memcpy(&(Line.tRightVertex), m_pDestVertex, sizeof(VertexPositionColor));
+	}
+
+	m_LineList.emplace_back(Line); // 내 기억상.... 컨테이너에 넣을 때 복사본이라.... &원본이여도 괜찮을듯 하지만 일단 지켜보기!
+	m_OriginalLineList.emplace_back(Line);
+
+	Safe_Delete(m_pDestVertex);
+	Safe_Delete(m_pSourVertex);
+}
+
+void CLine_Manager::DeleteBack_Line()
+{
+	if (m_LineList.empty() || m_OriginalLineList.empty())
+		return;
+
+	auto LineIter = m_LineList.end();
+	auto OriginalLineIter = m_OriginalLineList.end();
+
+	m_LineList.erase(--LineIter);
+	m_OriginalLineList.erase(--OriginalLineIter);
+}
+
+HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LINE_INFO** ppClosestLine)
 {
 	if (m_LineList.empty())
 		return E_FAIL;
@@ -151,7 +196,7 @@ HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LI
 	// priority_queue<_float>로 사용 시 기본 정렬인 less로 적용됨
 	const _float fImpossibleLanding = { -1000.f };
 	_float fClosestLandingLineY = fImpossibleLanding;
-	for (const tLine& tLine : m_LineList)
+	for (LINE_INFO& tLine : m_LineList)
 	{
 		// 객체의 x 범위 안에 있는지 체크
 		_float3 fLeftPos = tLine.tLeftVertex.position;
@@ -172,7 +217,7 @@ HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LI
 		if (fClosestLandingLineY < fLandingY)
 		{
 			fClosestLandingLineY = fLandingY;
-			tClosestLine = tLine;
+			*ppClosestLine = &tLine;
 		}
 		// @qurious - 왜 emplace보다 insert가 안전한지. 무엇이 더 좋은지 알아볼 것
 	}
@@ -182,6 +227,28 @@ HRESULT CLine_Manager::Get_ClosestLineToRide(const _float2 vInObjectPosition, LI
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CLine_Manager::Scroll_Line(const _float fScrollX, const _float fScrollY)
+{
+	list<LINE_INFO>::iterator OriginalLineIter = m_OriginalLineList.begin();
+	for (LINE_INFO& tLine : m_LineList)
+	{
+		if (OriginalLineIter == m_OriginalLineList.end())
+		{
+			MSG_BOX("CLine_Manager - Scroll_Line() - m_LineList의 원본 값이 없습니다.");
+			return;
+		}
+
+		tLine.tLeftVertex.position.x = (OriginalLineIter->tLeftVertex.position.x) + fScrollX;
+		tLine.tRightVertex.position.x = (OriginalLineIter->tRightVertex.position.x) + fScrollX;
+
+		tLine.tLeftVertex.position.y = (OriginalLineIter->tLeftVertex.position.y) + fScrollY;
+		tLine.tRightVertex.position.y = (OriginalLineIter->tRightVertex.position.y) + fScrollY;
+		++OriginalLineIter;
+	}
+
+	return;
 }
 
 const _float CLine_Manager::Get_Slope(const _float3 fA, const _float3 fB)

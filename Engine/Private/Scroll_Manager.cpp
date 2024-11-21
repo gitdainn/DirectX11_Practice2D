@@ -1,4 +1,6 @@
 #include "Scroll_Manager.h"
+#include "Line_Manager.h"
+#include "GameObject.h"
 
 USING(Engine)
 
@@ -8,18 +10,17 @@ CScroll_Manager::CScroll_Manager()
 {
 }
 
-
 CScroll_Manager::~CScroll_Manager()
 {
 }
 
 void CScroll_Manager::Scroll_Lock()
 {
-	if (0.f <= m_fScrollX)	// 맨 왼쪽에 도달했을 때
-		m_fScrollX = 0.f;
+	if (0.f <= m_fScroll.x)	// 맨 왼쪽에 도달했을 때
+		m_fScroll.x = 0.f;
 
-	if (0.f <= m_fScrollY) // 맨 위쪽에 도달했을 때
-		m_fScrollY = 0.f;
+	if (0.f <= m_fScroll.y) // 맨 위쪽에 도달했을 때
+		m_fScroll.y = 0.f;
 
 	//switch (_eScene)
 	//{ // y만 전부 30씩 더 추가해줌 ( 그래야 가생이가 완벽히 안 보이더라 이유는 모르겠음 )
@@ -36,8 +37,34 @@ void CScroll_Manager::Scroll_Lock()
 
 void CScroll_Manager::Scroll_Clear()
 {
-	m_fScrollX = 0.f;
-	m_fScrollY = 0.f;
+	m_fScroll = { 0.f, 0.f };
+}
+
+void CScroll_Manager::Add_ScrollListener(CGameObject* pObject)
+{
+	if (nullptr == pObject)
+		return;
+
+	m_ScrollList.emplace_back(pObject);
+	return;
+}
+
+void CScroll_Manager::Notify(const _float2 fScroll)
+{
+	// 1. 변화량만큼 객체들 위치 갱신
+	for (CGameObject* pObject : m_ScrollList)
+	{
+		if (nullptr == pObject)
+			continue;
+
+		pObject->ScrollNotify(fScroll);
+	}
+
+	// 2. 라인도 스크롤 적용
+	CLine_Manager* pLineManager = CLine_Manager::GetInstance();
+	if (nullptr == pLineManager)
+		return;
+	pLineManager->Scroll_Line(Get_ScrollX(), Get_ScrollY());
 }
 
 void CScroll_Manager::Free()

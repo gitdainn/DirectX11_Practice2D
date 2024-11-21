@@ -15,6 +15,10 @@
 #include "ColliderAABB2D.h"
 #include "SkillGateOfNether.h"
 #include "SkillGuillotine.h"
+//#include "SkillDive.h"
+//#include "SkillHighTide.h"
+//#include "SkillThrowSkul.h"
+//#include "SkillHeadless.h"
 #pragma endregion
 
 USING(Client)
@@ -128,7 +132,7 @@ HRESULT CMainApp::Render()
 
 #ifdef _DEBUG
 	//@ note - 프레임 60(1초) 제한 코드
-	//m_pGameInstance->Render_Line();
+	m_pGameInstance->Render_Line();
 	m_pGameInstance->Render_Collider();
 
 	++m_dwNumDraw;
@@ -391,6 +395,20 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 		return E_FAIL;
 	Safe_AddRef(pFileLoader);
 
+	// 리틀본 //
+	//const _tchar* pPrototypeName = TEXT("Prototype_GameObject_Skill_ThrowSkul");
+	//pFileLoader->Add_PrototypeName(L"두개골투척", pPrototypeName);
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillThrowSkul::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	//pPrototypeName = TEXT("Prototype_GameObject_Skill_Headless");
+	//pFileLoader->Add_PrototypeName(L"머리가본체", pPrototypeName);
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillHeadless::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	// 그림 리퍼 //
 	const _tchar* pPrototypeName = TEXT("Prototype_GameObject_Skill_GateOfNether");
 	pFileLoader->Add_PrototypeName(L"명계의균열", pPrototypeName);
 	
@@ -402,6 +420,19 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 
 	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillGuillotine::Create(m_pDevice, m_pContext))))
 		return E_FAIL;
+
+	// 워터 스컬 //
+	//pPrototypeName = TEXT("Prototype_GameObject_Skill_Dive");
+	//pFileLoader->Add_PrototypeName(L"입수", pPrototypeName);
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillDive::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
+
+	//pPrototypeName = TEXT("Prototype_GameObject_Skill_HighTide");
+	//pFileLoader->Add_PrototypeName(L"밑물", pPrototypeName);
+
+	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillHighTide::Create(m_pDevice, m_pContext))))
+	//	return E_FAIL;
 
 	Safe_Release(pFileLoader);
 

@@ -19,6 +19,8 @@ CInputHandler::~CInputHandler()
 CCommand* CInputHandler::Key_Input() const
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (nullptr == pGameInstance)
+        return nullptr;
     Safe_AddRef(pGameInstance);
 
     CCommand* pCommand = { nullptr };
@@ -73,17 +75,6 @@ CCommand* CInputHandler::Key_Input() const
 #pragma endregion
 
 #pragma region InteractionKey
-    if (pGameInstance->Get_KeyDown(DIK_R))
-    {
-        iter = m_CommandKeyMap.find(CONTROL_KEY::ROTATION);
-    }
-
-    if (iter != m_CommandKeyMap.end())
-    {
-        pCommand = iter->second;
-        pCommand->Execute();
-    }
-
     if (pGameInstance->Get_KeyDown(DIK_A))
     {
         CPlayer* pPPlayer = dynamic_cast<CPlayer*>(pPlayer);
@@ -110,7 +101,6 @@ CCommand* CInputHandler::Key_Input() const
 
 
     /** @note - CGameObject*에 CPlayer*는 담을 수 있지만, CGameObject**에 CPlayer*의 주소(&)를 담을 수 없음 */
-
     Safe_Release(pGameInstance);
     return pCommand;
 }

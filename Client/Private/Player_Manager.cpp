@@ -15,6 +15,33 @@ CPlayer_Manager::~CPlayer_Manager()
 {
 }
 
+void CPlayer_Manager::Swap_Skul()
+{
+    if (!m_bIsMaxSkulEquipped)
+        return;
+
+    if (nullptr == m_pMainSkul || nullptr == m_pSubSkul)
+        return;
+
+    CPlayer* pTemp = m_pMainSkul;
+    m_pMainSkul = m_pSubSkul;
+    m_pSubSkul = pTemp;
+
+    CUI_Handler* pUIHandler = CUI_Handler::GetInstance();
+    if (nullptr == pUIHandler)
+        return;
+    Safe_AddRef(pUIHandler);
+
+    pUIHandler->ChangeSkul(m_pMainSkul, true);
+    pUIHandler->ChangeSkul(m_pSubSkul, false);
+    m_pMainSkul->Set_IsEquipped(true);
+    m_pSubSkul->Set_IsEquipped(false);
+
+    m_pMainSkul->Swap_Skill();
+
+    Safe_Release(pUIHandler);
+}
+
 // @refactoring - UI 교체 지정을.. 플레이어 매니저에서 하는 것이 맞는 것인가 ㅜ
 void CPlayer_Manager::Acquire_Skul(CPlayer* pPlayer)
 {
@@ -85,28 +112,6 @@ void CPlayer_Manager::Drop_Skul()
 
     Safe_Release(pUIHandler);
 
-}
-
-void CPlayer_Manager::Swap_Skul()
-{
-    if (!m_bIsMaxSkulEquipped)
-        return;
-
-    CPlayer* pTemp = m_pMainSkul;
-    m_pMainSkul = m_pSubSkul;
-    m_pSubSkul = pTemp;
-
-    CUI_Handler* pUIHandler = CUI_Handler::GetInstance();
-    if (nullptr == pUIHandler)
-        return;
-    Safe_AddRef(pUIHandler);
-
-    pUIHandler->ChangeSkul(m_pMainSkul, true);
-    pUIHandler->ChangeSkul(m_pSubSkul, false);
-    m_pMainSkul->Set_IsEquipped(true);
-    m_pSubSkul->Set_IsEquipped(false);
-
-    Safe_Release(pUIHandler);
 }
 
 void CPlayer_Manager::Set_Damaged(const _int iDamaged)

@@ -7,7 +7,7 @@ void CRotationCmd::Execute(CGameObject* pObject)
     CPlayer_Manager* pPlayerInfo = CPlayer_Manager::GetInstance();
     Safe_AddRef(pPlayerInfo);
 
-    pPlayerInfo->Rotation_Skul();
+    pPlayerInfo->Swap_Skul();
 
     Safe_Release(pPlayerInfo);
 }

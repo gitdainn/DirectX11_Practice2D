@@ -38,6 +38,10 @@ public:
 	};
 
 public:
+	/** 플레이어의 움직임에 따라 화면을 밀어야 하는 스크롤값을 실시간 받기 위해 사용합니다. */
+	virtual void ScrollNotify(const _float2 fScroll) { return; }
+
+public:
 	class CComponent* Get_Component(const _tchar* pComponentTag) {
 		return Find_Component(pComponentTag);
 	}
@@ -85,6 +89,8 @@ public:
 	{
 		return m_pLayerTag;
 	}
+
+	const _bool		Get_IsScroll() const { return m_bIsScroll; }
 
 public:
 	void Set_InstanceID(const _uint iID)
@@ -190,6 +196,9 @@ protected:
 	const _tchar*		m_pObjectID;
 	_bool	m_bIsDead;
 	_bool	m_bIsRender;
+	_bool	m_bIsScroll;
+
+	const _float	m_fScrollSpeed = { 1.f };
 
 	CRenderer::RENDERGROUP	m_eRenderGroup;
 	const _tchar* m_pClassName = { nullptr };

@@ -17,6 +17,7 @@ public:
 
 private:
 	virtual void Add_Animation() override;
+	void	SwapSkill_Deluge(_double TimeDelta);
 
 private:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;

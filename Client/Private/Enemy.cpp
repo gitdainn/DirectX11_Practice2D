@@ -67,12 +67,6 @@ HRESULT CEnemy::Initialize(void* pArg)
 	_float2 vPosition = _float2(0.f, 0.f);
 	XMStoreFloat2(&vPosition, m_pTransformCom->Get_State(CTransform::STATE_POSITION));
 
-	if (FAILED(pGameInstance->Get_CurrentLineEndPoint(vPosition, m_LineEndPoints)))
-	{
-		MSG_BOX("CEnemy - Initialize() - FAILED");
-		return E_FAIL;
-	}
-
 	Safe_Release(pGameInstance);
 
 	CTransform::TRANSFORM_DESC tTransDesc;
@@ -149,6 +143,13 @@ void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, c
 void CEnemy::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 	int i = 0;
+}
+
+void CEnemy::ScrollNotify(const _float2 fScroll)
+{
+	m_vStartPosition = XMVectorSetX(m_vStartPosition, XMVectorGetX(m_vStartPosition) + fScroll.x);
+	
+	return __super::ScrollNotify(fScroll);
 }
 
 #pragma region ENEMY_STATE

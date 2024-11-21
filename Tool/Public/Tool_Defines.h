@@ -16,6 +16,7 @@ namespace Tool
 	typedef enum class eVTXTEX_PASS
 	{
 		Default,
+		Color,
 		UV_Anim,
 		FlipUV_Anim
 	}VTXTEX_PASS;

@@ -14,24 +14,10 @@ public:
     ~CPlayer_Manager();
 
 public:
-    void Rotation_Skul()
-    {
-        if (nullptr == m_pSubSkul)
-            return;
-        CPlayer* pTemp = m_pMainSkul;
-        m_pMainSkul = m_pSubSkul;
-        m_pSubSkul = pTemp;
-
-        m_pMainSkul->Get_TransformCom()->Set_State(CTransform::STATE_POSITION,
-            m_pSubSkul->Get_TransformCom()->Get_State(CTransform::STATE_POSITION));
-
-        m_pMainSkul->Set_IsEquipped(true);
-        m_pSubSkul->Set_IsEquipped(false);
-    };
+    void    Swap_Skul();
 
     void    Acquire_Skul(CPlayer* pPlayer);
     void    Drop_Skul();
-    void    Swap_Skul();
 
 public: // Setter //
     void Set_MainSkul(CPlayer* Skul)

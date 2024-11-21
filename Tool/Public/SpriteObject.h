@@ -37,6 +37,7 @@ public:
 public:
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
+	virtual HRESULT Late_Initialize(void* pArg = nullptr) override;
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
@@ -93,6 +94,8 @@ public:
 		m_tSpriteInfo.pPrototypeTag = pTag;
 	}
 
+	/** @notice - 크기 비율 적용 시 m_tSpriteInfo의 크기를 변경하지 말고 아래 함수를 사용해주세요. 
+	* 원본 크기가 들어있는 m_tSpriteInfo.fSize를 변경하면 비율이 누적돼서 거대해지는 문제가 발생합니다. */
 	void Set_ScaleRatio(const _float2 fSizeRatio)
 	{
 		m_tSpriteInfo.fSizeRatio = fSizeRatio;
@@ -128,6 +131,14 @@ public:
 		vScale.y /= iUVTexNumY;
 
 		m_pTransformCom->Set_Scaled(vScale);
+	}
+
+	void	Set_SpriteFileName(const _tchar* pTextureTag)
+	{
+		if (nullptr == pTextureTag)
+			return;
+
+		m_pSpriteFileName = pTextureTag;
 	}
 public:
 	const bool IsEndSprite()
@@ -167,6 +178,8 @@ public:
 		return m_eRenderGroup;
 	}
 
+	const _tchar* Get_SpriteFileName() const { return m_pSpriteFileName; }
+
 	const	_bool	Get_bIsAnimUV() const { return m_bIsAnimUV; }
 	const	_uint	Get_UVTexNumX() const { return m_iUVTexNumX; }
 	const	_uint	Get_UVTexNumY() const { return m_iUVTexNumY; }
@@ -200,9 +213,9 @@ protected:
 protected:
 	SPRITE_INFO m_tSpriteInfo;
 
+	_bool	m_bIsOnce = { false };
 	_bool	m_bIsAnimUV;
 	_bool	m_bIsEndSprite;
-	_bool	m_bIsScroll;
 
 	const char*		m_pSpriteTag;
 	const _tchar*		m_pTextureComTag;
@@ -212,6 +225,7 @@ protected:
 	_uint	m_iUVTexNumX = { 1 };
 	_uint	m_iUVTexNumY = { 1 };
 
+	const		_tchar* m_pSpriteFileName = { nullptr };
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 public:

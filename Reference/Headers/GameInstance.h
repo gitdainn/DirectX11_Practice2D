@@ -83,8 +83,8 @@ public: /* For.Frustum */
 public: /* For.Scroll_Manager */
 	const _float Get_ScrollX() const;
 	const _float Get_ScrollY() const;
-	void		Set_ScrollX(const _float _fX);
-	void		Set_ScrollY(const _float _fY);
+	void		Set_Scroll(const _float2 fScroll);
+	void		Add_ScrollListener(CGameObject* pObject);
 
 public: /* For.GarbageCollector */
 	void	Add_Garbage(char* pChar);
@@ -103,7 +103,7 @@ public: /* For. Line_Manager*/
 	void	Add_Vertex(const VertexPositionColor& tVertex);
 	void	DeleteBack_Line();
 	HRESULT Get_LineList(list<LINE_INFO>& LineList) const;
-	HRESULT Get_CurrentLineEndPoint(const _float2& vObjectPosition, pair<_float3, _float3>& EndPoints) const;
+	void	Scroll_Line(const _float fScrollX, const _float fScrollY);
 
 #ifdef _DEBUG
 	HRESULT Render_Collider();

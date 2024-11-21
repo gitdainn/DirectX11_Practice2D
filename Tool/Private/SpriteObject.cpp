@@ -10,7 +10,7 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	, m_bIsAnimUV(false)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
 	, m_pTextureComTag(nullptr), m_pSpriteTag(nullptr)
-	, m_bIsScroll(true)
+	, m_pSpriteFileName(nullptr)
 {
 	ZeroMemory(&m_tSpriteInfo, sizeof(SPRITE_INFO));
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -59,14 +59,16 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	_float4x4 WorldMatrix;
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
-	// 위치 지정
-	if(nullptr != m_pTextureCom)
-		m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+	// 인덱스로 이미지의 원본 크기를 가져옵니다.
+	m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
 	m_tSpriteInfo.fSizeRatio = tObjectTransform.fSizeRatio;
-	WorldMatrix._11 = tObjectTransform.fSize.x * m_tSpriteInfo.fSizeRatio.x;
-	WorldMatrix._22 = tObjectTransform.fSize.y * m_tSpriteInfo.fSizeRatio.y;
+
+	WorldMatrix._11 = tObjectTransform.fSize.x * tObjectTransform.fSizeRatio.x;
+	WorldMatrix._22 = tObjectTransform.fSize.y * tObjectTransform.fSizeRatio.y;
 	WorldMatrix._41 = tObjectTransform.fPosition.x;
 	WorldMatrix._42 = tObjectTransform.fPosition.y;
+
+	Set_ScaleRatio(m_tSpriteInfo.fSizeRatio);
 
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
@@ -104,6 +106,9 @@ HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	WorldMatrix._22 = m_tSpriteInfo.fSize.y * m_tSpriteInfo.fSizeRatio.y;
 	WorldMatrix._41 = m_tSpriteInfo.fPosition.x;
 	WorldMatrix._42 = m_tSpriteInfo.fPosition.y;
+
+	Set_ScaleRatio(m_tSpriteInfo.fSizeRatio);
+
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
@@ -115,8 +120,31 @@ HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	return S_OK;
 }
 
+HRESULT CSpriteObject::Late_Initialize(void* pArg)
+{
+
+	return S_OK;
+}
+
 _uint CSpriteObject::Tick(_double TimeDelta)
 {
+	if (!m_bIsOnce)
+	{
+		// m_pSpriteFileName은 Intialize 뒤에 Set이 가능하기 때문에 어쩔 수 없이.. Tick으로 빼둠
+		if (nullptr != m_pTextureCom)
+		{
+			if (nullptr == m_pSpriteFileName)
+				m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+			else
+				m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_pSpriteFileName);
+		}
+
+		Set_ScaleRatio(m_tSpriteInfo.fSizeRatio);
+
+		m_bIsOnce = true;
+	}
+
+
 	if (FAILED(__super::Tick(TimeDelta)))
 	{
 		MSG_BOX("CSpriteObject - Tick - __super Error");
@@ -343,11 +371,24 @@ HRESULT CSpriteObject::SetUp_ShaderDefault()
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_tSpriteInfo.vColor, sizeof(_vector))))
+	_float4 vColor = m_tSpriteInfo.vColor;
+	if ((_uint)VTXTEX_PASS::Color == m_iShaderPassIndex)
+	{
+		vColor = { 0.5f, 0.5f, 0.f, 0.f };
+	}
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_vector))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
-		return E_FAIL;
+	if (nullptr == m_pSpriteFileName)
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
+			return E_FAIL;
+	}
 
 	return S_OK;
 }

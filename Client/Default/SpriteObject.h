@@ -39,6 +39,7 @@ public:
 
 public:
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
+	/** @param - 인스턴스 번호를 넘겨주세요. 데이터를 읽어들일 때 사용됩니다. */
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
 	virtual HRESULT Late_Initialize(void* pArg = nullptr);
 	virtual HRESULT Initialize_Prototype() override;
@@ -50,6 +51,10 @@ public:
 	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
+
+public:
+	/** @notice - SpriteObject의 자식의 경우 오버라이딩 시 __super::ScrollNotify()를 해주어야 위치 적용이 됩니다. */
+	virtual void ScrollNotify(const _float2 fScroll) override;
 
 protected: // Animation
 	struct ANIM_INFO
@@ -194,6 +199,7 @@ protected:
 
 private:
 	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);
+	void Scroll_Screen(_float4x4& WorldMatrix) const;
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -251,6 +257,7 @@ protected:
 	_int m_iPhysicalAttackIncrease = { 0 };
 	_int m_iDefenseIncrease = { 0 };
 
+	_bool	m_bIsInvulnerable = { false };
 	_double m_InvulnerabilityDuration = { 0.0 };
 
 public:

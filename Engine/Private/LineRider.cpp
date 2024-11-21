@@ -4,14 +4,14 @@
 CLineRider::CLineRider(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
 {
-	ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
+	//ZeroMemory(&m_pClosestLandingLine, sizeof(LINE_INFO));
 }
 
 CLineRider::CLineRider(const CLineRider& rhs)
 	: CComponent(rhs)
 	, m_pLine_Manager(CLine_Manager::GetInstance())
 {
-	ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
+	//ZeroMemory(&m_pClosestLandingLine, sizeof(LINE_INFO));
 	Safe_AddRef(m_pLine_Manager);
 }
 
@@ -32,7 +32,7 @@ HRESULT CLineRider::Initialize(void* pArg)
 	memcpy(&vPosition, pArg, sizeof(_float2));
 
 	// 가장 가까운 선 받아오기
-	if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(vPosition, m_tClosestLandingLine)))
+	if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(vPosition, (LINE_INFO**)(&m_pClosestLandingLine))))
 	{
 		MSG_BOX("CLineRider - Initialize() - 탈 수 있는 선이 없습니다.");
 		return E_FAIL;
@@ -43,23 +43,33 @@ HRESULT CLineRider::Initialize(void* pArg)
 
 HRESULT CLineRider::Collision_Line(_vector vPosition, _float& fOutLandingY)
 {
+	if (nullptr == m_pClosestLandingLine)
+	{
+		// 현재 착지할 수 있는 땅이 없다면 재검색합니다.
+		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, (LINE_INFO**)(&m_pClosestLandingLine))))
+		{
+			return E_FAIL;
+		}
+	}
+
 	// 현재 가장 가까운 땅의 양끝을 벗어났다면 재검색합니다.
-	if (m_tClosestLandingLine.tLeftVertex.position.x > XMVectorGetX(vPosition)
-		|| m_tClosestLandingLine.tRightVertex.position.x < XMVectorGetX(vPosition))
+	if (m_pClosestLandingLine->tLeftVertex.position.x > XMVectorGetX(vPosition)
+		|| m_pClosestLandingLine->tRightVertex.position.x < XMVectorGetX(vPosition))
 	{
 		// 착지할 수 있는 땅이 없습니다.
 		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
-		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, m_tClosestLandingLine)))
+		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, (LINE_INFO**)(&m_pClosestLandingLine))))
 		{
-			ZeroMemory(&m_tClosestLandingLine, sizeof(LINE_INFO));
+			ZeroMemory(&m_pClosestLandingLine, sizeof(LINE_INFO));
 			return E_FAIL;
 		}
 		return E_FAIL;
 	}
 
 	// 두 점(라인) 사이의 점 중에 객체의 x 좌표에 해당하는 점의 y 구하기
-	const _float3 fLeftX = m_tClosestLandingLine.tLeftVertex.position;
-	const _float3 fRightX = m_tClosestLandingLine.tRightVertex.position;
+	const _float3 fLeftX = m_pClosestLandingLine->tLeftVertex.position;
+	const _float3 fRightX = m_pClosestLandingLine->tRightVertex.position;
 	
 	fOutLandingY = m_pLine_Manager->EquationOfLine(fLeftX, fRightX, XMVectorGetX(vPosition));
 
@@ -70,8 +80,11 @@ _bool CLineRider::CheckLineLanding(const _vector vPosition, _float& fOutLandingY
 {
 	const _float fLimitY = { -1000.f };
 
-	const _float3 fLeftX = m_tClosestLandingLine.tLeftVertex.position;
-	const _float3 fRightX = m_tClosestLandingLine.tRightVertex.position;
+	if (nullptr == m_pClosestLandingLine)
+		return false;
+
+	const _float3 fLeftX = m_pClosestLandingLine->tLeftVertex.position;
+	const _float3 fRightX = m_pClosestLandingLine->tRightVertex.position;
 
 	const _float fLineY = m_pLine_Manager->EquationOfLine(fLeftX, fRightX, XMVectorGetX(vPosition));
 
@@ -89,10 +102,10 @@ _bool CLineRider::CheckLineLanding(const _vector vPosition, _float& fOutLandingY
 	{
 		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
 		// 점프하는동안 탈 수 있는 선이 없을 수 있습니다. 없는 경우 선의 y좌표를 한계치로 설정합니다.
-		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, m_tClosestLandingLine)))
+		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, (LINE_INFO**)(&m_pClosestLandingLine))))
 		{
-			m_tClosestLandingLine.tLeftVertex.position = _float3(0.f, fLimitY, 1.f);
-			m_tClosestLandingLine.tRightVertex.position = _float3(0.f, fLimitY, 1.f);
+			m_pClosestLandingLine->tLeftVertex.position = _float3(0.f, fLimitY, 1.f);
+			m_pClosestLandingLine->tRightVertex.position = _float3(0.f, fLimitY, 1.f);
 		}
 	}
 

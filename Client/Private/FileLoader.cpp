@@ -160,6 +160,8 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 			pAddObject->Set_NameTag(szNameTag);
 			pAddObject->Set_ClassName(szClassName);
 
+			/** 렌더그룹도 툴에서부터 받아와야 합니다. 현재는 각 클래스에서 자기자신의 렌더그룹으로 출력 */
+
 			pAddObject->Set_Layer(pLayer, false);
 			pAddObject->Set_Order(tMetaData.iOrder);
 		}

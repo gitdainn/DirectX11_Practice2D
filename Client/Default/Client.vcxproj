@@ -200,8 +200,24 @@
     <ClInclude Include="..\Public\PlayerJump.h" />
     <ClInclude Include="..\Public\PlayerWalk.h" />
     <ClInclude Include="..\Public\Skill.h" />
+    <ClInclude Include="..\Public\SkillDive.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\SkillGateOfNether.h" />
     <ClInclude Include="..\Public\SkillGuillotine.h" />
+    <ClInclude Include="..\Public\SkillHeadless.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillHighTide.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillThrowSkul.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Public\SkillUI.h" />
     <ClInclude Include="..\Public\SkulItem.h" />
     <ClInclude Include="..\Public\Solider.h" />
@@ -256,8 +272,24 @@
     <ClCompile Include="..\Private\PlayerJump.cpp" />
     <ClCompile Include="..\Private\PlayerWalk.cpp" />
     <ClCompile Include="..\Private\Skill.cpp" />
+    <ClCompile Include="..\Private\SkillDive.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\SkillGateOfNether.cpp" />
     <ClCompile Include="..\Private\SkillGuillotine.cpp" />
+    <ClCompile Include="..\Private\SkillHeadless.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillHighTide.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillThrowSkul.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Private\SkillUI.cpp" />
     <ClCompile Include="..\Private\SkulItem.cpp" />
     <ClCompile Include="..\Private\Solider.cpp" />

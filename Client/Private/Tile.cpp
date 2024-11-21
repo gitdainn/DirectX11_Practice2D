@@ -28,7 +28,7 @@ HRESULT CTile::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+	m_eRenderGroup = CRenderer::RENDER_TILE;
 	m_iOrder += 10;
 
 	return S_OK;
@@ -40,7 +40,7 @@ HRESULT CTile::Initialize(void* pArg)
 		return E_FAIL;
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+	m_eRenderGroup = CRenderer::RENDER_TILE;
 
 	return S_OK;
 }

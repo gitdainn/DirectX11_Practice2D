@@ -73,6 +73,18 @@ public:
 	virtual HRESULT Render();
 
 private:
+#ifdef _DEBUG // 폴더에 이미지 추가 시 기존 데이터 복구 방법
+	/** 폴더에 이미지 추가 시 기존의 이미지 인덱스가 변경되므로 아래 내용을 읽어주세요.
+	* 1. 이미지 추가 전 파일명으로 기존 데이터를 저장합니다. (Load_Object() -> Save_FileName_Object())
+	* 2. 이미지 추가 후 기존 데이터를 파일명으로 불러온 뒤, 저장 시 인덱스로 저장합니다. (이미지 추가 -> Load_FileName_Object() -> Save_Object())
+	* 3. 폴더에 이미지 추가로 변경된 인덱스에 알맞게 기존 데이터를 사용할 수 있게 됩니다. (Load_Object())*/
+
+	// 고유한 형식의 해쉬(=지문)으로 얻는 방법도 있다고 함
+	//constexpr uint32_t FNV1a_Hash(const std::string& str, uint32_t hash = 2166136261u);
+	HRESULT Save_FileName_Object();
+	HRESULT Load_FileName_Object();
+#endif
+
 	HRESULT Save_Object();
 	HRESULT Load_Object();
 	HRESULT Save_Widget();
@@ -88,16 +100,16 @@ private:
 
 	HRESULT Get_OpenFileName(OPENFILENAME& tOpenFileName);
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
-	void Add_SpriteListBox(const char* pFolderName);
 	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;
 	const _bool&		CheckSelectionChanged() const;
 
+	HRESULT	Ready_ContainerResource(const vector<const char*>& FolderNameVec);
 private:
 	const int m_iComponentsNum = 2;
 
 private:
-	CSpriteObject* m_pPreviewObject;
 	CSpriteObject* m_pSelectedObject;
+	unordered_map<const char*, CTexture*>	m_FolderTextureMap;
 	vector<const char*>		m_FolderNameVec;
 	vector<const char*>		m_ClassNameVec;
 	vector<const char*>		m_RenderGroupVec;

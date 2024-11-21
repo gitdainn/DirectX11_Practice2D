@@ -31,10 +31,10 @@ HRESULT CItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
-	{
-		return E_FAIL;
-	}
+	//if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
+	//{
+	//	return E_FAIL;
+	//}
 
 	return S_OK;
 }

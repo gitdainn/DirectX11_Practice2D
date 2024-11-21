@@ -11,7 +11,7 @@ CInstallObject::CInstallObject(ID3D11Device* pDevice, ID3D11DeviceContext* pCont
 CInstallObject::CInstallObject(const CInstallObject& rhs)
     : CSpriteObject(rhs)
 {
-    *this = rhs;
+    //*this = rhs;
     /** @note - 디폴트 복사생성자
     * 1. 복사 생성자 미정의 시 단순 1대1 대입하는 기본 복사생성자 실행됨
     * 2. 포인터, 문자열의 경우 같은 문자열을 참조하는 문제 발생 (한 객체에서 delete[] 시 모든 객체가 다 삭제된 공간 참조)
@@ -21,6 +21,10 @@ CInstallObject::CInstallObject(const CInstallObject& rhs)
 
 HRESULT CInstallObject::Initialize_Prototype()
 {
+    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
+    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+    m_iAnimType = (_uint)STATE_TYPE::IDLE;
+
     return __super::Initialize_Prototype();
 }
 
@@ -35,17 +39,6 @@ HRESULT CInstallObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    m_eRenderGroup = CRenderer::RENDER_PRIORITY;
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-    m_iAnimType = (_uint)STATE_TYPE::IDLE;
-
-    m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
-
-    _float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
-    fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
-    fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
-    m_tSpriteInfo.fSize = fOriginalSize;
-    m_pTransformCom->Set_Scaled(_float3(m_tSpriteInfo.fSize.x, m_tSpriteInfo.fSize.y, 1.f));
 
     return S_OK;
 }
@@ -57,9 +50,15 @@ HRESULT CInstallObject::Initialize(void* pArg)
         return E_FAIL;
     }
 
+    //_float2 fOriginalSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
+    //fOriginalSize.x *= m_tSpriteInfo.fSizeRatio.x;
+    //fOriginalSize.y *= m_tSpriteInfo.fSizeRatio.y;
+   // m_tSpriteInfo.fSize = fOriginalSize;
+
     CTransform::TRANSFORM_DESC tTransDesc;
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
+
 
     return S_OK;
 }
@@ -82,16 +81,11 @@ _uint CInstallObject::Tick(_double TimeDelta)
     if (!lstrcmp(TEXT("BackGround"), m_pClassName))
     {
         m_eRenderGroup = CRenderer::RENDER_PRIORITY;
-        m_pTransformCom->Set_Scaled(_float3(g_iWinSizeX, g_iWinSizeY, 0.f));
-        m_bIsScroll = false;
     }
     else
     {
         m_eRenderGroup = CRenderer::RENDER_NONBLEND;
     }
-
-
-
 #pragma endregion
 
     return __super::Tick(TimeDelta);

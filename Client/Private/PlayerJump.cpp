@@ -168,6 +168,21 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	/** @qurious - 포물선 점프로 얻은 값을 증가되는 현재 Y위치에 더해줘야함.. 왜지? */
 	pTransformCom->Set_State(CTransform::STATE_POSITION
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
+
+	_vector vAfterMovePosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
+
+	_float2 fScroll = _float2(0.f, abs(XMVectorGetY(vPlayerPos) - XMVectorGetY(vAfterMovePosition)));
+	fScroll.y *= m_bIsFalling ? 1.f : -1.f;
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return;
+	Safe_AddRef(pGameInstance);
+
+	pGameInstance->Set_Scroll(fScroll);
+	pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+
+	Safe_Release(pGameInstance);
 }
 
 _bool CPlayerJump::AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY)

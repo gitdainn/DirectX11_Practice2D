@@ -82,6 +82,9 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Draw_NonBlend()))
 		return E_FAIL;
 
+	if (FAILED(Draw_Tile()))
+		return E_FAIL;
+
 	if (FAILED(Draw_Blend()))
 		return E_FAIL;
 
@@ -93,7 +96,7 @@ HRESULT CRenderer::Draw_RenderGroup()
 
 HRESULT CRenderer::Draw_Priority()
 {	
-	m_RenderGroups[RENDER_PRIORITY].sort(Sort());
+	m_RenderGroups[RENDER_PRIORITY].sort(SortOrder());
 
 	for (auto& pGameObject : m_RenderGroups[RENDER_PRIORITY])
 	{
@@ -110,7 +113,7 @@ HRESULT CRenderer::Draw_Priority()
 
 HRESULT CRenderer::Draw_NonBlend()
 {
-	m_RenderGroups[RENDER_NONBLEND].sort(Sort());
+	m_RenderGroups[RENDER_NONBLEND].sort(SortOrder());
 
 	/* Diffuse + Normal 타겟에 그리는 작업을 수행한다. */
 	for (auto& pGameObject : m_RenderGroups[RENDER_NONBLEND])
@@ -126,9 +129,27 @@ HRESULT CRenderer::Draw_NonBlend()
 	return S_OK;
 }
 
+HRESULT CRenderer::Draw_Tile()
+{
+	m_RenderGroups[RENDER_TILE].sort(SortOrder());
+
+	/* Diffuse + Normal 타겟에 그리는 작업을 수행한다. */
+	for (auto& pGameObject : m_RenderGroups[RENDER_TILE])
+	{
+		if (nullptr != pGameObject)
+			pGameObject->Render();
+
+		Safe_Release(pGameObject);
+	}
+
+	m_RenderGroups[RENDER_TILE].clear();
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Draw_Blend()
 {	
-	m_RenderGroups[RENDER_BLEND].sort(Sort());
+	m_RenderGroups[RENDER_BLEND].sort(SortOrder());
 
 	auto DepthLamda = [](CGameObject* pSour, CGameObject* pDest)->_bool
 		{
@@ -152,7 +173,7 @@ HRESULT CRenderer::Draw_Blend()
 
 HRESULT CRenderer::Draw_UI()
 {
-	m_RenderGroups[RENDER_UI].sort(Sort());
+	m_RenderGroups[RENDER_UI].sort(SortOrder());
 
 	for (auto& pGameObject : m_RenderGroups[RENDER_UI])
 	{
@@ -208,9 +229,9 @@ void CRenderer::Free()
 
 }
 
-// CGameObject 전방선언이라, 헤더 내용은 알 수 없어 안의 함수 사용은 선언부에서 불가
+// CGameObject 전방선언이라, 헤더 내용은 알 수 없어 안의 함수 사용은 선언부에서 구현 불가 (멤버로 하기 위해 선언은 Renderer 헤더에 작성)
 // true면 교체 X  -> 앞에가 더 크면 true로 교체해서 더 큰 숫자가 나중에 출력되도록 함.
-bool CRenderer::Sort::operator()(CGameObject* pA, CGameObject* pB)
+bool CRenderer::SortOrder::operator()(CGameObject* pA, CGameObject* pB)
 {
 	return pA->Get_Order() < pB->Get_Order();
 }

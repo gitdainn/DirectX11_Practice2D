@@ -82,7 +82,8 @@ void CSkulItem::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget
 	if (pGameInstance->Get_KeyDown(DIK_F))
 	{
 		SPRITE_INFO tSpriteInfo;
-		tSpriteInfo.fSize = _float2{ 200.f, 150.f };
+		//tSpriteInfo.fSize = _float2{ 200.f, 150.f };
+		tSpriteInfo.fSize = _float2{ 300.f, 300.f };
 		if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_WaterSkul"), LEVEL_LOGO, LAYER_PLAYER, tSpriteInfo)))
 			return;
 		list<CGameObject*>* pObjList = pGameInstance->Get_ObjectList(LEVEL_LOGO, LAYER_PLAYER);

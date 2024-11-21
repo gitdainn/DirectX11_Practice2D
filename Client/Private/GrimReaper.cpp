@@ -55,8 +55,6 @@ HRESULT CGrimReaper::Initialize(void* pArg)
     tTransDesc.SpeedPerSec = 20.f;
     m_pTransformCom->Set_TransformDesc(tTransDesc);
 
-    //CPlayerInfo::GetInstance()->Set_MainSkul(this);
-
     Add_Animation();
 
     CPlayer_Manager::GetInstance()->Acquire_Skul(this);
@@ -67,7 +65,7 @@ HRESULT CGrimReaper::Initialize(void* pArg)
 _uint CGrimReaper::Tick(_double TimeDelta)
 {
     Play_Animation(TimeDelta, m_iUVTextureIndex, m_iAnimType);
-
+    
     if (50 <= m_iSoulNum && 1 == m_iLevel)
         Awaken();
     else if (150 <= m_iSoulNum && 2 == m_iLevel)
@@ -77,7 +75,16 @@ _uint CGrimReaper::Tick(_double TimeDelta)
     int iMagicAttack;
     iMagicAttack = int(m_iMagicAttack + m_iMagicAttack * m_iSoulNum * 0.1f);
 
+    if(STATE_TYPE::SWAP == m_eCurrentState)
+        SwapSkill_GuidanceofDeath(TimeDelta);
+    
+    if (STATE_TYPE::ATK1 == m_eCurrentState)
+        Add_DefaultAtkCollider(m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex + 4);
+    if (STATE_TYPE::DEFAULT_ATK == m_eCurrentState)
+        Add_DefaultAtkCollider(m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex + 4);
+
     return CPlayer::Tick(TimeDelta);
+
 }
 
 _uint CGrimReaper::LateTick(_double TimeDelta)
@@ -115,6 +122,10 @@ void CGrimReaper::Add_Animation()
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].iEndIndex = 9 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL1].fAnimTime = 0.6f ;
 
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].iStartIndex = 0 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].iEndIndex = 9 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].fAnimTime = 1.f;
+
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::ATK2].iEndIndex = 8 + m_iUVTexNumX * iRow;
@@ -136,6 +147,20 @@ void CGrimReaper::Add_Animation()
     m_pAnimInfo[(_uint)STATE_TYPE::DASH].fAnimTime = 0.6f;
 
     m_iUVTextureIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
+}
+
+void CGrimReaper::SwapSkill_GuidanceofDeath(_double TimeDelta)
+{
+    m_bIsInvulnerable = true;
+
+    if (m_pAnimInfo[(_uint)STATE_TYPE::SWAP].fAnimTime <= m_SwapTimeAcc)
+    {
+        m_bIsInvulnerable = false;
+        m_SwapTimeAcc = 0.0;
+        Input_Handler(STATE_TYPE::IDLE, m_eSpriteDirection);
+    }
+
+    m_SwapTimeAcc += TimeDelta;
 }
 
 HRESULT CGrimReaper::Add_Components(void* pArg)

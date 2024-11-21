@@ -60,6 +60,15 @@ HRESULT CWaterSkul::Initialize(void* pArg)
 _uint CWaterSkul::Tick(_double TimeDelta)
 {    
     Play_Animation(TimeDelta, m_iUVTextureIndex, m_iAnimType);
+
+    if (STATE_TYPE::SWAP == m_eCurrentState)
+        SwapSkill_Deluge(TimeDelta);
+
+    if (STATE_TYPE::ATK1 == m_eCurrentState)
+        Add_DefaultAtkCollider(m_pAnimInfo[(_uint)STATE_TYPE::ATK1].iStartIndex + 4);
+    if (STATE_TYPE::DEFAULT_ATK == m_eCurrentState)
+        Add_DefaultAtkCollider(m_pAnimInfo[(_uint)STATE_TYPE::DEFAULT_ATK].iStartIndex + 4);
+
     return CPlayer::Tick(TimeDelta);
 }
 
@@ -109,6 +118,10 @@ void CWaterSkul::Add_Animation()
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].iEndIndex = 5 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::SKILL2].fAnimTime = 0.6f;
 
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].iStartIndex = 0 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].iEndIndex = 5 + m_iUVTexNumX * iRow;
+    m_pAnimInfo[(_uint)STATE_TYPE::SWAP].fAnimTime = 1.f;
+
     ++iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iStartIndex = 0 + m_iUVTexNumX * iRow;
     m_pAnimInfo[(_uint)STATE_TYPE::JUMP].iEndIndex = 2 + m_iUVTexNumX * iRow;
@@ -127,6 +140,17 @@ void CWaterSkul::Add_Animation()
 
     m_iUVTextureIndex = m_pAnimInfo[m_iAnimType].iStartIndex;
 }
+
+void CWaterSkul::SwapSkill_Deluge(_double TimeDelta)
+{
+    if (m_pAnimInfo[(_uint)STATE_TYPE::SWAP].fAnimTime <= m_SwapTimeAcc)
+    {
+        m_SwapTimeAcc = 0.0;
+        Input_Handler(STATE_TYPE::IDLE, m_eSpriteDirection);
+    }
+    m_SwapTimeAcc += TimeDelta;
+}
+
 
 HRESULT CWaterSkul::Add_Components(void* pArg)
 {

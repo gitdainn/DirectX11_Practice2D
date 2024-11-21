@@ -183,10 +183,12 @@ void CSolider::Walk(_double TimeDelta)
     }
 
     // 라인 끝점과의 거리 측정 //
-    const LINE_INFO tCurrnetLine = m_pLineRiderCom->Get_LandingLine();
+    const LINE_INFO* pCurrentLine = m_pLineRiderCom->Get_LandingLine();
+    if (nullptr == pCurrentLine)
+        return;
 
-    _float fLeftDistance = Get_DistanceX(vPosition, XMLoadFloat3(&tCurrnetLine.tLeftVertex.position));
-    _float fRightDistance = Get_DistanceX(vPosition, XMLoadFloat3(&tCurrnetLine.tRightVertex.position));
+    _float fLeftDistance = Get_DistanceX(vPosition, XMLoadFloat3(&(pCurrentLine->tLeftVertex.position)));
+    _float fRightDistance = Get_DistanceX(vPosition, XMLoadFloat3(&(pCurrentLine->tRightVertex.position)));
 
     // 라인 끝에 부딪쳤거나 iSearchDistance 이상 움직였거나 Block에 부딪쳤으면 Switch
     if((fSwitchDistance >= fLeftDistance && SPRITE_DIRECTION::LEFT == m_eSpriteDirection)
@@ -208,12 +210,15 @@ void CSolider::Attack(_double TimeDelta)
         return;
     }
 
-    // 위치에 따라 공격 추가
-    CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
-    tColliderDesc.vOffset.y = 30.f;
-    tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
-    m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
-    Attach_Collider(LAYER_ENEMYATK, m_pDefaultAtkColliderCom);
+    // 공격 콜라이더 적용되는 타이밍
+    if ((m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex + 4) == m_iUVTextureIndex)
+    {
+        CCollider::COLLIDER_DESC tColliderDesc = m_pDefaultAtkColliderCom->Get_ColliderDesc();
+        tColliderDesc.vOffset.y = 30.f;
+        tColliderDesc.vOffset.x = (SPRITE_DIRECTION::LEFT == m_eSpriteDirection ? -20.f : 20.f);
+        m_pDefaultAtkColliderCom->Set_ColliderDesc(tColliderDesc);
+        Attach_Collider(LAYER_ENEMYATK, m_pDefaultAtkColliderCom);
+    }
 
     // 돌진 이미지 인덱스부터 돌진 시작
     const _uint iStartRushIndex = m_pAnimInfo[ENEMY_STATE::ATK1].iStartIndex + 4;
@@ -230,20 +235,30 @@ void CSolider::Attack(_double TimeDelta)
         _float fT = m_AttackTimeAcc / fAnimTime;
         fT = 1.f < fT ? 1.f : fT; /* 선형보간은 0~1 값이어야하므로 "클램프"*/
 
-        _vector vLerpPosition = XMVectorLerp(m_vStartPosition, m_vDirectionPosition, fT);
+        //_vector vLerpPosition = XMVectorLerp(m_vStartPosition, m_vDirectionPosition, fT);
 
-        // 라인을 넘어가면 라인 끝으로 고정시키기
-        _float fObjectRadius = { 5.f }; // 오브젝트 크기의 반만큼 여유 공간 두기
-        const LINE_INFO tCurrentLine = m_pLineRiderCom->Get_LandingLine();
-        if (tCurrentLine.tRightVertex.position.x - fObjectRadius <= XMVectorGetX(vLerpPosition))
-        {
-            vLerpPosition = XMVectorSetX(vLerpPosition, tCurrentLine.tRightVertex.position.x - fObjectRadius);
-        }
-        else if (tCurrentLine.tLeftVertex.position.x + fObjectRadius >= XMVectorGetX(vLerpPosition))
-        {
-            vLerpPosition = XMVectorSetX(vLerpPosition, tCurrentLine.tLeftVertex.position.x + fObjectRadius);
-        }
-        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vLerpPosition);
+        //// 라인을 넘어가면 라인 끝으로 고정시키기
+        //_float fObjectRadius = { 5.f }; // 오브젝트 크기의 반만큼 여유 공간 두기
+        //const LINE_INFO* pCurrentLine = m_pLineRiderCom->Get_LandingLine();
+        //if (nullptr == pCurrentLine)
+        //    return;
+
+        //if (pCurrentLine->tRightVertex.position.x - fObjectRadius <= XMVectorGetX(vLerpPosition))
+        //{
+        //    vLerpPosition = XMVectorSetX(vLerpPosition, pCurrentLine->tRightVertex.position.x - fObjectRadius);
+        //}
+        //else if (pCurrentLine->tLeftVertex.position.x + fObjectRadius >= XMVectorGetX(vLerpPosition))
+        //{
+        //    vLerpPosition = XMVectorSetX(vLerpPosition, pCurrentLine->tLeftVertex.position.x + fObjectRadius);
+        //}
+
+        // 내가 10만큼 이동하고 싶다? 10을 Lerp 해서 vPosition에 더하고 Lerp 값이 
+        _float fDistance = { 10.f };
+        fDistance *= m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? -1.f : 1.f;
+        _vector vRushVec = XMVectorLerp(_vector{0.f, 0.f, 0.f, 0.f} , _vector{fDistance, 0.f, 0.f, 0.f}, fT);
+        _vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+        vPosition = XMVectorSetX(vPosition, XMVectorGetX(m_vStartPosition) + XMVectorGetX(vRushVec));
+        m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
     }
 #pragma endregion
 

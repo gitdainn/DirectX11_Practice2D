@@ -63,9 +63,9 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	_float4x4 WorldMatrix;
 	XMStoreFloat4x4(&WorldMatrix, XMMatrixIdentity());
 
-	// 위치 지정
-	WorldMatrix._11 = tObjectTransform.fSize.x;
-	WorldMatrix._22 = tObjectTransform.fSize.y;
+	// 크기 및 위치 지정
+	WorldMatrix._11 = (tObjectTransform.fSize.x * tObjectTransform.fSizeRatio.x);
+	WorldMatrix._22 = (tObjectTransform.fSize.y * tObjectTransform.fSizeRatio.y);
 	WorldMatrix._41 = tObjectTransform.fPosition.x;
 	WorldMatrix._42 = tObjectTransform.fPosition.y;
 	
@@ -78,11 +78,12 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
 	Safe_Release(pFileLoader);
-	return S_OK;
-}
 
-HRESULT CSpriteObject::Late_Initialize(void* pArg)
-{
+	if (m_bIsScroll)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		pGameInstance->Add_ScrollListener(this);
+	}
 	return S_OK;
 }
 
@@ -111,6 +112,24 @@ HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 
 	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
+
+	if (m_bIsScroll)
+	{
+		CGameInstance* pGameInstance = CGameInstance::GetInstance();
+		pGameInstance->Add_ScrollListener(this);
+	}
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::Late_Initialize(void* pArg)
+{
+	if (nullptr != m_pLineRiderCom)
+	{
+		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+		m_pLineRiderCom->Initialize(&fPositon);
+	}
 
 	return S_OK;
 }
@@ -151,6 +170,9 @@ HRESULT CSpriteObject::Render()
 
 void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
+	if (STATE_TYPE::SWAP == m_eCurrentState)
+		return;
+
 	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
 	
 	if (nullptr != pState)
@@ -209,23 +231,17 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 
 HRESULT CSpriteObject::SetUp_ShaderDefault()
 {
-	CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	Safe_AddRef(pGameInstance);
-
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
+
+	if (m_bIsScroll)
+	{
+		//Scroll_Screen(WorldMatrix);
+	}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 	{
-		Safe_Release(pGameInstance);
 		return E_FAIL;
 	}
-
-	//if (m_bIsScroll)
-//{
-//	Scroll_Screen(WorldMatrix);
-//}
-
-		Safe_Release(pGameInstance);
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 		return E_FAIL;
@@ -465,6 +481,31 @@ void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTa
 {
 	if (nullptr == pTargetCollider || nullptr == pTarget)
 		return;
+}
+
+void CSpriteObject::ScrollNotify(const _float2 fScroll)
+{
+	if (nullptr == m_pTransformCom)
+		return;
+
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+
+	vPosition = XMVectorSetX(vPosition, XMVectorGetX(vPosition) + fScroll.x * m_fScrollSpeed);
+	vPosition = XMVectorSetY(vPosition, XMVectorGetY(vPosition) + fScroll.y * m_fScrollSpeed);
+
+	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+}
+
+void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	WorldMatrix._41 = XMVectorGetX(vPosition) + pGameInstance->Get_ScrollX();
+	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
+
+	Safe_Release(pGameInstance);
 }
 
 void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType)

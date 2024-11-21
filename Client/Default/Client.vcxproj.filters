@@ -145,6 +145,18 @@
     <Filter Include="03.DesignPattern\State\EnemyState">
       <UniqueIdentifier>{179d0ae6-10eb-4ae0-a396-e22c7c57b9d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Skill\WaterSkul">
+      <UniqueIdentifier>{b853d333-9bf1-4ddc-8908-a2b59ac1ef5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\WaterSkul\Dive">
+      <UniqueIdentifier>{fb80d01c-d368-4cf3-a844-1e7a53f529de}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\WaterSkul\HighTide">
+      <UniqueIdentifier>{fa532b5b-eb3e-4b68-aefd-1f11abb46fb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Skill\LittleBorn">
+      <UniqueIdentifier>{e3fe2143-17b9-4714-9ea2-e9dc2e9249d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -283,12 +295,26 @@
     <ClInclude Include="..\Public\HealthBarUI.h">
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\HealthBarWidget.h" />
     <ClInclude Include="..\Public\EnemyJump.h">
       <Filter>03.DesignPattern\State\EnemyState</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\PlayerDamaged.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillDive.h">
+      <Filter>02.GameObject\Skill\WaterSkul\Dive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillHighTide.h">
+      <Filter>02.GameObject\Skill\WaterSkul\HighTide</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\HealthBarWidget.h">
+      <Filter>07.Widget</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillThrowSkul.h">
+      <Filter>02.GameObject\Skill\LittleBorn</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\SkillHeadless.h">
+      <Filter>02.GameObject\Skill\LittleBorn</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -416,12 +442,26 @@
     <ClCompile Include="..\Private\HealthBarUI.cpp">
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\HealthBarWidget.cpp" />
     <ClCompile Include="..\Private\EnemyJump.cpp">
       <Filter>03.DesignPattern\State\EnemyState</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\PlayerDamaged.cpp">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillDive.cpp">
+      <Filter>02.GameObject\Skill\WaterSkul\Dive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillHighTide.cpp">
+      <Filter>02.GameObject\Skill\WaterSkul\HighTide</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\HealthBarWidget.cpp">
+      <Filter>07.Widget</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillThrowSkul.cpp">
+      <Filter>02.GameObject\Skill\LittleBorn</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\SkillHeadless.cpp">
+      <Filter>02.GameObject\Skill\LittleBorn</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

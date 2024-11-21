@@ -12,7 +12,7 @@ class CGameObject;
 class ENGINE_DLL CRenderer final : public CComponent
 {
 public:
-	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONBLEND, RENDER_NONLIGHT, RENDER_BLEND, RENDER_UI, RENDER_END };
+	enum RENDERGROUP { RENDER_PRIORITY, RENDER_NONBLEND, RENDER_TILE, RENDER_NONLIGHT, RENDER_BLEND, RENDER_UI, RENDER_END };
 
 private:
 	CRenderer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);	
@@ -32,10 +32,12 @@ private:
 	* 1. 함수객체는 operator()로 선언하며, 클래스/구조체 이름으로 호출함.
 	* 2. 조건자에 사용되며 bool로 반환 
 	* */
-	struct Sort
+
+	struct SortOrder
 	{
 		bool operator()(CGameObject* pA, CGameObject* pB);
 	};
+
 
 private:		
 	list<CGameObject*>			m_RenderGroups[RENDER_END];
@@ -65,6 +67,7 @@ private:
 private: /* 그리는 그룹들에 따라 셋팅이 바뀌어야할 필요가 생길 수 있기때문에 그룹별로 함수를 만들어 처리. */
 	HRESULT Draw_Priority();
 	HRESULT Draw_NonBlend();
+	HRESULT Draw_Tile();
 	HRESULT Draw_Blend();
 	HRESULT Draw_UI();
 
