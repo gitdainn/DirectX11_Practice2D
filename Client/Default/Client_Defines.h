@@ -16,6 +16,7 @@ namespace Client
 	typedef enum class eVTXTEX_PASS
 	{
 		Default,
+		Not_Z_TestWrite,
 		Color,
 		UV_Anim,
 		FlipUV_Anim,

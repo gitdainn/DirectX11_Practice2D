@@ -72,18 +72,13 @@ HRESULT CSpriteObject::Initialize(void* pArg)
 	m_pTransformCom->Set_WorldMatrix(XMLoadFloat4x4(&WorldMatrix));
 
 	XMStoreFloat4x4(&m_ViewMatrix, XMMatrixIdentity());
-	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f));
+	XMStoreFloat4x4(&m_ProjMatrix, XMMatrixOrthographicLH(g_iWinSizeX, g_iWinSizeY, 0.f, 1.f)); // 직교투영 함수
 
 	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
 	Safe_Release(pFileLoader);
 
-	if (m_bIsScroll)
-	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		pGameInstance->Add_ScrollListener(this);
-	}
 	return S_OK;
 }
 
@@ -229,38 +224,98 @@ HRESULT CSpriteObject::Add_Components(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSpriteObject::SetUp_ShaderDefault()
+HRESULT CSpriteObject::SetUp_Shader_Camera()
 {
-	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
+	if (FAILED(SetUp_Shader_Default()))
+		return E_FAIL;
 
-	if (m_bIsScroll)
+	_matrix WorldMatrix = m_pTransformCom->Get_WorldMatrix();
+	_float4x4 WorldMatrixFloat;
+	XMStoreFloat4x4(&WorldMatrixFloat, WorldMatrix);
+	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrixFloat)))
 	{
-		//Scroll_Screen(WorldMatrix);
+		return E_FAIL;
 	}
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	XMStoreFloat4x4(&m_ViewMatrix, pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW));
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	XMStoreFloat4x4(&m_ProjMatrix, pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ));
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_Orthographic()
+{
+	if (FAILED(SetUp_Shader_Default()))
+		return E_FAIL;
+
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 	{
 		return E_FAIL;
 	}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	{
 		return E_FAIL;
+	}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
-		return E_FAIL;
-
-	if (nullptr == m_pSpriteFileName)
 	{
-		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
-			return E_FAIL;
+		return E_FAIL;
 	}
-	else
+
+	return S_OK;
+}
+
+HRESULT CSpriteObject::SetUp_Shader_NonCamera()
+{
+	if (FAILED(SetUp_Shader_Default()))
+		return E_FAIL;
+
+	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
+	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 	{
-		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
-			return E_FAIL;
+		return E_FAIL;
+	}
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return E_FAIL;
+	Safe_AddRef(pGameInstance);
+
+	_float4x4 ViewMatrix, ProjMatrix;
+	ViewMatrix = pGameInstance->Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW);
+
+	// 위치만 재역행렬 해서 카메라 영향을 안 받도록 하고. 나머지는 카메라 역행렬인 ViewMatrix를 그대로 적용. (직교 시 무조건 맨 앞에 출력되므로 이를 사용함)
+	_matrix NonCameraMatrix = XMMatrixInverse(nullptr, XMLoadFloat4x4(&ViewMatrix));
+	ViewMatrix._41 = XMVectorGetX(NonCameraMatrix.r[3]);
+	ViewMatrix._42 = XMVectorGetY(NonCameraMatrix.r[3]);
+
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &ViewMatrix)))
+	{
+		return E_FAIL;
+	}
+
+	ProjMatrix = pGameInstance->Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ);
+	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &ProjMatrix)))
+	{
+		return E_FAIL;
 	}
 
 	return S_OK;
@@ -483,19 +538,6 @@ void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTa
 		return;
 }
 
-void CSpriteObject::ScrollNotify(const _float2 fScroll)
-{
-	if (nullptr == m_pTransformCom)
-		return;
-
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-
-	vPosition = XMVectorSetX(vPosition, XMVectorGetX(vPosition) + fScroll.x * m_fScrollSpeed);
-	vPosition = XMVectorSetY(vPosition, XMVectorGetY(vPosition) + fScroll.y * m_fScrollSpeed);
-
-	m_pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
-}
-
 void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
@@ -506,6 +548,25 @@ void CSpriteObject::Scroll_Screen(_float4x4& WorldMatrix) const
 	WorldMatrix._42 = XMVectorGetY(vPosition) + pGameInstance->Get_ScrollY();
 
 	Safe_Release(pGameInstance);
+}
+
+HRESULT CSpriteObject::SetUp_Shader_Default()
+{
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &m_vColor, sizeof(_vector))))
+		return E_FAIL;
+
+	if (nullptr == m_pSpriteFileName)
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_iTextureIndex)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->Set_ShaderResource(m_pShaderCom, "g_Texture", m_pSpriteFileName)))
+			return E_FAIL;
+	}
+
+	return S_OK;
 }
 
 void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType)

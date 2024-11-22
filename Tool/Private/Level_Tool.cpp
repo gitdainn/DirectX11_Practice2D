@@ -35,24 +35,23 @@ HRESULT CLevel_Tool::Ready_Layer_Camera()
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
-	CCamera_Dynamic::CAMERA_DYNAMIC_DESC		tCameraDesc;
-	ZeroMemory(&tCameraDesc, sizeof tCameraDesc);
+	CCamera_Dynamic::CAMERA_DYNAMIC_DESC		tCameraDynamicDesc;
+	ZeroMemory(&tCameraDynamicDesc, sizeof tCameraDynamicDesc);
 
-	tCameraDesc.CameraDesc.vEye = _float4(0.f, 10.f, -7.f, 1.f);
-	tCameraDesc.CameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
-	tCameraDesc.CameraDesc.vAxisY = _float4(0.f, 1.f, 0.f, 0.f);
 
-	tCameraDesc.CameraDesc.fFovy = XMConvertToRadians(60.0f);
-	tCameraDesc.CameraDesc.fAspect = _float(g_iWinSizeX) / g_iWinSizeY;
-	tCameraDesc.CameraDesc.fNear = 0.2f;
-	tCameraDesc.CameraDesc.fFar = 300;
+	tCameraDynamicDesc.tCameraDesc.vEye = _float4(0.f, 0.f, -500.f, 1.f);
+	tCameraDynamicDesc.tCameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	tCameraDynamicDesc.tCameraDesc.vAxisY = _float4(0.f, 1.f, 0.f, 0.f);
 
-	tCameraDesc.CameraDesc.tTransformDesc.SpeedPerSec = 50.f;
-	tCameraDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
+	tCameraDynamicDesc.tCameraDesc.fFovy = XMConvertToRadians(60.f);
+	tCameraDynamicDesc.tCameraDesc.fAspect = _float(g_iWinSizeX) / g_iWinSizeY;
+	tCameraDynamicDesc.tCameraDesc.fNear = 1.f;
+	tCameraDynamicDesc.tCameraDesc.fFar = 1000.f;
 
-	tCameraDesc.CameraDesc.vAt = _float4(0.f, 0.f, 1.f, 1.f);
+	tCameraDynamicDesc.CameraDesc.tTransformDesc.SpeedPerSec = 50.f;
+	tCameraDynamicDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
 
-	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_TOOL, TEXT("Layer_Camera"), &tCameraDesc))))
+	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_TOOL, TEXT("Layer_Camera"), &tCameraDynamicDesc))))
 	{
 		MSG_BOX("CLevel_Tool - Ready_Layer_Camera() - NULL");
 	}

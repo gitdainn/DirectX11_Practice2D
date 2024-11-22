@@ -128,7 +128,7 @@ HRESULT CSkillHighTide::Add_Components(void* pArg)
 
 HRESULT CSkillHighTide::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Camera()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Shader_UVAnim()))

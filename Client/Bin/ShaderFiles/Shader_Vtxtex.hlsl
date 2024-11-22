@@ -198,6 +198,19 @@ technique11 DefaultTechnique
         PixelShader = compile ps_5_0 PS_MAIN();
     }
 
+    pass Not_Z_TestWrite
+    {
+        SetRasterizerState(RS_Default);
+        SetDepthStencilState(DSS_Not_ZTest_Not_ZWrite, 0);
+        SetBlendState(BS_Default, float4(0.f, 0.f, 0.f, 0.f), 0xffffffff);
+
+        VertexShader = compile vs_5_0 VS_MAIN();
+        GeometryShader = NULL;
+        HullShader = NULL;
+        DomainShader = NULL;
+        PixelShader = compile ps_5_0 PS_MAIN();
+    }
+
     pass Color
     {
         SetRasterizerState(RS_Default);

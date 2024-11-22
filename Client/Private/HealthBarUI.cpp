@@ -66,7 +66,7 @@ HRESULT CHealthBarUI::Add_Components(void* pArg)
 
 HRESULT CHealthBarUI::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Orthographic()))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_RawValue("g_fNormalizedX", &m_fNormalizedHp, sizeof(_float))))

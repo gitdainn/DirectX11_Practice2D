@@ -194,7 +194,7 @@ protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 	virtual HRESULT SetUp_ShaderResources() = 0;
-	HRESULT SetUp_ShaderDefault();
+	HRESULT SetUp_Shader_Camera();
 	HRESULT SetUp_Shader_UVAnim();
 	HRESULT SetUp_Shader_Wrap();
 

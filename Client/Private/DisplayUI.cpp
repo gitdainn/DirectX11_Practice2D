@@ -65,7 +65,7 @@ HRESULT CDisplayUI::Add_Components(void* pArg)
 
 HRESULT CDisplayUI::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Orthographic()))
 		return E_FAIL;
 
 	if (m_iShaderPassIndex == (_uint)VTXTEX_PASS::Wrap_X)

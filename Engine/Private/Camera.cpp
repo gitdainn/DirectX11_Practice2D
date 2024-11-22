@@ -70,9 +70,10 @@ _uint CCamera::Tick(_double TimeDelta)
 			m_pTransformCom->Get_WorldMatrix_Inverse());
 
 		m_pPipeLine->Set_Transform(CPipeLine::D3DTS_PROJ,
-			XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar));
+			XMMatrixPerspectiveFovLH(m_CameraDesc.fFovy, m_CameraDesc.fAspect, m_CameraDesc.fNear, m_CameraDesc.fFar)); // 원근 투영 함수
 	}
 
+	m_pPipeLine->Update();
 
 	return __super::Tick(TimeDelta);
 }

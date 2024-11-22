@@ -30,9 +30,9 @@ HRESULT CCamera_Dynamic::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	memcpy(&m_CameraDynamicDesc, pArg, sizeof m_CameraDynamicDesc);
+	memcpy(&m_tCameraDynamicDesc, pArg, sizeof m_tCameraDynamicDesc);
 
-	if (FAILED(__super::Initialize(&m_CameraDynamicDesc.CameraDesc)))
+	if (FAILED(__super::Initialize(&m_tCameraDynamicDesc.tCameraDesc)))
 		return E_FAIL;
 
 	return S_OK;
@@ -43,10 +43,11 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
+	const _float fSpeed = { 7.f };
 	if (pGameInstance->Get_KeyStay(DIK_W))
 	{
 		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-		m_pTransformCom->Go_Up(TimeDelta);
+		m_pTransformCom->Go_Up(TimeDelta * fSpeed);
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(0.f, -1 * abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
@@ -57,7 +58,7 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	if (pGameInstance->Get_KeyStay(DIK_S))
 	{
 		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-		m_pTransformCom->Go_Down(TimeDelta);
+		m_pTransformCom->Go_Down(TimeDelta * fSpeed);
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(0.f, abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
@@ -68,7 +69,7 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	if (pGameInstance->Get_KeyStay(DIK_A))
 	{
 		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-		m_pTransformCom->Go_Left(TimeDelta);
+		m_pTransformCom->Go_Left(TimeDelta * fSpeed);
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(-1 * abs(XMVectorGetX(vPosition) - XMVectorGetX(vMovePosition)), 0.f);
@@ -79,7 +80,7 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 	if (pGameInstance->Get_KeyStay(DIK_D))
 	{
 		_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-		m_pTransformCom->Go_Right(TimeDelta);
+		m_pTransformCom->Go_Right(TimeDelta * fSpeed);
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(abs(XMVectorGetX(vPosition) - XMVectorGetX(vMovePosition)), 0.f);

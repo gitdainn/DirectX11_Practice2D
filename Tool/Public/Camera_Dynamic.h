@@ -10,7 +10,7 @@ class CCamera_Dynamic final : public CCamera
 public:
 	typedef struct tagCameraDynamicDesc
 	{
-		CCamera::CAMERADESC		CameraDesc;
+		CCamera::CAMERADESC		tCameraDesc;
 	}CAMERA_DYNAMIC_DESC;
 
 protected:
@@ -25,7 +25,7 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 private:
-	CAMERA_DYNAMIC_DESC			m_CameraDynamicDesc;
+	CAMERA_DYNAMIC_DESC			m_tCameraDynamicDesc;
 
 public:
 	static CCamera_Dynamic* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -52,10 +52,6 @@ public:
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
-public:
-	/** @notice - SpriteObject의 자식의 경우 오버라이딩 시 __super::ScrollNotify()를 해주어야 위치 적용이 됩니다. */
-	virtual void ScrollNotify(const _float2 fScroll) override;
-
 protected: // Animation
 	struct ANIM_INFO
 	{
@@ -75,7 +71,7 @@ protected: // Animation
 	virtual void Add_Animation() = 0;
 	virtual void Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType = 0);
 	virtual void End_Animation(_uint& iSpriteIndex);
-	
+
 	void	Switch_SpriteDirection()
 	{
 		m_eSpriteDirection = (m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? SPRITE_DIRECTION::RIGHT : SPRITE_DIRECTION::LEFT);
@@ -159,7 +155,7 @@ public:
 		m_pSpriteFileName = pTextureTag;
 	}
 
-public: 
+public:
 	inline void CSpriteObject::Change_AnimType(const _uint& iAnimType)
 	{
 		if (m_iAnimTypeNum <= iAnimType)
@@ -182,13 +178,19 @@ protected:
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
 
 	virtual HRESULT SetUp_ShaderResources() = 0;
-	HRESULT SetUp_ShaderDefault();
+
+	/** WVP 행렬에 관한 리소스를 넘기는 함수들입니다. 꼭 택 1하여 사용해주세요. */
+	HRESULT SetUp_Shader_Camera();
+	HRESULT SetUp_Shader_NonCamera(); // 카메라로 관찰되지만, 카메라의 이동에는 영향을 받지 않는 함수입니다.
+	HRESULT SetUp_Shader_Orthographic();
+
+	/** 필요에 따라 선택적으로 사용하는 부가적인 리소스 함수들입니다. */
 	HRESULT SetUp_Shader_UVAnim();
 	HRESULT SetUp_Shader_Wrap();
 
 	/** 점프/추락 기능이 있는 객체에게 사용하는 선타기 기능입니다. */
 	virtual HRESULT	JumpableLineRider(_double TImeDelta);
-	/** 추락 기능이 없는 선타기 기능입니다. 
+	/** 추락 기능이 없는 선타기 기능입니다.
 	* @return - 현재 타고 있는 선을 벗어나면 E_FAIL을 반환합니다. (착지할 수 있는 땅이 없어도 E_FAIL 반환) */
 	HRESULT	DefaultLineRider(const _vector vPosition);
 
@@ -200,6 +202,10 @@ protected:
 private:
 	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);
 	void Scroll_Screen(_float4x4& WorldMatrix) const;
+
+private:
+	/** HLSL에 꼭 넘겨야 하는 리소스 정보입니다. */
+	HRESULT	SetUp_Shader_Default();
 
 protected:
 	ID3D11Device* m_pDevice = { nullptr };
@@ -215,12 +221,12 @@ protected: // 컴포넌트 //
 
 protected:
 	bool	m_bIsAnimUV;
-	bool	m_bIsEndSprite; 
+	bool	m_bIsEndSprite;
 
 	_vector					m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
-	CState*					m_pState;
-	CState*					m_pAirState;
+	CState* m_pState;
+	CState* m_pAirState;
 	_bool					m_bIsInAir;
 
 	STATE_TYPE				m_eCurrentState;

@@ -5,6 +5,7 @@
 #include "Level_Loading.h"
 #include "GameInstance.h"
 #include "Player_Manager.h"
+#include "Camera_Dynamic.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -18,6 +19,9 @@ HRESULT CLevel_Logo::Initialize()
 
 	///* 검색시에 어떤 레벨에 있는 특정 태그에 있는 몇번째 녀석. */
 	if (FAILED(Ready_Layer_GameObject()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Camera()))
 		return E_FAIL;
 
 	return S_OK;
@@ -85,12 +89,12 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 		return E_FAIL;
 	}
 
-	//if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/UI.xlsx"), LEVEL::LEVEL_LOGO)))
-	//{
-	//	MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
-	// Safe_Release(pFileLoader);
-	//	return E_FAIL;
-	//}
+	if (FAILED(pFileLoader->Load_Excel(TEXT("../Bin/DataFiles/UI.xlsx"), LEVEL::LEVEL_LOGO)))
+	{
+		MSG_BOX("CLevel_Logo - Initialize() - Load_Excel FAILED");
+		Safe_Release(pFileLoader);
+		return E_FAIL;
+	}
 #pragma endregion
 
 	Safe_Release(pFileLoader);
@@ -128,16 +132,59 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//	return E_FAIL;
 	//}
 
-	tSpriteInfo.fSize = _float2{ 30, 30.f };
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;		
-	}
+	//tSpriteInfo.fSize = _float2{ 30, 30.f };
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;		
+	//}
 
 	Safe_Release(pGameInstance);
 	return S_OK;
 
+}
+
+HRESULT CLevel_Logo::Ready_Layer_Camera()
+{
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
+	CCamera_Dynamic::CAMERA_DYNAMIC_DESC		tCameraDynamicDesc;
+	ZeroMemory(&tCameraDynamicDesc, sizeof CCamera_Dynamic::CAMERA_DYNAMIC_DESC);
+
+	tCameraDynamicDesc.tCameraDesc.vEye = _float4(0.f, 0.f, -500.f, 1.f);
+	tCameraDynamicDesc.tCameraDesc.vAt = _float4(0.f, 0.f, 0.f, 1.f);
+	tCameraDynamicDesc.tCameraDesc.vAxisY = _float4(0.f, 1.f, 0.f, 0.f);
+
+	tCameraDynamicDesc.tCameraDesc.fFovy = XMConvertToRadians(60.f);
+	tCameraDynamicDesc.tCameraDesc.fAspect = _float(g_iWinSizeX) / g_iWinSizeY;
+	tCameraDynamicDesc.tCameraDesc.fNear = 1.f;
+	tCameraDynamicDesc.tCameraDesc.fFar = 1000.f;
+
+	tCameraDynamicDesc.tCameraDesc.tTransformDesc.SpeedPerSec = 50.f;
+	tCameraDynamicDesc.tCameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
+
+	const _vector	vMapScaleLTRB[4] = { {-688.f, 0.f, 0.f, 0.f}
+										,{0.f, 398.f, 0.f, 0.f}
+										,{982.f, 0.f, 0.f, 0.f}
+										,{0.f, -632.f, 0.f, 0.f} }; // 맵 크기 Left Top Right Bottom 순
+	_float fLimitWidth = XMVectorGetX(XMVector4Length(vMapScaleLTRB[2] - vMapScaleLTRB[0]));
+	_float fLimitHeight = XMVectorGetY(XMVector4Length(vMapScaleLTRB[1] - vMapScaleLTRB[3]));
+	tCameraDynamicDesc.tCameraLimitRange.vRadius = _float2(fLimitWidth / 2.f, fLimitHeight / 2.f);
+	tCameraDynamicDesc.tCameraLimitRange.vCenterPos = _float2(XMVectorGetX(vMapScaleLTRB[2]) - fLimitWidth / 2.f
+															, XMVectorGetY(vMapScaleLTRB[1]) - fLimitHeight / 2.f);
+
+
+	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_STATIC, TEXT("Layer_Camera"), &tCameraDynamicDesc))))
+	{
+		Safe_Release(pGameInstance);
+		MSG_BOX("CLevel_Logo - Ready_Layer_Camera() - NULL");
+		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
+
+	return S_OK;
 }
 
 

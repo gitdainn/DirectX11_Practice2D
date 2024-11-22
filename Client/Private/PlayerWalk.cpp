@@ -111,8 +111,8 @@ void CPlayerWalk::Update(CSpriteObject* pObject, _double TimeDelta)
 		_vector vAfterMovePosition = pPlayerTransform->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(abs(XMVectorGetX(vPosition) - XMVectorGetX(vAfterMovePosition)), 0.f);
-		pGameInstance->Set_Scroll(fScroll);
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
 
 	}
 	else if (SPRITE_DIRECTION::RIGHT == m_eDirection)
@@ -122,8 +122,8 @@ void CPlayerWalk::Update(CSpriteObject* pObject, _double TimeDelta)
 		_vector vAfterMovePosition = pPlayerTransform->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(-1 * abs(XMVectorGetX(vPosition) - XMVectorGetX(vAfterMovePosition)), 0.f);
-		pGameInstance->Set_Scroll(fScroll);
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
 
 	}
 

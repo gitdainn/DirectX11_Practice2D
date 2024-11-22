@@ -36,9 +36,6 @@ public:
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
-public:
-	virtual void ScrollNotify(const _float2 fScroll) override;
-
 protected:
 	virtual void Idle(_double TimeDelta);
 	virtual void Walk(_double TimeDelta);

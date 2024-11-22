@@ -10,6 +10,7 @@
 #include "Widget.h"
 #include "HealthBarWidget.h"
 #include "LineRider.h"
+#include "Camera_Dynamic.h"
 
 #pragma region LOAD
 #include "ColliderAABB2D.h"
@@ -64,6 +65,9 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	if (FAILED(Ready_Prototype_Sprite_For_Static()))
+		return E_FAIL;
+
+	if (FAILED(Ready_PrototypeName()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_StartLevel(LEVEL_LOGO)))
@@ -200,56 +204,8 @@ HRESULT CMainApp::Ready_DefaultData_Excel()
 	return S_OK;
 }
 
-HRESULT CMainApp::Ready_Prototype_Component_For_Static()
+HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 {
-	/* For.Prototype_Component_Renderer */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
-		m_pRenderer = CRenderer::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Transform*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
-		CTransform::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_VIBuffer_Rect */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
-		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Shader_VtxTex*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
-		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_LineRider*/
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
-		CLineRider::Create(m_pDevice, m_pContext))))
-		return E_FAIL;
-
-	/* For.Prototype_Component_Widget */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Widget"),
-		CWidget::Create(m_pDevice, m_pContext))))
-	{
-		return E_FAIL;
-	};
-
-	/* For.Prototype_Component_HealthBarWidget */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_HealthBarWidget"),
-		CHealthBarWidget::Create(m_pDevice, m_pContext))))
-	{
-		return E_FAIL;
-	};
-
-#pragma region COLLIDER
-	/* For.Prototype_Component_Collider_AABB */
-	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
-		CColliderAABB2D::Create(m_pDevice, m_pContext))))
-	{
-		return E_FAIL;
-	};
-#pragma endregion
-
 #pragma region PLAYER_TEXTURE	
 	///* For.Prototype_Component_Texture_Logo */
 	//if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Texture_Background"),
@@ -388,7 +344,75 @@ HRESULT CMainApp::Ready_Prototype_Component_For_Static()
 	return S_OK;
 }
 
+HRESULT CMainApp::Ready_Prototype_Component_For_Static()
+{
+	/* For.Prototype_Component_Renderer */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Renderer"),
+		m_pRenderer = CRenderer::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Transform*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Transform"),
+		CTransform::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_VIBuffer_Rect */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_VIBuffer_Rect"),
+		CVIBuffer_Rect::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Shader_VtxTex*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Shader_VtxTex"),
+		CShader::Create(m_pDevice, m_pContext, TEXT("../Bin/ShaderFiles/Shader_VtxTex.hlsl"), VTXTEX_DECLARATION::Elements, VTXTEX_DECLARATION::iNumElements))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_LineRider*/
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_LineRider"),
+		CLineRider::Create(m_pDevice, m_pContext))))
+		return E_FAIL;
+
+	/* For.Prototype_Component_Widget */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Widget"),
+		CWidget::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+
+	/* For.Prototype_Component_HealthBarWidget */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_HealthBarWidget"),
+		CHealthBarWidget::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+
+#pragma region COLLIDER
+	/* For.Prototype_Component_Collider_AABB */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
+		CColliderAABB2D::Create(m_pDevice, m_pContext))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+	return S_OK;
+}
+
 HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
+{
+#pragma region OBJECT
+	/* For.Prototype_GameObject_Install */
+	if (FAILED(m_pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Camera_Dynamic"),
+		CCamera_Dynamic::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(m_pGameInstance);
+		return E_FAIL;
+	};
+#pragma endregion
+
+	return S_OK;
+}
+
+HRESULT CMainApp::Ready_PrototypeName()
 {
 	CFileLoader* pFileLoader = CFileLoader::GetInstance();
 	if (nullptr == pFileLoader)
@@ -413,34 +437,41 @@ HRESULT CMainApp::Ready_Prototype_GameObject_For_Static()
 	pFileLoader->Add_PrototypeName(L"명계의균열", pPrototypeName);
 	
 	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillGateOfNether::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pFileLoader);
 		return E_FAIL;
+	}
 
 	pPrototypeName = TEXT("Prototype_GameObject_Skill_Guillotine");
 	pFileLoader->Add_PrototypeName(L"길로틴", pPrototypeName);
 
 	if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillGuillotine::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pFileLoader);
 		return E_FAIL;
+	}
 
 	// 워터 스컬 //
 	//pPrototypeName = TEXT("Prototype_GameObject_Skill_Dive");
 	//pFileLoader->Add_PrototypeName(L"입수", pPrototypeName);
 
 	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillDive::Create(m_pDevice, m_pContext))))
+	//{
+	//	Safe_Release(pFileLoader);
 	//	return E_FAIL;
+	//}
 
 	//pPrototypeName = TEXT("Prototype_GameObject_Skill_HighTide");
 	//pFileLoader->Add_PrototypeName(L"밑물", pPrototypeName);
 
 	//if (FAILED(m_pGameInstance->Add_Prototype(pPrototypeName, CSkillHighTide::Create(m_pDevice, m_pContext))))
+	//{
+	//	Safe_Release(pFileLoader);
 	//	return E_FAIL;
+	//}
 
 	Safe_Release(pFileLoader);
 
-	return S_OK;
-}
-
-HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
-{
 	return S_OK;
 }
 

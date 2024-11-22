@@ -346,16 +346,12 @@ void CSpriteObject::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTa
 {
 }
 
-HRESULT CSpriteObject::SetUp_ShaderDefault()
+HRESULT CSpriteObject::SetUp_Shader_Camera()
 {
 	CGameInstance* pGameInstance = CGameInstance::GetInstance();
 	Safe_AddRef(pGameInstance);
 
 	_float4x4 WorldMatrix = m_pTransformCom->Get_WorldMatrixFloat();
-	if (m_bIsScroll)
-	{
-		Scroll_Screen(WorldMatrix);
-	}
 
 	if (FAILED(m_pShaderCom->Set_Matrix("g_WorldMatrix", &WorldMatrix)))
 	{
@@ -363,13 +359,22 @@ HRESULT CSpriteObject::SetUp_ShaderDefault()
 		return E_FAIL;
 	}
 
-	Safe_Release(pGameInstance);
 
+	XMStoreFloat4x4(&m_ViewMatrix, pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW));
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
 
+	XMStoreFloat4x4(&m_ProjMatrix, pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ));
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ProjMatrix", &m_ProjMatrix)))
+	{
+		Safe_Release(pGameInstance);
 		return E_FAIL;
+	}
+
+	Safe_Release(pGameInstance);
 
 	_float4 vColor = m_tSpriteInfo.vColor;
 	if ((_uint)VTXTEX_PASS::Color == m_iShaderPassIndex)

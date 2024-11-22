@@ -18,6 +18,7 @@ public:
 private: /* 이 레벨이 사용하기위한 사본 객체들을 그룹별로 생성한다. */
 	HRESULT Ready_Layer_Priority();
 	HRESULT Ready_Layer_GameObject();
+	HRESULT Ready_Layer_Camera(); // 플레이어 생성 이후에 해주세요. 일단은..
 
 public:
 	static CLevel_Logo* Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

@@ -145,13 +145,6 @@ void CEnemy::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, c
 	int i = 0;
 }
 
-void CEnemy::ScrollNotify(const _float2 fScroll)
-{
-	m_vStartPosition = XMVectorSetX(m_vStartPosition, XMVectorGetX(m_vStartPosition) + fScroll.x);
-	
-	return __super::ScrollNotify(fScroll);
-}
-
 #pragma region ENEMY_STATE
 void CEnemy::Idle(_double TimeDelta)
 {
@@ -370,7 +363,7 @@ HRESULT CEnemy::Add_Components(void* pArg)
 
 HRESULT CEnemy::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Camera()))
 		return E_FAIL;
 
 	if (FAILED(SetUp_Shader_UVAnim()))

@@ -29,7 +29,7 @@ HRESULT CBackGround::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
 	
-	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Not_Z_TestWrite;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
 }
@@ -39,7 +39,7 @@ HRESULT CBackGround::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Default;
+	m_iShaderPassIndex = (_uint)VTXTEX_PASS::Not_Z_TestWrite;
 	m_eRenderGroup = CRenderer::RENDER_PRIORITY;
 	return S_OK;
 }
@@ -74,7 +74,7 @@ HRESULT CBackGround::Add_Components(void* pArg)
 
 HRESULT CBackGround::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Orthographic()))
 		return E_FAIL;
 
 	return S_OK;

@@ -72,7 +72,7 @@ HRESULT CTile::Add_Components(void* pArg)
 
 HRESULT CTile::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Camera()))
 		return E_FAIL;
 
 	return S_OK;

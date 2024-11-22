@@ -57,7 +57,19 @@ void CScroll_Manager::Notify(const _float2 fScroll)
 		if (nullptr == pObject)
 			continue;
 
-		pObject->ScrollNotify(fScroll);
+		CTransform* pTransformCom = pObject->Get_TransformCom();
+		if (nullptr == pTransformCom)
+			return;
+
+		_vector vPosition = pTransformCom->Get_State(CTransform::STATE_POSITION);
+
+		_float fScrollSpeed = { 1.f }; // 이건 객체마다 달라야해서 임시코드
+		vPosition = XMVectorSetX(vPosition, XMVectorGetX(vPosition) + fScroll.x * fScrollSpeed);
+		vPosition = XMVectorSetY(vPosition, XMVectorGetY(vPosition) + fScroll.y * fScrollSpeed);
+
+		pTransformCom->Set_State(CTransform::STATE_POSITION, vPosition);
+
+		//pObject->ScrollNotify(fScroll); 
 	}
 
 	// 2. 라인도 스크롤 적용

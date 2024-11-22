@@ -101,8 +101,6 @@ HRESULT CGameInstance::Tick_Engine(_double TimeDelta)
 
 	m_pCollision_Manager->Tick(TimeDelta);
 
-	m_pPipeLine->Update();
-
 	m_pFrustum->Tick();
 
 	m_pObject_Manager->LateTick(TimeDelta);	

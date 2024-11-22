@@ -76,7 +76,7 @@ HRESULT CEnvironment::Add_Components(void* pArg)
 
 HRESULT CEnvironment::SetUp_ShaderResources()
 {
-	if (FAILED(SetUp_ShaderDefault()))
+	if (FAILED(SetUp_Shader_Camera()))
 		return E_FAIL;
 
 	return S_OK;

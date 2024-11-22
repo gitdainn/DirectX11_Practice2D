@@ -179,8 +179,8 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 		return;
 	Safe_AddRef(pGameInstance);
 
-	pGameInstance->Set_Scroll(fScroll);
-	pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+	//pGameInstance->Set_Scroll(fScroll);
+	//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
 
 	Safe_Release(pGameInstance);
 }

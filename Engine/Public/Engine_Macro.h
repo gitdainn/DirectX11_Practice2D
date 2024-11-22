@@ -11,6 +11,10 @@
 //
 #define			OBJ_DEAD				-1
 
+/** @note - 매크로함수: 매크로함수는 함수와 인자를 모두 소괄호로 묶어주어야 기호 테이블에 넘어갈 때 문제를 방지할 수 있습니다. (오버헤드 방지)*/
+/** 클램프: value 값이 minValue 이하이면 minValue, maxValue 이상이면 maxValue, 범위 이내이면 value를 반환합니다. */
+#define			CLAMP(value, minValue, maxValue)	( (value) < (minValue) ? (minValue) : (value) > (maxValue) ? (maxValue) : (value) )
+
 #define D3DCOLOR_ARGB(a,r,g,b) \
     ((D3DCOLOR)((((a)&0xff)<<24)|(((r)&0xff)<<16)|(((g)&0xff)<<8)|((b)&0xff)))
 

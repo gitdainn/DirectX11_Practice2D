@@ -324,15 +324,13 @@ HRESULT CFileLoader::Load_ObjectTransform_Excel(const _tchar* pFilePath)
 			_float2 fSizeRatio = { 1.f, 1.f };
 			tTransform.fSize.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fSize.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			fSizeRatio.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
-			fSizeRatio.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fSizeRatio.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
+			tTransform.fSizeRatio.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fPosition.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fPosition.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fRotation.x = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 			tTransform.fRotation.y = pSheet->readNum(iRow, m_iFirstCol + iCol++);
 
-			tTransform.fSize.x *= fSizeRatio.x;
-			tTransform.fSize.y *= fSizeRatio.y;
 			m_ObjectTransformMap.emplace(iInstanceID, tTransform);
 		}
 	}
