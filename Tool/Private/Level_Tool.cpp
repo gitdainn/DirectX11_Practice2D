@@ -48,8 +48,8 @@ HRESULT CLevel_Tool::Ready_Layer_Camera()
 	tCameraDynamicDesc.tCameraDesc.fNear = 1.f;
 	tCameraDynamicDesc.tCameraDesc.fFar = 1000.f;
 
-	tCameraDynamicDesc.CameraDesc.tTransformDesc.SpeedPerSec = 50.f;
-	tCameraDynamicDesc.CameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
+	tCameraDynamicDesc.tCameraDesc.tTransformDesc.SpeedPerSec = 50.f;
+	tCameraDynamicDesc.tCameraDesc.tTransformDesc.RotationPerSec = XMConvertToRadians(180.0f);
 
 	if (FAILED((pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Camera_Dynamic"), LEVEL_TOOL, TEXT("Layer_Camera"), &tCameraDynamicDesc))))
 	{

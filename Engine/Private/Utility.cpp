@@ -128,7 +128,7 @@ CTexture* CUtility::Load_Texture_Folder(ID3D11Device* pDevice, ID3D11DeviceConte
 	return pTexture;
 }
 
-_vector CUtility::Get_MousePos(HWND hWnd, const _uint& iWinSizeX, const _uint& iWinSizeY)
+_vector CUtility::Get_MousePosInViewport(HWND hWnd, const _uint& iWinSizeX, const _uint& iWinSizeY)
 {
 	POINT ptMouse{};
 	GetCursorPos(&ptMouse);

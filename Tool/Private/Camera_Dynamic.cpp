@@ -51,8 +51,8 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(0.f, -1 * abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
-		pGameInstance->Set_Scroll(fScroll);
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
 	}
 
 	if (pGameInstance->Get_KeyStay(DIK_S))
@@ -62,8 +62,8 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(0.f, abs(XMVectorGetY(vPosition) - XMVectorGetY(vMovePosition)));
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
-		pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
 	}
 
 	if (pGameInstance->Get_KeyStay(DIK_A))
@@ -73,8 +73,8 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(-1 * abs(XMVectorGetX(vPosition) - XMVectorGetX(vMovePosition)), 0.f);
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
-		pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
 	}
 
 	if (pGameInstance->Get_KeyStay(DIK_D))
@@ -84,8 +84,8 @@ _uint CCamera_Dynamic::Tick(_double TimeDelta)
 		_vector vMovePosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 
 		_float2 fScroll = _float2(abs(XMVectorGetX(vPosition) - XMVectorGetX(vMovePosition)), 0.f);
-		pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
-		pGameInstance->Set_Scroll(fScroll);
+		//pGameInstance->Scroll_Line(pGameInstance->Get_ScrollX(), pGameInstance->Get_ScrollY());
+		//pGameInstance->Set_Scroll(fScroll);
 	}
 
 	Safe_Release(pGameInstance);

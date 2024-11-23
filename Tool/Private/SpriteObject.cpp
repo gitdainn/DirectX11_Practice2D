@@ -359,7 +359,6 @@ HRESULT CSpriteObject::SetUp_Shader_Camera()
 		return E_FAIL;
 	}
 
-
 	XMStoreFloat4x4(&m_ViewMatrix, pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW));
 	if (FAILED(m_pShaderCom->Set_Matrix("g_ViewMatrix", &m_ViewMatrix)))
 	{
@@ -381,7 +380,7 @@ HRESULT CSpriteObject::SetUp_Shader_Camera()
 	{
 		vColor = { 0.5f, 0.5f, 0.f, 0.f };
 	}
-	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_vector))))
+	if (FAILED(m_pShaderCom->Set_RawValue("g_vColor", &vColor, sizeof(_float4))))
 		return E_FAIL;
 
 	if (nullptr == m_pSpriteFileName)

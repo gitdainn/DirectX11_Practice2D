@@ -273,9 +273,13 @@ HRESULT CCollider::Render()
 
 	_float4x4 ViewMatrix;
 	_float4x4 ProjMatrix;
-	DirectX::XMStoreFloat4x4(&ViewMatrix, XMMatrixIdentity());
-	DirectX::XMStoreFloat4x4(&ProjMatrix, XMMatrixOrthographicLH(1280, 720, 0.f, 1.f));
+	//DirectX::XMStoreFloat4x4(&ViewMatrix, XMMatrixIdentity());
+	//DirectX::XMStoreFloat4x4(&ProjMatrix, XMMatrixOrthographicLH(1280, 720, 0.f, 1.f));
 
+		// 카메라의 역행렬 및 원근투영 적용 (= 카메라의 움직임만큼 정점의 위치가 이동됨)
+	XMStoreFloat4x4(&ViewMatrix, pPipeLine->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW));
+	XMStoreFloat4x4(&ProjMatrix, pPipeLine->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ));
+	
 	m_pEffect->SetView(DirectX::XMLoadFloat4x4(&ViewMatrix));
 	m_pEffect->SetProjection(DirectX::XMLoadFloat4x4(&ProjMatrix));
 

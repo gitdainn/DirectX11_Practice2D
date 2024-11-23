@@ -96,8 +96,16 @@ private:
 
 private:
 	void	Key_Input(_double TimeDelta);
-	void	Get_MousePos(_vector& vMousePos) const;
 
+private: // Utility //
+	/** 뷰포트상의 마우스 위치를 반환합니다. *
+	* @notice - 직교투영 시 월드 위치와 뷰포트 상의 위치는 동일함으로 직교투영한 오브젝트를 다루고자 할 때 사용해주세요. */
+	void	Get_MousePosInViewport(_vector& vOutPos) const;
+	/** 인자값으로 받은 인덱스의 Z 평면과 마우스의 교차 지점의 위치를 반환합니다. *
+	* @param iZIndex - n ~ f 사이의 z 인덱스를 넣어주세요. (ex. z=1로 원근투영 중인 오브젝트를 마우스 위치로 위치시키고 싶을 때 1 넘김)*/
+	void	Get_IntersectMouseWithZPlane(_vector& vOutPos, const _uint iZIndex) const;
+
+private:
 	HRESULT Get_OpenFileName(OPENFILENAME& tOpenFileName);
 	HRESULT Install_GameObject(SPRITE_INFO& tSpriteInfo);
 	_tchar* ConvertCWithWC(const char* pFolderName, const _tchar* pConvertText) const;

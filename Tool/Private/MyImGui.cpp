@@ -2188,15 +2188,18 @@ void CMyImGui::Key_Input(_double TimeDelta)
 
     if (pGameInstance->Get_MouseStay(CDInput_Manager::MOUSEKEYSTATE::DIMK_RB))
     {
-        _vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
-        Get_MousePos(vMousePos);
-
         /* 직교 투영의 경우, 내부적으로 변화는 일어나지만 월드 좌표와 뷰포트 좌표의 차이가 없기에 뷰포트 좌표를 월드로 셋팅 */
         if (nullptr == m_pSelectedObject)
         {
             Safe_Release(pGameInstance);
             return;
         }
+        CTransform* pObjectTransformCom = m_pSelectedObject->Get_TransformCom();
+        if (nullptr == pObjectTransformCom)
+            return;
+
+        _vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
+        Get_IntersectMouseWithZPlane(vMousePos, XMVectorGetZ(pObjectTransformCom->Get_State(CTransform::STATE_POSITION)));
         
         m_pSelectedObject->Get_TransformCom()->Set_State(CTransform::STATE_POSITION, vMousePos);
     }
@@ -2205,7 +2208,7 @@ void CMyImGui::Key_Input(_double TimeDelta)
     if (pGameInstance->Get_KeyStay(DIK_L) && pGameInstance->Get_MouseDown(CDInput_Manager::MOUSEKEYSTATE::DIMK_LB))
     {
         _vector vMousePos = { 0.f, 0.f, 0.f, 0.f };
-        Get_MousePos(vMousePos);
+        Get_IntersectMouseWithZPlane(vMousePos, 0.f);
         _float3 vPosition = _float3(XMVectorGetX(vMousePos), XMVectorGetY(vMousePos), 0.f);
         VertexPositionColor tVertex(vPosition, XMFLOAT4(0.f, 1.f, 0.f, 1.f));
 
@@ -2338,26 +2341,72 @@ void CMyImGui::Key_Input(_double TimeDelta)
     return;
 }
 
-void CMyImGui::Get_MousePos(_vector& vMousePos) const
+void CMyImGui::Get_MousePosInViewport(_vector& vOutPos) const
+{
+    CGameInstance* pGameInstance = CGameInstance::GetInstance();
+    if (nullptr == pGameInstance)
+        return;
+
+    Safe_AddRef(pGameInstance);
+    POINT ptMouse{};
+    GetCursorPos(&ptMouse); // 스크린 공간의 마우스 좌표를 가져옵니다.
+    ScreenToClient(g_hWnd, &ptMouse); // 스크린 공간을 클라이언트 공간으로 변환합니다. 화면 크기가 동일하면(?) 클라공간은 뷰포트(=픽셀 단위)와 동일
+
+    // 뷰스 == 카메라 월드 역행렬
+    _float4x4 CameraWordInverseMatrix = pGameInstance->Get_Transform_Float4x4(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW);
+
+    /** x는 -이고, y는 +인 이유
+    * API 좌표계는 좌측 상단 (0,0)에 x는 우측으로 갈수록 +, y는 아래로 갈수록 +임을 인지해야 함.
+    * 뷰스페이스는 카메라의 월드 역행렬이므로 카메라 이동의 반대방향을 내포함.
+    * 우리는 카메라가 이동한 위치의 좌표를 가져올 거기 때문에 카메라의 반대가 아니라 동일하게 움직여야 해서 -와 +로 해준 것 */
+    _float fX = ptMouse.x - CameraWordInverseMatrix._41;
+    _float fY = ptMouse.y + CameraWordInverseMatrix._42;
+
+    /* API 좌표계를 DirectX 좌표계로 보정한 것 (변환X = NDC 좌표계X) */
+    vOutPos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+
+    Safe_Release(pGameInstance);
+    return;
+}
+
+void CMyImGui::Get_IntersectMouseWithZPlane(_vector& vOutPos, const _uint iZIndex) const
 {
     CGameInstance* pGameInstance = CGameInstance::GetInstance();
     Safe_AddRef(pGameInstance);
 
-    //_vector vMousePos = CUtility::Get_MousePos(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
+    //_vector vMousePos = CUtility::Get_MousePosInViewport(g_hWnd, g_iWinSizeY, g_iWinSizeY); 
     POINT ptMouse{};
-    GetCursorPos(&ptMouse);
-    ScreenToClient(g_hWnd, &ptMouse);
+    GetCursorPos(&ptMouse); // 스크린 공간의 마우스 좌표를 가져옵니다.
+    ScreenToClient(g_hWnd, &ptMouse); // 스크린 -> 클라이언트 공간(크기 동일 시 뷰포트와 동일)
 
-    _float2 MousePos = _float2((_float)ptMouse.x, (_float)ptMouse.y);
+    // 뷰포트 -> 투영
+    _vector vMousePos = XMVectorSet(ptMouse.x / (g_iWinSizeX * 0.5f) - 1.f, ptMouse.y / -(g_iWinSizeY * 0.5f) + 1.f, 0.f, 1.f);
 
-    vMousePos = XMVectorSet(MousePos.x, MousePos.y, 0.0f, 1.f);
+    // 투영 -> 뷰스페이스
+    _matrix ProjectionMatrix = pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ);
+    ProjectionMatrix = XMMatrixInverse(nullptr, ProjectionMatrix); // 투영 역행렬
+    vMousePos = XMVector3TransformCoord(XMVectorSet(XMVectorGetX(vMousePos), XMVectorGetY(vMousePos), 0.f, 1.f), ProjectionMatrix);
 
-    // @qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
-    _float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
-    _float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
+    _vector vRayPos = { 0.f, 0.f, 0.f };
+    _vector vRayDir = vMousePos - vRayPos;
 
-    /* 투영 변환 X, API 뷰포트 좌표를 DirectX 뷰포트로 보정한 것 */
-    vMousePos = XMVectorSet(fX - (g_iWinSizeX >> 1), -fY + (g_iWinSizeY >> 1), 0.f, 1.f);
+    // 3. 뷰스 -> 월드
+    _matrix ViewMatrix = pGameInstance->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW);
+    ViewMatrix = XMMatrixInverse(nullptr, ViewMatrix);
+
+    vRayPos = XMVector3TransformCoord(vRayPos, ViewMatrix);
+    vRayDir = XMVector3Normalize(XMVector3TransformNormal(vRayDir, ViewMatrix));
+
+    // 광선-평면 교차 계산 (z=1 평면)
+    float t = (iZIndex - XMVectorGetZ(vRayPos)) / XMVectorGetZ(vRayDir); // t = (zPlaneIndex - vRayPos) / vRayDir
+    vOutPos = XMVectorAdd(vRayPos, XMVectorScale(vRayDir, t)); // vRayPos + t * vRayDir
+
+#pragma region 공부할 부분
+    ////@qurious - 마우스 스크롤 왜 X는 -고, Y는 + 인지 분석, 왜 엔진에 넘기면 마우스가 제대로 안 따라오는지!
+    // // 이거 HiFiRush Tool의 직교투영 시 코드도 같이 보면서 원근 투영 시 마우스 클리과 직교 투영 시 마우스 클릭 어케 하는지 보기 (블로그 참고)
+    // _float fX = XMVectorGetX(vMousePos) - pGameInstance->Get_ScrollX();
+    // _float fY = XMVectorGetY(vMousePos) + pGameInstance->Get_ScrollY();
+#pragma endregion
 
     Safe_Release(pGameInstance);
     return;
