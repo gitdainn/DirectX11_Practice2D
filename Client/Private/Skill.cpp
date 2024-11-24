@@ -3,7 +3,7 @@
 #include "FileLoader.h"
 
 CSkill::CSkill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	:CSpriteObject(pDevice, pContext)
+	:CAnimObject(pDevice, pContext)
 {
 }
 
@@ -67,7 +67,7 @@ HRESULT CSkill::Late_Initialize(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
 	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		MSG_BOX("CAnimObject - Add_Components() - FAILED");
 		return E_FAIL;
 	}
 	m_pColliderCom->Set_Owner(this);
@@ -100,7 +100,7 @@ HRESULT CSkill::Render()
 	return __super::Render();
 }
 
-void CSkill::Enter(CSpriteObject* pOwner)
+void CSkill::Enter(CAnimObject* pOwner)
 {
 	ResetTime();
 

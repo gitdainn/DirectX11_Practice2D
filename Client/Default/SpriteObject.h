@@ -35,6 +35,7 @@ class CSpriteObject abstract : public CGameObject
 {
 public:
 	explicit CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
+	explicit CSpriteObject(const CSpriteObject& rhs);
 	virtual ~CSpriteObject() = default;
 
 public:
@@ -52,49 +53,44 @@ public:
 	virtual void OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 	virtual void OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override;
 
-protected: // Animation
-	struct ANIM_INFO
+protected: // Stats
+	struct BASE_STATS
 	{
-		_float fAnimTime = { 0.f };
-		// @qurious - vector를 하려면 딜레이없는 애들까지 공간 다 만들어줘야하고, 공간을 아끼자니 몇번째 인덱스인지 .find()를 써야함 ㅁ가 더 좋을까?
-		/** @qurious - map 타입 정의에는 const 쓰면 안됨 */
-		unordered_map<_uint, _float> fDelayTimeMap;
-		_uint iStartIndex = { 0 };
-		_uint iEndIndex = { 0 };
+		_int iMagicAttack = { 10 };
+		_int iHp = { 100 };
+		_int iDefense = { 1 };
+		_int iPhysicalAttack = { 10 };
+		_int iMaxJumpCount = { 2 };
+
+		_float fMovementSpeed = { 10 };
+		_float fAttackSpeed = { 10 };
+		_float fReduceCoolDownSpeed = { 0 };
+		_float fCriticalHit = { 0.f };
+
+		_int iMagicAttackIncrease = { 0 };
+		_int iPhysicalAttackIncrease = { 0 };
+		_int iDefenseIncrease = { 0 };
+
+		_bool	bIsInvulnerable = { false };
+		_double InvulnerabilityDuration = { 0.0 };
 	};
 
-	ANIM_INFO* m_pAnimInfo = { nullptr };
-	_uint m_iAnimTypeNum = { 0 };
-	_uint m_iAnimType = { 0 };
-	_double m_AnimAcc = { 0.f };
-
-	virtual void Add_Animation() = 0;
-	virtual void Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType = 0);
-	virtual void End_Animation(_uint& iSpriteIndex);
-
-	void	Switch_SpriteDirection()
+	virtual void	Switch_SpriteDirection()
 	{
 		m_eSpriteDirection = (m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? SPRITE_DIRECTION::RIGHT : SPRITE_DIRECTION::LEFT);
-		if (m_bIsAnimUV)
-		{
-			// 적 이미지 디폴트 방향이 오른쪽임 (Flip = 왼쪽 보는 상태)
-			m_iShaderPassIndex = ((m_eSpriteDirection == SPRITE_DIRECTION::LEFT ? (_uint)VTXTEX_PASS::FlipUV_Anim : (_uint)VTXTEX_PASS::UV_Anim));
-		}
-		// AnimUV가 아닐 경우의 Filp 버전은 현재 없음	
 	}
 
 public:
-	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 	HRESULT			Change_TextureComponent(const _tchar* pPrototypeTag);
 
 public:
 	const int		Get_Attack()
 	{
-		return m_iMagicAttack;
+		return m_tBaseStats.iMagicAttack;
 	}
 	void			Set_Damaged(const int iAttack)
 	{
-		m_iHp -= (iAttack - m_iDefense);
+		m_tBaseStats.iHp -= (iAttack - m_tBaseStats.iDefense);
 	}
 
 public:
@@ -155,24 +151,6 @@ public:
 		m_pSpriteFileName = pTextureTag;
 	}
 
-public:
-	inline void CSpriteObject::Change_AnimType(const _uint& iAnimType)
-	{
-		if (m_iAnimTypeNum <= iAnimType)
-			return;
-
-		m_iAnimType = iAnimType;
-		const ANIM_INFO* pAnim = m_pAnimInfo + m_iAnimType;
-		if (m_bIsAnimUV)
-		{
-			m_iUVTextureIndex = pAnim->iStartIndex;
-		}
-		else
-		{
-			m_iTextureIndex = pAnim->iStartIndex;
-		}
-	}
-
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr);
 	//class CComponent* Find_Component(const _tchar* pComponentTag);
@@ -185,19 +163,27 @@ protected:
 	HRESULT SetUp_Shader_Orthographic();
 
 	/** 필요에 따라 선택적으로 사용하는 부가적인 리소스 함수들입니다. */
-	HRESULT SetUp_Shader_UVAnim();
 	HRESULT SetUp_Shader_Wrap();
 
+protected:
 	/** 점프/추락 기능이 있는 객체에게 사용하는 선타기 기능입니다. */
 	virtual HRESULT	JumpableLineRider(_double TImeDelta);
 	/** 추락 기능이 없는 선타기 기능입니다.
 	* @return - 현재 타고 있는 선을 벗어나면 E_FAIL을 반환합니다. (착지할 수 있는 땅이 없어도 E_FAIL 반환) */
-	HRESULT	DefaultLineRider(const _vector vPosition);
+	HRESULT	DefaultLineRider(const _vector vPosition, const _float fOffsetY = 0.f);
 
 	HRESULT Load_Components_Excel();
 	HRESULT	Attach_Collider(const _tchar* pLayerTag, CCollider* pCollider);
 	_vector Adjust_PositionUp_Radius(const _float& RadiusY);
 	void	MoveToDirection(const SPRITE_DIRECTION& Direction, _double TimeDelta);
+
+protected:
+	const _tchar*	DeepCopy(const _tchar* pTag)
+	{
+		_tchar* pCopy = new _tchar[lstrlen(pTag) + 1]{};
+		lstrcpy(pCopy, pTag);
+		return pCopy;
+	}
 
 private:
 	HRESULT CSpriteObject::Mapping_Component(const _tchar* pComponentTag);
@@ -225,46 +211,24 @@ protected:
 
 	_vector					m_vColor = { 1.f, 1.f, 1.f, 1.f };
 
-	CState* m_pState;
-	CState* m_pAirState;
+	CState* m_pState = { nullptr };
+	CState* m_pAirState = { nullptr };
 	_bool					m_bIsInAir;
 
 	STATE_TYPE				m_eCurrentState;
 	SPRITE_DIRECTION		m_eSpriteDirection;
-	_uint	m_iUVTextureIndex;
-	// UV용 텍스처의 가로 텍스처 개수
-	_uint	m_iUVTexNumX;
-	// UV용 텍스처의 세로 텍스처 개수
-	_uint	m_iUVTexNumY;
 
 	const		_tchar* m_pSpriteFileName = { nullptr };
 	/** @note - 템플릿 변수는 static으로 선언해야 한다. - static은 무조건 외부 초기화 */
 
 protected:
 	SPRITE_INFO m_tSpriteInfo;
+	BASE_STATS	m_tBaseStats;
 
 	SKUL_RANK	m_eSkulRank;
 	SKUL_TYPE	m_eSkulType;
 
 	_uint	m_iLevel = { 1 };
-
-	_int m_iHp = { 100 };
-	_int m_iMagicAttack = { 10 };
-	_int m_iPhysicalAttack = { 10 };
-	_int m_iDefense = { 1 };
-	_int m_iMaxJumpCount = { 2 };
-
-	_float m_fMovementSpeed = { 10 };
-	_float m_fAttackSpeed = { 10 };
-	_float m_fReduceCoolDownSpeed = { 0 };
-	_float m_fCriticalHit;
-
-	_int m_iMagicAttackIncrease = { 0 };
-	_int m_iPhysicalAttackIncrease = { 0 };
-	_int m_iDefenseIncrease = { 0 };
-
-	_bool	m_bIsInvulnerable = { false };
-	_double m_InvulnerabilityDuration = { 0.0 };
 
 public:
 	virtual CGameObject* Clone(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) const = 0;

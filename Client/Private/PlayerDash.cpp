@@ -13,7 +13,7 @@ CPlayerDash::~CPlayerDash()
 {
 }
 
-CState* CPlayerDash::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerDash::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -44,7 +44,7 @@ CState* CPlayerDash::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 	return pState;
 }
 
-void CPlayerDash::Enter(CSpriteObject* pObject)
+void CPlayerDash::Enter(CPlayer* pObject)
 {
 	pObject->Set_CurrentState(STATE_TYPE::DASH);
 	pObject->Change_AnimType((_uint)STATE_TYPE::DASH);
@@ -55,7 +55,7 @@ void CPlayerDash::Enter(CSpriteObject* pObject)
 	}
 }
 
-void CPlayerDash::Update(CSpriteObject* pObject, _double TimeDelta)
+void CPlayerDash::Update(CPlayer* pObject, _double TimeDelta)
 {
 	// 만약 애니메이션 끝났으면
 	if (pObject->IsEndSprite())

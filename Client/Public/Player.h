@@ -1,11 +1,11 @@
 #pragma once
-#include "SpriteObject.h"
+#include "AnimObject.h"
 
 const int iSkillNum = { 2 };
 
 class CSkill;
 
-class CPlayer : public CSpriteObject
+class CPlayer : public CAnimObject
 {
 public:
 	explicit CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -25,8 +25,10 @@ private:
 	void	SkillRender();
 
 public:
+	void Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
+
+public:
 	void	Swap_Skill() { m_eCurrentState = STATE_TYPE::SWAP; Change_AnimType((_uint)STATE_TYPE::SWAP); }
-	virtual void	Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END);
 	void	Execute_Skill(_uint iSkillIndex);
 
 public:

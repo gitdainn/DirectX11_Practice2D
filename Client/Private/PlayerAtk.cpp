@@ -4,7 +4,7 @@
 #include "PlayerDash.h"
 #include "PlayerDamaged.h"
 
-CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerAtk::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -40,7 +40,7 @@ CState* CPlayerAtk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
 	return pState;
 }
 
-void CPlayerAtk::Enter(CSpriteObject* pObject)
+void CPlayerAtk::Enter(CPlayer* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
 	STATE_TYPE eAnimType = m_eAttackType;
@@ -64,7 +64,7 @@ void CPlayerAtk::Enter(CSpriteObject* pObject)
 	}
 }
 
-void CPlayerAtk::Update(CSpriteObject* pObject, _double TimeDelta)
+void CPlayerAtk::Update(CPlayer* pObject, _double TimeDelta)
 {
 	// 만약 애니메이션 끝났으면
 	if (pObject->IsEndSprite())

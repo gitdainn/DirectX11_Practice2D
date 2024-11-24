@@ -171,10 +171,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Bin\ShaderFiles\Shader_Defines.hpp" />
+    <ClInclude Include="..\Public\AnimObject.h" />
     <ClInclude Include="..\public\BackGround.h" />
     <ClInclude Include="..\Public\DisplayUI.h" />
     <ClInclude Include="..\public\Camera_Dynamic.h" />
     <ClInclude Include="..\Public\Command.h" />
+    <ClInclude Include="..\Public\Door.h" />
     <ClInclude Include="..\Public\Enemy.h" />
     <ClInclude Include="..\Public\EnemyJump.h" />
     <ClInclude Include="..\Public\Environment.h" />
@@ -243,10 +245,12 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Private\AnimObject.cpp" />
     <ClCompile Include="..\private\BackGround.cpp" />
     <ClCompile Include="..\Private\DisplayUI.cpp" />
     <ClCompile Include="..\private\Camera_Dynamic.cpp" />
     <ClCompile Include="..\Private\Command.cpp" />
+    <ClCompile Include="..\Private\Door.cpp" />
     <ClCompile Include="..\Private\Enemy.cpp" />
     <ClCompile Include="..\Private\EnemyJump.cpp" />
     <ClCompile Include="..\Private\Environment.cpp" />

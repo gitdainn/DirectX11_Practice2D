@@ -39,6 +39,13 @@ namespace Client
 		FALL, SKILL1, SKILL2, DAMAGED, SWAP, MOTION_END
 	};
 
+	enum class ACTIVATE_TYPE
+	{
+		DEACTIVATE,
+		ACTIVATE,
+		ACTIVATE_END
+	};
+
 	enum class SKUL_RANK
 	{
 		NORMAL, RARE, UNIQUE, LEGENDARY

@@ -7,8 +7,6 @@
 
 CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CGameObject(pDevice, pContext)
-	, m_iUVTextureIndex(0)
-	, m_iUVTexNumX(0), m_iUVTexNumY(0)
 	, m_bIsAnimUV(false)
 	, m_pState(nullptr)
 	, m_eSpriteDirection(SPRITE_DIRECTION::LEFT)
@@ -20,6 +18,46 @@ CSpriteObject::CSpriteObject(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
 	m_tSpriteInfo.vColor = { 1.f, 1.f, 1.f, 1.f };
 	m_tSpriteInfo.fSize = { 1.f, 1.f };
 	m_tSpriteInfo.fPosition = { 0.f, 0.f };
+}
+
+// 컴포넌트는 프로토타입에서 넘겨받지 않을거라 생략했음.
+CSpriteObject::CSpriteObject(const CSpriteObject& rhs)
+	: CGameObject(rhs)
+	, m_pDevice(rhs.m_pDevice), m_pContext(rhs.m_pContext)
+	, m_bIsAnimUV(rhs.m_bIsAnimUV), m_bIsEndSprite(rhs.m_bIsEndSprite)
+	, m_vColor(rhs.m_vColor)
+	, m_bIsInAir(rhs.m_bIsInAir)
+	, m_eCurrentState(rhs.m_eCurrentState), m_eSpriteDirection(rhs.m_eSpriteDirection)
+	, m_eSkulRank(rhs.m_eSkulRank), m_eSkulType(rhs.m_eSkulType)
+	, m_iLevel(rhs.m_iLevel)
+
+{
+	memcpy(&m_tBaseStats, &rhs.m_tBaseStats, sizeof(BASE_STATS));
+	memcpy(&m_tSpriteInfo, &rhs.m_tSpriteInfo, sizeof(SPRITE_INFO));
+
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	if (nullptr == pGameInstance)
+		return;
+	Safe_AddRef(pGameInstance);
+
+	if (nullptr != rhs.m_tSpriteInfo.pPrototypeTag)
+	{
+		m_tSpriteInfo.pPrototypeTag = DeepCopy(rhs.m_tSpriteInfo.pPrototypeTag);
+	}
+
+	if (nullptr != rhs.m_tSpriteInfo.pTextureComTag)
+	{
+		m_tSpriteInfo.pTextureComTag = DeepCopy(rhs.m_tSpriteInfo.pTextureComTag);
+		pGameInstance->Add_Garbage(m_tSpriteInfo.pTextureComTag);
+	}
+
+	if (nullptr != rhs.m_pSpriteFileName)
+	{
+		m_pSpriteFileName = DeepCopy(rhs.m_pSpriteFileName);
+		pGameInstance->Add_Garbage(m_pSpriteFileName);
+	}
+
+	Safe_Release(pGameInstance);
 }
 
 HRESULT CSpriteObject::Initialize_Prototype()
@@ -108,12 +146,6 @@ HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	CTransform::TRANSFORM_DESC TransformDesc = { 5.f, XMConvertToRadians(360.f) };
 	m_pTransformCom->Set_TransformDesc(TransformDesc);
 
-	if (m_bIsScroll)
-	{
-		CGameInstance* pGameInstance = CGameInstance::GetInstance();
-		pGameInstance->Add_ScrollListener(this);
-	}
-
 	return S_OK;
 }
 
@@ -161,23 +193,6 @@ HRESULT CSpriteObject::Render()
 	m_pVIBufferCom->Render();
 
 	return S_OK;
-}
-
-void CSpriteObject::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
-{
-	if (STATE_TYPE::SWAP == m_eCurrentState)
-		return;
-
-	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
-	
-	if (nullptr != pState)
-	{
-		delete m_pState;
-
-		m_pState = pState;
-		m_pState->Enter(this);
-	}
-
 }
 
 HRESULT CSpriteObject::Change_TextureComponent(const _tchar* pPrototypeTag)
@@ -347,7 +362,7 @@ HRESULT CSpriteObject::JumpableLineRider(_double TImeDelta)
 	return E_NOTIMPL;
 }
 
-HRESULT CSpriteObject::DefaultLineRider(const _vector vPosition)
+HRESULT CSpriteObject::DefaultLineRider(const _vector vPosition, const _float fOffsetY)
 {
 	if (nullptr == m_pLineRiderCom)
 		return E_FAIL;
@@ -360,32 +375,7 @@ HRESULT CSpriteObject::DefaultLineRider(const _vector vPosition)
 	}
 	else
 	{
-		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY));
-	}
-
-	return S_OK;
-}
-
-HRESULT CSpriteObject::SetUp_Shader_UVAnim()
-{
-	if (m_bIsAnimUV)
-	{
-		_uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
-		/** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
-		_uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);
-
-		// 0일 경우 -1을 하면 _uint라 이상한 값 나오기 때문에 체크 후 1 감소 (1감소해야 위치 맞음)
-		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexX", &iUVIndexX, sizeof(_uint))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVIndexY", &iUVIndexY, sizeof(_uint))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumX", &m_iUVTexNumX, sizeof(_uint))))
-			return E_FAIL;
-
-		if (FAILED(m_pShaderCom->Set_RawValue("g_iUVTexNumY", &m_iUVTexNumY, sizeof(_uint))))
-			return E_FAIL;
+		m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY + fOffsetY));
 	}
 
 	return S_OK;
@@ -569,53 +559,11 @@ HRESULT CSpriteObject::SetUp_Shader_Default()
 	return S_OK;
 }
 
-void CSpriteObject::Play_Animation(_double TimeDelta, _uint& iSpriteIndex, const _uint iAnimType)
-{
-	m_bIsEndSprite = false;
-
-	ANIM_INFO* pAnimInfo = m_pAnimInfo + iAnimType;
-	if (nullptr == pAnimInfo)
-		return;
-	_float fPerAnimTime = pAnimInfo->fAnimTime / fabs((_float)pAnimInfo->iEndIndex - (_float)pAnimInfo->iStartIndex);
-
-	const _uint iCurrentSpriteIndex = m_bIsAnimUV ? m_iUVTextureIndex : m_iTextureIndex;
-	unordered_map<_uint, _float>::iterator iter = pAnimInfo->fDelayTimeMap.find(iCurrentSpriteIndex);
-	_float fDelayTime = { 0.f };
-	if (iter != pAnimInfo->fDelayTimeMap.end())
-		fDelayTime = iter->second;
-
-	m_AnimAcc += (_float)TimeDelta;
-	if (fPerAnimTime + fDelayTime <= m_AnimAcc)
-	{
-		m_AnimAcc = 0.f;
-		++iSpriteIndex;
-
-		if (pAnimInfo->iEndIndex < iSpriteIndex)
-		{
-			End_Animation(iSpriteIndex);
-		}
-	}
-}
-
-void CSpriteObject::End_Animation(_uint& iSpriteIndex)
-{
-	m_bIsEndSprite = true;
-	return;
-}
-
 void CSpriteObject::Free()
 {
 	__super::Free();
 
 	Safe_Delete(m_pState);
-
-	if (nullptr != m_pAnimInfo)
-		m_pAnimInfo->fDelayTimeMap.clear();
-
-	if (1 < m_iAnimTypeNum)
-		Safe_Delete_Array(m_pAnimInfo);
-	else
-		Safe_Delete(m_pAnimInfo);
 
 	/** @note - m_pSpriteFileName 해제하면 안되는 이유
 	현재 m_pSpriteFileName는 문자열 리터럴을 가리키므로 읽기 전용 데이터에 저장되어 자동으로 삭제되기 때문 (동적할당 해준 경우만 해제해줄 것)*/

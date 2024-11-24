@@ -34,7 +34,6 @@ public:
 protected:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	virtual HRESULT SetUp_ShaderResources() = 0;
-	virtual void Add_Animation() override {};
 
 public:
 	virtual void OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer) override {};

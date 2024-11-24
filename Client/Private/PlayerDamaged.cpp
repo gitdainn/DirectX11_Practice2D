@@ -5,7 +5,7 @@
 #include "PlayerAtk.h"
 #include "PlayerDash.h"
 
-CState* CPlayerDamaged::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerDamaged::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -49,7 +49,7 @@ CState* CPlayerDamaged::Input_Handler(CSpriteObject* pObject, const STATE_TYPE I
 	return pState;
 }
 
-void CPlayerDamaged::Enter(CSpriteObject* pObject)
+void CPlayerDamaged::Enter(CPlayer* pObject)
 {
 	if (nullptr == pObject)
 		return;
@@ -65,7 +65,7 @@ void CPlayerDamaged::Enter(CSpriteObject* pObject)
 	}
 }
 
-void CPlayerDamaged::Update(CSpriteObject* pObject, _double TimeDelta)
+void CPlayerDamaged::Update(CPlayer* pObject, _double TimeDelta)
 {
 	if (nullptr == pObject)
 		return;

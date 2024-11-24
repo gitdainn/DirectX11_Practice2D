@@ -74,7 +74,7 @@ HRESULT CSkillGuillotine::Render()
 	return __super::Render();
 }
 
-void CSkillGuillotine::Enter(CSpriteObject* pOwner)
+void CSkillGuillotine::Enter(CAnimObject* pOwner)
 {
 	__super::Enter(pOwner);
 
@@ -94,6 +94,9 @@ void CSkillGuillotine::Enter(CSpriteObject* pOwner)
 	_float2 vScale = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);
 	vScale.y += 5.f;
 	m_pTransformCom->Set_State(CTransform::STATE_POSITION, Adjust_PositionUp_Radius(vScale.y));
+
+	if (nullptr == m_pColliderCom)
+		return;
 
 	CCollider::COLLIDER_DESC tColliderDesc = m_pColliderCom->Get_ColliderDesc();
 	XMStoreFloat3(&tColliderDesc.vPosition, vPlayerPosition);
@@ -115,7 +118,7 @@ void CSkillGuillotine::Add_Animation()
 
 	m_pAnimInfo->iStartIndex = 0;
 	m_pAnimInfo->iEndIndex = 25;
-	m_pAnimInfo->fAnimTime = m_LifeTime;
+	m_pAnimInfo->fAnimTime = (_float)m_LifeTime;
 }
 
 void CSkillGuillotine::End_Animation(_uint& iSpriteIndex)

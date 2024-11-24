@@ -16,7 +16,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void	Enter(CSpriteObject* pOwner = nullptr) override;
+	virtual void	Enter(CAnimObject* pOwner = nullptr) override;
 	virtual HRESULT	Awaken() override;
 
 protected:

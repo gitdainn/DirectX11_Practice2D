@@ -82,11 +82,6 @@ HRESULT CEnvironment::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CEnvironment::Add_Animation()
-{
-	return;
-}
-
 void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }

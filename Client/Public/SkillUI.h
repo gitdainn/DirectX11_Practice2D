@@ -32,7 +32,6 @@ public:
 private:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	virtual HRESULT SetUp_ShaderResources() override; /* 셰이더 전역변수에 값을 던진다. */
-	virtual void Add_Animation() override {};
 
 private:
 	void	onEvent()

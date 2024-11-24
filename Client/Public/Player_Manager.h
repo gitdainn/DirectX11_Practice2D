@@ -13,6 +13,28 @@ public:
     explicit CPlayer_Manager();
     ~CPlayer_Manager();
 
+private:
+    struct BASE_STATS
+    {
+        _int iMagicAttack = { 10 };
+        _int iHp = { 100 };
+        _int iDefense = { 1 };
+        _int iPhysicalAttack = { 10 };
+        _int iMaxJumpCount = { 2 };
+
+        _float fMovementSpeed = { 10 };
+        _float fAttackSpeed = { 10 };
+        _float fReduceCoolDownSpeed = { 0 };
+        _float fCriticalHit;
+
+        _int iMagicAttackIncrease = { 0 };
+        _int iPhysicalAttackIncrease = { 0 };
+        _int iDefenseIncrease = { 0 };
+
+        _bool	bIsInvulnerable = { false };
+        _double InvulnerabilityDuration = { 0.0 };
+    };
+
 public:
     void    Swap_Skul();
 
@@ -42,7 +64,7 @@ public: // Getter //
         return m_pSubSkul;
     }
 
-    _bool   Get_IsMaxSkulEqquipedl()
+    _bool   Get_IsMaxSkulEqquiped()
     {
         return m_bIsMaxSkulEquipped;
     }
@@ -60,19 +82,7 @@ private:
     _bool   m_bIsMaxSkulEquipped = { false };
 
 private:
-    _int m_iHp = { 100 };
-    _int m_iMaxHp = { 100 };
-    _int m_iMagicAttack;
-    _int m_iPhysicalAttack;
-    _int m_iMagicDefense;
-    _int m_iPhysicalDefense;
-    _float m_fMovementSpeed;
-    _double m_InvulnerabilityDuration;
-
-    _int iMagicAttackIncrease;
-    _int iPhysicalAttackIncrease;
-    _int iMagicDefenseIncrease;
-    _int iPhysicalDefenseIncrease;
+    BASE_STATS  m_tBaseStats;
 
 public:
     void Free() override;

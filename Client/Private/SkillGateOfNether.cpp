@@ -76,7 +76,7 @@ HRESULT CSkillGateOfNether::Render()
 	return __super::Render();
 }
 
-void CSkillGateOfNether::Enter(CSpriteObject* pOwner)
+void CSkillGateOfNether::Enter(CAnimObject* pOwner)
 {
 	__super::Enter(pOwner);
 
@@ -92,6 +92,9 @@ void CSkillGateOfNether::Enter(CSpriteObject* pOwner)
 		m_bIsSkillAvailable = true;
 		return;
 	}
+
+	if (nullptr == m_pColliderCom)
+		return;
 
 	CCollider::COLLIDER_DESC tColliderDesc = m_pColliderCom->Get_ColliderDesc();
 	XMStoreFloat3(&tColliderDesc.vPosition, vPlayerPosition);

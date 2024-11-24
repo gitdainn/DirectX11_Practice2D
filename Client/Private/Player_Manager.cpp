@@ -119,8 +119,8 @@ void CPlayer_Manager::Set_Damaged(const _int iDamaged)
     if (0 > iDamaged)
         return;
 
-    m_iHp -= iDamaged;
-    m_pUI_Handler->Set_Hp(m_iHp);
+    m_tBaseStats.iHp -= iDamaged;
+    m_pUI_Handler->Set_Hp(m_tBaseStats.iHp);
 }
 
 void CPlayer_Manager::Free()

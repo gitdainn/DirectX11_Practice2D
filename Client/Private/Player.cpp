@@ -11,7 +11,7 @@
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CPlayer::CPlayer(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CSpriteObject(pDevice, pContext)
+	: CAnimObject(pDevice, pContext)
 	, m_bIsEquipped(false)
 {
 }
@@ -68,20 +68,6 @@ _uint CPlayer::Tick(_double TimeDelta)
 	if(STATE_TYPE::SWAP != m_eCurrentState)
 		m_pState->Update(this, TimeDelta);
 
-	//CGameInstance* pGameInstance = CGameInstance::GetInstance();
-	//static _vector vPastPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	//_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	//if (XMVectorGetX(vPastPosition) != XMVectorGetX(vPosition)
-	//	|| XMVectorGetY(vPastPosition) != XMVectorGetY(vPastPosition))
-	//{
-	//	_vector vDir = vPosition - vPastPosition;
-	//	_float fCameraSpeed = m_fMovementSpeed * 0.7f * TimeDelta;
-	//	vDir = XMVector4Length(vDir);
-	//	pGameInstance->Set_ScrollX(XMVectorGetX(vDir) * fCameraSpeed);
-	//	pGameInstance->Set_ScrollY(XMVectorGetY(vDir) * fCameraSpeed);
-	//	vPastPosition = vPosition;
-	//}
-	
 	JumpableLineRider(TimeDelta);
 
 	SkillTick(TimeDelta);
@@ -104,6 +90,16 @@ _uint CPlayer::LateTick(_double TimeDelta)
 HRESULT CPlayer::Render()
 {
 	SkillRender();
+
+#ifdef _DEBUG
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_tchar	szPos[MAX_PATH] = TEXT("");
+	wsprintf(szPos, TEXT("X : %.1f, Y: %.1f"), XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+
+	if (FAILED(CGameInstance::GetInstance()->Render_Font(TEXT("Font_Bazzi"), szPos, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+#endif
+
 	return __super::Render();
 }
 
@@ -168,12 +164,12 @@ void CPlayer::SkillRender()
 
 void CPlayer::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	CSpriteObject* pTargetObject = dynamic_cast<CSpriteObject*>(pTarget);
+	CAnimObject* pTargetObject = dynamic_cast<CAnimObject*>(pTarget);
 	if (nullptr == pTargetObject || nullptr == pTargetCollider)
 		return;
 
 	// 무적 상태가 아닐 때 공격을 받으면
-	if ((!m_bIsInvulnerable) && (!lstrcmp(LAYER_ENEMYATK, pTargetLayer)))
+	if ((!m_tBaseStats.bIsInvulnerable) && (!lstrcmp(LAYER_ENEMYATK, pTargetLayer)))
 	{
 		Input_Handler(STATE_TYPE::DAMAGED);
 		CPlayerDamaged* pPlayerDamaged = dynamic_cast<CPlayerDamaged*>(m_pState);
@@ -203,6 +199,9 @@ void CPlayer::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, 
 
 void CPlayer::Input_Handler(const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
+	if (STATE_TYPE::SWAP == m_eCurrentState)
+		return;
+
 	CState* pState = m_pState->Input_Handler(this, Input, eDirection);
  	CState* pAirState = m_pAirState->Input_Handler(this, Input, eDirection);
 
@@ -233,7 +232,7 @@ void CPlayer::Execute_Skill(_uint iSkillIndex)
 	if (m_pSkill[iSkillIndex]->Get_IsSkillAvailable())
 	{
 		STATE_TYPE Input = (0 == iSkillIndex ? STATE_TYPE::ATK1 : STATE_TYPE::ATK2);
-		__super::Input_Handler(Input);
+		Input_Handler(Input);
 		m_pSkill[iSkillIndex]->Enter(this);
 		m_SkillAvailableList.emplace_back(m_pSkill[iSkillIndex]);
 	}
@@ -327,9 +326,9 @@ void CPlayer::Mapping_SkulData(const _tchar* pObjectID)
 		return;
 	}
 
-	m_iMagicAttackIncrease = tSkulInfo.iMagicAttackIncrease;
-	m_iPhysicalAttackIncrease = tSkulInfo.iPhysicalAttackIncrease;
-	m_iDefense = tSkulInfo.iDefense;
+	m_tBaseStats.iMagicAttackIncrease = tSkulInfo.iMagicAttackIncrease;
+	m_tBaseStats.iPhysicalAttackIncrease = tSkulInfo.iPhysicalAttackIncrease;
+	m_tBaseStats.iDefense = tSkulInfo.iDefense;
 
 	m_eSkulRank = tSkulInfo.eRank;
 	m_eSkulType = tSkulInfo.eType;
@@ -399,19 +398,19 @@ void CPlayer::Mapping_Type(const SKUL_TYPE& tType)
 {
 	if (SKUL_TYPE::BALANCE == tType)
 	{
-		m_fMovementSpeed += m_fMovementSpeed * 0.2f;
-		m_fAttackSpeed += m_fAttackSpeed * 0.2f;
-		m_iMaxJumpCount = 2;
+		m_tBaseStats.fMovementSpeed += m_tBaseStats.fMovementSpeed * 0.2f;
+		m_tBaseStats.fAttackSpeed += m_tBaseStats.fAttackSpeed * 0.2f;
+		m_tBaseStats.iMaxJumpCount = 2;
 	}
 	else if (SKUL_TYPE::POWER == tType)
 	{
-		m_iDefense -= m_iDefense * 0.2f;
-		m_iMaxJumpCount = 1;
+		m_tBaseStats.iDefense -= m_tBaseStats.iDefense * 0.2f;
+		m_tBaseStats.iMaxJumpCount = 1;
 	}
 	else if (SKUL_TYPE::SPEED == tType)
 	{
-		m_fReduceCoolDownSpeed += m_fReduceCoolDownSpeed * 0.6f;
-		m_iMaxJumpCount = 3;
+		m_tBaseStats.fReduceCoolDownSpeed += m_tBaseStats.fReduceCoolDownSpeed * 0.6f;
+		m_tBaseStats.iMaxJumpCount = 3;
 	}
 	else
 		MSG_BOX("CPlayer - Mapping_Type() - FAILED");
@@ -455,7 +454,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
 		{
-			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			MSG_BOX("CAnimObject - Add_Components() - FAILED");
 			return E_FAIL;
 		}
 		m_pColliderCom->Set_Owner(this);
@@ -470,7 +469,7 @@ HRESULT CPlayer::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TAG_COLL_DEFAULTATK, (CComponent**)&m_pDefaultAtkColliderCom, &tComponentInfo)))
 	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		MSG_BOX("CAnimObject - Add_Components() - FAILED");
 		return E_FAIL;
 	}
 	m_pDefaultAtkColliderCom->Set_Owner(this);

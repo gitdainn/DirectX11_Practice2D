@@ -139,6 +139,16 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//	return E_FAIL;		
 	//}
 
+	tSpriteInfo.fSize = _float2{ 220.f, 200.f };
+	tSpriteInfo.fPosition = _float2{ 700.f, 200.f };
+	tSpriteInfo.pTextureComTag = TEXT("Prototype_Component_Sprite_Door");
+
+	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Door"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;		
+	}
+
 	Safe_Release(pGameInstance);
 	return S_OK;
 

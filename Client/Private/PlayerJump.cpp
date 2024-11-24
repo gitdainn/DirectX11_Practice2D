@@ -6,7 +6,7 @@
 
 CPlayerJump::CPlayerJump()
 	: m_bIsDead(false)
-	, m_iMaxJumpCount(2), m_iJumpCount(0)
+	, iMaxJumpCount(2), m_iJumpCount(0)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
@@ -16,7 +16,7 @@ CPlayerJump::CPlayerJump()
 
 CPlayerJump::CPlayerJump(const CPlayerJump& rhs)
 	: m_bIsDead(rhs.m_bIsDead)
-	, m_iMaxJumpCount(rhs.m_iMaxJumpCount), m_iJumpCount(rhs.m_iJumpCount)
+	, iMaxJumpCount(rhs.iMaxJumpCount), m_iJumpCount(rhs.m_iJumpCount)
 	, m_UpTime(rhs.m_UpTime), m_DownTime(rhs.m_DownTime)
 	, m_JumpTimeAcc(rhs.m_JumpTimeAcc)
 	, m_bIsPaused(rhs.m_bIsPaused)
@@ -28,7 +28,7 @@ CPlayerJump::~CPlayerJump()
 {
 }
 
-CState* CPlayerJump::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerJump::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 	const STATE_TYPE eState = pObject->Get_CurrentState();
@@ -54,7 +54,7 @@ CState* CPlayerJump::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 			pState = new CPlayerJump();
 		}
 		// 점프 횟수가 최대 점프 횟수 이상이면 땅에 착지하기 전까지 Jump 불가능
-		else if (m_iMaxJumpCount < m_iJumpCount)
+		else if (iMaxJumpCount < m_iJumpCount)
 		{
 			pState = nullptr;
 		}
@@ -81,7 +81,7 @@ CState* CPlayerJump::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 	return pState;
 }
 
-void CPlayerJump::Enter(CSpriteObject* pObject)
+void CPlayerJump::Enter(CPlayer* pObject)
 {
 	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pObject);
 	if (nullptr != pPlayer)
@@ -94,7 +94,7 @@ void CPlayerJump::Enter(CSpriteObject* pObject)
 	++m_iJumpCount;
 }
 
-void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
+void CPlayerJump::Update(CPlayer* pObject, const _double TimeDelta)
 {
 	CPlayer* pPlayer = dynamic_cast<CPlayer*>(pObject);
 
@@ -140,7 +140,7 @@ void CPlayerJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 		Parabola(pObject, TimeDelta);
 }
 
-void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
+void CPlayerJump::Parabola(CPlayer* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
 	const _float fJumpSpeed = 3.f;
@@ -185,7 +185,7 @@ void CPlayerJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 	Safe_Release(pGameInstance);
 }
 
-_bool CPlayerJump::AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY)
+_bool CPlayerJump::AttachToLineIfBelow(CPlayer* pObject, const _float& fLandingY)
 {
 	if (nullptr == pObject)
 	{

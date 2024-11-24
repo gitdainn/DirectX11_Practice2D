@@ -10,9 +10,9 @@ public:
     ~CPlayerJump();
 
 public:
-    CState* Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection) override;
-    virtual void Enter(CSpriteObject* pObject) override;
-    virtual void Update(CSpriteObject* pObject, const _double TimeDelta = 0.0) override;
+    CState* Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection) override;
+    virtual void Enter(CPlayer* pObject) override;
+    virtual void Update(CPlayer* pObject, const _double TimeDelta = 0.0) override;
 
 public:
     void    Set_IsFalling(const _bool bIsFalling)
@@ -27,15 +27,15 @@ public:
     const _bool Get_IsFalling() const { return m_bIsFalling; }
 
 private:
-    void    Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    _bool           AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);
+    void    Parabola(CPlayer* pObject, const _double TimeDelta);
+    _bool           AttachToLineIfBelow(CPlayer* pObject, const _float& fLandingY);
 
 private:
     _bool   m_bCanJump;
     _bool   m_bIsFalling;
     _bool   m_bIsDead;
     _bool   m_bIsPaused;
-    _uint   m_iMaxJumpCount;
+    _uint   iMaxJumpCount;
     _uint   m_iJumpCount;
     _double m_UpTime;
     _double m_DownTime;

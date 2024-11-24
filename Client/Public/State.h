@@ -1,7 +1,7 @@
 #pragma once
 #include "Client_Defines.h"
 
-#include "SpriteObject.h"
+#include "Player.h"
 
 class CState abstract
 {
@@ -11,9 +11,9 @@ public:
 
 public:
     /** @note - 순수 가상 함수는 virtual 가상 함수에만 사용 가능 */
-    virtual CState* Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input
+    virtual CState* Input_Handler(CPlayer* pObject, const STATE_TYPE Input
         , const SPRITE_DIRECTION eDirection = SPRITE_DIRECTION::DIRECTION_END) = 0;
-    virtual void Enter(CSpriteObject* pObject) = 0;
-    virtual void Update(CSpriteObject* pObject, double TimeDelta = 0.0) = 0;
+    virtual void Enter(CPlayer* pObject) = 0;
+    virtual void Update(CPlayer* pObject, double TimeDelta = 0.0) = 0;
 };
 

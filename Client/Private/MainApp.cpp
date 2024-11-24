@@ -131,9 +131,6 @@ HRESULT CMainApp::Render()
 
 	m_pRenderer->Draw_RenderGroup();
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), TEXT("Dainn"), _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
-		return E_FAIL;
-
 #ifdef _DEBUG
 	//@ note - 프레임 60(1초) 제한 코드
 	m_pGameInstance->Render_Line();
@@ -148,7 +145,7 @@ HRESULT CMainApp::Render()
 		m_dwNumDraw = 0;
 	}
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #endif
@@ -282,7 +279,7 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	};
 #pragma endregion
 
-#pragma region ETC
+#pragma region FOLDER
 	/* For.Prototype_Component_Sprite_ForestTile */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_ForestTile"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Tiles/ForestTile/")))))
@@ -300,6 +297,15 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	/* For.Prototype_Component_Sprite_Background */
 	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Background"),
 		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Background/")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
+#pragma region ETC
+	/* For.Prototype_Component_Sprite_Door */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Door"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Door/")))))
 	{
 		return E_FAIL;
 	};

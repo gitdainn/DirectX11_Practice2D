@@ -106,10 +106,20 @@ HRESULT CTexture::Initialize_Prototype(const vector<TCHAR*>& TextureFileVec)
 		{
 			hr = CreateDDSTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
 		}
+		else if (!lstrcmp(szEXT, TEXT(".png")))
+			hr = CreateWICTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
 		else if (!lstrcmp(szEXT, TEXT(".tga")))
 			return E_FAIL;
+		else if (!lstrcmp(szEXT, TEXT(".xcf")))
+		{
+			--m_iNumTextures;
+			m_SRVs.resize(m_iNumTextures);
+			m_TextureSizeVec.resize(m_iNumTextures);
+			m_TexturePathVec.resize(m_iNumTextures);
+			continue;
+		}
 		else
-			hr = CreateWICTextureFromFile(m_pDevice, pFilePath, nullptr, &pSRV);
+			MSG_BOX("CTexture - Initialize_Prototype - 미확인된 확장자");
 
 		m_SRVs[iIndex] = (pSRV);
 

@@ -14,7 +14,7 @@ CPlayerWalk::~CPlayerWalk()
 {
 }
 
-CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerWalk::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -59,7 +59,7 @@ CState* CPlayerWalk::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 	return pState;
 }
 
-void CPlayerWalk::Enter(CSpriteObject* pObject)
+void CPlayerWalk::Enter(CPlayer* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
 	if (STATE_TYPE::IDLE == pObject->Get_CurrentState())
@@ -89,7 +89,7 @@ void CPlayerWalk::Enter(CSpriteObject* pObject)
 	pObject->Set_ShaderPass((_uint)eShaderPass);
 }
 
-void CPlayerWalk::Update(CSpriteObject* pObject, _double TimeDelta)
+void CPlayerWalk::Update(CPlayer* pObject, _double TimeDelta)
 {
 	if (nullptr == pObject)
 		return;

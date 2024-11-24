@@ -38,6 +38,7 @@ public:
 	HRESULT Add_GameObject(const _tchar* pPrototypeTag, _uint iLevelIndex, const _tchar* pLayerTag, const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr); /* 원형을 복제하여 사본을 추가한다. */
 	class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, void* pArg = nullptr);
 	class CGameObject* Clone_GameObject(const _tchar* pPrototypeTag, const SPRITE_INFO& tSpriteInfo, void* pArg = nullptr);
+	HRESULT Late_Initialize();
 	void Tick(_double TimeDelta);
 	void LateTick(_double TimeDelta);
 

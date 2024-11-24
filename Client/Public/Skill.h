@@ -1,7 +1,7 @@
 #pragma once
-#include "SpriteObject.h"
+#include "AnimObject.h"
 
-class CSkill abstract : public CSpriteObject
+class CSkill abstract : public CAnimObject
 {
 public:
 	explicit CSkill(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
@@ -17,7 +17,7 @@ public:
 	virtual HRESULT Render() override;
 
 public:
-	virtual void	Enter(CSpriteObject* pOwner = nullptr);
+	virtual void	Enter(CAnimObject* pOwner = nullptr);
 	virtual HRESULT	Awaken();
 
 public:

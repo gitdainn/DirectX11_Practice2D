@@ -4,7 +4,7 @@
 #include <functional>
 
 
-class CItem abstract : public CSpriteObject
+class CItem abstract : public CAnimObject
 {
 public:
 	explicit CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

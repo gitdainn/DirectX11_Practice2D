@@ -78,11 +78,6 @@ HRESULT CTile::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CTile::Add_Animation()
-{
-	return;
-}
-
 void CTile::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }

@@ -5,7 +5,7 @@
 #include "PlayerDash.h"
 #include "PlayerDamaged.h"
 
-CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
+CState* CPlayerIdle::Input_Handler(CPlayer* pObject, const STATE_TYPE Input, const SPRITE_DIRECTION eDirection)
 {
 	CState* pState = { nullptr };
 
@@ -48,14 +48,14 @@ CState* CPlayerIdle::Input_Handler(CSpriteObject* pObject, const STATE_TYPE Inpu
 	return pState;
 }
 
-void CPlayerIdle::Enter(CSpriteObject* pObject)
+void CPlayerIdle::Enter(CPlayer* pObject)
 {
 	// if ATK이나 JUMP 등이 아니면 교체
 	pObject->Set_CurrentState(STATE_TYPE::IDLE);
 	pObject->Change_AnimType((_uint)STATE_TYPE::IDLE);
 }
 
-void CPlayerIdle::Update(CSpriteObject* pObject, _double TimeDelta)
+void CPlayerIdle::Update(CPlayer* pObject, _double TimeDelta)
 {
 	return;
 }

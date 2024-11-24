@@ -9,12 +9,12 @@
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CSpriteObject(pDevice, pContext)
+	: CAnimObject(pDevice, pContext)
 {
 }
 
 CEnemy::CEnemy(const CEnemy& rhs)
-	: CSpriteObject(rhs)
+	: CAnimObject(rhs)
 	, m_StateFunctionMap(rhs.m_StateFunctionMap)
 	, m_StateFunc(rhs.m_StateFunc)
 {
@@ -47,7 +47,7 @@ HRESULT CEnemy::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	}
 
 	CTransform::TRANSFORM_DESC tTransDesc;
-	tTransDesc.SpeedPerSec = m_fMovementSpeed;
+	tTransDesc.SpeedPerSec = m_tBaseStats.fMovementSpeed;
 	m_pTransformCom->Set_TransformDesc(tTransDesc);
 
 	return S_OK;
@@ -70,7 +70,7 @@ HRESULT CEnemy::Initialize(void* pArg)
 	Safe_Release(pGameInstance);
 
 	CTransform::TRANSFORM_DESC tTransDesc;
-	tTransDesc.SpeedPerSec = m_fMovementSpeed;
+	tTransDesc.SpeedPerSec = m_tBaseStats.fMovementSpeed;
 	m_pTransformCom->Set_TransformDesc(tTransDesc);
 
 	return S_OK;
@@ -81,7 +81,7 @@ _uint CEnemy::Tick(_double TimeDelta)
 	// 툴에서 받아오는 이미지 Layer 설정해서 가져오기 귀차나사ㅓ.. 임시..용
 	Set_Layer(LAYER_ENEMY, false);
 
-	if (0 >= m_iHp)
+	if (0 >= m_tBaseStats.iHp)
 	{
 		m_bIsDead = true;
 	}
@@ -112,7 +112,7 @@ HRESULT CEnemy::Render()
 
 void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
+	CAnimObject* pObject = dynamic_cast<CAnimObject*>(pTarget);
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
@@ -121,7 +121,7 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, 
 		m_eTargetDirection = pObject->Get_SpriteDirection();
 		Input_Handler(ENEMY_STATE::DAMAGED);
 		Set_Damaged(pObject->Get_Attack());
-		CUI_Handler::GetInstance()->Set_Hp(m_pWidgetCom, m_iHp);
+		CUI_Handler::GetInstance()->Set_Hp(m_pWidgetCom, m_tBaseStats.iHp);
 	}
 
 	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
@@ -129,7 +129,7 @@ void CEnemy::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, 
 
 void CEnemy::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	CSpriteObject* pObject = dynamic_cast<CSpriteObject*>(pTarget);
+	CAnimObject* pObject = dynamic_cast<CAnimObject*>(pTarget);
 	if (nullptr == pObject || nullptr == pTargetCollider)
 		return;
 
@@ -337,7 +337,7 @@ HRESULT CEnemy::Add_Components(void* pArg)
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
 		{
-			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			MSG_BOX("CAnimObject - Add_Components() - FAILED");
 			return E_FAIL;
 		}
 		m_pColliderCom->Set_Owner(this);
@@ -352,7 +352,7 @@ HRESULT CEnemy::Add_Components(void* pArg)
 	if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 		TAG_COLL_DEFAULTATK, (CComponent**)&m_pDefaultAtkColliderCom, &tComponentInfo)))
 	{
-		MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+		MSG_BOX("CAnimObject - Add_Components() - FAILED");
 		return E_FAIL;
 	}
 	m_pDefaultAtkColliderCom->Set_Owner(this);

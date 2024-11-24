@@ -22,6 +22,7 @@
 #include "DisplayUI.h"
 #include "HealthBarUI.h"
 #include "SkulItem.h"
+#include "Door.h"
 #pragma endregion
 
 #pragma region COMPONENT
@@ -169,6 +170,14 @@ HRESULT CLoader::Loaiding_GameObject_Logo()
 	/* For.Prototype_GameObject_Environment */
 	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Environment"),
 		CEnvironment::Create(m_pDevice, m_pContext))))
+	{
+		Safe_Release(pGameInstance);
+		return E_FAIL;
+	};
+
+	/* For.Prototype_GameObject_Door */
+	if (FAILED(pGameInstance->Add_Prototype(TEXT("Prototype_GameObject_Door"),
+		CDoor::Create(m_pDevice, m_pContext))))
 	{
 		Safe_Release(pGameInstance);
 		return E_FAIL;

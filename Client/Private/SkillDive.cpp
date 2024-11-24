@@ -76,7 +76,7 @@ HRESULT CSkillDive::Render()
 	return __super::Render();
 }
 
-void CSkillDive::Enter(CSpriteObject* pOwner)
+void CSkillDive::Enter(CAnimObject* pOwner)
 {
 	__super::Enter(pOwner);
 

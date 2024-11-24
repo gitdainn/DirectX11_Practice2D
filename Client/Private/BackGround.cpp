@@ -80,11 +80,6 @@ HRESULT CBackGround::SetUp_ShaderResources()
 	return S_OK;
 }
 
-void CBackGround::Add_Animation()
-{
-	return;
-}
-
 void CBackGround::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
 }

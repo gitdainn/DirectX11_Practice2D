@@ -157,6 +157,9 @@
     <Filter Include="02.GameObject\Skill\LittleBorn">
       <UniqueIdentifier>{e3fe2143-17b9-4714-9ea2-e9dc2e9249d4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Door">
+      <UniqueIdentifier>{ae0af12e-4b56-4452-9c2a-eea139fa2e6c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -316,6 +319,10 @@
     <ClInclude Include="..\Public\SkillHeadless.h">
       <Filter>02.GameObject\Skill\LittleBorn</Filter>
     </ClInclude>
+    <ClInclude Include="..\Public\Door.h">
+      <Filter>02.GameObject\Door</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\AnimObject.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -463,6 +470,10 @@
     <ClCompile Include="..\Private\SkillHeadless.cpp">
       <Filter>02.GameObject\Skill\LittleBorn</Filter>
     </ClCompile>
+    <ClCompile Include="..\Private\Door.cpp">
+      <Filter>02.GameObject\Door</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\AnimObject.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

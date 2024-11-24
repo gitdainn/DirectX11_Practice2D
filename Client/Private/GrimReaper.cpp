@@ -73,7 +73,7 @@ _uint CGrimReaper::Tick(_double TimeDelta)
 
     // 소울 1개당 마법공격력 1% 증가
     int iMagicAttack;
-    iMagicAttack = int(m_iMagicAttack + m_iMagicAttack * m_iSoulNum * 0.1f);
+    iMagicAttack = int(m_tBaseStats.iMagicAttack + m_tBaseStats.iMagicAttack * m_iSoulNum * 0.1f);
 
     if(STATE_TYPE::SWAP == m_eCurrentState)
         SwapSkill_GuidanceofDeath(TimeDelta);
@@ -151,11 +151,11 @@ void CGrimReaper::Add_Animation()
 
 void CGrimReaper::SwapSkill_GuidanceofDeath(_double TimeDelta)
 {
-    m_bIsInvulnerable = true;
+    m_tBaseStats.bIsInvulnerable = true;
 
     if (m_pAnimInfo[(_uint)STATE_TYPE::SWAP].fAnimTime <= m_SwapTimeAcc)
     {
-        m_bIsInvulnerable = false;
+        m_tBaseStats.bIsInvulnerable = false;
         m_SwapTimeAcc = 0.0;
         Input_Handler(STATE_TYPE::IDLE, m_eSpriteDirection);
     }

@@ -1,12 +1,12 @@
 #pragma once
-#include "SpriteObject.h"
+#include "AnimObject.h"
 #include "Player_Manager.h"
 #include "LineRider.h"
 #include <functional>
 
 class CEnemyJump;
 
-class CEnemy abstract : public CSpriteObject
+class CEnemy abstract : public CAnimObject
 {
 public:
 	explicit CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);

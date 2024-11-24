@@ -28,6 +28,23 @@ HRESULT CLayer::Add_GameObject(CGameObject * pGameObject)
 	return S_OK;
 }
 
+HRESULT CLayer::Late_Initialize()
+{
+	for (CGameObject* pGameObject : m_GameObjectList)
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Late_Initialize()))
+			{
+				MSG_BOX("CLayer - Late_Intialize() - FAILED");
+				continue;
+			}
+
+		}
+	}
+	return S_OK;
+}
+
 void CLayer::Tick(_double TimeDelta)
 {
 	if (m_GameObjectList.empty())

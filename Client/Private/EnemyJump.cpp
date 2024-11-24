@@ -5,7 +5,7 @@
 
 CEnemyJump::CEnemyJump()
 	: m_bIsDead(false)
-	, m_iMaxJumpCount(2), m_iJumpCount(0)
+	, iMaxJumpCount(2), m_iJumpCount(0)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
@@ -18,7 +18,7 @@ CEnemyJump::CEnemyJump()
 CEnemyJump::CEnemyJump(const _uint& iJumpCount)
 	: m_iJumpCount(iJumpCount)
 	, m_bIsDead(false)
-	, m_iMaxJumpCount(2)
+	, iMaxJumpCount(2)
 	, m_UpTime(0.0), m_DownTime(0.0)
 	, m_JumpTimeAcc(0.0)
 	, m_bIsPaused(false)
@@ -29,7 +29,7 @@ CEnemyJump::CEnemyJump(const _uint& iJumpCount)
 
 CEnemyJump::CEnemyJump(const CEnemyJump& rhs)
 	: m_bIsDead(rhs.m_bIsDead)
-	, m_iMaxJumpCount(rhs.m_iMaxJumpCount), m_iJumpCount(rhs.m_iJumpCount)
+	, iMaxJumpCount(rhs.iMaxJumpCount), m_iJumpCount(rhs.m_iJumpCount)
 	, m_UpTime(rhs.m_UpTime), m_DownTime(rhs.m_DownTime)
 	, m_JumpTimeAcc(rhs.m_JumpTimeAcc)
 	, m_bIsPaused(rhs.m_bIsPaused)
@@ -50,7 +50,7 @@ void CEnemyJump::Enter()
 	++m_iJumpCount;
 }
 
-void CEnemyJump::Update(CSpriteObject* pObject, const _double TimeDelta)
+void CEnemyJump::Update(CAnimObject* pObject, const _double TimeDelta)
 {
 	if (nullptr == pObject)
 	{
@@ -91,7 +91,7 @@ void CEnemyJump::Update(CSpriteObject* pObject, const _double TimeDelta)
 		Parabola(pObject, TimeDelta);
 }
 
-void CEnemyJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
+void CEnemyJump::Parabola(CAnimObject* pObject, const _double TimeDelta)
 {
 	const _float fGravity = 9.8f;
 	const _float fJumpSpeed = 3.f;
@@ -121,7 +121,7 @@ void CEnemyJump::Parabola(CSpriteObject* pObject, const _double TimeDelta)
 		, XMVectorSetY(vPlayerPos, fJumpY + XMVectorGetY(vPlayerPos)));
 }
 
-const _bool CEnemyJump::AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY)
+const _bool CEnemyJump::AttachToLineIfBelow(CAnimObject* pObject, const _float& fLandingY)
 {
 	if (nullptr == pObject)
 	{

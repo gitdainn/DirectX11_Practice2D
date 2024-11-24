@@ -12,7 +12,7 @@ public:
 
 public:
     void Enter();
-    void Update(CSpriteObject* pObject, const _double TimeDelta = 0.0);
+    void Update(CAnimObject* pObject, const _double TimeDelta = 0.0);
 
 public:
     const _bool     Get_IsDead() { return m_bIsDead; }
@@ -26,15 +26,15 @@ public:
     const _bool Get_IsFalling() { return m_bIsFalling; }
 
 private:
-    void            Parabola(CSpriteObject* pObject, const _double TimeDelta);
-    const _bool     AttachToLineIfBelow(CSpriteObject* pObject, const _float& fLandingY);
+    void            Parabola(CAnimObject* pObject, const _double TimeDelta);
+    const _bool     AttachToLineIfBelow(CAnimObject* pObject, const _float& fLandingY);
 
 private:
     _bool   m_bCanJump;
     _bool   m_bIsFalling;
     _bool   m_bIsDead;
     _bool   m_bIsPaused;
-    _uint   m_iMaxJumpCount;
+    _uint   iMaxJumpCount;
     _uint   m_iJumpCount;
     _double m_UpTime;
     _double m_DownTime;

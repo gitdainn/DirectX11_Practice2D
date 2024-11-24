@@ -5,12 +5,12 @@
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CItem::CItem(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
-	: CSpriteObject(pDevice, pContext)
+	: CAnimObject(pDevice, pContext)
 {
 }
 
 CItem::CItem(const CItem& rhs)
-	: CSpriteObject(rhs)
+	: CAnimObject(rhs)
 {
 }
 
@@ -115,7 +115,7 @@ HRESULT CItem::Add_Components(void* pArg)
 		if (FAILED(CGameObject::Add_Components(LEVEL_STATIC, TEXT("Prototype_Component_Collider_AABB"),
 			TAG_COLL_AABB, (CComponent**)&m_pColliderCom, &tComponentInfo)))
 		{
-			MSG_BOX("CSpriteObject - Add_Components() - FAILED");
+			MSG_BOX("CAnimObject - Add_Components() - FAILED");
 			return E_FAIL;
 		}
 		m_pColliderCom->Set_Owner(this);

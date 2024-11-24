@@ -153,7 +153,6 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
 	if (nullptr == pGameObject)
 		return E_FAIL;	
-	pGameObject->Late_Initialize();
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)
@@ -204,9 +203,25 @@ CGameObject* CObject_Manager::Clone_GameObject(const _tchar* pPrototypeTag, cons
 	CGameObject* pGameObject = pPrototype->Clone(tSpriteInfo, pArg);
 	if (nullptr == pGameObject)
 		return nullptr;
-	pGameObject->Late_Initialize();
 
 	return pGameObject;
+}
+
+HRESULT CObject_Manager::Late_Initialize()
+{
+	for (_uint i = 0; i < m_iNumLevels; ++i)
+	{
+		for (auto& Pair : m_pLayersMap[i])
+		{
+			if (nullptr == Pair.second)
+			{
+				MSG_BOX("CObject_Manager - Tick - Null");
+				continue;
+			}
+			Pair.second->Late_Initialize();
+		}
+	}
+	return S_OK;
 }
 
 void CObject_Manager::Tick(_double TimeDelta)
