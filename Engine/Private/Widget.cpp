@@ -1,5 +1,6 @@
 #include "Widget.h"
 #include "GameObject.h"
+#include "PipeLine.h"
 
 CWidget::CWidget(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
 	: CComponent(pDevice, pContext)
@@ -46,6 +47,9 @@ HRESULT CWidget::Initialize(void* pArg)
 
 _uint CWidget::Tick_BindToOwner(_double TimeDelta)
 {
+	/** 직교 투영되는 위젯 UI는 스크린 상의 좌표로 고정이 됩니다.
+	즉, 원근 투영되는 몬스터를 따라가게 하고 싶으면 월드 상의 몬스터 좌표를 스크린 상의 좌표로 변환하여 셋팅해야 합니다. */
+
 	if (m_WidgetList.empty())
 		return _uint();
 
@@ -59,7 +63,47 @@ _uint CWidget::Tick_BindToOwner(_double TimeDelta)
 	if (nullptr == pOwnerTransform)
 		return _uint();
 
-	_vector vOwnerPos = pOwnerTransform->Get_State(CTransform::STATE_POSITION);
+	CPipeLine* pPipeLine = CPipeLine::GetInstance();
+	if (nullptr == pPipeLine)
+		return _uint();
+
+	//_float4x4 OwnerWorldMatrix = pOwnerTransform->Get_WorldMatrixFloat();
+	//OwnerWorldMatrix._42 -= 40.f; // y 위치 보정
+
+	//// 월드 -> 뷰스
+	//_matrix ViewMatrix = pPipeLine->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_VIEW);
+	//_matrix MultipleMatrix = XMMatrixMultiply(XMLoadFloat4x4(&OwnerWorldMatrix), ViewMatrix);
+
+	//// 뷰스 -> 투영
+	//_matrix ProjMatrix = pPipeLine->Get_Transform_Matrix(CPipeLine::TRANSFORMSTATE::D3DTS_PROJ);
+	//MultipleMatrix = XMMatrixMultiply(MultipleMatrix, ProjMatrix);
+
+	//// 투영 -> 뷰포트
+	//_float fViewportX = ((XMVectorGetX(MultipleMatrix.r[3]) + 1.f) * (1280.f * 0.5f));
+	//_float fViewportY = ((XMVectorGetY(MultipleMatrix.r[3]) - 1.f) * -(720.f * 0.5f));
+
+	//// 뷰포트 -> 윈도우 좌표로 보정하기
+	//_vector vOwnerPosInWindow = XMVectorSet(fViewportX - 1280.f * 0.5f
+	//						, -fViewportY + 720.f * 0.5f
+	//						, 0.f, 1.f);
+
+	_vector vOwnerPos = m_pOwner->Get_TransformCom()->Get_State(CTransform::STATE_POSITION);
+	vOwnerPos = XMVectorSetY(vOwnerPos, XMVectorGetY(vOwnerPos) - 40.f); // y 위치 보정
+
+	// World -> View Space
+	vOwnerPos = XMVector3TransformCoord(vOwnerPos, pPipeLine->Get_Transform_Matrix(CPipeLine::D3DTS_VIEW)); 
+	// View Space -> Projection
+	vOwnerPos = XMVector3TransformCoord(vOwnerPos, pPipeLine->Get_Transform_Matrix(CPipeLine::D3DTS_PROJ)); 
+
+	// Projection ->View port
+	_float4 vViewPortPos = { 0.f, 0.f, 0.f, 1.f }; // Projection ->View port
+	vViewPortPos.x = (XMVectorGetX(vOwnerPos) + 1.f) * (1280 * 0.5f);
+	vViewPortPos.y = (XMVectorGetY(vOwnerPos) - 1.f) * -(720 * 0.5f);
+
+	// 뷰포트 상 좌표와 스크린 상 좌표 위치 보정
+	vOwnerPos = XMVectorSet(vViewPortPos.x - 1280 * 0.5f
+		, -vViewPortPos.y + 720 * 0.5f
+		, 0.f, 1.f); 
 
 	for (CGameObject* pObject : m_WidgetList)
 	{
@@ -70,8 +114,7 @@ _uint CWidget::Tick_BindToOwner(_double TimeDelta)
 		if (nullptr == pTransform)
 			return _uint();
 
-		_vector vPos = { 0.f, -40.f, 0.f, 0.f };
-		pTransform->Set_State(CTransform::STATE_POSITION, vOwnerPos + vPos);
+		pTransform->Set_State(CTransform::STATE_POSITION, vOwnerPos);
 	}
 
 	return _uint();

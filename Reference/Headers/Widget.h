@@ -3,6 +3,7 @@
 
 BEGIN(Engine)
 
+/* 위젯은 파일별로 저장하여 로드합니다 */
 class ENGINE_DLL CWidget : public CComponent
 {
 public:

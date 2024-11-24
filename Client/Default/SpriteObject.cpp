@@ -149,7 +149,7 @@ HRESULT CSpriteObject::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	return S_OK;
 }
 
-HRESULT CSpriteObject::Late_Initialize(void* pArg)
+HRESULT CSpriteObject::Late_Initialize()
 {
 	if (nullptr != m_pLineRiderCom)
 	{

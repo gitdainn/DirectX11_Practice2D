@@ -27,6 +27,7 @@ public:
 	virtual HRESULT Initialize_Prototype() override; /* 원형객체의 초기화작업 */
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) override; /* 사본객체의 초기화작업 */
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
+	virtual HRESULT Late_Initialize() override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;

@@ -42,7 +42,7 @@ public:
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	/** @param - 인스턴스 번호를 넘겨주세요. 데이터를 읽어들일 때 사용됩니다. */
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
-	virtual HRESULT Late_Initialize(void* pArg = nullptr);
+	virtual HRESULT Late_Initialize();
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;

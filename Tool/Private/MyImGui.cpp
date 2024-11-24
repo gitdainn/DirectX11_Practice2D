@@ -55,6 +55,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_FolderNameVec.emplace_back("Enemy_Solider");
     m_FolderNameVec.emplace_back("ForestTile");
     m_FolderNameVec.emplace_back("ForestEnvironment");
+    m_FolderNameVec.emplace_back("Door");
     m_FolderNameVec.emplace_back("Background");
     m_FolderNameVec.emplace_back("UI_Skul");
     m_FolderNameVec.emplace_back("UI_HealthBar");
@@ -67,6 +68,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_ClassNameVec.emplace_back("Environment");
     m_ClassNameVec.emplace_back("Tile");
     m_ClassNameVec.emplace_back("BackGround");
+    m_ClassNameVec.emplace_back("Door");
     m_ClassNameVec.emplace_back("Player"); // 기본 플레이어 시작위치 (원래는 LittleBorn)
     m_ClassNameVec.emplace_back("Solider"); // Enemy클래스로 생성 시 알아서 각 객체로 만들어지는 기능 만들면 좋을듯
 #pragma endregion
@@ -85,6 +87,7 @@ HRESULT CMyImGui::Initialize(ID3D11Device* pDevice, ID3D11DeviceContext* pContex
     m_LayerVec.reserve(iLayerNum);
     m_LayerVec.emplace_back(make_pair("Layer_Default", 0));
     m_LayerVec.emplace_back(make_pair("Layer_Background", 0));
+    m_LayerVec.emplace_back(make_pair("Layer_Environment", 0));
     m_LayerVec.emplace_back(make_pair("Layer_Effect", 0));
     m_LayerVec.emplace_back(make_pair("Layer_Item", 0));
     m_LayerVec.emplace_back(make_pair("Layer_UI", 0));
@@ -601,6 +604,7 @@ HRESULT CMyImGui::Load_FileName_Object()
 
             pAddObject->Set_RenderGroup(eRenderGroup);
             pAddObject->Set_Layer(pLayer, true);
+            pAddObject->Set_Order(tMetaData.iOrder);
 
             m_CreateObjectVec.emplace_back(dynamic_cast<CSpriteObject*>(pAddObject));
         }
@@ -955,17 +959,18 @@ HRESULT CMyImGui::Load_Object()
             // 클래스, 레이어, 렌더그룹 지정
             CRenderer::RENDERGROUP eRenderGroup = CRenderer::RENDER_END;
             _tchar* pClassName = { nullptr };
-            if (!strcmp("Background", pClassNameC))
-            {
-                eRenderGroup = CRenderer::RENDER_PRIORITY;
-            }
-            else if (!strcmp("Tile", pClassNameC))
+
+            if (!strcmp("Tile", pClassNameC))
             {
                 eRenderGroup = CRenderer::RENDER_TILE;
             }
             else
             {
-                eRenderGroup = CRenderer::RENDER_NONBLEND;
+                eRenderGroup = CRenderer::RENDER_PRIORITY;
+                if (!lstrcmp(L"GateWall", szNameTag))
+                {
+                    eRenderGroup = CRenderer::RENDER_NONBLEND;
+                }
             }
 
             pAddObject->Set_RenderGroup(eRenderGroup);
@@ -1432,13 +1437,19 @@ HRESULT CMyImGui::ShowInstalledWindow()
             // Selectable은 콜백 함수, const char* 첫번째 인자와 동일한 리스트를 선택 (즉, 문자열이 동일하면 먼저 찾은 리스트가 선택됨)  
             if (ImGui::Selectable(m_CreateObjectVec[iListIndex]->Get_SpriteTag(), is_selected))
             {
-                if (nullptr != m_pSelectedObject)
-                    m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+                iSelectIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+                
+                if (nullptr == m_CreateObjectVec[iListIndex])
+                    continue;
+
                 m_pSelectedObject = m_CreateObjectVec[iListIndex];
 
-                m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Color);
+                if (m_pSelectedObject->Get_bIsAnimUV())
+                    m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::UV_Anim);
+                else
+                    m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
 
-                iSelectIndex = iListIndex; // 선택한 항목의 인덱스를 저장
+                m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Color);
             }
 
             if (is_selected)
@@ -1466,7 +1477,7 @@ HRESULT CMyImGui::ShowInstalledWindow()
 
     if (ImGui::Button("Save Line"))
     {
-        if (FAILED(Save_Line()))
+        if (FAILED(Save_Object()))
        {
            MSG_BOX("CMyImGui - Save_Line - FAILED");
        }
@@ -1934,6 +1945,8 @@ HRESULT CMyImGui::Inspector_Components(const _bool bIsSelectionChanged)
 
 HRESULT CMyImGui::Inspector_SpriteRenderer(const _bool bIsSelectionChanged)
 {
+    if (nullptr == m_pSelectedObject)
+        return S_OK;
 
     if (ImGui::TreeNode("SpriteRenderer"))
     {
@@ -2289,7 +2302,13 @@ void CMyImGui::Key_Input(_double TimeDelta)
         else
         {
             if (nullptr != m_pSelectedObject)
-                m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+            {
+                if(m_pSelectedObject->Get_bIsAnimUV())
+                    m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::UV_Anim);
+                else
+                    m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+
+            }
 
             m_pSelectedObject = m_CreateObjectVec.back();
             m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Color);
@@ -2460,7 +2479,12 @@ HRESULT CMyImGui::Install_GameObject(SPRITE_INFO& tSpriteInfo)
     }
     // @qurious - 이러면.. 오브젝트 안의 pTextureComTag가 문자열은 없는데 공간은 참조 중이라 nullptr해줘야하긴해..    
     if (nullptr != m_pSelectedObject)
-        m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+    {
+        if (m_pSelectedObject->Get_bIsAnimUV())
+            m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::UV_Anim);
+        else
+            m_pSelectedObject->Set_ShaderPass((_uint)VTXTEX_PASS::Default);
+    }
 
     m_pSelectedObject = dynamic_cast<CSpriteObject*>(pGameInstance->Get_LastObject(LEVEL_TOOL, pLayer));
     if (nullptr == m_pSelectedObject)

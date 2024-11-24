@@ -85,6 +85,7 @@ private:
 	HRESULT Load_FileName_Object();
 #endif
 
+	/** 현재 렌더그룹은 저장을 안하고 있습니다. 클라이언트의 Initialize에서 셋팅한 값이 적용되고 있습니다. */
 	HRESULT Save_Object();
 	HRESULT Load_Object();
 	HRESULT Save_Widget();

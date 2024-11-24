@@ -238,6 +238,15 @@ HRESULT CMainApp::Ready_Prototype_Sprite_For_Static()
 	};
 #pragma endregion
 
+#pragma region ETC
+	/* For.Prototype_Component_Sprite_Door */
+	if (FAILED(m_pGameInstance->Add_Prototype(LEVEL_STATIC, TEXT("Prototype_Component_Sprite_Door"),
+		CUtility::Load_Texture_Folder(m_pDevice, m_pContext, TEXT("../Bin/Resources/Sprite/Door/")))))
+	{
+		return E_FAIL;
+	};
+#pragma endregion
+
 	Safe_Release(pGameInstance);
 
 	return S_OK;

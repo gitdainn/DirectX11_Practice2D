@@ -66,7 +66,7 @@ HRESULT CLevel_Logo::Ready_Layer_Priority()
 #pragma endregion
 
 #pragma region 오브젝트 데이터
-	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/Map.data"), LEVEL_LOGO)))
+	if (FAILED(pFileLoader->Load_FIle(TEXT("../Bin/DataFiles/EnemyMap.data"), LEVEL_LOGO)))
 	{
 		MSG_BOX("CLevel_Logo - Initialize() - Load_FIle FAILED");
 	 Safe_Release(pFileLoader);
@@ -143,11 +143,11 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	tSpriteInfo.fPosition = _float2{ 700.f, 200.f };
 	tSpriteInfo.pTextureComTag = TEXT("Prototype_Component_Sprite_Door");
 
-	if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Door"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
-	{
-		Safe_Release(pGameInstance);
-		return E_FAIL;		
-	}
+	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_Door"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
+	//{
+	//	Safe_Release(pGameInstance);
+	//	return E_FAIL;		
+	//}
 
 	Safe_Release(pGameInstance);
 	return S_OK;

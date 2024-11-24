@@ -118,7 +118,6 @@ HRESULT CObject_Manager::Add_GameObject(const _tchar* pPrototypeTag, _uint iLeve
 	CGameObject* pGameObject = pPrototype->Clone(pArg);
 	if (nullptr == pGameObject)
 		return E_FAIL;
-	pGameObject->Late_Initialize();
 
 	CLayer* pLayer = Find_Layer(iLevelIndex, pLayerTag);
 	if (nullptr == pLayer)

@@ -79,10 +79,10 @@ HRESULT CRenderer::Draw_RenderGroup()
 	if (FAILED(Draw_Priority()))
 		return E_FAIL;
 
-	if (FAILED(Draw_NonBlend()))
+	if (FAILED(Draw_Tile()))
 		return E_FAIL;
 
-	if (FAILED(Draw_Tile()))
+	if (FAILED(Draw_NonBlend()))
 		return E_FAIL;
 
 	if (FAILED(Draw_Blend()))

@@ -24,15 +24,15 @@ HRESULT CDoor::Initialize_Prototype()
 	m_iAnimType = (_uint)ACTIVATE_TYPE::ACTIVATE;
 	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 
-	m_iTextureIndex = 0;
+	m_iOrder = { 5 };
 
 	m_bIsAnimUV = true;
 	m_iUVTexNumX = 8;
 	m_iUVTexNumY = 3;
 	m_bIsLoop = true;
 
-	m_tSpriteInfo.pTextureComTag = TEXT("Prototype_Component_Sprite_Door");
-	m_pSpriteFileName = TEXT("BlackMarketDoor");
+	//m_tSpriteInfo.pTextureComTag = TEXT("Prototype_Component_Sprite_Door");
+	//m_pSpriteFileName = TEXT("BlackMarketDoor");
 
 	return S_OK;
 }
@@ -42,10 +42,10 @@ HRESULT CDoor::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	if (FAILED(__super::Initialize(InSpriteInfo)))
 		return E_FAIL;
 
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float3 vScaled = m_pTransformCom->Get_Scaled();
-	if (FAILED(DefaultLineRider(vPosition, vScaled.y / 2.f)))
-		return E_FAIL;
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+	vScale.x /= m_iUVTexNumX;
+	vScale.y /= m_iUVTexNumY;
+	m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y, 0.f));
 
 	Add_Animation();
 
@@ -57,12 +57,22 @@ HRESULT CDoor::Initialize(void* pArg)
 	if (FAILED(__super::Initialize(pArg)))
 		return E_FAIL;
 
-	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
-	_float3 vScaled = m_pTransformCom->Get_Scaled();
-	if (FAILED(DefaultLineRider(vPosition, vScaled.y / 2.f)))
-		return E_FAIL;
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+	vScale.x /= m_iUVTexNumX;
+	vScale.y /= m_iUVTexNumY;
+	m_pTransformCom->Set_Scaled(_float3(vScale.x, vScale.y, 0.f));
 	
 	Add_Animation();
+
+	return S_OK;
+}
+
+HRESULT CDoor::Late_Initialize()
+{
+	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+	_float3 vScale = m_pTransformCom->Get_Scaled();
+	if (FAILED(DefaultLineRider(vPosition, vScale.y / 2.f)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -136,7 +146,6 @@ void CDoor::Add_Animation()
 
 void CDoor::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
-	// 만약 스테이지 깬 상태인데 Enter이면 ACTIVATE로 변경
 }
 
 void CDoor::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)

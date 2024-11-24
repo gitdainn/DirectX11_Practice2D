@@ -14,10 +14,12 @@ private:
 
 public:
 	virtual HRESULT Initialize_Prototype() override;
-	/** @param - 선을 타는 대상의 위치 정보(XMVECTOR 타입)를 넣어주세요. */
+	/** 넘겨받은 위치를 기준으로 탈 수 있는 선의 정보를 갱신합니다. 
+	* @param - 선을 타는 대상의 위치 정보(XMVECTOR 타입)를 넣어주세요. */
 	virtual HRESULT Initialize(void* pArg) override;
 
 public:
+	/** @notice - 현재 타고 있는 선을 벗어나면 재검색 후 FAILED를 반환합니다. */
 	HRESULT	Collision_Line(_vector vPosition, _float& fOutLandingY);
 	const LINE_INFO* Get_LandingLine() { return m_pClosestLandingLine; }
 
