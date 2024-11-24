@@ -45,7 +45,7 @@ HRESULT CMainApp::Initialize()
 	if (FAILED(SetUp_StartLevel(LEVEL_TOOL)))
 		return E_FAIL;
 
-	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Skul"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
 		return E_FAIL;
 
 	m_pImGui->Initialize(m_pDevice, m_pContext);
@@ -83,7 +83,7 @@ HRESULT CMainApp::Render()
 		m_dwNumDraw = 0;
 	}
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Skul"), m_szFPS, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 #endif
 

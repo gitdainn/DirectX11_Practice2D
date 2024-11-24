@@ -58,6 +58,11 @@ void CLevel_Loading::Tick(_double TimeDelta)
 				return;
 			}
 
+			if (FAILED(pNewLevel->Late_Initialize())) {
+				MSG_BOX("CLevel_Loading - Tick() - Late_Initialize() - FAILED");
+				return;
+			}
+
 			if (FAILED(pGameInstance->Open_Level(m_eNextLevelID, pNewLevel)))
 			{
 				Safe_Release(pGameInstance);

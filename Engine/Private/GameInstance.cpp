@@ -71,9 +71,6 @@ HRESULT CGameInstance::Initialize_Engine(_uint iNumLevels, HINSTANCE hInstance, 
 	if (FAILED(m_pObject_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;
 
-	if (FAILED(m_pObject_Manager->Late_Initialize()))
-		return E_FAIL;
-
 	/* 컴포넌트 매니져의 공간 예약. */
 	if (FAILED(m_pComponent_Manager->Reserve_Manager(iNumLevels)))
 		return E_FAIL;

@@ -96,7 +96,7 @@ HRESULT CPlayer::Render()
 	_tchar	szPos[MAX_PATH] = TEXT("");
 	wsprintf(szPos, TEXT("X : %.1f, Y: %.1f"), XMVectorGetX(vPosition), XMVectorGetY(vPosition));
 
-	if (FAILED(CGameInstance::GetInstance()->Render_Font(TEXT("Font_Bazzi"), szPos, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(CGameInstance::GetInstance()->Render_Font(TEXT("Font_Skul"), szPos, _float2(0.f, 35.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 #endif
 

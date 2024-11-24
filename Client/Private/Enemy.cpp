@@ -6,6 +6,7 @@
 #include "Widget.h"
 #include "LineRider.h"
 #include "EnemyJump.h"
+#include "Stage_Manager.h"
 
 // @qurious. 부모 생성자도 꼭 호출해줘야하는 이유가 궁금함. (매개변수로)
 CEnemy::CEnemy(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -50,6 +51,13 @@ HRESULT CEnemy::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 	tTransDesc.SpeedPerSec = m_tBaseStats.fMovementSpeed;
 	m_pTransformCom->Set_TransformDesc(tTransDesc);
 
+	CStage_Manager* pStage_Manager = CStage_Manager::GetInstance();
+	if (nullptr == pStage_Manager)
+		return E_FAIL;
+	Safe_AddRef(pStage_Manager);
+	pStage_Manager->IncreaseEnemyCount();
+	Safe_Release(pStage_Manager);
+
 	return S_OK;
 }
 
@@ -73,6 +81,13 @@ HRESULT CEnemy::Initialize(void* pArg)
 	tTransDesc.SpeedPerSec = m_tBaseStats.fMovementSpeed;
 	m_pTransformCom->Set_TransformDesc(tTransDesc);
 
+	CStage_Manager* pStage_Manager = CStage_Manager::GetInstance();
+	if (nullptr == pStage_Manager)
+		return E_FAIL;
+	Safe_AddRef(pStage_Manager);
+	pStage_Manager->IncreaseEnemyCount();
+	Safe_Release(pStage_Manager);
+
 	return S_OK;
 }
 
@@ -84,6 +99,12 @@ _uint CEnemy::Tick(_double TimeDelta)
 	if (0 >= m_tBaseStats.iHp)
 	{
 		m_bIsDead = true;
+		CStage_Manager* pStage_Manager = CStage_Manager::GetInstance();
+		if (nullptr == pStage_Manager)
+			return E_FAIL;
+		Safe_AddRef(pStage_Manager);
+		pStage_Manager->DecreaseEnemyCount();
+		Safe_Release(pStage_Manager);
 	}
 
 	if (nullptr != m_pWidgetCom)

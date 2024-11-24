@@ -11,6 +11,7 @@
 #include "HealthBarWidget.h"
 #include "LineRider.h"
 #include "Camera_Dynamic.h"
+#include "Stage_Manager.h"
 
 #pragma region LOAD
 #include "ColliderAABB2D.h"
@@ -44,9 +45,10 @@ HRESULT CMainApp::Initialize()
 		return E_FAIL;
 
 	/*
-	MakeSpriteFont "배찌체" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
-	*/ 
-	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Bazzi"), TEXT("../Bin/Resources/Fonts/133ex.SpriteFont"))))
+	MakeSpriteFont "ttf이름" /FontSize:30 /FastPack /CharacterRegion:0x0020-0x00FF /CharacterRegion:0x3131-0x3163 /CharacterRegion:0xAC00-0xD800 /DefaultCharacter:0xAC00 133ex.spritefont
+	*/
+
+	if (FAILED(m_pGameInstance->Add_Font(m_pDevice, m_pContext, TEXT("Font_Skul"), TEXT("../Bin/Resources/Fonts/Perfect DOS VGA 437.spritefont"))))
 		return E_FAIL;
 
 	if (FAILED(Ready_CollisionLayerMatrix()))
@@ -145,7 +147,13 @@ HRESULT CMainApp::Render()
 		m_dwNumDraw = 0;
 	}
 
-	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Bazzi"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Skul"), m_szFPS, _float2(0.f, 0.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
+		return E_FAIL;
+
+	int iCount = CStage_Manager::GetInstance()->Get_EnemyCount();
+	_tchar		szCount[MAX_PATH] = TEXT("");
+	wsprintf(szCount, TEXT("EnemyNum : %d"), iCount);
+	if (FAILED(m_pGameInstance->Render_Font(TEXT("Font_Skul"), szCount, _float2(0.f, 70.f), XMVectorSet(1.f, 1.f, 1.f, 1.f))))
 		return E_FAIL;
 
 #endif
@@ -510,6 +518,7 @@ void CMainApp::Free()
 
 	/** @note - 싱글톤도 new로 동적할당했기에 꼭 직접 해제를 명시해줘야함 (delete 해줘야 한다는 뜻) */
 	CPlayer_Manager::GetInstance()->DestroyInstance();
+	CStage_Manager::GetInstance()->DestroyInstance();
 	CInputHandler::GetInstance()->DestroyInstance();
 	CFileLoader::GetInstance()->DestroyInstance();
 	CUI_Handler::GetInstance()->DestroyInstance();

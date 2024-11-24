@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Public\Door.h"
-
+#include "Stage_Manager.h"
 #include "GameInstance.h"
 
 CDoor::CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -146,16 +146,22 @@ void CDoor::Add_Animation()
 
 void CDoor::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
+	if (nullptr == pTargetCollider || nullptr == pTarget || nullptr == pTargetLayer)
+		return;
 }
 
 void CDoor::OnCollisionStay(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
+	if (nullptr == pTargetCollider || nullptr == pTarget || nullptr == pTargetLayer)
+		return;
 	// ACTIVATE이고, 플레이어 있는데 입장버튼 누르면 스테이지 전환
 	__super::OnCollisionStay(pTargetCollider, pTarget, pTargetLayer);
 }
 
 void CDoor::OnCollisionExit(CCollider* pTargetCollider, CGameObject* pTarget, const _tchar* pTargetLayer)
 {
+	if (nullptr == pTargetCollider || nullptr == pTarget || nullptr == pTargetLayer)
+		return;
 }
 
 CDoor* CDoor::Create(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)

@@ -24,6 +24,10 @@ namespace Client
 		Wrap_X
 	}VTXTEX_PASS;
 
+	// 스컬 문 종류: 골드룸, 아이템/정수룸, 스컬룸, 용사룸, 암시장룸, 각성/보스룸
+	enum class ROOM_TYPE
+	{ GOLD, ITEM_ESSENCE, SKUL, HERO, BLACKMARKET, AWAKENING_BOSS, ROOM_END };
+
 	enum class CONTROL_KEY
 	{
 		LEFT, RIGHT, FALL,

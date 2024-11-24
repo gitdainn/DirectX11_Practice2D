@@ -12,6 +12,7 @@ protected:
 
 public:
 	virtual HRESULT Initialize();
+	virtual HRESULT Late_Initialize();
 	virtual void Tick(_double TimeDelta);
 
 protected:

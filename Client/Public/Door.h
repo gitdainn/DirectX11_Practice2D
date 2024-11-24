@@ -14,10 +14,6 @@ BEGIN(Client)
 
 class CDoor final : public CAnimObject
 {
-public:
-	// 스컬 문 종류: 골드룸, 아이템/정수룸, 스컬룸, 용사룸, 암시장룸, 각성/보스룸
-	enum DOOR_TYPE { GOLD, ITEM_ESSENCE, SKUL, HERO, BLACKMARKET, AWAKENING_BOSS, DOOR_END };
-
 private:
 	CDoor(ID3D11Device* pDevice, ID3D11DeviceContext* pContext);
 	CDoor(const CDoor& rhs);

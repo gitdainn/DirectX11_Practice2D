@@ -223,6 +223,7 @@
     <ClInclude Include="..\Public\SkillUI.h" />
     <ClInclude Include="..\Public\SkulItem.h" />
     <ClInclude Include="..\Public\Solider.h" />
+    <ClInclude Include="..\Public\Stage_Manager.h" />
     <ClInclude Include="..\Public\State.h" />
     <ClInclude Include="..\Public\TemplateCmd.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
@@ -297,6 +298,7 @@
     <ClCompile Include="..\Private\SkillUI.cpp" />
     <ClCompile Include="..\Private\SkulItem.cpp" />
     <ClCompile Include="..\Private\Solider.cpp" />
+    <ClCompile Include="..\Private\Stage_Manager.cpp" />
     <ClCompile Include="..\Private\State.cpp" />
     <ClCompile Include="..\Private\TemplateCmd.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>

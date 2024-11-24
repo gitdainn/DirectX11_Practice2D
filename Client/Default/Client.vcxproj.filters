@@ -160,6 +160,15 @@
     <Filter Include="02.GameObject\Door">
       <UniqueIdentifier>{ae0af12e-4b56-4452-9c2a-eea139fa2e6c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="05.Manager\UI_Manager">
+      <UniqueIdentifier>{dc530a88-868a-4315-8b31-ebb5fa7628f8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Manager\Player_Manager">
+      <UniqueIdentifier>{7aad84db-ed87-41f0-bfcb-0f231bfd5241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Manager\Stage_Manager">
+      <UniqueIdentifier>{521aa34f-a8aa-4f4a-a79e-537c9b2a63d2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -232,9 +241,6 @@
     <ClInclude Include="..\Public\PlayerIdle.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\Player_Manager.h">
-      <Filter>05.Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\PlayerDash.h">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClInclude>
@@ -292,9 +298,6 @@
     <ClInclude Include="..\Public\SkulItem.h">
       <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClInclude>
-    <ClInclude Include="..\Public\UI_Manager.h">
-      <Filter>05.Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Public\HealthBarUI.h">
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClInclude>
@@ -323,6 +326,15 @@
       <Filter>02.GameObject\Door</Filter>
     </ClInclude>
     <ClInclude Include="..\Public\AnimObject.h" />
+    <ClInclude Include="..\Public\Player_Manager.h">
+      <Filter>05.Manager\Player_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\UI_Manager.h">
+      <Filter>05.Manager\UI_Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Public\Stage_Manager.h">
+      <Filter>05.Manager\Stage_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -389,9 +401,6 @@
     <ClCompile Include="..\Private\PlayerIdle.cpp">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\Player_Manager.cpp">
-      <Filter>05.Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\PlayerDash.cpp">
       <Filter>03.DesignPattern\State\PlayerState</Filter>
     </ClCompile>
@@ -443,9 +452,6 @@
     <ClCompile Include="..\Private\SkulItem.cpp">
       <Filter>02.GameObject\Item\SkulItem</Filter>
     </ClCompile>
-    <ClCompile Include="..\Private\UI_Manager.cpp">
-      <Filter>05.Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Private\HealthBarUI.cpp">
       <Filter>02.GameObject\UI\HealthBarUI</Filter>
     </ClCompile>
@@ -474,6 +480,15 @@
       <Filter>02.GameObject\Door</Filter>
     </ClCompile>
     <ClCompile Include="..\Private\AnimObject.cpp" />
+    <ClCompile Include="..\Private\Player_Manager.cpp">
+      <Filter>05.Manager\Player_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\UI_Manager.cpp">
+      <Filter>05.Manager\UI_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Private\Stage_Manager.cpp">
+      <Filter>05.Manager\Stage_Manager</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
