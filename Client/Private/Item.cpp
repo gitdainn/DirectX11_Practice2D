@@ -31,10 +31,11 @@ HRESULT CItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	//if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
-	//{
-	//	return E_FAIL;
-	//}
+	if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
+	{
+		return E_FAIL;
+	}
+	m_bIsJump = true;
 
 	return S_OK;
 }
@@ -50,12 +51,46 @@ HRESULT CItem::Initialize(void* pArg)
 	{
 		return E_FAIL;
 	}
+	m_bIsJump = true;
+
+	return S_OK;
+}
+
+HRESULT CItem::Late_Initialize()
+{
+	__super::Late_Initialize();
+
+	if (FAILED(DefaultLineRider(m_pTransformCom->Get_State(CTransform::STATE_POSITION))))
+	{
+		return E_FAIL;
+	}
+	m_bIsJump = true;
 
 	return S_OK;
 }
 
 _uint CItem::Tick(_double TimeDelta)
 {
+	if (m_bIsJump)
+	{
+		Parabola(TimeDelta);
+
+		if (m_bIsFalling)
+		{
+			_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
+			_float fLandingY = { 0.f };
+			if (m_pLineRiderCom->CheckLineLanding(vPosition, fLandingY))
+			{
+				m_pTransformCom->Set_State(CTransform::STATE_POSITION, XMVectorSetY(vPosition, fLandingY + 20.f));
+				m_bIsJump = false;
+			}
+		}
+	}
+	else
+	{
+		// 위아래로 왔다갔다하기
+	}
+
 	return __super::Tick(TimeDelta);
 }
 

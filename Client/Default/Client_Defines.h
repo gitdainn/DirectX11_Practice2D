@@ -108,6 +108,7 @@ using namespace Client;
 #define LAYER_DEFAULT			TEXT("Layer_Default")	
 #define LAYER_BACKGROUND		TEXT("Layer_Background")
 #define LAYER_ENVIRONMENT		TEXT("Layer_Environment")
+#define LAYER_DOOR				TEXT("Layer_Door")
 #define LAYER_PLAYER			TEXT("Layer_Player") 
 #define LAYER_ENEMY				TEXT("Layer_Enemy")
 #define LAYER_PLAYERATK			TEXT("Layer_PlayerAtk") 

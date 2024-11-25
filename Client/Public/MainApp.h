@@ -38,6 +38,8 @@ private:
 
 private:
 	HRESULT SetUp_StartLevel(LEVEL eNextLevelID);
+
+	/** 레이어별 충돌 행렬입니다. */
 	HRESULT Ready_CollisionLayerMatrix();
 	HRESULT Ready_DefaultData_Excel();
 	HRESULT Ready_Prototype_Sprite_For_Static();

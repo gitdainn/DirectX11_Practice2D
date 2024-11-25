@@ -28,6 +28,10 @@ public:
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;
 
+public:
+	/** 문을 활성화합니다. */
+	void	Set_Activate() { m_iAnimType = (_uint)ACTIVATE_TYPE::ACTIVATE; m_iUVTextureIndex = m_pAnimInfo[(_uint)ACTIVATE_TYPE::ACTIVATE].iStartIndex; }
+
 private:
 	virtual HRESULT Add_Components(void* pArg = nullptr) override;
 	virtual HRESULT SetUp_ShaderResources() override; /* 셰이더 전역변수에 값을 던진다. */

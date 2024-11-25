@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Public\Environment.h"
-
+#include "Stage_Manager.h"
 #include "GameInstance.h"
 
 CEnvironment::CEnvironment(ID3D11Device* pDevice, ID3D11DeviceContext* pContext)
@@ -96,16 +96,33 @@ void CEnvironment::OnCollisionEnter(CCollider* pTargetCollider, CGameObject* pTa
 	if (nullptr == pTargetCollider || nullptr == pTarget || nullptr == pTargetLayer)
 		return;
 
+	CGameInstance* pGameInstance = CGameInstance::GetInstance();
+	Safe_AddRef(pGameInstance);
+
 	if (!lstrcmp(L"GateWall", m_pNameTag))
 	{
-		// 스테이지 매니저에서 Clear일 때
-		// 이펙트 생성
-		// 아이템 생성
+		CStage_Manager* pStage_Manager = CStage_Manager::GetInstance();
+		if (nullptr != pStage_Manager)
+		{
+			Safe_AddRef(pStage_Manager);
+			if (pStage_Manager->Get_IsClear())
+			{
+				pStage_Manager->Give_ClearReward();
 
-		// 흠.. 이때 획득한 아이템을 먹으면 스테이지 내 문에게 알림을 걸어서 ACTIVATE로 활성화
+				// 이펙트도 생성
+			}
+			Safe_Release(pStage_Manager);
+		}
+
+		// 이거 이벤트 클래스 파서.. 이름별로 Map 찾아서 함수 포인터 실행 시켜도 좋을듯
+		// 흠.. 이때 획득한 아이템을 먹으면 스테이지 내 문에게 알림을 걸어서 ACTIVATE로 활성화 - 아 0인 시점에 아이템이 생성되면 해당 아이템은 Stage_Manager에 DoorActivate Toggle로 등록
+		// 그리고 이 토글이 Get_Dead() 하면 레벨 내 문들을 전부 활성화!
 		// 나는 현재 그냥 바로 문들 활성화 시키기
 
 	}
+
+	Safe_Release(pGameInstance);
+
 	__super::OnCollisionEnter(pTargetCollider, pTarget, pTargetLayer);
 }
 

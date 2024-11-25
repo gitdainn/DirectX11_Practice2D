@@ -74,7 +74,7 @@ HRESULT CGameObject::Initialize(void * pArg)
 	return S_OK;
 }
 
-HRESULT CGameObject::Late_Initialize(void* pArg)
+HRESULT CGameObject::Late_Initialize()
 {
 	return S_OK;
 }

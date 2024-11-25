@@ -53,17 +53,11 @@ HRESULT CLineRider::Collision_Line(_vector vPosition, _float& fOutLandingY)
 		}
 	}
 
-	// 현재 가장 가까운 땅의 양끝을 벗어났다면 재검색합니다.
+	// 현재 가장 가까운 땅의 양끝을 벗어났다면 null을 반환합니다.
 	if (m_pClosestLandingLine->tLeftVertex.position.x > XMVectorGetX(vPosition)
 		|| m_pClosestLandingLine->tRightVertex.position.x < XMVectorGetX(vPosition))
 	{
-		// 착지할 수 있는 땅이 없습니다.
-		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
-		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, (LINE_INFO**)(&m_pClosestLandingLine))))
-		{
-			ZeroMemory(&m_pClosestLandingLine, sizeof(LINE_INFO));
-			return E_FAIL;
-		}
+		m_pClosestLandingLine = nullptr;
 		return E_FAIL;
 	}
 
@@ -81,7 +75,14 @@ _bool CLineRider::CheckLineLanding(const _vector vPosition, _float& fOutLandingY
 	const _float fLimitY = { -1000.f };
 
 	if (nullptr == m_pClosestLandingLine)
-		return false;
+	{
+		// 현재 착지할 수 있는 땅이 없다면 재검색합니다.
+		_float2 fPositon = _float2(XMVectorGetX(vPosition), XMVectorGetY(vPosition));
+		if (FAILED(m_pLine_Manager->Get_ClosestLineToRide(fPositon, (LINE_INFO**)(&m_pClosestLandingLine))))
+		{
+			return E_FAIL;
+		}
+	}
 
 	const _float3 fLeftX = m_pClosestLandingLine->tLeftVertex.position;
 	const _float3 fRightX = m_pClosestLandingLine->tRightVertex.position;

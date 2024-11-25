@@ -6,6 +6,7 @@
 #include "GameInstance.h"
 #include "Player_Manager.h"
 #include "Camera_Dynamic.h"
+#include "Stage_Manager.h"
 
 CLevel_Logo::CLevel_Logo(ID3D11Device * pDevice, ID3D11DeviceContext * pContext)
 	: CLevel(pDevice, pContext)
@@ -24,6 +25,12 @@ HRESULT CLevel_Logo::Initialize()
 	if (FAILED(Ready_Layer_Camera()))
 		return E_FAIL;
 
+	CStage_Manager* pStage_Manager = CStage_Manager::GetInstance();
+	if (nullptr == pStage_Manager)
+		return E_FAIL;
+	Safe_AddRef(pStage_Manager);
+	pStage_Manager->Enter(ROOM_TYPE::SKUL, LEVEL_LOGO);
+	Safe_Release(pStage_Manager);
 	return S_OK;
 }
 
@@ -130,13 +137,6 @@ HRESULT CLevel_Logo::Ready_Layer_GameObject()
 	//{
 	//	Safe_Release(pGameInstance);
 	//	return E_FAIL;
-	//}
-
-	//tSpriteInfo.fSize = _float2{ 30, 30.f };
-	//if (FAILED(pGameInstance->Add_GameObject(TEXT("Prototype_GameObject_SkulItem"), LEVEL_LOGO, LAYER_ITEM, tSpriteInfo)))
-	//{
-	//	Safe_Release(pGameInstance);
-	//	return E_FAIL;		
 	//}
 
 	tSpriteInfo.fSize = _float2{ 220.f, 200.f };

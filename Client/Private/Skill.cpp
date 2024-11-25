@@ -41,7 +41,7 @@ HRESULT CSkill::Initialize(void* pArg)
 	return S_OK;
 }
 
-HRESULT CSkill::Late_Initialize(void* pArg)
+HRESULT CSkill::Late_Initialize()
 {
 	if (nullptr == m_pSpriteFileName)
 		m_tSpriteInfo.fSize = m_pTextureCom->Get_OriginalTextureSize(m_iTextureIndex);

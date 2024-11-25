@@ -20,7 +20,7 @@ protected:
 public:
 	virtual HRESULT Initialize_Prototype();
 	virtual HRESULT Initialize(void* pArg);
-	virtual HRESULT Late_Initialize(void* pArg = nullptr);
+	virtual HRESULT Late_Initialize();
 	virtual _uint Tick(_double TimeDelta);
 	virtual _uint LateTick(_double TimeDelta);
 	virtual HRESULT Render();

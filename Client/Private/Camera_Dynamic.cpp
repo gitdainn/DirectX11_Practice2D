@@ -34,7 +34,7 @@ HRESULT CCamera_Dynamic::Initialize(void * pArg)
 }
 
 // 스컬이 교체되니까.. 이걸 딴 곳에서 셋팅해줘야할듯함.
-HRESULT CCamera_Dynamic::Late_Initialize(void* pArg)
+HRESULT CCamera_Dynamic::Late_Initialize()
 {
 	CPlayer_Manager* pPlayerManager = CPlayer_Manager::GetInstance();
 	Safe_AddRef(pPlayerManager);

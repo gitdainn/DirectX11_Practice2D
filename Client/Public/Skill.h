@@ -11,7 +11,7 @@ public:
 	virtual HRESULT Initialize_Prototype() override;
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr) override;
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
-	virtual HRESULT Late_Initialize(void* pArg);
+	virtual HRESULT Late_Initialize();
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
 	virtual HRESULT Render() override;

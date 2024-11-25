@@ -42,7 +42,8 @@ public:
 	virtual HRESULT Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg = nullptr);
 	/** @param - 인스턴스 번호를 넘겨주세요. 데이터를 읽어들일 때 사용됩니다. */
 	virtual HRESULT Initialize(void* pArg = nullptr) override;
-	virtual HRESULT Late_Initialize();
+	/** @notice - 레벨 입장 시에만 호출됩니다. */
+	virtual HRESULT Late_Initialize() override;
 	virtual HRESULT Initialize_Prototype() override;
 	virtual _uint Tick(_double TimeDelta) override;
 	virtual _uint LateTick(_double TimeDelta) override;
@@ -56,7 +57,7 @@ public:
 protected: // Stats
 	struct BASE_STATS
 	{
-		_int iMagicAttack = { 10 };
+		_int iMagicAttack = { 60 };
 		_int iHp = { 100 };
 		_int iDefense = { 1 };
 		_int iPhysicalAttack = { 10 };

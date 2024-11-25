@@ -119,7 +119,7 @@ void CMainApp::Tick(_double TimeDelta)
 	/* 1. 현재 할당된 레벨의 Tick함수를 호출한다. */
 	/* 2. 생성된 게임오브젝트의 Tick함수를 호출한다. */
 	m_pGameInstance->Tick_Engine(TimeDelta);
-
+	CStage_Manager::GetInstance()->Tick(TimeDelta);
 
 #ifdef _DEBUG
 	m_TimeAcc += TimeDelta;
@@ -180,7 +180,8 @@ HRESULT CMainApp::Ready_CollisionLayerMatrix()
 	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ENVIRONMENT, true);
 	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ENEMYATK, true);
 	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_ITEM, true);
-	pGameInstance->Set_CollisionLayerMatrix(LAYER_ENEMY,  LAYER_PLAYERATK, true);
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_PLAYER, LAYER_DOOR, true);
+	pGameInstance->Set_CollisionLayerMatrix(LAYER_ENEMY, LAYER_PLAYERATK, true);
 
 	Safe_Release(pGameInstance);
 	return S_OK;

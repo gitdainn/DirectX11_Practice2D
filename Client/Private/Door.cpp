@@ -18,13 +18,11 @@ CDoor::CDoor(const CDoor& rhs)
 HRESULT CDoor::Initialize_Prototype()
 {
 	__super::Initialize_Prototype();
-	Set_Layer(LAYER_ENVIRONMENT, false);
 
 	m_iShaderPassIndex = (_uint)VTXTEX_PASS::UV_Anim;
-	m_iAnimType = (_uint)ACTIVATE_TYPE::ACTIVATE;
+	m_iAnimType = (_uint)ACTIVATE_TYPE::DEACTIVATE;
 	m_eRenderGroup = CRenderer::RENDER_NONBLEND;
 
-	m_iOrder = { 5 };
 
 	m_bIsAnimUV = true;
 	m_iUVTexNumX = 8;
@@ -69,6 +67,11 @@ HRESULT CDoor::Initialize(void* pArg)
 
 HRESULT CDoor::Late_Initialize()
 {
+	__super::Late_Initialize();
+
+	Set_Layer(LAYER_DOOR, false);
+	m_iOrder = { 5 };
+
 	_vector vPosition = m_pTransformCom->Get_State(CTransform::STATE_POSITION);
 	_float3 vScale = m_pTransformCom->Get_Scaled();
 	if (FAILED(DefaultLineRider(vPosition, vScale.y / 2.f)))

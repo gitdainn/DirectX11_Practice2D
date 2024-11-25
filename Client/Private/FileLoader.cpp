@@ -136,8 +136,14 @@ HRESULT CFileLoader::Load_FIle(const _tchar* pFilePath, LEVEL eLevel)
 		_tchar* pPrototypeTag = new _tchar[MAX_PATH]{ TEXT("Prototype_GameObject_") };
 		lstrcat(pPrototypeTag, szClassName);
 
+		/** @temp */
+		if(!lstrcmp(szClassName, L"Door"))
+		{
+			lstrcpyW(szLayer, L"Layer_Door");
+		}
 		_tchar* pLayer = new _tchar[lstrlen(szLayer) + 1];
 		lstrcpy(pLayer, szLayer);
+
 		if (FAILED(pGameInstance->Add_GameObject(pPrototypeTag, (_uint)eLevel, pLayer, &tMetaData.iInstanceID)))
 		{
 			MSG_BOX("CMyImGui - Load_FIle() - FAILED");

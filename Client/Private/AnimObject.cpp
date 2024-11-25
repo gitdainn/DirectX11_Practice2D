@@ -74,6 +74,11 @@ void CAnimObject::End_Animation(_uint& iSpriteIndex)
 
 HRESULT CAnimObject::SetUp_Shader_UVAnim()
 {
+	if (0 == m_iUVTexNumX)
+	{
+		MSG_BOX("CAnimObject - SetUp_Shader_UVAnim - m_iUVTexNum이 0입니다.");
+		return E_FAIL;
+	}
 	_uint iUVIndexY = m_iUVTextureIndex / m_iUVTexNumX;
 	/** @note - _uint가 있으면 int로 담기 전 계산 과정에서 이미 모두 int로 변환 후 계산해야함. (음수가 되면 엄청 쓰레기값 들어감) */
 	_uint iUVIndexX = max(0, (int)m_iUVTextureIndex - (int)(m_iUVTexNumX * iUVIndexY) - 1);

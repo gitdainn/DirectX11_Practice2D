@@ -31,7 +31,6 @@ HRESULT CSkulItem::Initialize(const SPRITE_INFO& InSpriteInfo, void* pArg)
 		return E_FAIL;
 	}
 
-	//Landing_Ground();
 	Add_Animation();
 
 	return S_OK;
@@ -44,7 +43,6 @@ HRESULT CSkulItem::Initialize(void* pArg)
 		return E_FAIL;
 	}
 
-	//Landing_Ground();
 	Add_Animation();
 
 	return S_OK;

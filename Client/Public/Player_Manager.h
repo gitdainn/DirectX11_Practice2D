@@ -16,7 +16,7 @@ public:
 private:
     struct BASE_STATS
     {
-        _int iMagicAttack = { 10 };
+        _int iMagicAttack = { 60 };
         _int iHp = { 100 };
         _int iDefense = { 1 };
         _int iPhysicalAttack = { 10 };
